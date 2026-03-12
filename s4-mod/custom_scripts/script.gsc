@@ -73,15 +73,7 @@ on_player_spawned()
 // wait till prematch is over for prints because the game does some weird third person cinematic
 print_after_prematch(registered)
 {
-    is_prematch_done = game["flags"]["prematch_done"];
-    if (!is_prematch_done)
-    {
-        while (!is_prematch_done)
-        {
-            is_prematch_done = game["flags"]["prematch_done"];
-            wait 0.05;
-        }
-    }
+    waittill_prematch_over();
         
     self iprintln("^6neura s4 ^7by * ^6@nyli2b ^2@mjkzy ^7*");
     self iprintln("[!] registered ^6" + registered + "^7 functions");
@@ -168,7 +160,7 @@ nac_bind(args)
     {
         self notify("stop_nac_bind");
         actionslot = int(args[0]);
-        self thread do_nac_bind(actionslot);
+        self thread do_nac_bind(args, actionslot);
         self setpers("nac_bind", "on");
         self setpers("nac_slot", actionslot);
         self iprintln("nac bind set to actionslot ^6" + actionslot);
@@ -182,7 +174,7 @@ nac_bind(args)
     }
 }
 
-do_nac_bind(slot)
+do_nac_bind(args, slot)
 {
     self endon("disconnect");
     self endon("stop_nac_bind");
@@ -200,7 +192,7 @@ instaswap_bind(args)
     {
         self notify("stop_instaswap_bind");
         actionslot = int(args[0]);
-        self thread do_instaswap_bind(actionslot);
+        self thread do_instaswap_bind(args, actionslot);
         self setpers("instaswap_bind", "on");
         self setpers("is_slot", actionslot);
         self iprintln("instaswap bind set to actionslot ^+" + actionslot);
@@ -214,7 +206,7 @@ instaswap_bind(args)
     }
 }
 
-do_instaswap_bind(slot)
+do_instaswap_bind(args, slot)
 {
     self endon("stop_instaswap_bind");
     self endon("disconnect");
@@ -230,10 +222,10 @@ do_instaswap_bind(slot)
 
 ufo_mode(args)
 {
-    if (int(args[0]) == 1)
+    if (isdefined(args) && int(args[0]) == 1)
     {
         self notify("stop_noclip");
-        self thread watch_noclip();
+        self thread watch_noclip(args);
         self setpers("ufo_mode", "on");
         self iprintln("^6noclip bind enabled");
     }
@@ -245,11 +237,15 @@ ufo_mode(args)
     }
 }
 
-watch_noclip()
+watch_noclip(args)
 {
+    self endon("disconnect");
+    self endon("stop_noclip");
+    level endon("game_ended");
+
     self.isactive = 0;
+    
     self.noclipanchor = undefined;
-    self.godmode_active = undefined;
 
     if (!isdefined(self.noclipmonitor))
     {
@@ -263,6 +259,10 @@ noclip_monitor()
     self endon("disconnect");
     self endon("stop_noclip");
     level endon("game_ended");
+
+    while (!isalive(self))
+        wait 0.05;
+
     for (;;)
     {
         if (self meleebuttonpressed() && self jumpbuttonpressed())
@@ -274,7 +274,7 @@ noclip_monitor()
             wait 0.2;
         }
 
-        if (self.isactive && isdefined( self.noclipanchor))
+        if (self.isactive && isdefined(self.noclipanchor))
         {
             self.viewangles = self getplayerangles();
             self.forward = anglestoforward(self.viewangles);
@@ -282,7 +282,7 @@ noclip_monitor()
             self.moveinput = self getnormalizedmovement();
             self.verticalinput = 0;
 
-            if (!self.menuopen)
+            if (isdefined(self.menuopen) && !self.menuopen)
             {
                 if (self jumpbuttonpressed())
                     self.verticalinput = 1;
@@ -297,7 +297,7 @@ noclip_monitor()
             self.noclipanchor.angles = self.viewangles;
         }
 
-        wait 0.01;
+        wait 0.05;
     }
 }
 
@@ -335,7 +335,7 @@ instaswaps(args)
     if (int(args[0]) == 1)
     {
         self notify("stop_instaswaps");
-        self thread do_instaswaps();
+        self thread do_instaswaps(args);
         self setpers("instaswaps", "on");
         self iprintln( "^6bo2 instaswaps enabled" );
         self iprintln( "edit the time with: ^6 instaswaps_time 0.0-1" );
@@ -348,7 +348,7 @@ instaswaps(args)
     }
 }
 
-do_instaswaps()
+do_instaswaps(args)
 {
     self endon("disconnect");
     level endon("game_ended");
@@ -496,7 +496,7 @@ aimbot(args)
     if (int(args[0]) == 1)
     {
         self notify("stop_aimbot");
-        self thread do_aimbot();
+        self thread do_aimbot(args);
         self setpers("aimbot", "on");
         self iprintln( "ߝ [player] * aimbot enabled @ ^6" + range + " range");
     }
@@ -508,7 +508,21 @@ aimbot(args)
     }
 }
 
-do_aimbot()
+// this will wait until prematch is confirmed over, and if over, this will just skip through
+waittill_prematch_over()
+{
+    is_prematch_done = game["flags"]["prematch_done"];
+    if (!is_prematch_done)
+    {
+        while (!is_prematch_done)
+        {
+            is_prematch_done = game["flags"]["prematch_done"];
+            wait 0.05;
+        }
+    }
+}
+
+do_aimbot(args)
 {
     level endon("game_ended");
     self endon("disconnect");
@@ -549,7 +563,7 @@ auto_prone(args)
     if (int(args[0]) == 1)
     {
         self notify("stop_auto_prone");
-        self thread do_auto_prone();
+        self thread do_auto_prone(args);
         self setpers("autoprone", "on");
         self iprintln( "ߝ [player] * ^6auto prone enabled" );
     }
@@ -561,7 +575,7 @@ auto_prone(args)
     }
 }
 
-do_auto_prone()
+do_auto_prone(args)
 {
     self endon("disconnect");
     self endon("stop_auto_prone");
@@ -622,7 +636,7 @@ auto_reload(args)
     if (int(args[0]) == 1)
     {
         self notify("stop_auto_reload");
-        self thread do_auto_reload();
+        self thread do_auto_reload(args);
         self setpers("autoreload", "on");
         self iprintln( "ߝ [player] * ^6auto reload enabled" );
     }
@@ -634,7 +648,7 @@ auto_reload(args)
     }
 }
 
-do_auto_reload()
+do_auto_reload(args)
 {
     self endon("stop_auto_reload");
     level waittill("game_ended");
@@ -748,13 +762,8 @@ loadpers(key, func, args)
     }
 
     wait 0.05;
-    if (args)
-    {
-        self thread [[func]](args);
-        return;
-    }
 
-    self thread [[func]]();
+    self thread [[func]](args);
 }
 
 watch_buttons()
