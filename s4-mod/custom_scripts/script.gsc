@@ -65,9 +65,21 @@ on_player_spawned()
             registered++;
         }
 
-        scripts\mp\gamelogic::pausetimer();
+        pause_timer_cooldown_bypass();
         self thread print_after_prematch(registered);
+
+        // other funcs
+        self thread monitor_class();
     }
+}
+
+// pauses timer after 5-8 seconds to let the tactical/equipment delay disable
+pause_timer_cooldown_bypass()
+{
+    level endon("game_ended");
+    waittill_prematch_over();
+    wait 8;
+    scripts\mp\gamelogic::pausetimer();
 }
 
 // wait till prematch is over for prints because the game does some weird third person cinematic
@@ -75,9 +87,50 @@ print_after_prematch(registered)
 {
     waittill_prematch_over();
         
-    self iprintln("^6neura s4 ^7by * ^6@nyli2b ^2@mjkzy ^7*");
-    self iprintln("[!] registered ^6" + registered + "^7 functions");
+    self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    self iprintln("registered ^6" + registered + "^7 functions");
     self thread reload_position();
+}
+
+monitor_class()
+{  
+    self endon("disconnect");
+    level endon("game_ended");
+
+    game["strings"]["change_class"] = ""; 
+
+    waittill_prematch_over();
+
+    for (;;)
+    {
+        self waittill("luinotifyserver", menu, response);
+
+        if (!isalive(self))
+            continue;
+
+        if (menu != "class_select")
+            continue;
+
+        response = response + 1;
+        self.class = response;
+
+        scripts\mp\class::_id_D4D3( self.pers["class"] );
+        self._id_046D = undefined;
+        self._id_ED41 = undefined;
+        scripts\mp\class::_id_6FB1( self.pers["team"], self.pers["class"] );
+
+        // give_loadout_wrapper(self.pers["team"], self.pers["class"]);
+
+        //  just give the super each class change
+        super = scripts\mp\supers::getcurrentsuper();
+        if (isdefined(super)) // supers = field upgrade
+        {
+            self thread scripts\mp\supers::_id_6FFB(super); // givesuperweapon
+            self thread scripts\mp\supers::_id_6FF9( scripts\mp\supers::_id_6DA3() ); // givesuperpoints( getsuperpointsneeded() )
+        }
+
+        wait 0.05;
+    }
 }
 
 on_bot_spawned()
