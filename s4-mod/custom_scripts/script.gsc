@@ -45,6 +45,9 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
+
+        self thread disable_actionslots();
+
         if (self.has_spawned)
             continue;
 
@@ -53,15 +56,14 @@ on_player_spawned()
 
         registered = 0;
         f = [];
-        //f[f.size] = ::disable_actionslots;
         f[f.size] = ::watch_commands;
         f[f.size] = ::watch_dvars;
-        f[f.size] = ::watch_notify;
+        //f[f.size] = ::watch_notify;
         f[f.size] = ::watch_memory;
         f[f.size] = ::clean_killcam;
         f[f.size] = ::unlimited_eq;
         f[f.size] = ::watch_rounds;
-        f[f.size] = ::create_notify;
+        //f[f.size] = ::create_notify;
 
         foreach (func in f)
         {
@@ -76,12 +78,12 @@ on_player_spawned()
         {
             //self initial_variable();
             //self thread initial_monitor();
-            //self thread monitor_buttons();
+            self thread monitor_buttons();
             self.menu_init = true;
         }
 
         self thread pause_timer_cooldown_bypass();
-        self thread print_after_prematch(registered);
+        self thread post_prematch_start(registered);
 
         // other funcs
         self thread monitor_class();
@@ -107,6 +109,8 @@ monitor_class()
         if (menu != "class_select")
             continue;
 
+        self thread disable_actionslots();
+
         response = response + 1;
         self.class = response;
 
@@ -124,6 +128,8 @@ monitor_class()
             self thread scripts\mp\supers::_id_6FFB(super); // givesuperweapon
             self thread scripts\mp\supers::_id_6FF9( scripts\mp\supers::_id_6DA3() ); // givesuperpoints( getsuperpointsneeded() )
         }
+
+        self thread disable_actionslots();
 
         wait 0.05;
     }
@@ -178,14 +184,12 @@ disable_actionslots()
 {
     self endon("disconnect");
     level endon("game_ended");
-    for(;;)
+    for (j = 0; j < 20; j++)
     {
         for (i = 1; i < 7; i++)
         {
             self setactionslot(i, "");
-            wait 0.05;
         }
-        wait 0.05;
     }
 }
 
@@ -976,14 +980,6 @@ loadpers(key, func, args)
     self thread [[func]](args);
 }
 
-watch_notify()
-{
-    foreach (value in strtok("+sprint,+actionslot 1,+actionslot 2,+actionslot 3,+actionslot 4,+frag,+smoke,+melee,+melee_zoom,+stance,+gostand,+switchseat,+usereload", ","))
-    {
-        self notifyonplayercmd(value, value);
-    }
-}
-
 // meme for now idc, ill come back to it later
 create_notify()
 {
@@ -1235,7 +1231,7 @@ pause_timer_cooldown_bypass()
 }
 
 // wait till prematch is over for prints because the game does some weird third person cinematic
-print_after_prematch(registered)
+post_prematch_start(registered)
 {
     waittill_prematch_over();
         
@@ -2183,7 +2179,7 @@ update_menu(menu, cursor, force)
 }
 
 // have to use this because ActionSlotButtonOnePressed etc does not exist!
-button_monitor(button) 
+button_monitor(button)
 {
     self endon("disconnect");
 
@@ -2193,6 +2189,7 @@ button_monitor(button)
     while(1)
     {
         self waittill("button_pressed_" + button);
+        self iprintln(button);
         self.button_pressed[button] = true;
         wait .01;
         self.button_pressed[button] = false;
@@ -2212,12 +2209,19 @@ monitor_buttons()
     self.now_monitoring = true;
     
     if (!isdefined(self.button_actions))
-        self.button_actions = ["+sprint", "+melee", "+melee_zoom", "+melee_breath", "+stance", "+gostand", "weapnext", "+actionslot 1", "+actionslot 2", "+actionslot 3", "+actionslot 4", "+forward", "+back", "+moveleft", "+moveright"];
+        self.button_actions = list("special,melee,melee_zoom,melee_breath,stance,gostand,weapnext,actionslot 1,actionslot 2,actionslot 3,actionslot 4,actionslot 5,actionslot 6,actionslot 7,forward,back,moveleft,moveright");
+
     if (!isdefined(self.button_pressed))
         self.button_pressed = [];
     
     for(a=0 ; a < self.button_actions.size ; a++)
-        self thread button_monitor(self.button_actions[a]);
+    {
+        self thread button_monitor("+" + self.button_actions[a]);
+        self thread button_monitor("-" + self.button_actions[a]); // this usually works as a fallback to many of these
+    }
+    self thread button_monitor("nightvision");
+
+    self setactionslot( 4, "" );
 }
 
 toggle(variable) 
