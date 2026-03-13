@@ -15,6 +15,7 @@ setup_dvars()
     setdvarifuni("autoprone_mode", "air");
     setdvarifuni("autoprone_endgame", 1);
     setdvarifuni("instaswaps_time", 0.19);
+    setdvar("MSOOMPMPQS", true);
 }
 
 on_player_connect()
@@ -73,25 +74,6 @@ on_player_spawned()
     }
 }
 
-// pauses timer after 5-8 seconds to let the tactical/equipment delay disable
-pause_timer_cooldown_bypass()
-{
-    level endon("game_ended");
-    waittill_prematch_over();
-    wait 8;
-    scripts\mp\gamelogic::pausetimer();
-}
-
-// wait till prematch is over for prints because the game does some weird third person cinematic
-print_after_prematch(registered)
-{
-    waittill_prematch_over();
-        
-    self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
-    self iprintln("registered ^6" + registered + "^7 functions");
-    self thread reload_position();
-}
-
 monitor_class()
 {  
     self endon("disconnect");
@@ -141,17 +123,9 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-        is_prematch_done = game["flags"]["prematch_done"];
-        if (!is_prematch_done)
-        {
-            while (!is_prematch_done)
-            {
-                is_prematch_done = game["flags"]["prematch_done"];
-                wait 0.05;
-            }
-            self thread reload_position();
-            self thread freeze_loop();
-        }
+        waittill_prematch_over();
+        self thread reload_position();
+        self thread freeze_loop();
     }
 }
 
@@ -171,6 +145,18 @@ watch_memory()
     self loadpers("ufo_mode", ::watch_noclip);
     self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
     self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
+    self setpersifuni("bouncecount", "0");
+    for (i = 1; i < 8; i++)
+    {
+        self setpersifuni("bouncepos" + i, "0");
+        wait 0.05;
+    }   
+    if (int(self getpers("bouncecount")) >= 1)
+    {
+        self notify("stop_bounce_loop");
+        self thread monitor_bounces();
+        self iprintln("^6" + self getpers("bouncecount") + "^7 bounces reloaded");
+    }
 }
 
 watch_dvars()
@@ -199,12 +185,147 @@ watch_commands() // handles (most) dvar commands
     self thread createcommand("autoprone", "auto prone", ::auto_prone);
     self thread createcommand("ufo", "toggle noclip", ::ufo_mode);
     self thread createcommand("instaswaps", "bo2 instaswaps", ::instaswaps);
+    self thread createcommand("bounce", "spawn bounces", ::manage_bounce);
+    self thread createcommand("drop", "drop items", ::drop_util);
+    self thread createcommand("setup", "easy setup", ::setup);
 
     // binds
     self thread createcommand("nacbind", "nac bind to next weapon", ::nac_bind);
     self thread createcommand("isbind", "instaswap bind to next weapon", ::instaswap_bind);
 
     self iprintln("^6commands registered");
+}
+
+manage_bounce(args)
+{
+    switch (args[0])
+    {
+        case "spawn":
+            self thread spawn_bounce();
+            break;
+        case "delete":
+            self thread delete_bounce();
+            break;
+        default:
+            self iprintln("^6use spawn or delete..");
+            break;        
+    }
+}
+
+spawn_bounce()
+{
+    x = int(self getpers("bouncecount"));
+    x++;
+
+    self setpers("bouncecount", x);
+    self setpers("bouncepos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+    self iprintln("bounce #" + x + " spawned at ^6" + self getorigin());
+
+    if (x == 1)
+    {
+        self notify("stop_bounce_loop");
+        self thread monitor_bounces();
+    }
+}
+
+delete_bounce()
+{
+    x = int(self getpers("bouncecount"));
+
+    if (x == 0)
+        return self iprintln("ߝ [game] * ^+no bounces to delete");
+
+    x--;
+    self setpers("bouncecount", x);
+    self iprintln("ߝ [game] * ^+bounce #" + x + " deleted");
+}
+
+monitor_bounces()
+{
+    self endon("stop_bounce_loop");
+    self endon("disconnect");
+    level endon("game_ended");
+    
+    for (;;)
+    {
+        for (i = 1; i < int(self getpers("bouncecount")) + 1; i++)
+        {
+            pos = perstovector(self getpers("bouncepos" + i));
+
+            if (distance(self getorigin(), pos) < 90 && self getvelocity()[2] < -250)
+            {
+                self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
+                wait 0.2;
+            }
+        }
+        wait 0.05;
+    }
+}
+
+unlimited_eq()
+{
+    self endon("disconnect");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("grenade_fire", grenade, item);
+        wait 0.05;
+        self setweaponammoclip(item, 1);
+        self givemaxammo(item);
+        wait 0.05;
+    }
+}
+
+setup(args)
+{
+    if (int(args[0]))
+    {    
+        f = [];
+        f[f.size] = ::auto_reload;
+        f[f.size] = ::aimbot;
+        foreach (func in f)
+        {
+            self thread [[func]](args);
+            wait 0.05;
+        }
+        self thread move_bots();
+        setdvar("aimbot_range", 1500);
+    }
+}
+
+drop_util(args)
+{
+    current = self getcurrentweapon();
+    next = self getnextweapon();
+    weapons = self getrealweapons();
+
+    switch (args[0])
+    {
+        case "current":
+        case "curr":
+            self dropitem(current);
+            wait 0.05;
+            self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(self getweaponslistprimaries()[0]);
+            break;
+        case "next":
+        case "secondary":
+            self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(next);
+            self dropitem(next);
+            wait 0.05;
+            self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(self getweaponslistprimaries()[0]);
+            break;
+        case "all":
+            foreach (item in self getweaponslistprimaries())
+            {
+                self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(item);
+                wait 0.05;
+                self dropitem(item);
+            }
+            break;
+        default:
+            self iprintln("^6use canswap, current, alt, primary, or all..");
+            break;        
+    }
 }
 
 nac_bind(args)
@@ -412,12 +533,10 @@ do_instaswaps(args)
         self waittill("grenade_pullback", grenade);
         name = grenade.basename;
         
-        /*
-        if (name == "ac130_105mm_mp" || name == "ac130_40mm_mp" || name == "heli_pilot_turret_mp" || name == "manual_turret_mp" || name == "nuke_mp" || name == "chopper_support_turret_mp" || name == "iw8_gunship_tablet" || name == "iw8_wheelson_tablet" || name == "mp_killstreak_nuke_tablet" || name == "iw8_cruise_missile_tablet" || name == "iw8_chopper_gunner_tablet" || name == "apache_turret_mp" || name == "pac_sentry_turret_mp" || name == "emp_drone_non_player_direct_mp" || name == "emp_drone_non_player_mp" || name == "emp_drone_player_mp" || name == "emp_grenade_mp" || name == "deployable_cover_mp" || name == "support_box_mp" || name == "equip_adrenaline" || name == "airdrop_marker_mp" || name == "deployable_vest_marker_mp" || name == "deployable_weapon_crate_marker_mp")
+        if (name == "ks_remote_nuke_mp" || name == "ac130_105mm_mp" || name == "ac130_40mm_mp" || name == "heli_pilot_turret_mp" || name == "manual_turret_mp" || name == "nuke_mp" || name == "chopper_support_turret_mp" || name == "iw8_gunship_tablet" || name == "iw8_wheelson_tablet" || name == "mp_killstreak_nuke_tablet" || name == "iw8_cruise_missile_tablet" || name == "iw8_chopper_gunner_tablet" || name == "apache_turret_mp" || name == "pac_sentry_turret_mp" || name == "emp_drone_non_player_direct_mp" || name == "emp_drone_non_player_mp" || name == "emp_drone_player_mp" || name == "emp_grenade_mp" || name == "deployable_cover_mp" || name == "support_box_mp" || name == "equip_adrenaline" || name == "airdrop_marker_mp" || name == "deployable_vest_marker_mp" || name == "deployable_weapon_crate_marker_mp")
         {
             continue;
         }
-        */
 
         if (isdefined(self.is_swapping))
         {
@@ -475,7 +594,7 @@ move_bots()
         {
             player setorigin(self.origin);
             player save_spawn();
-            self iprintln("ߝ [ai] * trying to move all bots to ^6" + self.origin);
+            self iprintln("trying to move all bots to ^6" + self.origin);
             self playlocalsound("attachment_pickup");
         }
     }
@@ -492,7 +611,7 @@ save_pos_bind()
         {
             self thread save_spawn();
             self iprintlnbold("ߝ [position] * saved @ ^6" + self.origin);
-            wait 0.6;
+            wait 1;
             self iprintlnbold(" ");
             wait 0.05;
         }
@@ -551,13 +670,13 @@ aimbot(args)
         self notify("stop_aimbot");
         self thread do_aimbot(args);
         self setpers("aimbot", "on");
-        self iprintln( "ߝ [player] * aimbot enabled @ ^6" + range + " range");
+        self iprintln( "aimbot enabled @ ^6" + range + " range");
     }
     else
     {
         self notify("stop_aimbot");
         self setpers("refillbind", false);
-        self iprintln( "ߝ [player] * ^6aimbot disabled" );
+        self iprintln( "^6aimbot disabled" );
     }
 }
 
@@ -618,13 +737,13 @@ auto_prone(args)
         self notify("stop_auto_prone");
         self thread do_auto_prone(args);
         self setpers("autoprone", "on");
-        self iprintln( "ߝ [player] * ^6auto prone enabled" );
+        self iprintln( "^6auto prone enabled" );
     }
     else
     {
         self notify("stop_auto_prone");
         self setpers("autoprone", false);
-        self iprintln( "ߝ [player] * ^6auto prone disabled" );
+        self iprintln( "^6auto prone disabled" );
     }
 }
 
@@ -747,7 +866,7 @@ watch_rounds()
     game["teamScores"]["allies"] = random_round_ally;
     game["teamScores"]["axis"] = random_round_axis;
     game["roundsplayed"] = rounds_played;
-    game["switchedsides"] = 0; // never switch sides
+    game["switchedsides"] = 0;
 }
 
 get_player_by_entnum(data)
@@ -959,3 +1078,24 @@ getrealweapons()
 
     return var_0;
 }
+
+// pauses timer after 5-8 seconds to let the tactical/equipment delay disable
+pause_timer_cooldown_bypass()
+{
+    level endon("game_ended");
+    waittill_prematch_over();
+    wait 8;
+    scripts\mp\gamelogic::pausetimer();
+}
+
+// wait till prematch is over for prints because the game does some weird third person cinematic
+print_after_prematch(registered)
+{
+    waittill_prematch_over();
+        
+    self iprintlnbold("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    self iprintln("registered ^6" + registered + "^7 functions");
+    self thread reload_position();
+}
+
+getorigin() { return self.origin; }
