@@ -45,9 +45,6 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-
-        self thread disable_actionslots();
-
         if (self.has_spawned)
             continue;
 
@@ -109,8 +106,6 @@ monitor_class()
         if (menu != "class_select")
             continue;
 
-        self thread disable_actionslots();
-
         response = response + 1;
         self.class = response;
 
@@ -128,8 +123,6 @@ monitor_class()
             self thread scripts\mp\supers::_id_6FFB(super); // givesuperweapon
             self thread scripts\mp\supers::_id_6FF9( scripts\mp\supers::_id_6DA3() ); // givesuperpoints( getsuperpointsneeded() )
         }
-
-        self thread disable_actionslots();
 
         wait 0.05;
     }
@@ -180,22 +173,17 @@ watch_memory()
     }
 }
 
-disable_actionslots()
-{
-    self endon("disconnect");
-    level endon("game_ended");
-    for (j = 0; j < 20; j++)
-    {
-        for (i = 1; i < 7; i++)
-        {
-            self setactionslot(i, "");
-        }
-    }
-}
-
 watch_dvars()
 {
+    level endon("game_ended");
+    self endon("disconnect");
+
+    self iprintln("watch_dvars 1");
+
     waittill_prematch_over();
+
+    self iprintln("watch_dvars 2");
+
     registered = 0;
     f = [];
     f[f.size] = ::save_pos_bind;
@@ -205,10 +193,7 @@ watch_dvars()
     {
         self thread [[func]]();
         registered++;
-        wait 0.05;
     }
-
-    self iprintln("now watching ^6 " + registered + " ^7dvar functions");
 }
 
 watch_commands() // handles (most) dvar commands
@@ -652,7 +637,7 @@ save_pos_bind()
     level endon("game_ended");
     for (;;)
     {
-        self waittill("+actionslot 3");
+        self waittill("button_pressed_+actionslot 3");
         if (self getstance() == "crouch")
         {
             self thread save_spawn();
@@ -670,7 +655,7 @@ load_pos_bind()
     level endon("game_ended");
     for (;;)
     {
-        self waittill("+actionslot 2");
+        self waittill("button_pressed_-actionslot 2");
         if (self getstance() == "crouch")
         {
             self thread load_spawn();
@@ -2185,11 +2170,12 @@ button_monitor(button)
 
     self.button_pressed[button] = false;
     self NotifyOnPlayerCommand("button_pressed_" + button, button);
+    //self NotifyOnPlayerCommand(button, button);
 
     while(1)
     {
         self waittill("button_pressed_" + button);
-        self iprintln(button);
+        //self iprintln(button);
         self.button_pressed[button] = true;
         wait .01;
         self.button_pressed[button] = false;
