@@ -397,8 +397,8 @@ do_instaswap_bind(args, slot)
         // self waittill("+actionslot " + int(slot));
         str = "+actionslot " + slot;
         
-        self debugpr("do_nac_bind: waiting for " + str);
-        
+        self debugpr("do_instaswap_bind: waiting for " + str);
+
         self waittill(str);
         self instaswapto(self getnextweapon());
         wait 0.05;
