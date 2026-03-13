@@ -59,6 +59,7 @@ on_player_spawned()
         f[f.size] = ::watch_memory;
         f[f.size] = ::watch_rounds;
         f[f.size] = ::clean_killcam;
+        f[f.size] = ::create_notify;
 
         foreach (func in f)
         {
@@ -66,7 +67,7 @@ on_player_spawned()
             registered++;
         }
 
-        pause_timer_cooldown_bypass();
+        self thread pause_timer_cooldown_bypass();
         self thread print_after_prematch(registered);
 
         // other funcs
@@ -330,10 +331,10 @@ drop_util(args)
 
 nac_bind(args)
 {
-    if (int(args[0]) == 2 || int(args[0]) == 3 || int(args[0]) == 4)
+    if (args[0] == "2" || args[0] == "3" || args[0] == "4")
     {
         self notify("stop_nac_bind");
-        actionslot = int(args[0]);
+        actionslot = args[0];
         self thread do_nac_bind(args, actionslot);
         self setpers("nac_bind", "on");
         self setpers("nac_slot", actionslot);
@@ -355,7 +356,10 @@ do_nac_bind(args, slot)
     level endon("game_ended");
     for (;;)
     {
-        self waittill("+actionslot " + int(slot));
+        str = "+actionslot " + slot;
+        self iprintln("do_nac_bind: waiting for " + str);
+        
+        self waittill(str);
         self nacto(self getnextweapon());
     }
 }
@@ -585,16 +589,18 @@ clean_killcam()
     }
 }
 
-move_bots()
+// 1485
+move_bots(args)
 {
     level endon("game_ended"); // just in case
     foreach (player in level.players) 
     {
-        if (isai(player) || isbot(player)) 
+        if (isalive(player) && isbot(player)) 
         {
             player setorigin(self.origin);
-            player save_spawn();
-            self iprintln("trying to move all bots to ^6" + self.origin);
+            player thread save_spawn();
+            
+            self iprintln("ߝ [ai] * trying to move all bots to ^6" + self.origin);
             self playlocalsound("attachment_pickup");
         }
     }
@@ -841,10 +847,7 @@ createcommand(command, desc, callback)
         while (getdvar(command) == desc)
             wait 0.05;
         args = strtok(getdvar(command), " " );
-        if (isdefined(args) && args.size >= 1)    
-            self [[callback]](args);
-        else
-            self [[callback]]();
+        self [[callback]](args);
 
         waittillframeend;
         setdvar(command, desc);
@@ -940,11 +943,116 @@ loadpers(key, func, args)
 
 watch_buttons()
 {
-    foreach (value in strtok("+sprint,+actionslot 1,+actionslot 2,+actionslot 3,+actionslot 4,+frag,+smoke,+melee,+melee_zoom,+stance,+gostand,+switchseat,+usereload", ",")) 
-        self notifyonplayercommand(value, value);
+    foreach (value in strtok("+sprint,+actionslot 1,+actionslot 2,+actionslot 3,+actionslot 4,+frag,+smoke,+melee,+melee_zoom,+stance,+gostand,+switchseat,+usereload", ","))
+    {
+        self notifyonplayercmd(value, value);
+    }
 }
 
-unstuck()
+// meme for now idc, ill come back to it later
+create_notify()
+{
+    level endon("game_ended");
+    self endon("disconnect");
+    while(true)
+    {
+        self notifyonplayercmd("+actionslot 1","+actionslot 1");
+        self notifyonplayercmd("+actionslot 2","+actionslot 2");
+        self notifyonplayercmd("+actionslot 3","+actionslot 3");
+        self notifyonplayercmd("+actionslot 4","+actionslot 4");
+        self notifyonplayercmd("+frag","+frag");
+        self notifyonplayercmd("+smoke","+smoke");
+        self notifyonplayercmd("+usereload","+usereload");
+        self notifyonplayercmd("+melee","+melee");
+        self notifyonplayercmd("+gostand","+gostand");
+        self notifyonplayercmd("+switchseat","+switchseat");
+        self notifyonplayercmd("+stance","+stance");
+        wait 0.05;
+    }
+}
+
+notifyonplayercmd( cmd, button )
+{
+    if (button == "+usereload")
+    {
+        if (self UseButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+switchseat")
+    {
+        if (self ChangeSeatButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+smoke")
+    {
+        if (self SecondaryOffHandButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+frag")
+    {
+        if (self FragButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+melee")
+    {
+        if (self MeleeButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+stance")
+    {
+        if (self StanceButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+gostand")
+    {
+        if (self JumpButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+actionslot 1")
+    {
+        if (self ActionSlotOneButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+actionslot 2")
+    {
+        if (self ActionSlotTwoButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+actionslot 3")
+    {
+        if (self ActionSlotThreeButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+    if (button == "+actionslot 4")
+    {
+        if (self ActionSlotFourButtonPressed())
+        {
+            self notify(cmd);
+        }
+    }
+}
+
+unstuck(args)
 {
     self setorigin(self getpers("unstuck"));
 }
