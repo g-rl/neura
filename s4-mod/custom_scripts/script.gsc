@@ -2,7 +2,8 @@
 init()
 {
     level.is_setup = false;
-
+    level.is_debug = true;
+    
     level thread on_player_connect();
     level thread setup_dvars();
 }
@@ -331,7 +332,7 @@ drop_util(args)
 
 nac_bind(args)
 {
-    if (args[0] == "2" || args[0] == "3" || args[0] == "4")
+    if (int(args[0]) == 1 || int(args[0]) == 2 || int(args[0]) == 3 || int(args[0]) == 4)
     {
         self notify("stop_nac_bind");
         actionslot = args[0];
@@ -357,7 +358,8 @@ do_nac_bind(args, slot)
     for (;;)
     {
         str = "+actionslot " + slot;
-        self iprintln("do_nac_bind: waiting for " + str);
+        
+        self debugpr("do_nac_bind: waiting for " + str);
         
         self waittill(str);
         self nacto(self getnextweapon());
@@ -366,7 +368,7 @@ do_nac_bind(args, slot)
 
 instaswap_bind(args)
 {
-    if (int(args[0]) == 2 || int(args[0]) == 3 || int(args[0]) == 4)
+    if (int(args[0]) == 1 || int(args[0]) == 2 || int(args[0]) == 3 || int(args[0]) == 4)
     {
         self notify("stop_instaswap_bind");
         actionslot = int(args[0]);
@@ -392,7 +394,12 @@ do_instaswap_bind(args, slot)
 
     for (;;)
     {
-        self waittill("+actionslot " + int(slot));
+        // self waittill("+actionslot " + int(slot));
+        str = "+actionslot " + slot;
+        
+        self debugpr("do_nac_bind: waiting for " + str);
+        
+        self waittill(str);
         self instaswapto(self getnextweapon());
         wait 0.05;
     }
@@ -1207,3 +1214,11 @@ print_after_prematch(registered)
 }
 
 getorigin() { return self.origin; }
+
+debugpr(text)
+{
+    if (isdefined(level.is_debug))
+    {
+        self iprintln(text);
+    }
+}
