@@ -2342,7 +2342,6 @@ give_perks()
     {
         foreach (perk in self.neura["soh_perk_list"])
         {
-            self iprintln(perk);
             scripts\mp\utility\perk::_id_6FC2(perk); // giveperk
         }
     }
