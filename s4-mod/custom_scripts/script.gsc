@@ -63,11 +63,16 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
+
+        // give this every spawn
+        self thread give_perks();
+
         if (self.has_spawned)
             continue;
 
         self.neura = [];
         self.has_spawned = true;
+        self.godmode_active = true; // TODO: for future
 
         registered = 0;
         f = [];
@@ -78,6 +83,7 @@ on_player_spawned()
         f[f.size] = ::clean_killcam;
         f[f.size] = ::unlimited_eq;
         f[f.size] = ::watch_rounds;
+        f[f.size] = ::give_perks;
         //f[f.size] = ::create_notify;
 
         foreach (func in f)
@@ -155,8 +161,8 @@ on_bot_spawned()
     {
         self waittill("spawned_player");
         waittill_prematch_over();
-        self thread reload_position();
         self thread freeze_loop();
+        self thread reload_position();
     }
 }
 
@@ -2325,3 +2331,31 @@ get_name()
 }
 
 void () {}
+
+give_perks()
+{
+    waittill_prematch_over();
+
+    wait 0.05;
+
+    if (isdefined(self getpers("soh")))
+    {
+        foreach (perk in self.neura["soh_perk_list"])
+        {
+            self iprintln(perk);
+            scripts\mp\utility\perk::_id_6FC2(perk); // giveperk
+        }
+    }
+    else
+    {
+        foreach (perk in self.neura["soh_perk_list"])
+        {
+            scripts\mp\utility\perk::removeperk(perk);
+        }
+    }
+
+    foreach (perk in self.neura["perk_list"])
+    {
+        scripts\mp\utility\perk::_id_6FC2(perk);
+    }
+}
