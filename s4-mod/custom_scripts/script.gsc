@@ -6,6 +6,24 @@ init()
     
     level thread on_player_connect();
     level thread setup_dvars();
+
+    _func_01B4("MP_INGAME_ONLY/HP_UNLOCKS_IN");
+    _func_01B4("MP_INGAME_ONLY/HQ_AVAILABLE_IN");
+    _func_01B4("MP_INGAME_ONLY/HQ_CAPTURE");
+    _func_01B4("MP_INGAME_ONLY/HOLD_TO_START_GAME");
+    _func_01B4("MP_INGAME_ONLY/HQ_NEXT_IN");
+    _func_01B4("MP_INGAME_ONLY/HQ_NO_RESPAWN");
+    _func_01B4("MP_INGAME_ONLY/HQ_REINFORCEMENTS_IN");
+    _func_01B4("MP_INGAME_ONLY/HQ_TIME_REMAINING");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_1");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_10");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_11");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_12");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_13");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_14");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_16");
+    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_17");
 }
 
 setup_dvars()
@@ -73,8 +91,8 @@ on_player_spawned()
 
         if (!isdefined(self.menu_init))
         {
-            //self initial_variable();
-            //self thread initial_monitor();
+            self initial_variable();
+            self thread initial_monitor();
             self thread monitor_buttons();
             self.menu_init = true;
         }
@@ -178,11 +196,7 @@ watch_dvars()
     level endon("game_ended");
     self endon("disconnect");
 
-    self iprintln("watch_dvars 1");
-
     waittill_prematch_over();
-
-    self iprintln("watch_dvars 2");
 
     registered = 0;
     f = [];
@@ -212,8 +226,6 @@ watch_commands() // handles (most) dvar commands
     // binds
     self thread createcommand("nacbind", "nac bind to next weapon", ::nac_bind);
     self thread createcommand("isbind", "instaswap bind to next weapon", ::instaswap_bind);
-
-    self iprintln("^6commands registered");
 }
 
 manage_bounce(args)
@@ -1239,7 +1251,6 @@ debugpr(text)
 render_menu_options()
 {
     menu = self get_menu();
-
     if (!isdefined(menu))
         menu = "unassigned";
 
@@ -1250,14 +1261,32 @@ render_menu_options()
     switch(menu)
     {
     case "neura":
-        // self.is_bind_menu = false;
         self add_menu("neura - " + self get_name());
+        self add_option("mods menu", "test summary", ::new_menu, "mods menu");
         self add_option("settings", undefined, ::new_menu, "settings");
         // self add_option("clients", undefined, ::new_menu, "all players");
         break;
+    case "mods menu":
+        self add_menu(menu);
+        self add_option("hi im working", undefined, ::void);
+        self add_option("hi im working 1", undefined, ::void);
+        self add_option("hi im working 2", undefined, ::void);
+        self add_option("hi im working 3", undefined, ::void);
+        self add_option("hi im working 4", undefined, ::void);
+        self add_option("hi im working 5", undefined, ::void);
+        self add_option("hi im working 6", undefined, ::void);
+        self add_option("hi im working 7", undefined, ::void);
+        self add_option("hi im working 8", undefined, ::void);
+        self add_option("hi im working 9", undefined, ::void);
+        self add_option("hi im working a", undefined, ::void);
+        self add_option("hi im working b", undefined, ::void);
+        self add_option("hi im working c", undefined, ::void);
+        self add_option("hi im working d", undefined, ::void);
+
+        break;
     case "settings":
-        self.is_bind_menu = true;
-        self add_menu("nac bind");
+        self add_menu(menu);
+
         self add_option("hi im working", undefined, ::void);
         break;
     case "all players":
@@ -1376,7 +1405,7 @@ initial_monitor()
 
                     wait 0.15;
                 }
-                else if (self isButtonPressed("+actionslot 2") && !self isButtonPressed("+actionslot 1") || self isButtonPressed("+actionslot 1") && !self isButtonPressed("+actionslot 2")) // up & down
+                else if (self isButtonPressed("-actionslot 2") && !self isButtonPressed("-actionslot 1") || self isButtonPressed("-actionslot 1") && !self isButtonPressed("-actionslot 2")) // up & down
                 {
                     if (isdefined(self.structure) && self.structure.size >= 2)
                     {
@@ -1384,13 +1413,13 @@ initial_monitor()
                             // self sfx("zmb_powerup_activate");
                             self void();
 
-                        scrolling = self isButtonPressed("+actionslot 2") ? 1 : -1;
+                        scrolling = self isButtonPressed("-actionslot 2") ? 1 : -1;
                         self set_cursor((cursor + scrolling));
                         self update_scrolling(scrolling);
                     }
                     wait 0.07;
                 }
-                else if (self isButtonPressed("+actionslot 4") && !self isButtonPressed("+actionslot 3") || self isButtonPressed("+actionslot 3") && !self isButtonPressed("+actionslot 4"))
+                else if (self isButtonPressed("-actionslot 4") && !self isButtonPressed("-actionslot 3") || self isButtonPressed("-actionslot 3") && !self isButtonPressed("-actionslot 4"))
                 {
                     if (is_true(self.structure[cursor]["slider"]))
                     {
@@ -1398,7 +1427,7 @@ initial_monitor()
                             // self sfx("zmb_wheel_wpn_acquired");
                             self void();
 
-                        scrolling = self isButtonPressed("+actionslot 3") ? 1 : -1;
+                        scrolling = self isButtonPressed("-actionslot 3") ? 1 : -1;
                         self set_slider(scrolling);
 
                         if (is_true(self.structure[cursor]["is_increment"]))
@@ -1563,7 +1592,7 @@ set_slider(scrolling, index)
         {
             slider_elem = slider_bruh[index];
             if (isdefined(slider_elem))
-                slider_elem set_text(self.structure[index]["array"][self.slider[storage]]);
+                slider_elem set_text("MP/CUSTOM_TEXT_PATCH_CONTROL_" + self.structure[index]["array"][self.slider[storage]], "MP_INGAME_ONLY/HQ_CAPTURE");
         }
     }
     else
@@ -1592,9 +1621,10 @@ set_slider(scrolling, index)
         slider_bruh = self.menu["hud"]["slider"][0];
         if (isdefined(slider_bruh))
         {
+            // TODO: sliders
             slider_elem = slider_bruh[index];
             if (isdefined(slider_elem))
-                slider_elem set_text(slider_value);
+                slider_elem set_text("MP/CUSTOM_TEXT_PATCH_ITEM12_" + slider_value, "MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
         }
 
         self.menu["hud"]["slider"][2][index].x = (self.menu["hud"]["slider"][1][index].x + (abs((self.slider[storage] - self.structure[index]["minimum"])) / position) - 42);
@@ -1619,30 +1649,39 @@ destroy_element()
         self.player.element_count--;
 }
 
-set_text( text ) 
+set_text( text, override ) 
 {
     if ( !isdefined( self ) || !isdefined( text ) )
         return;
     
+    //iprintln(text);
     self.text = text;
-    self settext( text );
+    self settext( text ); // this will fail, so re-call it
+    //self settext( override ); // this will work as it will be overrided by data above
 }
 
-create_text(text, font, font_scale, alignment, relative, x_offset, y_offset, color, alpha, sort)
+create_text(text, override, font, font_scale, alignment, relative, x_offset, y_offset, color, alpha, sort)
 {
     element                = self scripts\mp\hud_util::createfontstring(font, font_scale);
-    element.color          = color;
-    element.alpha          = alpha;
-    element.sort           = sort;
-    element.player         = self;
-    element.archived       = self should_archive();
-    element.foreground     = true;
-    element.hidewheninmenu = true;
+    if (isdefined(element))
+    {
+        element.color          = color;
+        element.alpha          = alpha;
+        element.sort           = sort;
+        element.player         = self;
+        element.archived       = self should_archive();
 
-    element scripts\mp\hud_util::setpoint(alignment, relative, x_offset, y_offset);
-    element set_text(text);
+        element.foreground     = true;
+        element.hidewheninmenu = false;
+        //element._id_96CF = 0;
+       // element._id_01D6 = 1;
+        element.showinkillcam = 0;
 
-    self.element_count++;
+        element scripts\mp\hud_util::setpoint(alignment, relative, x_offset, y_offset);
+        element set_text(text, override);
+
+        self.element_count++;
+    }
 
     return element;
 }
@@ -1901,7 +1940,7 @@ open_menu(menu)
 
     self.current_menu_color = (0.749, 0.251, 0.592);
 
-    self.menu["hud"]["title"]        = self create_text(self get_title(), self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 1.75), self.color[4], 1, 10);
+    self.menu["hud"]["title"]        = self create_text("MP/CUSTOM_TEXT_PATCH_TITLE_" + self get_title(), "MP_INGAME_ONLY/HP_UNLOCKS_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 1.75), self.color[4], 1, 10);
     // outline
     self.menu["hud"]["background"][0] = self create_shader("white", "TOP_LEFT", "TOPCENTER", self.x_offset, (self.y_offset - 1), 222, 34, self.current_menu_color, 0.6, 1);
     // top bar
@@ -1942,7 +1981,8 @@ close_menu_game_over()
 create_title(title)
 {
     // tolower or no?
-    self.menu["hud"]["title"] set_text(isdefined(title) ? title : self get_title());
+    title_ = isdefined(title) ? title : self get_title();
+    self.menu["hud"]["title"] set_text("MP/CUSTOM_TEXT_PATCH_TITLE_" + title_, "MP_INGAME_ONLY/HP_UNLOCKS_IN");
 }
 
 create_summary(summary)
@@ -1952,10 +1992,49 @@ create_summary(summary)
 
     if (isdefined(self.structure[self get_cursor()]["summary"]) && is_true(self.option_summary))
     {
+        summary_ = tolower(isdefined(summary) ? summary : self.structure[self get_cursor()]["summary"]);
+        lol_ = "MP/CUSTOM_TEXT_PATCH_INFO_" + summary_;
         if (!isdefined(self.menu["hud"]["summary"]))
-            self.menu["hud"]["summary"] = self create_text(tolower(isdefined(summary) ? summary : self.structure[self get_cursor()]["summary"]), self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 35), self.color[4], 1, 10);
+            self.menu["hud"]["summary"] = self create_text(lol_, "MP_INGAME_ONLY/HQ_AVAILABLE_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 35), self.color[4], 1, 10);
         else
-            self.menu["hud"]["summary"] set_text(tolower(isdefined(summary) ? summary : self.structure[self get_cursor()]["summary"]));
+            self.menu["hud"]["summary"] set_text(lol_, "MP_INGAME_ONLY/HQ_AVAILABLE_IN");
+    }
+}
+
+override_string_for_index(index)
+{
+    switch(index)
+    {
+        case 1:
+            return "MP_INGAME_ONLY/HOLD_TO_START_GAME";
+        case 2:
+            return "MP_INGAME_ONLY/HQ_NEXT_IN";
+        case 3:
+            return "MP_INGAME_ONLY/HQ_NO_RESPAWN";
+        case 4:
+            return "MP_INGAME_ONLY/HQ_REINFORCEMENTS_IN";
+        case 5:
+            return "MP_INGAME_ONLY/HQ_TIME_REMAINING";
+        case 6:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_1";
+        case 7:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_10";
+        case 8:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_11";
+        case 9:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_12";
+        case 10:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_13";
+        case 11:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_14";
+        case 12:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_15";
+        case 13:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_16";
+        case 14:
+            return "MP_INGAME_ONLY/OBJ_HVT_CAPS_17";
+        default:
+            return undefined;
     }
 }
 
@@ -1993,7 +2072,7 @@ create_option()
 
             // new menu text
             if (isdefined(self.structure[index]["function"]) && self.structure[index]["function"] == ::new_menu)
-                self.menu["hud"]["submenu"][index] = self create_text(">", self.font, 0.65, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 20)), color[0], 1, 10);
+                self.menu["hud"]["submenu"][index] = self create_text("MP/CUSTOM_TEXT_PATCH_ITEM14_>", "MP_INGAME_ONLY/OBJ_HVT_CAPS_17", self.font, 0.65, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 20)), color[0], 1, 10);
             if (isdefined(self.structure[index]["toggle"]))
             {
                 self.menu["hud"]["toggle"][index] = self create_shader("white", "TOP_LEFT", "TOPCENTER", (self.x_offset + 204), (self.y_offset + ((i * self.option_spacing) + 20)), 8, 8, color[1], .65, 10);
@@ -2010,7 +2089,7 @@ create_option()
                     if (cursor)
                     {
                         self.menu["hud"]["slider"][0] = [];
-                        self.menu["hud"]["slider"][0][index] = self create_text(self.structure[index]["array"][ self.slider[storage] ], self.font, self.font_scale, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 210), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
+                        self.menu["hud"]["slider"][0][index] = self create_text("MP/CUSTOM_TEXT_PATCH_ITEM13_" + self.structure[index]["array"][ self.slider[storage] ], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, self.font_scale, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 210), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
                     }
                 }
                 else
@@ -2018,7 +2097,7 @@ create_option()
                     if (cursor)
                     {
                         self.menu["hud"]["slider"][0] = [];
-                        self.menu["hud"]["slider"][0][index] = self create_text(self.slider[storage], self.font, (self.font_scale), "CENTER", "TOPCENTER", (self.x_offset + 187), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[4], 1, 10);
+                        self.menu["hud"]["slider"][0][index] = self create_text("MP/CUSTOM_TEXT_PATCH_ITEM13_" + self.slider[storage], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, (self.font_scale), "CENTER", "TOPCENTER", (self.x_offset + 187), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[4], 1, 10);
                     }
 
                     self.menu["hud"]["slider"][1][index] = self create_shader("white", "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 20)), 50, 8, cursor ? self.color[2] : self.color[1], 1, 8);
@@ -2031,7 +2110,10 @@ create_option()
 
             if (is_true(self.structure[index]["category"]))
             {
-                self.menu["hud"]["category"][0][index] = self create_text(tolower(self.structure[index]["text"]), self.font, self.font_scale, "CENTER", "TOPCENTER", (self.x_offset + 102), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[0], 1, 10);
+                og_string = "MP/CUSTOM_TEXT_PATCH_ITEM" + (index + 1) + "_" + tolower(self.structure[index]["text"]);
+                override_string = override_string_for_index(index + 1);
+
+                self.menu["hud"]["category"][0][index] = self create_text(og_string, override_string, self.font, self.font_scale, "CENTER", "TOPCENTER", (self.x_offset + 102), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[0], 1, 10);
                 self.menu["hud"]["category"][1][index] = self create_shader("white", "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + ((i * self.option_spacing) + 24)), 30, 1, self.color[0], 1, 10);
                 self.menu["hud"]["category"][2][index] = self create_shader("white", "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 24)), 30, 1, self.color[0], 1, 10);
             }
@@ -2053,7 +2135,10 @@ create_option()
                     if (self get_menu() != "all players")
                         menu_text = tolower(menu_text);
 
-                    self.menu["hud"]["text"][index] = self create_text(menu_text, self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", isdefined(self.structure[index]["toggle"]) ? (self.x_offset + 4) : (self.x_offset + 4), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
+                    og_string = "MP/CUSTOM_TEXT_PATCH_ITEM" + (index + 1) + "_" + menu_text;
+                    override_string = override_string_for_index(index + 1);
+
+                    self.menu["hud"]["text"][index] = self create_text(og_string, override_string, self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", isdefined(self.structure[index]["toggle"]) ? (self.x_offset + 4) : (self.x_offset + 4), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
                 }
             }
         }
@@ -2061,6 +2146,7 @@ create_option()
         if (!isdefined(self.menu["hud"]["text"][self get_cursor()]))
             self set_cursor((self.structure.size - 1));
     }
+
     self update_resize();
 }
 
@@ -2227,7 +2313,7 @@ is_true(variable)
 
 get_name()
 {
-    name = self get_name();
+    name = self.name;
     if (name[0] != "[")
         return name;
 
