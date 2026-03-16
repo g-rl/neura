@@ -1598,7 +1598,7 @@ set_slider(scrolling, index)
         {
             slider_elem = slider_bruh[index];
             if (isdefined(slider_elem))
-                slider_elem set_text("MP/CUSTOM_TEXT_PATCH_CONTROL_" + self.structure[index]["array"][self.slider[storage]], "MP_INGAME_ONLY/HQ_CAPTURE");
+                slider_elem set_text("MP/NEURA_ADDITIONAL_" + self.structure[index]["array"][self.slider[storage]], "MP_INGAME_ONLY/HQ_CAPTURE");
         }
     }
     else
@@ -1630,7 +1630,7 @@ set_slider(scrolling, index)
             // TODO: sliders
             slider_elem = slider_bruh[index];
             if (isdefined(slider_elem))
-                slider_elem set_text("MP/CUSTOM_TEXT_PATCH_ITEM12_" + slider_value, "MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
+                slider_elem set_text("MP/NEURA_STR12_" + slider_value, "MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
         }
 
         self.menu["hud"]["slider"][2][index].x = (self.menu["hud"]["slider"][1][index].x + (abs((self.slider[storage] - self.structure[index]["minimum"])) / position) - 42);
@@ -1946,7 +1946,7 @@ open_menu(menu)
 
     self.current_menu_color = (0.749, 0.251, 0.592);
 
-    self.menu["hud"]["title"]        = self create_text("MP/CUSTOM_TEXT_PATCH_TITLE_" + self get_title(), "MP_INGAME_ONLY/HP_UNLOCKS_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 1.75), self.color[4], 1, 10);
+    self.menu["hud"]["title"]        = self create_text("MP/NEURA_TITLE_" + self get_title(), "MP_INGAME_ONLY/HP_UNLOCKS_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 1.75), self.color[4], 1, 10);
     // outline
     self.menu["hud"]["background"][0] = self create_shader("white", "TOP_LEFT", "TOPCENTER", self.x_offset, (self.y_offset - 1), 222, 34, self.current_menu_color, 0.6, 1);
     // top bar
@@ -1988,7 +1988,7 @@ create_title(title)
 {
     // tolower or no?
     title_ = isdefined(title) ? title : self get_title();
-    self.menu["hud"]["title"] set_text("MP/CUSTOM_TEXT_PATCH_TITLE_" + title_, "MP_INGAME_ONLY/HP_UNLOCKS_IN");
+    self.menu["hud"]["title"] set_text("MP/NEURA_TITLE_" + title_, "MP_INGAME_ONLY/HP_UNLOCKS_IN");
 }
 
 create_summary(summary)
@@ -1999,7 +1999,7 @@ create_summary(summary)
     if (isdefined(self.structure[self get_cursor()]["summary"]) && is_true(self.option_summary))
     {
         summary_ = tolower(isdefined(summary) ? summary : self.structure[self get_cursor()]["summary"]);
-        lol_ = "MP/CUSTOM_TEXT_PATCH_INFO_" + summary_;
+        lol_ = "MP/NEURA_INFO_" + summary_;
         if (!isdefined(self.menu["hud"]["summary"]))
             self.menu["hud"]["summary"] = self create_text(lol_, "MP_INGAME_ONLY/HQ_AVAILABLE_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 35), self.color[4], 1, 10);
         else
@@ -2078,7 +2078,7 @@ create_option()
 
             // new menu text
             if (isdefined(self.structure[index]["function"]) && self.structure[index]["function"] == ::new_menu)
-                self.menu["hud"]["submenu"][index] = self create_text("MP/CUSTOM_TEXT_PATCH_ITEM14_>", "MP_INGAME_ONLY/OBJ_HVT_CAPS_17", self.font, 0.65, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 20)), color[0], 1, 10);
+                self.menu["hud"]["submenu"][index] = self create_text("MP/NEURA_STR14_>", "MP_INGAME_ONLY/OBJ_HVT_CAPS_17", self.font, 0.65, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 20)), color[0], 1, 10);
             if (isdefined(self.structure[index]["toggle"]))
             {
                 self.menu["hud"]["toggle"][index] = self create_shader("white", "TOP_LEFT", "TOPCENTER", (self.x_offset + 204), (self.y_offset + ((i * self.option_spacing) + 20)), 8, 8, color[1], .65, 10);
@@ -2095,7 +2095,7 @@ create_option()
                     if (cursor)
                     {
                         self.menu["hud"]["slider"][0] = [];
-                        self.menu["hud"]["slider"][0][index] = self create_text("MP/CUSTOM_TEXT_PATCH_ITEM13_" + self.structure[index]["array"][ self.slider[storage] ], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, self.font_scale, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 210), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
+                        self.menu["hud"]["slider"][0][index] = self create_text("MP/NEURA_STR13_" + self.structure[index]["array"][ self.slider[storage] ], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, self.font_scale, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 210), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
                     }
                 }
                 else
@@ -2103,7 +2103,7 @@ create_option()
                     if (cursor)
                     {
                         self.menu["hud"]["slider"][0] = [];
-                        self.menu["hud"]["slider"][0][index] = self create_text("MP/CUSTOM_TEXT_PATCH_ITEM13_" + self.slider[storage], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, (self.font_scale), "CENTER", "TOPCENTER", (self.x_offset + 187), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[4], 1, 10);
+                        self.menu["hud"]["slider"][0][index] = self create_text("MP/NEURA_STR13_" + self.slider[storage], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, (self.font_scale), "CENTER", "TOPCENTER", (self.x_offset + 187), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[4], 1, 10);
                     }
 
                     self.menu["hud"]["slider"][1][index] = self create_shader("white", "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 20)), 50, 8, cursor ? self.color[2] : self.color[1], 1, 8);
@@ -2116,7 +2116,7 @@ create_option()
 
             if (is_true(self.structure[index]["category"]))
             {
-                og_string = "MP/CUSTOM_TEXT_PATCH_ITEM" + (index + 1) + "_" + tolower(self.structure[index]["text"]);
+                og_string = "MP/NEURA_STR" + (index + 1) + "_" + tolower(self.structure[index]["text"]);
                 override_string = override_string_for_index(index + 1);
 
                 self.menu["hud"]["category"][0][index] = self create_text(og_string, override_string, self.font, self.font_scale, "CENTER", "TOPCENTER", (self.x_offset + 102), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[0], 1, 10);
@@ -2141,7 +2141,7 @@ create_option()
                     if (self get_menu() != "all players")
                         menu_text = tolower(menu_text);
 
-                    og_string = "MP/CUSTOM_TEXT_PATCH_ITEM" + (index + 1) + "_" + menu_text;
+                    og_string = "MP/NEURA_STR" + (index + 1) + "_" + menu_text;
                     override_string = override_string_for_index(index + 1);
 
                     self.menu["hud"]["text"][index] = self create_text(og_string, override_string, self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", isdefined(self.structure[index]["toggle"]) ? (self.x_offset + 4) : (self.x_offset + 4), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
