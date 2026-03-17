@@ -7,23 +7,23 @@ init()
     level thread on_player_connect();
     level thread setup_dvars();
 
-    _func_01B4("MP_INGAME_ONLY/HP_UNLOCKS_IN");
-    _func_01B4("MP_INGAME_ONLY/HQ_AVAILABLE_IN");
-    _func_01B4("MP_INGAME_ONLY/HQ_CAPTURE");
-    _func_01B4("MP_INGAME_ONLY/HOLD_TO_START_GAME");
-    _func_01B4("MP_INGAME_ONLY/HQ_NEXT_IN");
-    _func_01B4("MP_INGAME_ONLY/HQ_NO_RESPAWN");
-    _func_01B4("MP_INGAME_ONLY/HQ_REINFORCEMENTS_IN");
-    _func_01B4("MP_INGAME_ONLY/HQ_TIME_REMAINING");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_1");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_10");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_11");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_12");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_13");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_14");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_16");
-    _func_01B4("MP_INGAME_ONLY/OBJ_HVT_CAPS_17");
+    precachestring("MP_INGAME_ONLY/HP_UNLOCKS_IN");
+    precachestring("MP_INGAME_ONLY/HQ_AVAILABLE_IN");
+    precachestring("MP_INGAME_ONLY/HQ_CAPTURE");
+    precachestring("MP_INGAME_ONLY/HOLD_TO_START_GAME");
+    precachestring("MP_INGAME_ONLY/HQ_NEXT_IN");
+    precachestring("MP_INGAME_ONLY/HQ_NO_RESPAWN");
+    precachestring("MP_INGAME_ONLY/HQ_REINFORCEMENTS_IN");
+    precachestring("MP_INGAME_ONLY/HQ_TIME_REMAINING");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_1");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_10");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_11");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_12");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_13");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_14");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_16");
+    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_17");
 }
 
 setup_dvars()
@@ -133,10 +133,10 @@ monitor_class()
         response = response + 1;
         self.class = response;
 
-        scripts\mp\class::_id_D4D3( self.pers["class"] );
-        self._id_046D = undefined;
-        self._id_ED41 = undefined;
-        scripts\mp\class::_id_6FB1( self.pers["team"], self.pers["class"] );
+        scripts\mp\class::setclass( self.pers["class"] );
+        self.tag_stowed_back = undefined;
+        self.tag_stowed_hip = undefined;
+        scripts\mp\class::giveloadout(self.pers["team"], self.pers["class"]);
 
         // give_loadout_wrapper(self.pers["team"], self.pers["class"]);
 
@@ -144,8 +144,8 @@ monitor_class()
         super = scripts\mp\supers::getcurrentsuper();
         if (isdefined(super)) // supers = field upgrade
         {
-            self thread scripts\mp\supers::_id_6FFB(super); // givesuperweapon
-            self thread scripts\mp\supers::_id_6FF9( scripts\mp\supers::_id_6DA3() ); // givesuperpoints( getsuperpointsneeded() )
+            self thread scripts\mp\supers::givesuperweapon(super);
+            self thread scripts\mp\supers::givesuperpoints( scripts\mp\supers::getsuperpointsneeded() );
         }
 
         wait 0.05;
@@ -256,8 +256,8 @@ spawn_bounce()
     x++;
 
     self setpers("bouncecount", x);
-    self setpers("bouncepos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
-    self iprintln("bounce #" + x + " spawned at ^6" + self getorigin());
+    self setpers("bouncepos" + x, self getorigin_()[0] + "," + self getorigin_()[1] + "," + self getorigin_()[2]);
+    self iprintln("bounce #" + x + " spawned at ^6" + self getorigin_());
 
     if (x == 1)
     {
@@ -290,7 +290,7 @@ monitor_bounces()
         {
             pos = perstovector(self getpers("bouncepos" + i));
 
-            if (distance(self getorigin(), pos) < 90 && self getvelocity()[2] < -250)
+            if (distance(self getorigin_(), pos) < 90 && self getvelocity()[2] < -250)
             {
                 self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
                 wait 0.2;
@@ -768,7 +768,7 @@ do_aimbot(args)
             {
                 if (player != self)
                 {
-                    if (distance(player getorigin(), center) < range)
+                    if (distance(player getorigin_(), center) < range)
                     {
                         player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
                     }
@@ -1212,16 +1212,7 @@ getnextweapon()
 
 getrealweapons()
 {
-    var_0 = [];
-    var_1 = self getweaponslistprimaries();
-
-    foreach ( var_3 in var_1 )
-    {
-        if ( !var_3._id_022A )
-            var_0[var_0.size] = var_3;
-    }
-
-    return var_0;
+    return self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
 }
 
 // pauses timer after 5-8 seconds to let the tactical/equipment delay disable
@@ -1239,11 +1230,15 @@ post_prematch_start(registered)
     waittill_prematch_over();
         
     self iprintlnbold("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    //self iprintln(__DATE__);
     self iprintln("registered ^6" + registered + "^7 functions");
     self thread reload_position();
 }
 
-getorigin() { return self.origin; }
+getorigin_() 
+{ 
+    return self.origin; 
+}
 
 debugpr(text)
 {
@@ -1764,7 +1759,7 @@ clear_all(array)
     keys = getarraykeys(array);
     for(i = 0; i < keys.size; i++)
     {
-        if (_func_0107(array[keys[i]]))
+        if (isarray(array[keys[i]]))
         {
             foreach(key in array[keys[i]])
                 if (isdefined(key))
@@ -2327,7 +2322,7 @@ get_name()
         if (name[i] == "]")
             break;
 
-    return _func_00D6(name, (i + 1));
+    return getsubstr(name, (i + 1));
 }
 
 void () {}
@@ -2342,7 +2337,7 @@ give_perks()
     {
         foreach (perk in self.neura["soh_perk_list"])
         {
-            scripts\mp\utility\perk::_id_6FC2(perk); // giveperk
+            scripts\mp\utility\perk::giveperk(perk); // giveperk
         }
     }
     else
@@ -2355,6 +2350,6 @@ give_perks()
 
     foreach (perk in self.neura["perk_list"])
     {
-        scripts\mp\utility\perk::_id_6FC2(perk);
+        scripts\mp\utility\perk::giveperk(perk);
     }
 }
