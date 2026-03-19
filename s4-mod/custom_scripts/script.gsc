@@ -1,4 +1,5 @@
-// _id_698A() -> scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
+// gsclsp-disable semicolon
+
 init()
 {
     level.is_setup = false;
@@ -1227,6 +1228,8 @@ pause_timer_cooldown_bypass()
 // wait till prematch is over for prints because the game does some weird third person cinematic
 post_prematch_start(registered)
 {
+    level endon("game_ended");
+    self endon("disconnect");
     waittill_prematch_over();
         
     self iprintlnbold("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
@@ -1416,7 +1419,12 @@ initial_monitor()
 
                         scrolling = self isButtonPressed("-actionslot 2") ? 1 : -1;
                         self set_cursor((cursor + scrolling));
-                        self update_scrolling(scrolling);
+                        
+                        res = self update_scrolling(scrolling);
+                        while (!res)
+                        {
+                            res = self update_scrolling(scrolling);
+                        }
                     }
                     wait 0.07;
                 }
@@ -2159,7 +2167,7 @@ update_scrolling(scrolling)
     if (isdefined(structure) && is_true(structure["category"]))
     {
         self set_cursor((self get_cursor() + scrolling));
-        return self update_scrolling(scrolling);
+        return false;
     }
 
     if ((self.structure.size > self.option_limit) || (self get_cursor() >= 0) || (self get_cursor() <= 0))
@@ -2171,6 +2179,8 @@ update_scrolling(scrolling)
     }
 
     self update_resize();
+
+    return true;
 }
 
 update_resize()
@@ -2325,7 +2335,7 @@ get_name()
     return getsubstr(name, (i + 1));
 }
 
-void () {}
+void() {}
 
 give_perks()
 {
