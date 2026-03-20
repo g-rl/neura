@@ -139,9 +139,7 @@ monitor_class()
         self.tag_stowed_hip = undefined;
         scripts\mp\class::giveloadout(self.pers["team"], self.pers["class"]);
 
-        // give_loadout_wrapper(self.pers["team"], self.pers["class"]);
-
-        //  just give the super each class change
+        // also give the super each class change
         super = scripts\mp\supers::getcurrentsuper();
         if (isdefined(super)) // supers = field upgrade
         {
