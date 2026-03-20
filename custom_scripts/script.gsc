@@ -2,12 +2,16 @@
 
 init()
 {
+    // variables
     level.is_setup = false;
     level.is_debug = true;
     
+    // functions
     level thread on_player_connect();
     level thread setup_dvars();
 
+    // precache 17 strings used for overriding
+#ifdef S4
     precachestring("MP_INGAME_ONLY/HP_UNLOCKS_IN");
     precachestring("MP_INGAME_ONLY/HQ_AVAILABLE_IN");
     precachestring("MP_INGAME_ONLY/HQ_CAPTURE");
@@ -25,17 +29,37 @@ init()
     precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
     precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_16");
     precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_17");
+#endif
 }
 
 setup_dvars()
 {
-    setdvarifuni("killcam_elems", 1);
-    setdvarifuni("scr_killcam_time", 5);
-    setdvarifuni("aimbot_range", 1200);
-    setdvarifuni("autoprone_mode", "air");
-    setdvarifuni("autoprone_endgame", 1);
-    setdvarifuni("instaswaps_time", 0.19);
-    setdvar("MSOOMPMPQS", true);
+    // player
+    setdvarifuninitialized("nvg", 0);
+    setdvarifuninitialized("oob", 1);
+    setdvarifuninitialized("barriers", 1);
+    setdvarifuninitialized("godmode", 1);
+
+    // specials
+    setdvarifuninitialized("give_streak", "");
+    setdvarifuninitialized("ks_auto_activate", 0);
+
+    // custom
+    setdvarifuninitialized("instaswaps_time", 0.19);
+    setdvarifuninitialized("autoprone_mode", "air");
+    setdvarifuninitialized("autoprone_endgame", 1);
+    setdvarifuninitialized("aimbot_range", 1200);
+    setdvarifuninitialized("scr_killcam_time", 5);
+    setdvarifuninitialized("slomo", 1);
+    setdvarifuninitialized("killcam_elems", 1);
+
+    setdvarifuninitialized("giveweapon", "");
+    setdvarifuninitialized("camo", "");
+
+    // TODO: add S4 unlimited sprint
+#ifdef IW8
+    setdvar("MSOOMPMPQS", true); // unlimited sprint
+#endif
 }
 
 on_player_connect()
@@ -45,12 +69,11 @@ on_player_connect()
     for (;;)
     {
         level waittill("connected", player);
+
         if (isai(player) || isbot(player))
             player thread on_bot_spawned();
-        else if (player ishost())
-        {
+        else
             player thread on_player_spawned();
-        }
     }
 }
 
@@ -65,7 +88,7 @@ on_player_spawned()
     {
         self waittill("spawned_player");
 
-        // give this every spawn
+        // give this stuff every spawn
         self thread give_perks();
 
         if (self.has_spawned)
@@ -73,19 +96,17 @@ on_player_spawned()
 
         self.neura = [];
         self.has_spawned = true;
-        self.godmode_active = true; // TODO: for future
+        self.godmode_active = true;
 
-        registered = 0;
-        f = [];
-        f[f.size] = ::watch_commands;
-        f[f.size] = ::watch_dvars;
-        //f[f.size] = ::watch_notify;
-        f[f.size] = ::watch_memory;
-        f[f.size] = ::clean_killcam;
-        f[f.size] = ::unlimited_eq;
-        f[f.size] = ::watch_rounds;
-        f[f.size] = ::give_perks;
-        //f[f.size] = ::create_notify;
+        //
+        self thread watch_commands();
+        //self thread watch_notify();
+        self thread watch_memory();
+        self thread monitor_dvars();
+        self thread unlimited_eq();
+        self thread round_manager();
+        self thread clean_killcam();
+        //self thread create_notify();
 
         foreach (func in f)
         {
@@ -167,52 +188,83 @@ on_bot_spawned()
 
 watch_memory()
 {
-    waittill_prematch_over();
+    //waittill_prematch_over();
+
     self.neura["soh_perk_list"] = list("specialty_fastreload,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
     self.neura["perk_list"] = list("specialty_marathon,specialty_holdbreath,specialty_lightweight");
-    self setpers("lives", 99);
-    self setpersifuni("unstuck", self.origin);
-    self setpersifuni("soh", "on");
-    self setpersifuni("ufo_mode", "on");
 
-    self loadpers("autoprone", ::do_auto_prone);
-    self loadpers("autoreload", ::do_auto_reload);
-    self loadpers("aimbot", ::do_aimbot);
-    self loadpers("instaswaps", ::do_instaswaps);
-    self loadpers("ufo_mode", ::watch_noclip);
-    self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
-    self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
+    self setpers("lives", 99);
+
+    self setpersifuni("unstuck", self.origin);
+    self setpersifuni("velx", 250);
+    self setpersifuni("vely", 250);
+    self setpersifuni("velz", 250);
+    self setpersifuni("boltcount", "0");
+    self setpersifuni("boltspeed", "1.2");
+    self setpersifuni("class_wrap", "5");
+    self setpersifuni("class_can", "on");
+    self setpersifuni("soh", "on");
+    self setpersifuni("eq_weapon", "c4_mp_p");
+    self setpersifuni("eq_putaway", false);
+    self setpersifuni("ufo_mode", "on");
+    self setpersifuni("timescale", false);
+
+    for (i=1;i<8;i++)
+    {
+        self setpersifuni("boltpos" + i, "0");
+        wait 0.05;
+    }
+
     self setpersifuni("bouncecount", "0");
     for (i = 1; i < 8; i++)
     {
         self setpersifuni("bouncepos" + i, "0");
         wait 0.05;
-    }   
+    }
+
     if (int(self getpers("bouncecount")) >= 1)
     {
         self notify("stop_bounce_loop");
         self thread monitor_bounces();
-        self iprintln("^6" + self getpers("bouncecount") + "^7 bounces reloaded");
+        self iprintln("ߝ [game] * ^+ " + self getpers("bouncecount") + "^7 bounces reloaded");
     }
+
+    self loadpers("no_hud", ::watch_hud);
+    self loadpers("always_canswap", ::do_always_canswap);
+    self loadpers("autoprone", ::do_auto_prone);
+    self loadpers("autoreload", ::do_auto_reload);
+    self loadpers("instaswaps", ::do_instaswaps);
+    self loadpers("refill_bind", ::do_refill_bind);
+    self loadpers("aimbot", ::do_aimbot);
+    self loadpers("ufo_mode", ::watch_noclip);
+    self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
+    self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
+    self loadpers("bounce_bind", ::do_bounce_bind, self getpers("bounce_slot"));
+    self loadpers("bolt_movement_bind", ::do_bolt_movement_bind, self getpers("bolt_slot"));
+    self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
+    self loadpers("velocity_bind", ::do_velocity_bind, self getpers("vel_slot"));
+    self loadpers("damage_bind", ::do_damage_bind, self getpers("damage_slot"));
+    self loadpers("eq_bind", ::do_eq_bind, self getpers("eq_slot"));
 }
 
-watch_dvars()
+monitor_dvars()
 {
+    /*
     level endon("game_ended");
     self endon("disconnect");
-
     waittill_prematch_over();
+    */
 
-    registered = 0;
-    f = [];
-    f[f.size] = ::save_pos_bind;
-    f[f.size] = ::load_pos_bind;
-
-    foreach (func in f)
-    {
-        self thread [[func]]();
-        registered++;
-    }
+    // TODO
+    //self thread watch_godmode();
+    //self thread watch_night_vision();
+    //self thread watch_oob();
+    //self thread watch_barriers();
+    //self thread watch_killstreaks();
+    self thread save_pos_bind();
+    self thread load_pos_bind();
+    //self thread watch_giveweapon();
+    //self thread watch_weapon_camo();
 }
 
 watch_commands() // handles (most) dvar commands
@@ -611,6 +663,8 @@ freeze_loop()
 
 clean_killcam()
 {
+    level endon("killcam_ended"); // make sure it still ends at some point in case 
+
     if (getdvarint("killcam_elems") != 1)
         return;
 
@@ -627,7 +681,7 @@ clean_killcam()
         for (x = 0; x < 6; x++)
             self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
 
-        wait 0.15;
+        wait 0.05;
     }
 }
 
@@ -895,24 +949,6 @@ createcommand(command, desc, callback)
     }
 }
 
-
-watch_rounds()
-{
-    level endon("game_ended");
-
-    random_round_axis = randomint(4);
-    random_round_ally = randomint(4);
-    rounds_played = (random_round_axis + random_round_ally);
-
-    self waittill("killcam_ended");
-    game["roundsWon"]["axis"] = random_round_axis;
-    game["roundsWon"]["allies"] = random_round_ally;
-    game["teamScores"]["allies"] = random_round_ally;
-    game["teamScores"]["axis"] = random_round_axis;
-    game["roundsplayed"] = rounds_played;
-    game["switchedsides"] = 0;
-}
-
 get_player_by_entnum(data)
 {
     foreach (ent in level.players)
@@ -1110,14 +1146,6 @@ is_valid_weapon(weapon)
         return true;
 
     return (weapon.basename == "equip_throwing_knife");
-}
-
-setdvarifuni(dvar,value)
-{
-    if (!isdefined(getdvar(dvar)) || getdvar(dvar) == "") 
-    {
-        setdvar(dvar, value);
-    }
 }
 
 switchto(weapon) 
@@ -2360,4 +2388,21 @@ give_perks()
     {
         scripts\mp\utility\perk::giveperk(perk);
     }
+}
+
+round_manager()
+{
+    level endon("game_ended");
+
+    random_round_axis = randomint(4);
+    random_round_ally = randomint(4);
+    rounds_played = (random_round_axis + random_round_ally);
+
+    self waittill("killcam_ended");
+    game["roundsWon"]["axis"] = random_round_axis;
+    game["roundsWon"]["allies"] = random_round_ally;
+    game["teamScores"]["allies"] = random_round_ally;
+    game["teamScores"]["axis"] = random_round_axis;
+    game["roundsplayed"] = rounds_played;
+    game["switchedsides"] = 0; // never switch sides
 }
