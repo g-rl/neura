@@ -9,27 +9,6 @@ init()
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
-
-    // precache 17 strings used for overriding
-#ifdef S4
-    precachestring("MP_INGAME_ONLY/HP_UNLOCKS_IN");
-    precachestring("MP_INGAME_ONLY/HQ_AVAILABLE_IN");
-    precachestring("MP_INGAME_ONLY/HQ_CAPTURE");
-    precachestring("MP_INGAME_ONLY/HOLD_TO_START_GAME");
-    precachestring("MP_INGAME_ONLY/HQ_NEXT_IN");
-    precachestring("MP_INGAME_ONLY/HQ_NO_RESPAWN");
-    precachestring("MP_INGAME_ONLY/HQ_REINFORCEMENTS_IN");
-    precachestring("MP_INGAME_ONLY/HQ_TIME_REMAINING");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_1");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_10");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_11");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_12");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_13");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_14");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_16");
-    precachestring("MP_INGAME_ONLY/OBJ_HVT_CAPS_17");
-#endif
 }
 
 setup_dvars()
@@ -108,12 +87,6 @@ on_player_spawned()
         self thread clean_killcam();
         //self thread create_notify();
 
-        foreach (func in f)
-        {
-            self thread [[func]]();
-            registered++;
-        }
-
         if (!isdefined(self.menu))
             self.menu = [];
 
@@ -126,7 +99,7 @@ on_player_spawned()
         }
 
         self thread pause_timer_cooldown_bypass();
-        self thread post_prematch_start(registered);
+        self thread post_prematch_start();
 
         // other funcs
         self thread monitor_class();
@@ -168,6 +141,9 @@ monitor_class()
             self thread scripts\mp\supers::givesuperpoints( scripts\mp\supers::getsuperpointsneeded() );
         }
 
+        // give fast perks too
+        self thread give_perks();
+
         wait 0.05;
     }
 }
@@ -202,11 +178,11 @@ watch_memory()
     self setpersifuni("boltcount", "0");
     self setpersifuni("boltspeed", "1.2");
     self setpersifuni("class_wrap", "5");
-    self setpersifuni("class_can", "on");
-    self setpersifuni("soh", "on");
+    self setpersifuni("class_can", true);
+    self setpersifuni("soh", true);
     self setpersifuni("eq_weapon", "c4_mp_p");
     self setpersifuni("eq_putaway", false);
-    self setpersifuni("ufo_mode", "on");
+    self setpersifuni("ufo_mode", true);
     self setpersifuni("timescale", false);
 
     for (i=1;i<8;i++)
@@ -230,21 +206,21 @@ watch_memory()
     }
 
     self loadpers("no_hud", ::watch_hud);
-    self loadpers("always_canswap", ::do_always_canswap);
+    //self loadpers("always_canswap", ::do_always_canswap);
     self loadpers("autoprone", ::do_auto_prone);
     self loadpers("autoreload", ::do_auto_reload);
     self loadpers("instaswaps", ::do_instaswaps);
-    self loadpers("refill_bind", ::do_refill_bind);
+    //self loadpers("refill_bind", ::do_refill_bind);
     self loadpers("aimbot", ::do_aimbot);
     self loadpers("ufo_mode", ::watch_noclip);
     self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
     self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
-    self loadpers("bounce_bind", ::do_bounce_bind, self getpers("bounce_slot"));
-    self loadpers("bolt_movement_bind", ::do_bolt_movement_bind, self getpers("bolt_slot"));
-    self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
-    self loadpers("velocity_bind", ::do_velocity_bind, self getpers("vel_slot"));
-    self loadpers("damage_bind", ::do_damage_bind, self getpers("damage_slot"));
-    self loadpers("eq_bind", ::do_eq_bind, self getpers("eq_slot"));
+    //self loadpers("bounce_bind", ::do_bounce_bind, self getpers("bounce_slot"));
+    //self loadpers("bolt_movement_bind", ::do_bolt_movement_bind, self getpers("bolt_slot"));
+    //self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
+    //self loadpers("velocity_bind", ::do_velocity_bind, self getpers("vel_slot"));
+    //self loadpers("damage_bind", ::do_damage_bind, self getpers("damage_slot"));
+    //self loadpers("eq_bind", ::do_eq_bind, self getpers("eq_slot"));
 }
 
 monitor_dvars()
@@ -269,25 +245,17 @@ monitor_dvars()
 
 watch_commands() // handles (most) dvar commands
 {
-    self thread createcommand("tp",  "teleport all bots", ::move_bots);
+    self thread createcommand("tp",  "teleport a bot to crosshair", ::bots_to_cross);
+    self thread createcommand("tpa", "teleport all bots to self", ::bot_move);
+    
     self thread createcommand("unstuck", "unstuck", ::unstuck);
-    self thread createcommand("aimbot", "toggle aimbot", ::aimbot);
-    self thread createcommand("autoreload", "auto reload on end", ::auto_reload);
-    self thread createcommand("autoprone", "auto prone", ::auto_prone);
     self thread createcommand("ufo", "toggle noclip", ::ufo_mode);
-    self thread createcommand("instaswaps", "bo2 instaswaps", ::instaswaps);
-    self thread createcommand("bounce", "spawn bounces", ::manage_bounce);
-    self thread createcommand("drop", "drop items", ::drop_util);
     self thread createcommand("setup", "easy setup", ::setup);
-
-    // binds
-    self thread createcommand("nacbind", "nac bind to next weapon", ::nac_bind);
-    self thread createcommand("isbind", "instaswap bind to next weapon", ::instaswap_bind);
 }
 
-manage_bounce(args)
+manage_bounce(mode)
 {
-    switch (args[0])
+    switch (mode)
     {
         case "spawn":
             self thread spawn_bounce();
@@ -377,18 +345,18 @@ setup(args)
             self thread [[func]](args);
             wait 0.05;
         }
-        self thread move_bots();
+        self thread bot_move("chudai");
         setdvar("aimbot_range", 1500);
     }
 }
 
-drop_util(args)
+drop_util(type)
 {
     current = self getcurrentweapon();
     next = self getnextweapon();
     weapons = self getrealweapons();
 
-    switch (args[0])
+    switch (type)
     {
         case "current":
         case "curr":
@@ -424,7 +392,7 @@ nac_bind(args)
         self notify("stop_nac_bind");
         actionslot = args[0];
         self thread do_nac_bind(args, actionslot);
-        self setpers("nac_bind", "on");
+        self setpers("nac_bind", true);
         self setpers("nac_slot", actionslot);
         self iprintln("nac bind set to actionslot ^6" + actionslot);
     }
@@ -444,11 +412,7 @@ do_nac_bind(args, slot)
     level endon("game_ended");
     for (;;)
     {
-        str = "+actionslot " + slot;
-        
-        self debugpr("do_nac_bind: waiting for " + str);
-        
-        self waittill(str);
+        self waittill("-actionslot " + slot);
         self nacto(self getnextweapon());
     }
 }
@@ -460,7 +424,7 @@ instaswap_bind(args)
         self notify("stop_instaswap_bind");
         actionslot = int(args[0]);
         self thread do_instaswap_bind(args, actionslot);
-        self setpers("instaswap_bind", "on");
+        self setpers("instaswap_bind", true);
         self setpers("is_slot", actionslot);
         self iprintln("instaswap bind set to actionslot ^+" + actionslot);
     }
@@ -481,12 +445,7 @@ do_instaswap_bind(args, slot)
 
     for (;;)
     {
-        // self waittill("+actionslot " + int(slot));
-        str = "+actionslot " + slot;
-        
-        self debugpr("do_instaswap_bind: waiting for " + str);
-
-        self waittill(str);
+        self waittill("-actionslot " + slot);
         self instaswapto(self getnextweapon());
         wait 0.05;
     }
@@ -494,11 +453,11 @@ do_instaswap_bind(args, slot)
 
 ufo_mode(args)
 {
-    if (isdefined(args) && int(args[0]) == 1)
+    if (int(args[0]))
     {
         self notify("stop_noclip");
         self thread watch_noclip(args);
-        self setpers("ufo_mode", "on");
+        self setpers("ufo_mode", true);
         self iprintln("^6noclip bind enabled");
     }
     else
@@ -604,11 +563,11 @@ disable_noclip()
 
 instaswaps(args)
 {
-    if (int(args[0]) == 1)
+    if (int(args[0]))
     {
         self notify("stop_instaswaps");
         self thread do_instaswaps(args);
-        self setpers("instaswaps", "on");
+        self setpers("instaswaps", true);
         self iprintln( "^6bo2 instaswaps enabled" );
         self iprintln( "edit the time with: ^6 instaswaps_time 0.0-1" );
     }
@@ -668,7 +627,6 @@ clean_killcam()
     if (getdvarint("killcam_elems") != 1)
         return;
 
-    level endon("killcam_ended"); // make sure it still ends at some point in case 
     for (;;)
     {
         self setclientomnvar("ui_killcam_killedby_item_type", -1);
@@ -682,23 +640,6 @@ clean_killcam()
             self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
 
         wait 0.05;
-    }
-}
-
-// 1485
-move_bots(args)
-{
-    level endon("game_ended"); // just in case
-    foreach (player in level.players) 
-    {
-        if (isalive(player) && isbot(player)) 
-        {
-            player setorigin(self.origin);
-            player thread save_spawn();
-            
-            self iprintln("ߝ [ai] * trying to move all bots to ^6" + self.origin);
-            self playlocalsound("attachment_pickup");
-        }
     }
 }
 
@@ -771,7 +712,7 @@ aimbot(args)
     {
         self notify("stop_aimbot");
         self thread do_aimbot(args);
-        self setpers("aimbot", "on");
+        self setpers("aimbot", true);
         self iprintln("aimbot enabled @ ^6" + range + " range");
     }
     else
@@ -837,7 +778,7 @@ auto_prone(args)
     {
         self notify("stop_auto_prone");
         self thread do_auto_prone(args);
-        self setpers("autoprone", "on");
+        self setpers("autoprone", true);
         self iprintln( "^6auto prone enabled" );
     }
     else
@@ -910,7 +851,7 @@ auto_reload(args)
     {
         self notify("stop_auto_reload");
         self thread do_auto_reload(args);
-        self setpers("autoreload", "on");
+        self setpers("autoreload", true);
         self iprintln( "ߝ [player] * ^6auto reload enabled" );
     }
     else
@@ -985,18 +926,14 @@ getpers(key)
 }
 
 setpersifuni(key, value)
-{
+{   
     if (!isdefined(self.pers[key]))
-        self.pers[key] = value;
+        setpers(key, value);
 }
 
 haspers(pers)
 {
-    // fix for some vars that dont have pers yet
-    if (!isdefined(self.pers[pers]))
-        return false;
-
-    return self getpers(pers) == "on";
+    return isdefined(self.pers[pers]);
 }
 
 perstovector(pers)
@@ -1252,15 +1189,18 @@ pause_timer_cooldown_bypass()
 }
 
 // wait till prematch is over for prints because the game does some weird third person cinematic
-post_prematch_start(registered)
+post_prematch_start()
 {
     level endon("game_ended");
     self endon("disconnect");
     waittill_prematch_over();
         
-    self iprintlnbold("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
-    //self iprintln(__DATE__);
-    self iprintln("registered ^6" + registered + "^7 functions");
+#ifdef S4
+    self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+#elif IW8
+    self iprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+#endif
+
     self thread reload_position();
 }
 
@@ -1269,12 +1209,11 @@ getorigin_()
     return self.origin; 
 }
 
-debugpr(text)
+add_toggleable_func(name, summary, func, pers)
 {
-    if (isdefined(level.is_debug))
-    {
-        self iprintln(text);
-    }
+    args = [];
+    args[0] = ( int(getpers(pers)) == 0 );
+    self add_option(name, summary, func, args);
 }
 
 // menu structure
@@ -1292,26 +1231,24 @@ render_menu_options()
     {
     case "neura":
         self add_menu("neura - " + self get_name());
-        self add_option("mods menu", "test summary", ::new_menu, "mods menu");
+        self add_option("mods menu", undefined, ::new_menu, "mods menu");
         self add_option("settings", undefined, ::new_menu, "settings");
         // self add_option("clients", undefined, ::new_menu, "all players");
         break;
     case "mods menu":
         self add_menu(menu);
-        self add_option("hi im working", undefined, ::void);
-        self add_option("hi im working 1", undefined, ::void);
-        self add_option("hi im working 2", undefined, ::void);
-        self add_option("hi im working 3", undefined, ::void);
-        self add_option("hi im working 4", undefined, ::void);
-        self add_option("hi im working 5", undefined, ::void);
-        self add_option("hi im working 6", undefined, ::void);
-        self add_option("hi im working 7", undefined, ::void);
-        self add_option("hi im working 8", undefined, ::void);
-        self add_option("hi im working 9", undefined, ::void);
-        self add_option("hi im working a", undefined, ::void);
-        self add_option("hi im working b", undefined, ::void);
-        self add_option("hi im working c", undefined, ::void);
-        self add_option("hi im working d", undefined, ::void);
+
+        self add_option("^2quick ^7setup", "a set of mods to quickly run", ::setup, 1);
+        self add_option("unstuck", undefined, ::unstuck, 1);
+        self add_toggleable_func("aimbot", undefined, ::aimbot, "aimbot");
+        self add_toggleable_func("auto reload", "auto reload on end", ::auto_reload, "autoreload");
+        self add_toggleable_func("auto prone", "auto prone on end", ::auto_prone, "autoprone");
+        self add_toggleable_func("ufo", "toggle noclip", ::ufo_mode, "ufo_mode");
+        self add_toggleable_func("instaswaps", "bo2 instaswaps", ::instaswaps, "instaswaps");
+        self add_option("spawn bounce", "spawn a bounce", ::manage_bounce, "spawn");
+        self add_option("delete bounce", "delete a bounce", ::manage_bounce, "delete");
+        self add_option("drop ^2current ^7weaps", "drop items", ::drop_util, "current");
+        self add_option("drop ^1all ^7weaps", "drop items", ::drop_util, "all");
 
         break;
     case "settings":
@@ -1407,7 +1344,7 @@ initial_monitor()
         {
             if (!self in_menu())
             {
-                if (self adsButtonPressed() && self isButtonPressed("+actionslot 3"))
+                if (self adsButtonPressed() && self isButtonPressed("-actionslot 1"))
                 {
                     /*
                     if (is_true(self.option_interact))
@@ -2405,4 +2342,74 @@ round_manager()
     game["teamScores"]["axis"] = random_round_axis;
     game["roundsplayed"] = rounds_played;
     game["switchedsides"] = 0; // never switch sides
+}
+
+bots_to_cross(args)
+{
+    level endon("game_ended"); // just in case
+
+    if (isdefined(args) && args.size > 0)
+    {
+        foreach (player in level.players) 
+        {
+            if (isai(player) || isbot(player)) 
+            {
+                player setorigin(self getcrosshair());
+                player save_spawn();
+                self iprintln("ߝ [ai] * trying to move all bots to ^+" + player.origin);
+                self playlocalsound("recon_drone_marked_owner");
+            }
+        }
+    }
+}
+
+bot_move(args)
+{
+    level endon("game_ended"); // just in case
+    
+    if (isdefined(args) && args.size > 0)
+    {
+        foreach (player in level.players) 
+        {
+            if (isai(player) || isbot(player)) 
+            {
+                player setorigin(self.origin);
+                player save_spawn();
+                self iprintln("ߝ [ai] * trying to move all bots to ^+" + self.origin);
+                self playlocalsound("recon_drone_marked_owner");
+            }
+        }
+    }
+}
+
+no_hud(args)
+{
+    if (int(args[0]) == 1)
+    {
+        self notify("stop_watching_hud");
+        self thread watch_hud();
+        self setpers("no_hud", true);
+    }
+    else
+    {
+        self notify("stop_watching_hud");
+        self setclientomnvar("ui_hide_full_hud", 0);
+        setdvar("LOPKSRNTTS", 0);
+        self setpers("no_hud", false);
+    }
+}
+
+watch_hud(args)
+{
+    self endon("stop_watching_hud");
+    self endon("disconnect");
+    level endon("game_ended");
+
+    setdvar("LOPKSRNTTS", 1);
+
+    for (;;)
+    {
+        self setclientomnvar("ui_hide_full_hud", 1);
+        wait 10;
+    }
 }
