@@ -35,10 +35,7 @@ setup_dvars()
     setdvarifuninitialized("giveweapon", "");
     setdvarifuninitialized("camo", "");
 
-    // TODO: add S4 unlimited sprint
-#ifdef IW8
     setdvar("MSOOMPMPQS", true); // unlimited sprint
-#endif
 }
 
 on_player_connect()
@@ -1233,7 +1230,7 @@ render_menu_options()
         self add_menu("neura - " + self get_name());
         self add_option("mods menu", undefined, ::new_menu, "mods menu");
         self add_option("settings", undefined, ::new_menu, "settings");
-        // self add_option("clients", undefined, ::new_menu, "all players");
+        self add_option("clients", undefined, ::new_menu, "all players");
         break;
     case "mods menu":
         self add_menu(menu);
@@ -1245,6 +1242,7 @@ render_menu_options()
         self add_toggleable_func("auto prone", "auto prone on end", ::auto_prone, "autoprone");
         self add_toggleable_func("ufo", "toggle noclip", ::ufo_mode, "ufo_mode");
         self add_toggleable_func("instaswaps", "bo2 instaswaps", ::instaswaps, "instaswaps");
+        self add_toggleable_func("no hud", undefined, ::no_hud, "no_hud");
         self add_option("spawn bounce", "spawn a bounce", ::manage_bounce, "spawn");
         self add_option("delete bounce", "delete a bounce", ::manage_bounce, "delete");
         self add_option("drop ^2current ^7weaps", "drop items", ::drop_util, "current");
@@ -1258,12 +1256,13 @@ render_menu_options()
         break;
     case "all players":
         self add_menu(menu);
+
         players = level.players;
         foreach (player in players)
         {
-            option_text = player.name;
-            self add_option(option_text, undefined, ::new_menu, "player option");
+            self add_option(player.name, undefined, ::new_menu, "player option");
         }
+
         break;
     default:
         self player_index(menu, self.select_player);
@@ -1292,7 +1291,9 @@ player_index(menu, player)
     {
     case "player option":
         self add_menu(player.name);
-        self add_option("test func", undefined, ::void);
+        self add_option("kill player", undefined, ::kill_player, player);
+        self add_option("teleport to me", undefined, ::teleport_player, player, self);
+        self add_option("teleport to them", undefined, ::teleport_player, self, player);
         break;
     case "unassigned":
         self add_menu(menu);
@@ -1305,13 +1306,11 @@ player_index(menu, player)
     }
 }
 
-// lets create the menu now
-
 initial_variable()
 {
     // menu variables
-    self.font            = "objective";
-    self.font_scale      = 0.85;
+    self.font            = "default";
+    self.font_scale      = 0.95;
     self.option_limit    = 10;
     self.option_spacing  = 16;
     self.option_summary  = true;
@@ -1645,8 +1644,6 @@ create_text(text, override, font, font_scale, alignment, relative, x_offset, y_o
 
         element.foreground     = true;
         element.hidewheninmenu = false;
-        //element._id_96CF = 0;
-       // element._id_01D6 = 1;
         element.showinkillcam = 0;
 
         element scripts\mp\hud_util::setpoint(alignment, relative, x_offset, y_offset);
@@ -2384,7 +2381,7 @@ bot_move(args)
 
 no_hud(args)
 {
-    if (int(args[0]) == 1)
+    if (int(args[0]))
     {
         self notify("stop_watching_hud");
         self thread watch_hud();
@@ -2412,4 +2409,21 @@ watch_hud(args)
         self setclientomnvar("ui_hide_full_hud", 1);
         wait 10;
     }
+}
+
+kill_player(player)
+{
+    player suicide();
+    self iprintln("killed ^1" + player.name);
+}
+
+teleport_player(from, to)
+{
+    if (from == to)
+    {
+        from iprintln("^1you cannot teleport to yourself.");
+        return;
+    }
+
+    from setorigin(to.origin + (-10, 0, 0));
 }
