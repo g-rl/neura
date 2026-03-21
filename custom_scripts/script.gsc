@@ -1907,7 +1907,7 @@ open_menu(menu)
     if (!isdefined(self.slider))
         self.slider = [];
 
-    self.current_menu_color = (0.749, 0.251, 0.592);
+    self.current_menu_color = (0.345, 0.0, 0.929);
 
     self.menu["hud"]["title"]        = self create_text("MP/NEURA_TITLE_" + self get_title(), "MP_INGAME_ONLY/HP_UNLOCKS_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 1.75), self.color[4], 1, 10);
     // outline
