@@ -595,11 +595,9 @@ do_instaswaps()
         }
 
         self.is_swapping = true;
-        wait (float(self getpers(("instaswaps_time"))));
 
-        prev = self getprevweapon();
-        self iprintln("prev: " + prev.basename);
-        self switchto(prev);
+        wait (float(self getpers(("instaswaps_time"))));
+        self switchto(self getprevweapon());
 
         self.is_swapping = undefined;
     }
