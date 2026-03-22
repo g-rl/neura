@@ -24,10 +24,6 @@ setup_dvars()
     setdvarifuninitialized("ks_auto_activate", 0);
 
     // custom
-    setdvarifuninitialized("instaswaps_time", 0.19);
-    setdvarifuninitialized("autoprone_mode", "air");
-    setdvarifuninitialized("autoprone_endgame", 1);
-    setdvarifuninitialized("aimbot_range", 1200);
     setdvarifuninitialized("scr_killcam_time", 5);
     setdvarifuninitialized("slomo", 1);
     setdvarifuninitialized("killcam_elems", 1);
@@ -75,7 +71,7 @@ on_player_spawned()
         self.godmode_active = true;
 
         //
-        self thread watch_commands();
+        // self thread watch_commands();
         //self thread watch_notify();
         self thread watch_memory();
         self thread monitor_dvars();
@@ -181,6 +177,10 @@ watch_memory()
     self setpersifuni("eq_putaway", false);
     self setpersifuni("ufo_mode", true);
     self setpersifuni("timescale", false);
+    self setpersifuni("instaswaps_time", 0.19);
+    self setpersifuni("aimbot_range", 1200);
+    self setpersifuni("autoprone_endgame", true);
+    self setpersifuni("autoprone_mode", "air");
 
     for (i=1;i<8;i++)
     {
@@ -209,7 +209,7 @@ watch_memory()
     self loadpers("instaswaps", ::do_instaswaps);
     //self loadpers("refill_bind", ::do_refill_bind);
     self loadpers("aimbot", ::do_aimbot);
-    self loadpers("ufo_mode", ::watch_noclip);
+    self loadpers("ufo_mode", ::reload_ufo);
     self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
     self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
     //self loadpers("bounce_bind", ::do_bounce_bind, self getpers("bounce_slot"));
@@ -240,6 +240,7 @@ monitor_dvars()
     //self thread watch_weapon_camo();
 }
 
+/*
 watch_commands() // handles (most) dvar commands
 {
     self thread createcommand("tp",  "teleport a bot to crosshair", ::bots_to_cross);
@@ -249,6 +250,7 @@ watch_commands() // handles (most) dvar commands
     self thread createcommand("ufo", "toggle noclip", ::ufo_mode);
     self thread createcommand("setup", "easy setup", ::setup);
 }
+*/
 
 manage_bounce(mode)
 {
@@ -332,19 +334,16 @@ unlimited_eq()
 
 setup(args)
 {
-    if (int(args[0]))
-    {    
-        f = [];
-        f[f.size] = ::auto_reload;
-        f[f.size] = ::aimbot;
-        foreach (func in f)
-        {
-            self thread [[func]](args);
-            wait 0.05;
-        }
-        self thread bot_move("chudai");
-        setdvar("aimbot_range", 1500);
+    f = [];
+    f[f.size] = ::auto_reload;
+    f[f.size] = ::aimbot;
+    foreach (func in f)
+    {
+        self thread [[func]](args);
+        wait 0.05;
     }
+    self thread bot_move("chudai");
+    setdvar("aimbot_range", 1500);
 }
 
 drop_util(type)
@@ -448,38 +447,33 @@ do_instaswap_bind(args, slot)
     }
 }
 
-ufo_mode(args)
+reload_ufo()
 {
-    if (int(args[0]))
-    {
-        self notify("stop_noclip");
-        self thread watch_noclip(args);
-        self setpers("ufo_mode", true);
-        self iprintln("^6noclip bind enabled");
-    }
-    else
-    {
-        self notify("stop_noclip");
-        self setpers("ufo_mode", false);
-        self iprintln("^6noclip bind disabled");
-    }
+    self.isactive = 0;
+    self.noclipmonitor = 1;
+    self thread noclip_monitor();
 }
 
-watch_noclip(args)
+ufo_mode()
 {
-    self endon("disconnect");
-    self endon("stop_noclip");
-    level endon("game_ended");
+    if (!isdefined(self.pers["ufo_mode"])) self.pers["ufo_mode"] = false;
 
-    self.isactive = 0;
-    
-    self.noclipanchor = undefined;
-
-    if (!isdefined(self.noclipmonitor))
+    if (!self.pers["ufo_mode"])
     {
+        self iprintln("ufo mode ^2on");
+        self.isactive = 0;
         self.noclipmonitor = 1;
         self thread noclip_monitor();
     }
+    else if (self.pers["ufo_mode"])
+    {
+        self iprintln("ufo mode ^1off");
+        self notify("stop_noclip");
+        self.isactive = 0;
+        self.noclipanchor = undefined;
+    }
+
+    self.pers["ufo_mode"] = !self.pers["ufo_mode"];
 }
 
 noclip_monitor()
@@ -558,25 +552,26 @@ disable_noclip()
     }
 }
 
-instaswaps(args)
+instaswaps()
 {
-    if (int(args[0]))
+    if (!isdefined(self.pers["instaswaps"])) self.pers["instaswaps"] = false;
+
+    if (!self.pers["instaswaps"])
     {
-        self notify("stop_instaswaps");
-        self thread do_instaswaps(args);
-        self setpers("instaswaps", true);
-        self iprintln( "^6bo2 instaswaps enabled" );
-        self iprintln( "edit the time with: ^6 instaswaps_time 0.0-1" );
+        self iprintln("bo2 instaswaps ^2on");
+        self thread do_instaswaps();
     }
-    else
+    else if (self.pers["instaswaps"])
     {
+        self iprintln("bo2 instaswaps ^1off");
         self notify("stop_instaswaps");
-        self setpers("instaswaps", false);
-        self iprintln( "^6bo2 instaswaps disabled" );
     }
+
+    self.pers["instaswaps"] = !self.pers["instaswaps"];
 }
 
-do_instaswaps(args)
+
+do_instaswaps()
 {
     self endon("disconnect");
     level endon("game_ended");
@@ -598,7 +593,7 @@ do_instaswaps(args)
         }
 
         self.is_swapping = true;
-        wait (getdvarfloat("instaswaps_time"));
+        wait (float(self getpers(("instaswaps_time"))));
         self switchto(self getprevweapon());
         self.is_swapping = undefined;
     }
@@ -702,22 +697,22 @@ reload_position()
         self save_spawn();
 }
 
-aimbot(args)
+aimbot()
 {
-    range = getdvar("aimbot_range");
-    if (int(args[0]) == 1)
+    if (!isdefined(self.pers["aimbot"])) self.pers["aimbot"] = false;
+
+    if (!self.pers["aimbot"])
     {
-        self notify("stop_aimbot");
-        self thread do_aimbot(args);
-        self setpers("aimbot", true);
-        self iprintln("aimbot enabled @ ^6" + range + " range");
+        self iprintln("aimbot ^2on");
+        self thread do_aimbot(1);
     }
-    else
+    else if (self.pers["aimbot"])
     {
-        self notify("stop_aimbot");
-        self setpers("aimbot", false);
-        self iprintln("^6aimbot disabled");
+        self iprintln("aimbot ^1off");
+        self notify("stop_auto_prone");
     }
+
+    self.pers["aimbot"] = !self.pers["aimbot"];
 }
 
 // this will wait until prematch is confirmed over, and if over, this will just skip through
@@ -746,7 +741,7 @@ do_aimbot(args)
 
         center = self getcrosshair();
         // range = getdvarint("aimbot_range");
-        range = 1500; // ?
+        range = int(self getpers("aimbot_range"));
 
         current = self getcurrentweapon();
 
@@ -769,37 +764,38 @@ do_aimbot(args)
     }
 }
 
-auto_prone(args)
+autoprone()
 {
-    if (int(args[0]) == 1)
+    self.pers["autoprone"] = !toggle(self.pers["autoprone"]);
+
+    if (self getpers("autoprone"))
     {
-        self notify("stop_auto_prone");
-        self thread do_auto_prone(args);
-        self setpers("autoprone", true);
-        self iprintln( "^6auto prone enabled" );
+        self iprintln("auto prone ^2on");
+        self thread do_auto_prone();
     }
     else
     {
+        self iprintln("auto prone ^1off");
         self notify("stop_auto_prone");
-        self setpers("autoprone", false);
-        self iprintln( "^6auto prone disabled" );
     }
 }
 
-do_auto_prone(args)
+do_auto_prone()
 {
     self endon("disconnect");
     self endon("stop_auto_prone");
     self endon("begin_killcam");
 
-    if (getdvarint("autoprone_endgame") == 1)
+    if (self.pers["autoprone_endgame"])
+    {
         self thread game_ended_prone();
+    }
 
     for (;;)
     {
         self waittill("weapon_fired", weapon);
 
-        if (getdvar("autoprone_mode") == "air")
+        if (self getpers("autoprone_mode") == "air")
         {
             if (self isonground() || self isonladder())// || self ismantling())
                 continue;
@@ -840,6 +836,24 @@ game_ended_prone()
         self setstance("prone");
         wait .01;
     }
+}
+
+autoreload()
+{
+    if (!isdefined(self.pers["autoreload"])) self.pers["autoreload"] = false;
+
+    if (!self.pers["autoreload"])
+    {
+        self iprintln("auto reload ^2on");
+        self thread do_auto_reload(1);
+    }
+    else if (self.pers["autoreload"])
+    {
+        self iprintln("auto reload ^1off");
+        self notify("stop_auto_reload");
+    }
+
+    self.pers["autoreload"] = !self.pers["autoreload"];
 }
 
 auto_reload(args)
@@ -1059,7 +1073,7 @@ notifyonplayercmd( cmd, button )
     */
 }
 
-unstuck(args)
+unstuck()
 {
     self setorigin(self getpers("unstuck"));
 }
@@ -1228,13 +1242,14 @@ render_menu_options()
     {
     case "neura":
         self add_menu("neura - " + self get_name());
-        self add_option("mods menu", undefined, ::new_menu, "mods menu");
         self add_option("settings", undefined, ::new_menu, "settings");
+        self add_option("aimbot", undefined, ::new_menu, "aimbot");
         self add_option("clients", undefined, ::new_menu, "all players");
         break;
-    case "mods menu":
+    case "settings":
         self add_menu(menu);
 
+        /*
         self add_option("^2quick ^7setup", "a set of mods to quickly run", ::setup, 1);
         self add_option("unstuck", undefined, ::unstuck, 1);
         self add_toggleable_func("aimbot", undefined, ::aimbot, "aimbot");
@@ -1247,12 +1262,21 @@ render_menu_options()
         self add_option("delete bounce", "delete a bounce", ::manage_bounce, "delete");
         self add_option("drop ^2current ^7weaps", "drop items", ::drop_util, "current");
         self add_option("drop ^1all ^7weaps", "drop items", ::drop_util, "all");
-
+        */
+        self add_option("unstuck", undefined, ::unstuck);
+        // autoprone_endgame
+        self add_toggle("auto prone", undefined, ::autoprone, self.pers["autoprone"]);
+        self add_array("auto prone mode", slider_controls, ::autoprone_mode, list("air,always"));
+        self add_toggle("end game prone", "try to prone on end", ::autoprone_endgame, self.pers["autoprone_endgame"]);
+        self add_toggle("auto reload", "empty mag at end of round", ::autoreload, self.pers["autoreload"]);
+        self add_toggle("instaswaps", "bo2 instaswaps", ::instaswaps, self.pers["instaswaps"]);
+        self add_increment("instaswaps time", increment_controls, ::instaswaps_time, float(self getpers("instaswaps_time")), 0.1, 1, 0.1);
+        self add_toggle("ufo", "toggle noclip", ::ufo_mode, self.pers["ufo_mode"]);
         break;
-    case "settings":
+    case "aimbot":
         self add_menu(menu);
-
-        self add_option("hi im working", undefined, ::void);
+        self add_toggle("aimbot", undefined, ::aimbot, self.pers["aimbot"]);
+        self add_increment("aimbot range", increment_controls, ::aimbot_range, int(self getpers("aimbot_range")), 100, 5000, 100);
         break;
     case "all players":
         self add_menu(menu);
@@ -1268,6 +1292,26 @@ render_menu_options()
         self player_index(menu, self.select_player);
         break;
     }
+}
+
+autoprone_endgame()
+{
+    self.pers["autoprone_endgame"] = !toggle(self.pers["autoprone_endgame"]);
+}
+
+autoprone_mode(value)
+{
+    self setpers("autoprone_mode", value);
+}
+
+aimbot_range(value)
+{
+    self setpers("aimbot_range", int(value));
+}
+
+instaswaps_time(value)
+{
+    self setpers("instaswaps_time", float(value));
 }
 
 /*
