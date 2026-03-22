@@ -1,5 +1,12 @@
 // gsclsp-disable semicolon
 
+/*
+
+        neura menu for IW8 (MW2019), S4 (Vanguard), and IW9 (MW2022) 
+        - #ifdef IW8 does not work properly, use #ifdef S4 instead 
+
+*/
+
 init()
 {
     // variables
@@ -446,7 +453,7 @@ do_instaswap_bind(args, slot)
     }
 }
 
-reload_ufo()
+reload_ufo(args)
 {
     self.isactive = 0;
     self.noclipmonitor = 1;
@@ -760,7 +767,15 @@ do_aimbot(args)
                 {
                     if (distance(player getorigin_(), center) < range)
                     {
+                        iprintln("bruh.....");
+
+#ifdef S4
+                        // callbackplayerdamage isnt named yet
+                        player thread [[level._id_2F4C]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
+#else
+                        // IW8 and other games
                         player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
+#endif
                     }
                 }
             }
@@ -967,6 +982,7 @@ loadpers(key, func, args)
 
     wait 0.05;
 
+    // we call any function passed through loadpers with args no matter what - THIS CAN BE UNDEFINED
     self thread [[func]](args);
 }
 
@@ -1112,7 +1128,7 @@ post_prematch_start()
         
 #ifdef S4
     self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
-#elif IW8
+#else
     self iprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 #endif
 
