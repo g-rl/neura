@@ -78,7 +78,6 @@ on_player_spawned()
         self thread unlimited_eq();
         self thread round_manager();
         self thread clean_killcam();
-        //self thread create_notify();
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -570,7 +569,6 @@ instaswaps()
     self.pers["instaswaps"] = !self.pers["instaswaps"];
 }
 
-
 do_instaswaps()
 {
     self endon("disconnect");
@@ -579,13 +577,17 @@ do_instaswaps()
 
     for (;;)
     {
-        self waittill("grenade_pullback", grenade);
+        /*
+        self waittill("weapon_pullback", grenade);
+
         name = grenade.basename;
         
         if (name == "ks_remote_nuke_mp" || name == "ac130_105mm_mp" || name == "ac130_40mm_mp" || name == "heli_pilot_turret_mp" || name == "manual_turret_mp" || name == "nuke_mp" || name == "chopper_support_turret_mp" || name == "iw8_gunship_tablet" || name == "iw8_wheelson_tablet" || name == "mp_killstreak_nuke_tablet" || name == "iw8_cruise_missile_tablet" || name == "iw8_chopper_gunner_tablet" || name == "apache_turret_mp" || name == "pac_sentry_turret_mp" || name == "emp_drone_non_player_direct_mp" || name == "emp_drone_non_player_mp" || name == "emp_drone_player_mp" || name == "emp_grenade_mp" || name == "deployable_cover_mp" || name == "support_box_mp" || name == "equip_adrenaline" || name == "airdrop_marker_mp" || name == "deployable_vest_marker_mp" || name == "deployable_weapon_crate_marker_mp")
         {
             continue;
         }
+        */
+        self waittill("button_pressed_+frag");
 
         if (isdefined(self.is_swapping))
         {
@@ -594,7 +596,11 @@ do_instaswaps()
 
         self.is_swapping = true;
         wait (float(self getpers(("instaswaps_time"))));
-        self switchto(self getprevweapon());
+
+        prev = self getprevweapon();
+        self iprintln("prev: " + prev.basename);
+        self switchto(prev);
+
         self.is_swapping = undefined;
     }
 }
@@ -966,113 +972,6 @@ loadpers(key, func, args)
     self thread [[func]](args);
 }
 
-// meme for now idc, ill come back to it later
-create_notify()
-{
-    level endon("game_ended");
-    self endon("disconnect");
-    while(true)
-    {
-        self notifyonplayercmd("+actionslot 1","+actionslot 1");
-        self notifyonplayercmd("+actionslot 2","+actionslot 2");
-        self notifyonplayercmd("+actionslot 3","+actionslot 3");
-        self notifyonplayercmd("+actionslot 4","+actionslot 4");
-        self notifyonplayercmd("+frag","+frag");
-        self notifyonplayercmd("+smoke","+smoke");
-        self notifyonplayercmd("+usereload","+usereload");
-        self notifyonplayercmd("+melee","+melee");
-        self notifyonplayercmd("+gostand","+gostand");
-        self notifyonplayercmd("+switchseat","+switchseat");
-        self notifyonplayercmd("+stance","+stance");
-        wait 0.05;
-    }
-}
-
-notifyonplayercmd( cmd, button )
-{
-    if (button == "+usereload")
-    {
-        if (self UseButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    /*
-    if (button == "+switchseat")
-    {
-        if (self ChangeSeatButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    */
-    if (button == "+smoke")
-    {
-        if (self SecondaryOffHandButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    if (button == "+frag")
-    {
-        if (self FragButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    if (button == "+melee")
-    {
-        if (self MeleeButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    if (button == "+stance")
-    {
-        if (self StanceButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    if (button == "+gostand")
-    {
-        if (self JumpButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    /*
-    if (button == "+actionslot 1")
-    {
-        if (self ActionSlotOneButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    if (button == "+actionslot 2")
-    {
-        if (self ActionSlotTwoButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    if (button == "+actionslot 3")
-    {
-        if (self ActionSlotThreeButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    if (button == "+actionslot 4")
-    {
-        if (self ActionSlotFourButtonPressed())
-        {
-            self notify(cmd);
-        }
-    }
-    */
-}
-
 unstuck()
 {
     self setorigin(self getpers("unstuck"));
@@ -1151,20 +1050,19 @@ instaswapto(weapon)
 
 getprevweapon() 
 {
-    z = self getrealweapons();
+    real_weaps = self getrealweapons();
     x = self getcurrentweapon();
-    for (i = 0 ; i < z.size ; i++)
+    for (i = 0 ; i < real_weaps.size ; i++)
     {
-        if (x == z[i])
+        if (x == real_weaps[i])
         {
             y = i - 1;
             if (y < 0)
-            y = z.size - 1;
+                y = real_weaps.size - 1;
 
-            if (isdefined(z[y]))
-                return z[y];
-            else
-                return z[0];
+            if (isdefined(real_weaps[y]))
+                return real_weaps[y];
+            return real_weaps[0];
         }
     }
 }
@@ -1187,7 +1085,15 @@ getnextweapon()
 
 getrealweapons()
 {
-    return self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
+    weapons = self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
+    for (i = 0; i < weapons.size; i++)
+    {
+        if (issubstr(weapons[i].basename, "knifestab"))
+        {
+            weapons[i] = undefined;
+        }
+    }
+    return weapons;
 }
 
 // pauses timer after 5-8 seconds to let the tactical/equipment delay disable
@@ -1607,7 +1513,7 @@ set_slider(scrolling, index)
         {
             slider_elem = slider_bruh[index];
             if (isdefined(slider_elem))
-                slider_elem set_text("MP/NEURA_ADDITIONAL_" + self.structure[index]["array"][self.slider[storage]], "MP_INGAME_ONLY/HQ_CAPTURE");
+                slider_elem set_text("MP/NEURA_ADDITIONAL_" + self.structure[index]["array"][self.slider[storage]]);
         }
     }
     else
@@ -1639,7 +1545,7 @@ set_slider(scrolling, index)
             // TODO: sliders
             slider_elem = slider_bruh[index];
             if (isdefined(slider_elem))
-                slider_elem set_text("MP/NEURA_STR12_" + slider_value, "MP_INGAME_ONLY/OBJ_HVT_CAPS_15");
+                slider_elem set_text("MP/NEURA_STR12_" + slider_value);
         }
 
         self.menu["hud"]["slider"][2][index].x = (self.menu["hud"]["slider"][1][index].x + (abs((self.slider[storage] - self.structure[index]["minimum"])) / position) - 42);
@@ -1664,15 +1570,13 @@ destroy_element()
         self.player.element_count--;
 }
 
-set_text( text, override ) 
+set_text( text ) 
 {
     if ( !isdefined( self ) || !isdefined( text ) )
         return;
-    
-    //iprintln(text);
+
     self.text = text;
-    self settext( text ); // this will fail, so re-call it
-    //self settext( override ); // this will work as it will be overrided by data above
+    self settext( text );
 }
 
 create_text(text, override, font, font_scale, alignment, relative, x_offset, y_offset, color, alpha, sort)
@@ -1691,7 +1595,7 @@ create_text(text, override, font, font_scale, alignment, relative, x_offset, y_o
         element.showinkillcam = 0;
 
         element scripts\mp\hud_util::setpoint(alignment, relative, x_offset, y_offset);
-        element set_text(text, override);
+        element set_text(text);
 
         self.element_count++;
     }
@@ -1993,9 +1897,8 @@ close_menu_game_over()
 
 create_title(title)
 {
-    // tolower or no?
     title_ = isdefined(title) ? title : self get_title();
-    self.menu["hud"]["title"] set_text("MP/NEURA_TITLE_" + title_, "MP_INGAME_ONLY/HP_UNLOCKS_IN");
+    self.menu["hud"]["title"] set_text("MP/NEURA_TITLE_" + title_);
 }
 
 create_summary(summary)
@@ -2010,7 +1913,7 @@ create_summary(summary)
         if (!isdefined(self.menu["hud"]["summary"]))
             self.menu["hud"]["summary"] = self create_text(lol_, "MP_INGAME_ONLY/HQ_AVAILABLE_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 35), self.color[4], 1, 10);
         else
-            self.menu["hud"]["summary"] set_text(lol_, "MP_INGAME_ONLY/HQ_AVAILABLE_IN");
+            self.menu["hud"]["summary"] set_text(lol_);
     }
 }
 
@@ -2271,14 +2174,12 @@ button_monitor(button)
 
     self.button_pressed[button] = false;
     self NotifyOnPlayerCommand("button_pressed_" + button, button);
-    //self NotifyOnPlayerCommand(button, button);
 
     while(1)
     {
         self waittill("button_pressed_" + button);
-        //self iprintln(button);
         self.button_pressed[button] = true;
-        wait .01;
+        wait 0.05;
         self.button_pressed[button] = false;
     }
 }
@@ -2296,7 +2197,7 @@ monitor_buttons()
     self.now_monitoring = true;
     
     if (!isdefined(self.button_actions))
-        self.button_actions = list("special,melee,melee_zoom,melee_breath,stance,gostand,weapnext,actionslot 1,actionslot 2,actionslot 3,actionslot 4,actionslot 5,actionslot 6,actionslot 7,forward,back,moveleft,moveright");
+        self.button_actions = list("frag,smoke,special,melee,melee_zoom,melee_breath,stance,gostand,weapnext,actionslot 1,actionslot 2,actionslot 3,actionslot 4,actionslot 5,actionslot 6,actionslot 7,forward,back,moveleft,moveright");
 
     if (!isdefined(self.button_pressed))
         self.button_pressed = [];
