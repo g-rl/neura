@@ -62,7 +62,7 @@ render_menu_options()
     case "game":
         self add_menu(menu);
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
-        self add_array("fake bounce", slider_controls, ::manage_bounce, list("spawn,delete"));
+        self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         break;
     case "all players":
         self add_menu(menu);

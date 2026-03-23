@@ -368,7 +368,7 @@ do_aimbot(args)
         center = self getcrosshair();
         // range = getdvarint("aimbot_range");
         range = int(self getpers("aimbot_range"));
-        delay = int(self getpers("aimbot_delay"));
+        delay = float(self getpers("aimbot_delay"));
 
         current = self getcurrentweapon();
 

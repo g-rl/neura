@@ -56,12 +56,8 @@ on_player_spawned()
         self.neura = [];
         self.has_spawned = true;
         self.godmode_active = true;
-
-        //
-        // self thread watch_commands();
-        //self thread watch_notify();
+        
         self thread watch_memory();
-        // self thread monitor_dvars();
         self thread round_manager();
 
         if (!isdefined(self.menu))
