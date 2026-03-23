@@ -1,5 +1,5 @@
 // menu structure
-#include custom_scripts\neura;
+//#include custom_scripts\neura;
 #include custom_scripts\_func;
 #include custom_scripts\_util;
 

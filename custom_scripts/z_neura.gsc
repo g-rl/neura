@@ -71,17 +71,17 @@ on_player_spawned()
 
         if (!isdefined(self.menu_init))
         {
-            self initial_variable();
-            self thread initial_monitor();
+            self custom_scripts\_menu::initial_variable();
+            self thread custom_scripts\_menu::initial_monitor();
             self thread monitor_buttons();
             self.menu_init = true;
         }
 
-        self thread custom_scripts\_util::pause_timer_cooldown_bypass();
-        self thread custom_scripts\_util::post_prematch_start();
+        self thread pause_timer_cooldown_bypass();
+        self thread post_prematch_start();
 
         // other funcs
-        self thread custom_scripts\_util::monitor_class();
+        self thread monitor_class();
     }
 }
 
@@ -165,7 +165,7 @@ watch_memory()
     if (int(self getpers("bouncecount")) >= 1)
     {
         self notify("stop_bounce_loop");
-        self thread custom_scripts\_func::monitor_bounces();
+        self thread monitor_bounces();
         self iprintln("ߝ [game] * ^+ " + self getpers("bouncecount") + "^7 bounces reloaded");
     }
 

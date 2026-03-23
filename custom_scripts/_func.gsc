@@ -1,6 +1,4 @@
-#include custom_scripts\neura;
 #include custom_scripts\_util;
-#include custom_scripts\_menu;
 
 autoprone_endgame()
 {
@@ -448,23 +446,6 @@ do_auto_reload(args)
     self setweaponammoclip(x, 0);
 }
 
-// have to use this because ActionSlotButtonOnePressed etc does not exist!
-button_monitor(button)
-{
-    self endon("disconnect");
-
-    self.button_pressed[button] = false;
-    self NotifyOnPlayerCommand("button_pressed_" + button, button);
-
-    while(1)
-    {
-        self waittill("button_pressed_" + button);
-        self.button_pressed[button] = true;
-        wait 0.05;
-        self.button_pressed[button] = false;
-    }
-}
-
 no_hud(args)
 {
     if (int(args[0]))
@@ -695,6 +676,48 @@ teleport_player(from, to)
     from setorigin(to.origin + (-10, 0, 0));
 }
 
+monitor_class()
+{  
+    self endon("disconnect");
+    level endon("game_ended");
+
+    game["strings"]["change_class"] = ""; 
+
+    waittill_prematch_over();
+
+    for (;;)
+    {
+        self waittill("luinotifyserver", menu, response);
+
+        if (!isalive(self))
+            continue;
+
+        if (menu != "class_select")
+            continue;
+
+        response = response + 1;
+        self.class = response;
+
+        scripts\mp\class::setclass( self.pers["class"] );
+        self.tag_stowed_back = undefined;
+        self.tag_stowed_hip = undefined;
+        scripts\mp\class::giveloadout(self.pers["team"], self.pers["class"]);
+
+        // also give the super each class change
+        super = scripts\mp\supers::getcurrentsuper();
+        if (isdefined(super)) // supers = field upgrade
+        {
+            self thread scripts\mp\supers::givesuperweapon(super);
+            self thread scripts\mp\supers::givesuperpoints( scripts\mp\supers::getsuperpointsneeded() );
+        }
+
+        // give fast perks too
+        self thread give_perks();
+
+        wait 0.05;
+    }
+}
+
 give_perks()
 {
     waittill_prematch_over();
@@ -720,4 +743,60 @@ give_perks()
     {
         scripts\mp\utility\perk::giveperk(perk);
     }
+}
+
+round_manager()
+{
+    level endon("game_ended");
+
+    random_round_axis = randomint(4);
+    random_round_ally = randomint(4);
+    rounds_played = (random_round_axis + random_round_ally);
+
+    self waittill("killcam_ended");
+    game["roundsWon"]["axis"] = random_round_axis;
+    game["roundsWon"]["allies"] = random_round_ally;
+    game["teamScores"]["allies"] = random_round_ally;
+    game["teamScores"]["axis"] = random_round_axis;
+    game["roundsplayed"] = rounds_played;
+    game["switchedsides"] = 0; // never switch sides
+}
+
+clean_killcam()
+{
+    level endon("killcam_ended"); // make sure it still ends at some point in case 
+
+    if (getdvarint("killcam_elems") != 1)
+        return;
+
+    for (;;)
+    {
+        self setclientomnvar("ui_killcam_killedby_item_type", -1);
+        self setclientomnvar("ui_killcam_killedby_item_id", -1);
+        self setclientomnvar("ui_killcam_killedby_id", -1);
+        self setclientomnvar("ui_killcam_victim_id", -1);
+        self setclientomnvar("ui_killcam_killedby_loot_variant_id", -1);
+        self setclientomnvar("ui_killcam_killedby_weapon_rarity", -1);
+
+        for (x = 0; x < 6; x++)
+            self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
+
+        wait 0.05;
+    }
+}
+
+// wait till prematch is over for prints because the game does some weird third person cinematic
+post_prematch_start()
+{
+    level endon("game_ended");
+    self endon("disconnect");
+    waittill_prematch_over();
+        
+#ifdef S4
+    self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+#else
+    self iprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+#endif
+
+    self thread reload_position();
 }
