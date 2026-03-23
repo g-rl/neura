@@ -62,9 +62,7 @@ on_player_spawned()
         //self thread watch_notify();
         self thread watch_memory();
         // self thread monitor_dvars();
-        self thread unlimited_eq();
         self thread round_manager();
-        self thread clean_killcam();
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -146,8 +144,16 @@ watch_memory()
     self setpersifuni("timescale", false);
     self setpersifuni("instaswaps_time", 0.19);
     self setpersifuni("aimbot_range", 1200);
+    self setpersifuni("aimbot_range", 0);
     self setpersifuni("autoprone_endgame", true);
     self setpersifuni("autoprone_mode", "air");
+    self setpersifuni("snl", true);
+    self setpersifuni("saveposx", 0);
+    self setpersifuni("saveposy", 0);
+    self setpersifuni("saveposz", 0);
+    self setpersifuni("poschangeby", 10);
+    self setpersifuni("inf_eq", true);
+    self setpersifuni("clean_kc", true);
 
     for (i=1;i<8;i++)
     {
@@ -169,21 +175,23 @@ watch_memory()
         self iprintln("ߝ [game] * ^+ " + self getpers("bouncecount") + "^7 bounces reloaded");
     }
 
-    self loadpers("no_hud", ::watch_hud);
     self loadpers("autoprone", ::do_auto_prone);
     self loadpers("autoreload", ::do_auto_reload);
     self loadpers("instaswaps", ::do_instaswaps);
     self loadpers("aimbot", ::do_aimbot);
     self loadpers("ufo_mode", ::reload_ufo);
-    self loadpers("save_pos", ::setup_snl);
-    self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
-    self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
+    self loadpers("snl", ::setup_snl);
+    self loadpers("inf_eq", ::unlimited_eq);
+    self loadpers("clean_kc", ::clean_killcam);
+    // self loadpers("no_hud", ::watch_hud);
+    // self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
+    // self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
 
     //self loadpers("always_canswap", ::do_always_canswap);
     //self loadpers("refill_bind", ::do_refill_bind);
     //self loadpers("bounce_bind", ::do_bounce_bind, self getpers("bounce_slot"));
     //self loadpers("bolt_movement_bind", ::do_bolt_movement_bind, self getpers("bolt_slot"));
-    //self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
+    // self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
     //self loadpers("velocity_bind", ::do_velocity_bind, self getpers("vel_slot"));
     //self loadpers("damage_bind", ::do_damage_bind, self getpers("damage_slot"));
     //self loadpers("eq_bind", ::do_eq_bind, self getpers("eq_slot"));

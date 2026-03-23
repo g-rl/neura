@@ -12,30 +12,55 @@ render_menu_options()
     // change options msg
     increment_controls = "[{+actionslot 3}] / [{+actionslot 4}] to use slider, no jump needed to select";
     slider_controls = "[{+actionslot 3}] / [{+actionslot 4}] to use slider, [{+gostand}] to select";
+    bind_list = list("nac,instaswap,bounce,bolt movement,velocity,damage,equipment,change class");
 
     switch(menu)
     {
     case "neura":
         self add_menu("neura - " + self get_name());
         self add_option("settings", undefined, ::new_menu, "settings");
+        self add_option("position", undefined, ::new_menu, "position");
+        self add_option("game", undefined, ::new_menu, "game");
         self add_option("aimbot", undefined, ::new_menu, "aimbot");
         self add_option("clients", undefined, ::new_menu, "all players");
         break;
     case "settings":
         self add_menu(menu);
-        self add_option("unstuck", undefined, ::unstuck);
-        self add_toggle("auto prone", undefined, ::autoprone, self.pers["autoprone"]);
+        self add_pers_toggle("infinite equipment", undefined, ::autoprone_endgame, "inf_eq");
+        self add_array("drop item", slider_controls, ::drop_util, list("current,secondary,all"));
+        self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
         self add_array("auto prone mode", slider_controls, ::autoprone_mode, list("air,always"));
-        self add_toggle("end game prone", "try to prone on end", ::autoprone_endgame, self.pers["autoprone_endgame"]);
-        self add_toggle("auto reload", "empty mag at end of round", ::autoreload, self.pers["autoreload"]);
-        self add_toggle("instaswaps", "bo2 instaswaps", ::instaswaps, self.pers["instaswaps"]);
-        self add_increment("instaswaps time", increment_controls, ::instaswaps_time, float(self getpers("instaswaps_time")), 0.1, 1, 0.1);
-        self add_toggle("ufo", "toggle noclip", ::ufo_mode, self.pers["ufo_mode"]);
+        self add_pers_toggle("round end prone", undefined, ::autoprone_endgame, "autoprone_endgame");
+        self add_pers_toggle("auto reload", "empty mag at end of round", ::autoreload, "autoreload");
+        self add_pers_toggle("instaswaps", "bo2 instaswaps", ::instaswaps, "instaswaps");
+        self add_increment("instaswaps time", increment_controls, ::instaswaps_time, float(self getpers("instaswaps_time")), 0.1, 1, 0.01);
+        self add_pers_toggle("ufo", "toggle noclip", ::ufo_mode, "ufo_mode");
+        break;
+    case "position":
+        self add_menu(menu);
+        self add_array("teleport bots", slider_controls, ::move_bots, list("self,crosshair"));
+        self add_option("unstuck", undefined, ::unstuck);
+        self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
+        self add_option("save position", undefined, ::save_spawn);
+        self add_option("load position", undefined, ::load_spawn);
+        if(float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
+        {
+            self add_increment("x", increment_controls, ::pos_x, float(self getpers("saveposx")), -500000, 5000000, float(self getpers("poschangeby")));
+            self add_increment("y", increment_controls, ::pos_y, float(self getpers("saveposy")), -500000, 5000000, float(self getpers("poschangeby")));
+            self add_increment("z", increment_controls, ::pos_z, float(self getpers("saveposz")), -500000, 5000000, float(self getpers("poschangeby")));
+            self add_increment("change by", increment_controls, ::pos_change_by, float(self getpers("poschangeby")), 5, 10000, 5);
+        }
         break;
     case "aimbot":
         self add_menu(menu);
-        self add_toggle("aimbot", undefined, ::aimbot, self.pers["aimbot"]);
-        self add_increment("aimbot range", increment_controls, ::aimbot_range, int(self getpers("aimbot_range")), 100, 5000, 100);
+        self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
+        self add_increment("range", increment_controls, ::aimbot_range, int(self getpers("aimbot_range")), 100, 5000, 100);
+        self add_increment("delay", increment_controls, ::aimbot_delay, float(self getpers("aimbot_delay")), 0, 1, 0.05);
+        break;
+    case "game":
+        self add_menu(menu);
+        self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
+        self add_array("fake bounce", slider_controls, ::manage_bounce, list("spawn,delete"));
         break;
     case "all players":
         self add_menu(menu);
@@ -533,6 +558,43 @@ add_option(text, summary, function, argument_1, argument_2, argument_3)
     self.structure[self.structure.size] = option;
 }
 
+add_bind(text, summary, function, pers, argument_1, argument_2, argument_3)
+{
+    option            = [];
+    option["text"]       = text;
+    option["summary"]    = summary;
+    option["function"]   = function;
+    option["slider"]     = true;
+    option["is_array"]   = true;
+    option["array"]      = list("off,[{+actionslot 1}],[{+actionslot 2}],[{+actionslot 3}],[{+actionslot 4}]");
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+    
+    self.structure[self.structure.size] = option;
+}
+
+add_pers_toggle(text, summary, function, toggle, array, argument_1, argument_2, argument_3)
+{
+    option          = [];
+    option["text"]     = text;
+    option["summary"]  = summary;
+    option["function"] = function;
+    option["toggle"]   = is_true(self.pers[toggle]);
+    if (isdefined(array))
+    {
+        option["slider"] = true;
+        option["is_array"] = true;
+        option["array"]  = array;
+    }
+
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+
+    self.structure[self.structure.size] = option;
+}
+
 add_toggle(text, summary, function, toggle, array, argument_1, argument_2, argument_3)
 {
     option          = [];
@@ -563,22 +625,6 @@ add_array(text, summary, function, array, argument_1, argument_2, argument_3)
     option["slider"]     = true;
     option["is_array"]   = true;
     option["array"]      = array;
-    option["argument_1"] = argument_1;
-    option["argument_2"] = argument_2;
-    option["argument_3"] = argument_3;
-
-    self.structure[self.structure.size] = option;
-}
-
-add_bind(text, summary, function, argument_1, argument_2, argument_3)
-{
-    option            = [];
-    option["text"]       = text;
-    option["summary"]    = summary;
-    option["function"]   = function;
-    option["slider"]     = true;
-    option["is_array"]   = true;
-    option["array"]      = "[{" + list("+actionslot 1,+actionslot 2,+actionslot 3,+actionslot 4") + "}]";
     option["argument_1"] = argument_1;
     option["argument_2"] = argument_2;
     option["argument_3"] = argument_3;

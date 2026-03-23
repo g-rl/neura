@@ -10,14 +10,106 @@ autoprone_mode(value)
     self setpers("autoprone_mode", value);
 }
 
+aimbot_delay(value)
+{
+    self setpers("aimbot_delay", float(value));
+}
+
 aimbot_range(value)
 {
     self setpers("aimbot_range", int(value));
 }
 
+class_wrap(value)
+{
+    self setpers("class_wrap", int(value));
+}
+
 instaswaps_time(value)
 {
     self setpers("instaswaps_time", float(value));
+}
+
+pos_x(value)
+{
+    self setpers("saveposx", float(value));
+}
+
+pos_y(value)
+{
+    self setpers("saveposy", float(value));
+}
+
+pos_z(value)
+{
+    self setpers("saveposz", float(value));
+}
+
+pos_change_by(value)
+{
+    self setpers("poschangeby", int(value));
+}
+
+actionslot_to_func(actionslot)
+{
+    switch(actionslot)
+    {
+    case "[{+actionslot 1}]":
+        return "-actionslot 1";
+    case "[{+actionslot 2}]":
+        return "-actionslot 2";
+    case "[{+actionslot 3}]":
+        return "-actionslot 3";
+    case "[{+actionslot 4}]":
+        return "-actionslot 4";
+    default:
+        break;
+    }
+}
+
+do_class_bind(slot)
+{
+    self notify("stop_class_bind");
+    self endon("disconnect");
+    self endon("stop_class_bind");
+    level endon("game_ended");
+
+    if (slot == "off")
+    {
+        self notify("stop_class_bind");
+        self setpers("class_bind", false);
+        return;
+    }
+
+    slot = actionslot_to_func(slot);
+    self setpers("class_bind", true);
+    self setpers("class_slot", slot);
+
+    for (;;)
+    {
+        self waittill("+actionslot " + int(slot));
+
+        index = int(scripts\mp\class::getclassindex(self.class) + 1);
+        index++;
+
+        if (index > int(self getpers("class_wrap"))) 
+        {
+            index = 1;
+        }
+
+        self.class = "custom" + index;
+        scripts\mp\class::setclass(self.class);
+        self.tag_stowed_back = undefined;
+        self.tag_stowed_hip = undefined;
+        scripts\mp\class::giveloadout(self.pers["team"], self.class);
+
+        super = scripts\mp\supers::getcurrentsuper();
+        if (isdefined(super)) // supers = field upgrade
+        {
+            self thread scripts\mp\supers::givesuperweapon(super);
+            self thread scripts\mp\supers::givesuperpoints( scripts\mp\supers::getsuperpointsneeded() );
+        }
+    }
 }
 
 do_nac_bind(args, slot)
@@ -84,22 +176,25 @@ load_pos_bind()
 save_spawn()
 {
     self setpers("position", true);
-    self setpers("saved_origin", self.origin);
-    self setpers("saved_angles", self getplayerangles());
+    self setpers("saveposx", self getorigin()[0]);
+    self setpers("saveposy", self getorigin()[1]);
+    self setpers("saveposz", self getorigin()[2]);
+    self setpers("saveangles1", self getplayerangles()[0]);
+    self setpers("saveangles2", self getplayerangles()[1]);
+    self setpers("saveangles3", self getplayerangles()[2]);
 }
 
 load_spawn()
 {
-    if (!self.pers["position"])
+    if(float(self getpers("saveposx")) == 0 && float(self getpers("saveposy")) == 0 && float(self getpers("saveposz")) == 0)
     {
         self iprintlnbold("^6save a position first");
         return;
     }
 
     self setvelocity((0, 0, 0));
-    self setorigin(self getpers("saved_origin"));
-    self setplayerangles(self getpers("saved_angles"));
-    self setvelocity((0, 0, 0));
+    self setorigin((float(self getpers("saveposx")), float(self getpers("saveposy")), float(self getpers("saveposz"))));
+    self setplayerangles((0, float(self getpers("saveangles2")), 0));
 }
 
 reload_position()
@@ -318,6 +413,7 @@ do_aimbot(args)
         center = self getcrosshair();
         // range = getdvarint("aimbot_range");
         range = int(self getpers("aimbot_range"));
+        delay = int(self getpers("aimbot_delay"));
 
         current = self getcurrentweapon();
 
@@ -333,6 +429,11 @@ do_aimbot(args)
                     if (distance(player getorigin_(), center) < range)
                     {
                         iprintln("bruh.....");
+
+                        if (delay > 0)
+                        {
+                            wait (delay);
+                        }
 
 #ifdef S4
                         // callbackplayerdamage isnt named yet
@@ -531,6 +632,22 @@ monitor_dvars()
     //self thread watch_weapon_camo();
 }
 
+toggle_inf_eq()
+{
+    self.pers["inf_eq"] = !toggle(self.pers["inf_eq"]);
+
+    if (self getpers("inf_eq"))
+    {
+        self iprintln("infinite equipment ^2on");
+        self thread unlimited_eq();
+    }
+    else
+    {
+        self iprintln("infinite equipment ^1off");
+        self notify("stop_unlimited_eq");
+    }
+}
+
 unlimited_eq()
 {
     self endon("disconnect");
@@ -602,7 +719,7 @@ monitor_bounces()
         {
             pos = perstovector(self getpers("bouncepos" + i));
 
-            if (distance(self getorigin_(), pos) < 90 && self getvelocity()[2] < -250)
+            if (distance(self getorigin_(), pos) < 90 && self getvelocity()[2] < -250) // ? getorigin_ is messing this up i think
             {
                 self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
                 wait 0.2;
@@ -762,12 +879,26 @@ round_manager()
     game["switchedsides"] = 0; // never switch sides
 }
 
+toggle_clean_kc()
+{
+    self.pers["clean_kc"] = !toggle(self.pers["clean_kc"]);
+
+    if (self getpers("clean_kc"))
+    {
+        self iprintln("clean killcam ^2on");
+        self thread clean_killcam();
+    }
+    else
+    {
+        self iprintln("clean killcam ^1off");
+        self notify("stop_clean_killcam");
+    }
+}
+
 clean_killcam()
 {
+    self endon("stop_clean_killcam");
     level endon("killcam_ended"); // make sure it still ends at some point in case 
-
-    if (getdvarint("killcam_elems") != 1)
-        return;
 
     for (;;)
     {
