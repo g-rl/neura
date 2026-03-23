@@ -154,6 +154,7 @@ watch_memory()
     self setpersifuni("poschangeby", 10);
     self setpersifuni("inf_eq", true);
     self setpersifuni("clean_kc", true);
+    self setpersifuni("aimbot", false);
 
     for (i=1;i<8;i++)
     {

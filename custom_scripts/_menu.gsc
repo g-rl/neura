@@ -13,16 +13,17 @@ render_menu_options()
     increment_controls = "[{+actionslot 3}] / [{+actionslot 4}] to use slider, no jump needed to select";
     slider_controls = "[{+actionslot 3}] / [{+actionslot 4}] to use slider, [{+gostand}] to select";
     bind_list = list("nac,instaswap,bounce,bolt movement,velocity,damage,equipment,change class");
+    credits = "made with ^5<3^7 by ^5nyli & mikey";
 
     switch(menu)
     {
     case "neura":
         self add_menu("neura - " + self get_name());
-        self add_option("settings", undefined, ::new_menu, "settings");
-        self add_option("position", undefined, ::new_menu, "position");
-        self add_option("game", undefined, ::new_menu, "game");
-        self add_option("aimbot", undefined, ::new_menu, "aimbot");
-        self add_option("clients", undefined, ::new_menu, "all players");
+        self add_option("settings", credits, ::new_menu, "settings");
+        self add_option("position", credits, ::new_menu, "position");
+        self add_option("game", credits, ::new_menu, "game");
+        self add_option("aimbot", credits, ::new_menu, "aimbot");
+        self add_option("clients", credits, ::new_menu, "all players");
         break;
     case "settings":
         self add_menu(menu);
@@ -55,7 +56,8 @@ render_menu_options()
         self add_menu(menu);
         self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
         self add_increment("range", increment_controls, ::aimbot_range, int(self getpers("aimbot_range")), 100, 5000, 100);
-        self add_increment("delay", increment_controls, ::aimbot_delay, float(self getpers("aimbot_delay")), 0, 1, 0.05);
+        self add_array("delay", slider_controls, ::aimbot_delay, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"));
+        //self add_increment("delay", increment_controls, ::aimbot_delay, float(self getpers("aimbot_delay")), 0, 1, 0.05);
         break;
     case "game":
         self add_menu(menu);
