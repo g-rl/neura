@@ -67,51 +67,6 @@ actionslot_to_func(actionslot)
     }
 }
 
-do_class_bind(slot)
-{
-    self notify("stop_class_bind");
-    self endon("disconnect");
-    self endon("stop_class_bind");
-    level endon("game_ended");
-
-    if (slot == "off")
-    {
-        self notify("stop_class_bind");
-        self setpers("class_bind", false);
-        return;
-    }
-
-    slot = actionslot_to_func(slot);
-    self setpers("class_bind", true);
-    self setpers("class_slot", slot);
-
-    for (;;)
-    {
-        self waittill("+actionslot " + int(slot));
-
-        index = int(scripts\mp\class::getclassindex(self.class) + 1);
-        index++;
-
-        if (index > int(self getpers("class_wrap"))) 
-        {
-            index = 1;
-        }
-
-        self.class = "custom" + index;
-        scripts\mp\class::setclass(self.class);
-        self.tag_stowed_back = undefined;
-        self.tag_stowed_hip = undefined;
-        scripts\mp\class::giveloadout(self.pers["team"], self.class);
-
-        super = scripts\mp\supers::getcurrentsuper();
-        if (isdefined(super)) // supers = field upgrade
-        {
-            self thread scripts\mp\supers::givesuperweapon(super);
-            self thread scripts\mp\supers::givesuperpoints( scripts\mp\supers::getsuperpointsneeded() );
-        }
-    }
-}
-
 do_nac_bind(args, slot)
 {
     self endon("disconnect");
