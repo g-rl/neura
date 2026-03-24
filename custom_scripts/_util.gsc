@@ -1,5 +1,20 @@
-
 void() {}
+
+nprintln(text)
+{
+    if (self getpers("messages"))
+        return;
+
+    self iprintln(text);
+}
+
+nprintlnbold(text)
+{
+    if (!self getpers("messages"))
+        return;
+
+    self iprintlnbold(text);
+}
 
 monitor_buttons() 
 {
@@ -78,7 +93,19 @@ haspers(pers)
     return isdefined(self.pers[pers]);
 }
 
-// utility
+loadpers(key, func, args)
+{
+    if (!self haspers(key))
+    {
+        self setpersifuni(key, false);
+        return;
+    }
+
+    wait 0.05;
+
+    // we call any function passed through loadpers with args no matter what - THIS CAN BE UNDEFINED
+    self thread [[func]](args);
+}
 
 createcommand(command, desc, callback)
 {
@@ -116,20 +143,6 @@ getenemyplayer()
             return player;
 
     return self;
-}
-
-loadpers(key, func, args)
-{
-    if (!self haspers(key))
-    {
-        self setpersifuni(key, false);
-        return;
-    }
-
-    wait 0.05;
-
-    // we call any function passed through loadpers with args no matter what - THIS CAN BE UNDEFINED
-    self thread [[func]](args);
 }
 
 unstuck()
@@ -183,7 +196,7 @@ takegood(gun)
     self takeweapon(gun);
 }
 
-givegood(gun) 
+givegood(gun)
 {
     self giveweapon(self.goodgun);
     self setweaponammoclip(self.goodgun, self.getclip);
@@ -262,9 +275,9 @@ instaswapto(weapon)
     self givegood(x);
 }
 
-getorigin_() 
+getorigin_() // so self.origin on iw8 glitches out bounces etc so
 { 
-    return self.origin; 
+    return self getorigin();
 }
 
 toggle(variable) 
@@ -310,4 +323,9 @@ button_monitor(button)
         wait 0.05;
         self.button_pressed[button] = false;
     }
+}
+
+getbasename(weapon)
+{
+    return weapon.basename;
 }

@@ -50,6 +50,9 @@ on_player_spawned()
         // give this stuff every spawn
         self thread give_perks();
 
+        if (is_true(self getpers("position")))
+            self thread load_spawn(); // jus gonna thread this
+
         if (self.has_spawned)
             continue;
 
@@ -59,6 +62,8 @@ on_player_spawned()
         
         self thread watch_memory();
         self thread round_manager();
+        self thread do_nac_bind();
+        self thread do_instaswap_bind();
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -125,6 +130,9 @@ watch_memory()
 
     self setpers("lives", 99);
 
+    camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"];
+    camo = camos[randomint(camos.size)];
+    self setpersifuni("camo", "camo_11b");
     self setpersifuni("unstuck", self.origin);
     self setpersifuni("velx", 250);
     self setpersifuni("vely", 250);
@@ -140,17 +148,18 @@ watch_memory()
     self setpersifuni("timescale", false);
     self setpersifuni("instaswaps_time", 0.19);
     self setpersifuni("aimbot_range", 1200);
-    self setpersifuni("aimbot_range", 0);
-    self setpersifuni("autoprone_endgame", true);
-    self setpersifuni("autoprone_mode", "air");
-    self setpersifuni("snl", true);
+    self setpersifuni("aimbot_delay", 0);
     self setpersifuni("saveposx", 0);
     self setpersifuni("saveposy", 0);
     self setpersifuni("saveposz", 0);
     self setpersifuni("poschangeby", 10);
     self setpersifuni("inf_eq", true);
     self setpersifuni("clean_kc", true);
-    self setpersifuni("aimbot", false);
+    self setpersifuni("watch_weapons", false);
+    self setpersifuni("snl", true);
+    self setpersifuni("autoprone_endgame", true);
+    self setpersifuni("autoprone_mode", "air");
+    self setpersifuni("frozen_bots", true);
 
     for (i=1;i<8;i++)
     {
@@ -180,6 +189,8 @@ watch_memory()
     self loadpers("snl", ::setup_snl);
     self loadpers("inf_eq", ::unlimited_eq);
     self loadpers("clean_kc", ::clean_killcam);
+    self loadpers("watch_weapons", ::watch_weaps);
+    self loadpers("invincible", ::godmode_loop);
     // self loadpers("no_hud", ::watch_hud);
     // self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
     // self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));

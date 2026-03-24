@@ -14,6 +14,7 @@ render_menu_options()
     slider_controls = "[{+actionslot 3}] / [{+actionslot 4}] to use slider, [{+gostand}] to select";
     bind_list = list("nac,instaswap,bounce,bolt movement,velocity,damage,equipment,change class");
     credits = "made with ^5<3^7 by ^5nyli & mikey";
+    weapon = getbasename(self getcurrentweapon());
 
     switch(menu)
     {
@@ -21,14 +22,15 @@ render_menu_options()
         self add_menu("neura - " + self get_name());
         self add_option("settings", credits, ::new_menu, "settings");
         self add_option("position", credits, ::new_menu, "position");
+        self add_option("class", credits, ::new_menu, "class");
         self add_option("game", credits, ::new_menu, "game");
         self add_option("aimbot", credits, ::new_menu, "aimbot");
         self add_option("clients", credits, ::new_menu, "all players");
         break;
     case "settings":
         self add_menu(menu);
-        self add_pers_toggle("infinite equipment", undefined, ::autoprone_endgame, "inf_eq");
-        self add_array("drop item", slider_controls, ::drop_util, list("current,secondary,all"));
+        self add_pers_toggle("invincibility", undefined, ::toggle_invincibility, "invincible");
+        self add_pers_toggle("infinite equipment", undefined, ::toggle_inf_eq, "inf_eq");
         self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
         self add_array("auto prone mode", slider_controls, ::autoprone_mode, list("air,always"));
         self add_pers_toggle("round end prone", undefined, ::autoprone_endgame, "autoprone_endgame");
@@ -40,6 +42,7 @@ render_menu_options()
     case "position":
         self add_menu(menu);
         self add_array("teleport bots", slider_controls, ::move_bots, list("self,crosshair"));
+        self add_pers_toggle("freeze bots", undefined, ::frozen_bots, "frozen_bots");
         self add_option("unstuck", undefined, ::unstuck);
         self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
         self add_option("save position", undefined, ::save_spawn);
@@ -59,9 +62,20 @@ render_menu_options()
         self add_array("delay", slider_controls, ::aimbot_delay, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"));
         //self add_increment("delay", increment_controls, ::aimbot_delay, float(self getpers("aimbot_delay")), 0, 1, 0.05);
         break;
+    case "class":
+        self add_menu(menu);
+        self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
+        self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all,current"));
+        self add_option("take weapon", undefined, ::takecurrent);
+        // self add_option("primaries", credits, ::new_menu, "primaries");
+        // self add_option("secondaries", credits, ::new_menu, "secondaries");
+        // self add_option("give sniper test", undefined, ::give_weapon, "iw8_sn_alpha50_mp");
+        break;
     case "game":
         self add_menu(menu);
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
+        self add_pers_toggle("weapon name monitor", holding, ::toggle_weapon_debug, "watch_weapons");
+        self add_pers_toggle("messages", undefined, ::toggle_messages, "messages");
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         break;
     case "all players":
@@ -90,8 +104,11 @@ player_index(menu, player)
     case "player option":
         self add_menu(player.name);
         self add_option("kill player", undefined, ::kill_player, player);
+        self add_option("look at me", undefined, ::look_at_me, player);
+        self add_option("give shield", undefined, ::give_player_shield, player);
         self add_option("teleport to me", undefined, ::teleport_player, player, self);
         self add_option("teleport to them", undefined, ::teleport_player, self, player);
+        self add_option("teleport to cross", undefined, ::teleport_to_cross, player);
         break;
     case "unassigned":
         self add_menu(menu);

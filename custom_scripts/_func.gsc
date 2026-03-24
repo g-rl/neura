@@ -1,5 +1,40 @@
 #include custom_scripts\_util;
 
+toggle_weapon_debug()
+{
+    self.pers["watch_weapons"] = !toggle(self.pers["watch_weapons"]);
+
+    if (self getpers("watch_weapons"))
+        self thread watch_weaps();
+    else
+        self notify("stop_weapon_monitor");
+}
+
+watch_weaps()
+{
+    self endon("disconnect");
+    self endon("stop_weapon_monitor");
+    level endon("game_ended");
+
+    for(;;)
+    {
+        self waittill("weapon_change", weapon);
+        weapon = weapon.basename;
+        self nprintln("^5" + weapon);
+        print(weapon);
+    }
+}
+
+toggle_messages()
+{
+    self.pers["messages"] = !toggle(self.pers["messages"]);
+}
+
+frozen_bots()
+{
+    self.pers["frozen_bots"] = !toggle(self.pers["frozen_bots"]);
+}
+
 autoprone_endgame()
 {
     self.pers["autoprone_endgame"] = !toggle(self.pers["autoprone_endgame"]);
@@ -74,8 +109,12 @@ do_nac_bind(args, slot)
     level endon("game_ended");
     for (;;)
     {
-        self waittill("-actionslot " + slot);
-        self nacto(self getnextweapon());
+        self waittill("-actionslot " + 3);
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self nacto(self getnextweapon());
+            wait 0.05;
+        }
     }
 }
 
@@ -87,9 +126,13 @@ do_instaswap_bind(args, slot)
 
     for (;;)
     {
-        self waittill("-actionslot " + slot);
-        self instaswapto(self getnextweapon());
-        wait 0.05;
+        self waittill("-actionslot " + 1);
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self instaswapto(self getnextweapon());
+            wait 0.05;
+        }
     }
 }
 
@@ -104,9 +147,9 @@ save_pos_bind()
         if (self getstance() == "crouch")
         {
             self thread save_spawn();
-            self iprintlnbold("ߝ [position] * saved @ ^6" + self.origin);
+            self nprintlnbold("ߝ [position] * saved @ ^6" + self.origin);
             wait 1;
-            self iprintlnbold(" ");
+            self nprintlnbold(" ");
             wait 0.05;
         }
     }
@@ -143,7 +186,7 @@ load_spawn()
 {
     if(float(self getpers("saveposx")) == 0 && float(self getpers("saveposy")) == 0 && float(self getpers("saveposz")) == 0)
     {
-        self iprintlnbold("^6save a position first");
+        self nprintlnbold("^6save a position first");
         return;
     }
 
@@ -154,7 +197,7 @@ load_spawn()
 
 reload_position()
 {
-    if (isdefined(self.pers["position"]) && self.pers["position"])
+    if (self getpers("position"))
         self load_spawn();
     else   
         self save_spawn();
@@ -166,12 +209,10 @@ toggle_snl()
 
     if (self getpers("snl"))
     {
-        self iprintln("save and load ^2on");
         self thread setup_snl();
     }
     else
     {
-        self iprintln("save and load ^1off");
         self notify("stop_snl");
     }
 }
@@ -180,6 +221,50 @@ setup_snl(args)
 {
     self thread save_pos_bind();
     self thread load_pos_bind();
+}
+
+toggle_invincibility()
+{
+    self.pers["invincible"] = !toggle(self.pers["invincible"]);
+
+    if (self getpers("invincible"))
+    {
+        self thread godmode_loop();
+    }
+    else
+    {
+        self notify("stop_godmode");
+        setdvar("NKTQRKRMTS", self.fall_height);
+        self.fall_height = undefined;
+        self.no_damage = undefined;
+    }
+}
+
+godmode_loop()
+{
+    self endon("disconnect");
+    self endon("stop_godmode");
+    level endon("game_ended");
+
+    if (!isdefined(self.fall_height))
+    {
+        self.fall_height = getdvarfloat("NKTQRKRMTS", 200.0);
+    }
+
+    setdvar("NKTQRKRMTS", 10000.0);
+    self.maxhealth = 999999;
+    self.health = 999999;
+    self.no_damage = true;
+
+    for (;;)
+    {
+        self waittill("damage", var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9);
+
+        if (is_true(self.no_damage))
+        {
+            self.health = self.maxhealth;
+        }
+    }
 }
 
 reload_ufo(args)
@@ -195,14 +280,14 @@ ufo_mode()
 
     if (!self.pers["ufo_mode"])
     {
-        self iprintln("ufo mode ^2on");
+        self nprintln("ufo mode ^2on");
         self.isactive = 0;
         self.noclipmonitor = 1;
         self thread noclip_monitor();
     }
     else if (self.pers["ufo_mode"])
     {
-        self iprintln("ufo mode ^1off");
+        self nprintln("ufo mode ^1off");
         self notify("stop_noclip");
         self.isactive = 0;
         self.noclipanchor = undefined;
@@ -293,12 +378,12 @@ instaswaps()
 
     if (!self.pers["instaswaps"])
     {
-        self iprintln("bo2 instaswaps ^2on");
+        self nprintln("bo2 instaswaps ^2on");
         self thread do_instaswaps();
     }
     else if (self.pers["instaswaps"])
     {
-        self iprintln("bo2 instaswaps ^1off");
+        self nprintln("bo2 instaswaps ^1off");
         self notify("stop_instaswaps");
     }
 
@@ -345,12 +430,10 @@ aimbot()
 
     if (self getpers("aimbot"))
     {
-        self iprintln("aimbot ^2on");
         self thread do_aimbot();
     }
     else
     {
-        self iprintln("aimbot ^1off");
         self notify("stop_auto_prone");
     }
 }
@@ -366,7 +449,6 @@ do_aimbot(args)
         self waittill("weapon_fired");
 
         center = self getcrosshair();
-        // range = getdvarint("aimbot_range");
         range = int(self getpers("aimbot_range"));
         delay = float(self getpers("aimbot_delay"));
 
@@ -381,9 +463,9 @@ do_aimbot(args)
             {
                 if (player != self)
                 {
-                    if (distance(player getorigin_(), center) < range)
+                    if (distance(player.origin, center) < range)
                     {
-                        iprintln("bruh.....");
+                        // nprintln("bruh.....");
 
                         if (delay > 0)
                         {
@@ -410,12 +492,10 @@ autoprone()
 
     if (self getpers("autoprone"))
     {
-        self iprintln("auto prone ^2on");
         self thread do_auto_prone();
     }
     else
     {
-        self iprintln("auto prone ^1off");
         self notify("stop_auto_prone");
     }
 }
@@ -484,12 +564,10 @@ autoreload()
 
     if (self getpers("autoreload"))
     {
-        self iprintln("auto reload ^2on");
         self thread do_auto_reload();
     }
     else
     {
-        self iprintln("auto reload ^1off");
         self notify("stop_auto_reload");
     }
 }
@@ -500,23 +578,6 @@ do_auto_reload(args)
     level waittill("game_ended");
     x = self getcurrentweapon();
     self setweaponammoclip(x, 0);
-}
-
-no_hud(args)
-{
-    if (int(args[0]))
-    {
-        self notify("stop_watching_hud");
-        self thread watch_hud();
-        self setpers("no_hud", true);
-    }
-    else
-    {
-        self notify("stop_watching_hud");
-        self setclientomnvar("ui_hide_full_hud", 0);
-        setdvar("LOPKSRNTTS", 0);
-        self setpers("no_hud", false);
-    }
 }
 
 watch_hud(args)
@@ -564,7 +625,7 @@ drop_util(type)
             }
             break;
         default:
-            self iprintln("^6use canswap, current, alt, primary, or all..");
+            self nprintln("^6use canswap, current, alt, primary, or all..");
             break;        
     }
 }
@@ -593,12 +654,10 @@ toggle_inf_eq()
 
     if (self getpers("inf_eq"))
     {
-        self iprintln("infinite equipment ^2on");
         self thread unlimited_eq();
     }
     else
     {
-        self iprintln("infinite equipment ^1off");
         self notify("stop_unlimited_eq");
     }
 }
@@ -629,7 +688,7 @@ manage_bounce(mode)
             self thread delete_bounce();
             break;
         default:
-            self iprintln("^6use spawn or delete..");
+            self nprintln("^6use spawn or delete..");
             break;        
     }
 }
@@ -641,7 +700,7 @@ spawn_bounce()
 
     self setpers("bouncecount", x);
     self setpers("bouncepos" + x, self getorigin_()[0] + "," + self getorigin_()[1] + "," + self getorigin_()[2]);
-    self iprintln("bounce #" + x + " spawned at ^6" + self getorigin_());
+    self nprintln("bounce #" + x + " spawned at ^6" + self getorigin_());
 
     if (x == 1)
     {
@@ -655,11 +714,11 @@ delete_bounce()
     x = int(self getpers("bouncecount"));
 
     if (x == 0)
-        return self iprintln("ߝ [game] * ^+no bounces to delete");
+        return self nprintln("ߝ [game] * ^+no bounces to delete");
 
     x--;
     self setpers("bouncecount", x);
-    self iprintln("ߝ [game] * ^+bounce #" + x + " deleted");
+    self nprintln("ߝ [game] * ^+bounce #" + x + " deleted");
 }
 
 monitor_bounces()
@@ -692,6 +751,11 @@ freeze_loop()
 
     for (;;)
     {
+        if (!is_true(self getpers("frozen_bots")))
+        {
+            continue;
+        }
+
         self freezecontrols(1);
         wait 0.05;
     }
@@ -710,7 +774,7 @@ move_bots(args)
             {
                 player setorigin(self.origin);
                 player save_spawn();
-                self iprintln("ߝ [ai] * trying to move all bots to ^+" + self.origin);
+                self nprintln("ߝ [ai] * trying to move all bots to ^+" + self.origin);
                 self playlocalsound("recon_drone_marked_owner");
             }
         }
@@ -722,7 +786,7 @@ move_bots(args)
             {
                 player setorigin(self getcrosshair());
                 player save_spawn();
-                self iprintln("ߝ [ai] * trying to move all bots to ^+" + self getcrosshair());
+                self nprintln("ߝ [ai] * trying to move all bots to ^+" + self getcrosshair());
                 self playlocalsound("recon_drone_marked_owner");
             }
         }
@@ -734,14 +798,14 @@ move_bots(args)
 kill_player(player)
 {
     player suicide();
-    self iprintln("killed ^1" + player.name);
+    self nprintln("killed ^1" + player.name);
 }
 
 teleport_player(from, to)
 {
     if (from == to)
     {
-        from iprintln("^1you cannot teleport to yourself.");
+        from nprintln("^1you cannot teleport to yourself.");
         return;
     }
 
@@ -840,12 +904,10 @@ toggle_clean_kc()
 
     if (self getpers("clean_kc"))
     {
-        self iprintln("clean killcam ^2on");
         self thread clean_killcam();
     }
     else
     {
-        self iprintln("clean killcam ^1off");
         self notify("stop_clean_killcam");
     }
 }
@@ -879,10 +941,178 @@ post_prematch_start()
     waittill_prematch_over();
         
 #ifdef S4
-    self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    self nprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 #else
-    self iprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    self nprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 #endif
 
     self thread reload_position();
+}
+
+look_at_me(player)
+{
+    player setplayerangles(vectortoangles(((self.origin)) - (player gettagorigin("j_head"))));
+}
+
+takecurrent()
+{
+    self takeweapon(self getcurrentweapon());
+}
+
+give_player_shield(player)
+{
+    player giveweapon("iw8_me_riotshield_mp");
+    player setspawnweapon("iw8_me_riotshield_mp");
+    player setorigin(player.origin - (0,0,2));
+}
+
+teleport_to_cross(player)
+{
+    player setorigin(self getcrosshair());
+    self look_at_me(player);
+}
+
+refill_my_ammo(args)
+{
+    switch (args)
+    {
+        case "all":
+            self thread refill_all_ammo();
+        case "current":
+            self thread refill_weapon_ammo();
+        default:
+            self nprintln("ߝ [weapon] * ^+unknown args '" + args + "'. falling back..");
+            self thread refill_all_ammo();
+    }
+    self playlocalsound("scavenger_pack_pickup");
+}
+
+refill_all_ammo()
+{
+    level endon("game_ended"); // just in case
+
+    items = self.equippedweapons;
+    foreach ( item in items )
+    {
+        self givemaxammo( item );
+        self setweaponammostock( item, 999 );
+        self setweaponammoclip( item, 999 );
+        self setweaponammoclip( item, 999, "left" );
+        self setweaponammoclip( item, 999, "right" );
+        self setweaponammoclip( item, 999, "_encstr_8253060E2B5FE330" );
+        self setweaponammoclip( item, 999, "_encstr_9353062E718710C9" );
+        self setweaponammoclip( item, 999, "_encstr_A5AD056A019C63" );
+        self setweaponammoclip( item, 999, "_encstr_B1AD05C65666E8" );
+        wait 0.05;
+    }
+}
+
+refill_weapon_ammo( item )
+{
+    self givemaxammo( item );
+    self setweaponammostock( item, 999 );
+    self setweaponammoclip( item, 999 );
+    self setweaponammoclip( item, 999, "left" );
+    self setweaponammoclip( item, 999, "right" );
+    self setweaponammoclip( item, 999, "_encstr_A5AD056A019C63" );
+    self setweaponammoclip( item, 999, "_encstr_B1AD05C65666E8" );
+    self setweaponammoclip( item, 999, "_encstr_8253060E2B5FE330" );
+    self setweaponammoclip( item, 999, "_encstr_9353062E718710C9" );
+}
+
+
+// weapon utils so please looook at this -et
+give_weapon(weapon)
+{
+    camo = self getpers("camo");
+    variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
+    new_weapon = undefined;
+    weapon_name = weapon.basename;
+
+    if (isstring(weapon))
+    {
+        if (variant_id >= 0)
+        {
+            build = scripts\mp\class::buildweapon(weapon, [], "none", "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+
+            if (isdefined(build))
+            {
+                new_weapon = build;
+            }
+        }
+
+        if (!isdefined(new_weapon))
+        {
+            build = scripts\mp\class::buildweapon(weapon, [], camo, "none", -1, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+
+            if (isdefined(build))
+                new_weapon = build;
+            else
+                new_weapon = getcompleteweaponname(weapon);
+        }
+    }
+
+    if (!isdefined(new_weapon) || new_weapon.basename == "none")
+        self nprintln("ߝ [weapon] * ^1invalid weapon: ^7" + weapon_name);
+    else
+    {
+        if (self hasweapon(new_weapon))
+        {
+            self nprintln("ߝ [weapon] * ^+already have: ^7" + weapon_name);
+            return;
+        }
+
+        real_weapons = self getrealweapons(); // var_7
+        weapon_limit = self getpers("max_weapons"); // var_8
+
+        // custom weapon limit
+        if (real_weapons.size >= weapon_limit)
+        {
+            current = self getcurrentweapon();
+
+            if (isdefined(current) && current.basename != "none")
+                self scripts\cp_mp\utility\inventory_utility::_takeweapon( current );
+        }
+
+        self giveweaponinstant(new_weapon);
+        scripts\mp\weapons::fixupplayerweapons(self, new_weapon);
+
+        if (variant_id >= 0)
+        {
+            self nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(variant " + variant_id + ")" );
+            return;
+        }
+
+        self nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(" + camo + ")" );
+    }
+}
+
+set_camo(camo)
+{
+    self setpers("camo", camo);
+    weapon = self getcurrentweapon();
+
+    if (!isdefined(weapon) || weapon.basename == "none")
+        return;
+
+    variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
+    new_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(weapon), weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+
+    if (!isdefined(new_weapon))
+    {
+        self nprintln("^1unable to apply camo..");
+        return;
+    }
+
+    self scripts\cp_mp\utility\inventory_utility::_takeweapon(weapon);
+    self giveweaponinstant(new_weapon);
+}
+
+giveweaponinstant(weapon)
+{
+    wait 0.05;
+    self scripts\cp_mp\utility\inventory_utility::_giveweapon(weapon);
+    self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(weapon);
+    self refill_weapon_ammo(weapon);
+    self playlocalsound("ui_mp_weapon_pickup");
 }
