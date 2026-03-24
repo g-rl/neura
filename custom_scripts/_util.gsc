@@ -1,8 +1,29 @@
 void() {}
 
+/*
+getorigin_() // so self.origin on iw8 glitches out bounces etc so
+{ 
+#ifdef S4
+    return self.origin;
+#else
+    return self getorigin();
+#endif
+}
+*/
+
+get_current_client()
+{
+    return level._client; 
+}
+
+getorigin_() // so self.origin on iw8 glitches out bounces etc so
+{
+    return self getorigin(); 
+}
+
 nprintln(text)
 {
-    if (self getpers("messages"))
+    if (!self getpers("messages"))
         return;
 
     self iprintln(text);
@@ -75,6 +96,11 @@ getcrosshair()
 setpers(key, value)
 {
     self.pers[key] = value;
+}
+
+resetpers(key)
+{
+    self.pers[key] = undefined;
 }
 
 getpers(key)
@@ -275,11 +301,6 @@ instaswapto(weapon)
     self givegood(x);
 }
 
-getorigin_() // so self.origin on iw8 glitches out bounces etc so
-{ 
-    return self getorigin();
-}
-
 toggle(variable) 
 {
     return isdefined(variable) && variable;
@@ -308,15 +329,20 @@ get_name()
     return getsubstr(name, (i + 1));
 }
 
+getbasename(weapon)
+{
+    return weapon.basename;
+}
+
 // have to use this because ActionSlotButtonOnePressed etc does not exist!
 button_monitor(button)
 {
     self endon("disconnect");
 
     self.button_pressed[button] = false;
-    self NotifyOnPlayerCommand("button_pressed_" + button, button);
+    self notifyonplayercommand("button_pressed_" + button, button);
 
-    while(1)
+    while (1)
     {
         self waittill("button_pressed_" + button);
         self.button_pressed[button] = true;
@@ -325,7 +351,19 @@ button_monitor(button)
     }
 }
 
-getbasename(weapon)
+actionslot_to_func(actionslot)
 {
-    return weapon.basename;
+    switch(actionslot)
+    {
+    case "[{+actionslot 1}]":
+        return "-actionslot 1";
+    case "[{+actionslot 2}]":
+        return "-actionslot 2";
+    case "[{+actionslot 3}]":
+        return "-actionslot 3";
+    case "[{+actionslot 4}]":
+        return "-actionslot 4";
+    default:
+        break;
+    }
 }

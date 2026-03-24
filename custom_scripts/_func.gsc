@@ -1,16 +1,6 @@
 #include custom_scripts\_util;
 
-toggle_weapon_debug()
-{
-    self.pers["watch_weapons"] = !toggle(self.pers["watch_weapons"]);
-
-    if (self getpers("watch_weapons"))
-        self thread watch_weaps();
-    else
-        self notify("stop_weapon_monitor");
-}
-
-watch_weaps()
+watch_weap_change()
 {
     self endon("disconnect");
     self endon("stop_weapon_monitor");
@@ -19,9 +9,9 @@ watch_weaps()
     for(;;)
     {
         self waittill("weapon_change", weapon);
-        weapon = weapon.basename;
-        self nprintln("^5" + weapon);
-        print(weapon);
+        name = weapon.basename;
+        print(name);
+        wait 0.05;
     }
 }
 
@@ -85,23 +75,6 @@ pos_change_by(value)
     self setpers("poschangeby", int(value));
 }
 
-actionslot_to_func(actionslot)
-{
-    switch(actionslot)
-    {
-    case "[{+actionslot 1}]":
-        return "-actionslot 1";
-    case "[{+actionslot 2}]":
-        return "-actionslot 2";
-    case "[{+actionslot 3}]":
-        return "-actionslot 3";
-    case "[{+actionslot 4}]":
-        return "-actionslot 4";
-    default:
-        break;
-    }
-}
-
 do_nac_bind(args, slot)
 {
     self endon("disconnect");
@@ -109,7 +82,7 @@ do_nac_bind(args, slot)
     level endon("game_ended");
     for (;;)
     {
-        self waittill("-actionslot " + 3);
+        self waittill("button_pressed_-actionslot 3");
         if (!self custom_scripts\_menu::in_menu())
         {
             self nacto(self getnextweapon());
@@ -126,7 +99,7 @@ do_instaswap_bind(args, slot)
 
     for (;;)
     {
-        self waittill("-actionslot " + 1);
+        self waittill("button_pressed_-actionslot 1");
 
         if (!self custom_scripts\_menu::in_menu())
         {
@@ -173,13 +146,19 @@ load_pos_bind()
 
 save_spawn()
 {
-    self setpers("position", true);
     self setpers("saveposx", self getorigin()[0]);
     self setpers("saveposy", self getorigin()[1]);
     self setpers("saveposz", self getorigin()[2]);
     self setpers("saveangles1", self getplayerangles()[0]);
     self setpers("saveangles2", self getplayerangles()[1]);
     self setpers("saveangles3", self getplayerangles()[2]);
+}
+
+reset_position()
+{
+    self setpers("saveposx", 0);
+    self setpers("saveposy", 0);
+    self setpers("saveposz", 0);
 }
 
 load_spawn()
@@ -197,10 +176,10 @@ load_spawn()
 
 reload_position()
 {
-    if (self getpers("position"))
+    if(float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
+    {
         self load_spawn();
-    else   
-        self save_spawn();
+    }
 }
 
 toggle_snl()
@@ -240,7 +219,7 @@ toggle_invincibility()
     }
 }
 
-godmode_loop()
+godmode_loop(args)
 {
     self endon("disconnect");
     self endon("stop_godmode");
@@ -662,7 +641,7 @@ toggle_inf_eq()
     }
 }
 
-unlimited_eq()
+unlimited_eq(args)
 {
     self endon("disconnect");
     self endon("stop_unlimited_eq");
@@ -743,7 +722,7 @@ monitor_bounces()
     }
 }
 
-freeze_loop()
+watch_freeze_controls()
 {
     self endon("disconnect");
     self endon("unfreeze_me");
@@ -751,12 +730,14 @@ freeze_loop()
 
     for (;;)
     {
-        if (!is_true(self getpers("frozen_bots")))
+        foreach(player in level.players)
         {
-            continue;
+            if (isai(player) || isbot(player))
+            {
+                player freezecontrols(self getpers("frozen_bots"));
+            }
+            wait 0.05;
         }
-
-        self freezecontrols(1);
         wait 0.05;
     }
 }
@@ -801,7 +782,7 @@ kill_player(player)
     self nprintln("killed ^1" + player.name);
 }
 
-teleport_player(from, to)
+teleport_player(from, to, player)
 {
     if (from == to)
     {
@@ -809,7 +790,27 @@ teleport_player(from, to)
         return;
     }
 
-    from setorigin(to.origin + (-10, 0, 0));
+    from setorigin(to.origin);
+    player save_spawn();
+}
+
+manage_teleport(mode, player)
+{
+    switch (mode)
+    {
+        case "me":
+            self thread teleport_player(player, self, player);
+            break;
+        case "them":
+            self thread teleport_player(self, player, player);
+            break;
+        case "crosshair":
+            self thread teleport_player(player, self getcrosshair(), player);
+            break;
+        default:
+            self thread teleport_player(player, self, player);
+            break;        
+    }
 }
 
 monitor_class()
@@ -912,7 +913,7 @@ toggle_clean_kc()
     }
 }
 
-clean_killcam()
+clean_killcam(args)
 {
     self endon("stop_clean_killcam");
     level endon("killcam_ended"); // make sure it still ends at some point in case 
@@ -941,9 +942,9 @@ post_prematch_start()
     waittill_prematch_over();
         
 #ifdef S4
-    self nprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 #else
-    self nprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    self iprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 #endif
 
     self thread reload_position();
@@ -992,36 +993,45 @@ refill_all_ammo()
     level endon("game_ended"); // just in case
 
     items = self.equippedweapons;
-    foreach ( item in items )
+    foreach (item in items)
     {
-        self givemaxammo( item );
-        self setweaponammostock( item, 999 );
-        self setweaponammoclip( item, 999 );
-        self setweaponammoclip( item, 999, "left" );
-        self setweaponammoclip( item, 999, "right" );
-        self setweaponammoclip( item, 999, "_encstr_8253060E2B5FE330" );
-        self setweaponammoclip( item, 999, "_encstr_9353062E718710C9" );
-        self setweaponammoclip( item, 999, "_encstr_A5AD056A019C63" );
-        self setweaponammoclip( item, 999, "_encstr_B1AD05C65666E8" );
+        self givemaxammo(item);
+        self setweaponammostock(item, 999);
+        self setweaponammoclip(item, 999);
+        self setweaponammoclip(item, 999, "left");
+        self setweaponammoclip(item, 999, "right");
+        self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
+        self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
+        self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
+        self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
         wait 0.05;
     }
 }
 
-refill_weapon_ammo( item )
+refill_weapon_ammo(item)
 {
-    self givemaxammo( item );
-    self setweaponammostock( item, 999 );
-    self setweaponammoclip( item, 999 );
-    self setweaponammoclip( item, 999, "left" );
-    self setweaponammoclip( item, 999, "right" );
-    self setweaponammoclip( item, 999, "_encstr_A5AD056A019C63" );
-    self setweaponammoclip( item, 999, "_encstr_B1AD05C65666E8" );
-    self setweaponammoclip( item, 999, "_encstr_8253060E2B5FE330" );
-    self setweaponammoclip( item, 999, "_encstr_9353062E718710C9" );
+    self givemaxammo(item);
+    self setweaponammostock(item, 999);
+    self setweaponammoclip(item, 999);
+    self setweaponammoclip(item, 999, "left");
+    self setweaponammoclip(item, 999, "right");
+    self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
+    self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
+    self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
+    self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
 }
 
 
 // weapon utils so please looook at this -et
+
+givegun(weapon)
+{
+    self takeweapon(self getcurrentweapon());
+    wait 0.05;
+    self giveweapon(weapon);
+    self switchtoweaponimmediate(weapon);
+}
+
 give_weapon(weapon)
 {
     camo = self getpers("camo");
@@ -1110,7 +1120,6 @@ set_camo(camo)
 
 giveweaponinstant(weapon)
 {
-    wait 0.05;
     self scripts\cp_mp\utility\inventory_utility::_giveweapon(weapon);
     self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(weapon);
     self refill_weapon_ammo(weapon);

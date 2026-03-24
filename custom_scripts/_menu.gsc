@@ -1,128 +1,28 @@
-// menu structure
-//#include custom_scripts\neura;
 #include custom_scripts\_func;
 #include custom_scripts\_util;
 
-render_menu_options()
-{
-    menu = self get_menu();
-    if (!isdefined(menu))
-        menu = "unassigned";
-
-    // change options msg
-    increment_controls = "[{+actionslot 3}] / [{+actionslot 4}] to use slider, no jump needed to select";
-    slider_controls = "[{+actionslot 3}] / [{+actionslot 4}] to use slider, [{+gostand}] to select";
-    bind_list = list("nac,instaswap,bounce,bolt movement,velocity,damage,equipment,change class");
-    credits = "made with ^5<3^7 by ^5nyli & mikey";
-    weapon = getbasename(self getcurrentweapon());
-
-    switch(menu)
-    {
-    case "neura":
-        self add_menu("neura - " + self get_name());
-        self add_option("settings", credits, ::new_menu, "settings");
-        self add_option("position", credits, ::new_menu, "position");
-        self add_option("class", credits, ::new_menu, "class");
-        self add_option("game", credits, ::new_menu, "game");
-        self add_option("aimbot", credits, ::new_menu, "aimbot");
-        self add_option("clients", credits, ::new_menu, "all players");
-        break;
-    case "settings":
-        self add_menu(menu);
-        self add_pers_toggle("invincibility", undefined, ::toggle_invincibility, "invincible");
-        self add_pers_toggle("infinite equipment", undefined, ::toggle_inf_eq, "inf_eq");
-        self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
-        self add_array("auto prone mode", slider_controls, ::autoprone_mode, list("air,always"));
-        self add_pers_toggle("round end prone", undefined, ::autoprone_endgame, "autoprone_endgame");
-        self add_pers_toggle("auto reload", "empty mag at end of round", ::autoreload, "autoreload");
-        self add_pers_toggle("instaswaps", "bo2 instaswaps", ::instaswaps, "instaswaps");
-        self add_increment("instaswaps time", increment_controls, ::instaswaps_time, float(self getpers("instaswaps_time")), 0.1, 1, 0.01);
-        self add_pers_toggle("ufo", "toggle noclip", ::ufo_mode, "ufo_mode");
-        break;
-    case "position":
-        self add_menu(menu);
-        self add_array("teleport bots", slider_controls, ::move_bots, list("self,crosshair"));
-        self add_pers_toggle("freeze bots", undefined, ::frozen_bots, "frozen_bots");
-        self add_option("unstuck", undefined, ::unstuck);
-        self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
-        self add_option("save position", undefined, ::save_spawn);
-        self add_option("load position", undefined, ::load_spawn);
-        if(float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
-        {
-            self add_increment("x", increment_controls, ::pos_x, float(self getpers("saveposx")), -500000, 5000000, float(self getpers("poschangeby")));
-            self add_increment("y", increment_controls, ::pos_y, float(self getpers("saveposy")), -500000, 5000000, float(self getpers("poschangeby")));
-            self add_increment("z", increment_controls, ::pos_z, float(self getpers("saveposz")), -500000, 5000000, float(self getpers("poschangeby")));
-            self add_increment("change by", increment_controls, ::pos_change_by, float(self getpers("poschangeby")), 5, 10000, 5);
-        }
-        break;
-    case "aimbot":
-        self add_menu(menu);
-        self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
-        self add_increment("range", increment_controls, ::aimbot_range, int(self getpers("aimbot_range")), 100, 5000, 100);
-        self add_array("delay", slider_controls, ::aimbot_delay, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"));
-        //self add_increment("delay", increment_controls, ::aimbot_delay, float(self getpers("aimbot_delay")), 0, 1, 0.05);
-        break;
-    case "class":
-        self add_menu(menu);
-        self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
-        self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all,current"));
-        self add_option("take weapon", undefined, ::takecurrent);
-        // self add_option("primaries", credits, ::new_menu, "primaries");
-        // self add_option("secondaries", credits, ::new_menu, "secondaries");
-        // self add_option("give sniper test", undefined, ::give_weapon, "iw8_sn_alpha50_mp");
-        break;
-    case "game":
-        self add_menu(menu);
-        self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
-        self add_pers_toggle("weapon name monitor", holding, ::toggle_weapon_debug, "watch_weapons");
-        self add_pers_toggle("messages", undefined, ::toggle_messages, "messages");
-        self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
-        break;
-    case "all players":
-        self add_menu(menu);
-
-        players = level.players;
-        foreach (player in players)
-        {
-            self add_option(player.name, undefined, ::new_menu, "player option");
-        }
-
-        break;
-    default:
-        self player_index(menu, self.select_player);
-        break;
-    }
-}
-
-player_index(menu, player)
-{
-    if (!isdefined(player) || !isplayer(player))
-        menu = "unassigned";
-
-    switch(menu)
-    {
-    case "player option":
-        self add_menu(player.name);
-        self add_option("kill player", undefined, ::kill_player, player);
-        self add_option("look at me", undefined, ::look_at_me, player);
-        self add_option("give shield", undefined, ::give_player_shield, player);
-        self add_option("teleport to me", undefined, ::teleport_player, player, self);
-        self add_option("teleport to them", undefined, ::teleport_player, self, player);
-        self add_option("teleport to cross", undefined, ::teleport_to_cross, player);
-        break;
-    case "unassigned":
-        self add_menu(menu);
-        self add_option("this menu is unassigned");
-        break;
-    default:
-        self add_menu("error");
-        self add_option("unable to load " + menu);
-        break;
-    }
-}
-
 initial_variable()
 {
+    // [0]: ID
+    // [1]: Display Name
+    self.neura["soh_perk_list"] = list("specialty_fastreload,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
+    self.neura["perk_list"] = list("specialty_marathon,specialty_holdbreath,specialty_lightweight");
+
+    self.neura["weapons"]["iw8"]["launchers"][0] = ["iw8_la_gromeo_mp", "iw8_la_kgolf_mp", "iw8_la_juliet_mp", "iw8_la_rpapa7_mp"];
+    self.neura["weapons"]["iw8"]["launchers"][1] = ["pila", "strela-p", "jokr", "rpg-7"];
+
+    self.neura["weapons"]["iw8"]["pistols"][0] = ["iw8_sn_golf21_mp", "iw8_pi_mike1911,mp", "iw8_pi_cpapa_mp", "iw8_pi_papa320_mp", "iw8_pi_decho_mp", "iw8_pi_mike9_mp"];
+    self.neura["weapons"]["iw8"]["pistols"][1] = ["x16", "1911", ".357", "m19", ".50 gs", "renetti"];
+
+    self.neura["weapons"]["iw8"]["snipers"][0] = ["iw8_sn_delta_mp", "iw8_sn_hdromeo_mp", "iw8_sn_alpha50_mp"];
+    self.neura["weapons"]["iw8"]["snipers"][1] = ["dragunov", "hdr", "ax50"];
+
+    self.neura["weapons"]["iw8"]["shotguns"][0] = ["iw8_sh_romeo870_mp", "iw8_sh_dpapa12_mp", "iw8_sh_charlie725_mp", "iw8_sh_oscar12_mp", "iw8_sh_mike26_mp"];
+    self.neura["weapons"]["iw8"]["shotguns"][1] = ["model 680", "r-90", "725", "origin 12", "vlk rogue"];
+
+    self.neura["weapons"]["iw8"]["misc"][0] = ["iw8_knife_mp", "iw8_me_riotshield_mp"];
+    self.neura["weapons"]["iw8"]["misc"][1] = ["combat knife", "riot shield"];
+
     // menu variables
     self.font            = "default";
     self.font_scale      = 0.95;
@@ -565,6 +465,20 @@ add_menu(title, shader)
     self.structure = [];
 }
 
+add_iw8_option(text, summary, function, argument_1, argument_2, argument_3)
+{
+#ifndef S4
+    option            = [];
+    option["text"]       = text;
+    option["summary"]    = summary;
+    option["function"]   = function;
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+    self.structure[self.structure.size] = option;
+#endif
+}
+
 add_option(text, summary, function, argument_1, argument_2, argument_3)
 {
     option            = [];
@@ -843,7 +757,7 @@ override_string_for_index(index)
 create_option()
 {
     self clear_option();
-    self render_menu_options();
+    self custom_scripts\_structure::structure();
 
     if (!isdefined(self.structure) || !self.structure.size)
         self add_option("nothing to display..");

@@ -5,6 +5,8 @@
         neura menu for IW8 (MW2019), S4 (Vanguard), and IW9 (MW2022) 
         - #ifdef IW8 does not work properly, use #ifdef S4 instead 
 
+        by ethan (@nyli2b) & mikey (@mjkzys)
+
 */
 
 #include custom_scripts\_func;
@@ -12,13 +14,18 @@
 
 init()
 {
-    // variables
+#ifdef S4
+    level._client = "s4";
+#else
+    level._client = "iw8";
+#endif
     level.is_setup = false;
     level.is_debug = true;
     
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
+    print("playing on: " + level._client);
 }
 
 on_player_connect()
@@ -50,9 +57,6 @@ on_player_spawned()
         // give this stuff every spawn
         self thread give_perks();
 
-        if (self getpers("position"))
-            self thread load_spawn(); // jus gonna thread this
-
         if (self.has_spawned)
             continue;
 
@@ -61,7 +65,8 @@ on_player_spawned()
         self.godmode_active = true;
         
         self thread watch_memory();
-        self thread round_manager();
+        self thread watch_freeze_controls();
+        
         self thread do_nac_bind();
         self thread do_instaswap_bind();
 
@@ -81,29 +86,14 @@ on_player_spawned()
 
         // other funcs
         self thread monitor_class();
+        self thread round_manager();
+        self thread watch_weap_change();
     }
 }
 
 setup_dvars()
 {
-    // player
-    setdvarifuninitialized("nvg", 0);
-    setdvarifuninitialized("oob", 1);
-    setdvarifuninitialized("barriers", 1);
-    setdvarifuninitialized("godmode", 1);
-
-    // specials
-    setdvarifuninitialized("give_streak", "");
-    setdvarifuninitialized("ks_auto_activate", 0);
-
-    // custom
     setdvarifuninitialized("scr_killcam_time", 5);
-    setdvarifuninitialized("slomo", 1);
-    setdvarifuninitialized("killcam_elems", 1);
-
-    setdvarifuninitialized("giveweapon", "");
-    setdvarifuninitialized("camo", "");
-
     setdvar("MSOOMPMPQS", true); // unlimited sprint
 }
 
@@ -116,7 +106,6 @@ on_bot_spawned()
     {
         self waittill("spawned_player");
         waittill_prematch_over();
-        self thread freeze_loop();
         self thread reload_position();
     }
 }
@@ -124,9 +113,6 @@ on_bot_spawned()
 watch_memory()
 {
     //waittill_prematch_over();
-
-    self.neura["soh_perk_list"] = list("specialty_fastreload,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
-    self.neura["perk_list"] = list("specialty_marathon,specialty_holdbreath,specialty_lightweight");
 
     self setpers("lives", 99);
 
@@ -155,11 +141,12 @@ watch_memory()
     self setpersifuni("poschangeby", 10);
     self setpersifuni("inf_eq", true);
     self setpersifuni("clean_kc", true);
-    self setpersifuni("watch_weapons", false);
     self setpersifuni("snl", true);
     self setpersifuni("autoprone_endgame", true);
     self setpersifuni("autoprone_mode", "air");
     self setpersifuni("frozen_bots", true);
+    self setpersifuni("messages", true);
+    self setpersifuni("invincible", true);
 
     for (i=1;i<8;i++)
     {
@@ -170,6 +157,7 @@ watch_memory()
     self setpersifuni("bouncecount", "0");
     for (i = 1; i < 8; i++)
     {
+
         self setpersifuni("bouncepos" + i, "0");
         wait 0.05;
     }
@@ -189,7 +177,6 @@ watch_memory()
     self loadpers("snl", ::setup_snl);
     self loadpers("inf_eq", ::unlimited_eq);
     self loadpers("clean_kc", ::clean_killcam);
-    self loadpers("watch_weapons", ::watch_weaps);
     self loadpers("invincible", ::godmode_loop);
     // self loadpers("no_hud", ::watch_hud);
     // self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
