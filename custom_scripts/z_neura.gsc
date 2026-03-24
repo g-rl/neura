@@ -50,7 +50,7 @@ on_player_spawned()
         // give this stuff every spawn
         self thread give_perks();
 
-        if (is_true(self getpers("position")))
+        if (self getpers("position"))
             self thread load_spawn(); // jus gonna thread this
 
         if (self.has_spawned)
