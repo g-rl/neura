@@ -6,11 +6,11 @@ watch_weap_change()
     self endon("stop_weapon_monitor");
     level endon("game_ended");
 
-    for(;;)
+    for (;;)
     {
         self waittill("weapon_change", weapon);
         name = weapon.basename;
-        print(name);
+        self iprintln(name);
         wait 0.05;
     }
 }
@@ -163,7 +163,7 @@ reset_position()
 
 load_spawn()
 {
-    if(float(self getpers("saveposx")) == 0 && float(self getpers("saveposy")) == 0 && float(self getpers("saveposz")) == 0)
+    if (float(self getpers("saveposx")) == 0 && float(self getpers("saveposy")) == 0 && float(self getpers("saveposz")) == 0)
     {
         self nprintlnbold("^6save a position first");
         return;
@@ -176,7 +176,7 @@ load_spawn()
 
 reload_position()
 {
-    if(float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
+    if (float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
     {
         self load_spawn();
     }
@@ -730,7 +730,7 @@ watch_freeze_controls()
 
     for (;;)
     {
-        foreach(player in level.players)
+        foreach (player in level.players)
         {
             if (isai(player) || isbot(player))
             {
@@ -1124,4 +1124,97 @@ giveweaponinstant(weapon)
     self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(weapon);
     self refill_weapon_ammo(weapon);
     self playlocalsound("ui_mp_weapon_pickup");
+}
+
+// maybe add toggles for barriers and oob but i think they'd rly always be on
+allow_oob()
+{
+    scripts\mp\outofbounds::enableoobimmunity(self);
+    
+    self.allowedintrigger = 1;
+    self.alreadytouchingtrigger = 0;
+
+    if (isdefined(self.vehicle) && isdefined(self.vehicle.health) && self.vehicle.health > 0)
+    {
+        scripts\mp\outofbounds::clearoob(self.vehicle, 0);
+        self setclientomnvar("ui_out_of_bounds_type", 0 );
+        self setclientomnvar("ui_out_of_bounds_countdown", 0);
+    }
+}
+
+remove_barriers()
+{
+    init_original_barriers();
+    
+    foreach (trigger in level.original_barriers.triggers)
+    {
+        if (isdefined(trigger.entity))
+            trigger.entity.origin = (999999, 999999, 999999);
+    }
+
+    foreach (barrier in level.original_barriers.barriers)
+    {
+        if (isdefined(barrier.entity))
+            barrier.entity.origin = (999999, 999999, 999999);
+    }
+
+    foreach (clip in level.original_barriers.clips)
+    {
+        if (isdefined(clip.entity))
+            clip.entity.origin = (999999, 999999, 999999);
+    }
+
+    foreach (singular in level.original_barriers.oncetriggers)
+    {
+        if (isdefined(singular.entity))
+            singular.entity.origin = (999999, 999999, 999999);
+    }
+}
+
+init_original_barriers()
+{
+    if (!isdefined(level.original_barriers))
+    {
+        level.original_barriers = spawnstruct();
+        level.original_barriers.triggers = [];
+        level.original_barriers.barriers = [];
+        level.original_barriers.clips = [];
+        level.original_barriers.oncetriggers = [];
+
+        hurt_ents = getentarray("trigger_hurt", "classname");
+
+        for (i=0;i<hurt_ents.size;i++)
+        {
+            level.original_barriers.triggers[i] = spawnstruct();
+            level.original_barriers.triggers[i].entity = hurt_ents[i];
+            level.original_barriers.triggers[i].origin = hurt_ents[i].origin;
+        }
+
+        barrier_ents = getentarray("barrier", "targetname");
+
+        for (i=0;i<barrier_ents.size;i++)
+        {
+            level.original_barriers.barriers[i] = spawnstruct();
+            level.original_barriers.barriers[i].entity = barrier_ents[i];
+            level.original_barriers.barriers[i].origin = barrier_ents[i].origin;
+        }
+
+        multi_ents = getentarray("trigger_multiple", "classname");
+
+        for (i=0;i<multi_ents.size;i++)
+        {
+            level.original_barriers.clips[i] = spawnstruct();
+            level.original_barriers.clips[i].entity = multi_ents[i];
+            level.original_barriers.clips[i].origin = multi_ents[i].origin;
+        }
+
+        singular_ents = getentarray("trigger_once", "classname");
+
+        for (i=0;i<singular_ents.size;i++)
+        {
+            level.original_barriers.oncetriggers[i] = spawnstruct();
+            level.original_barriers.oncetriggers[i].entity = singular_ents[i];
+            level.original_barriers.oncetriggers[i].origin = singular_ents[i].origin;
+        }
+    }
 }

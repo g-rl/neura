@@ -11,19 +11,20 @@ structure()
     increment_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5no jump^7 needed to select";
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
     bind_list = list("nac,instaswap,bounce,bolt movement,velocity,damage,equipment,change class");
-    credits = "made with ^5<3^7 by ^5nyli & mikey";
+    credits = "made with ^5<3^7 by ^5ethan & mikey";
     client = level._client;
 
     switch(menu)
     {
     case "neura":
         self add_menu("neura - " + self get_name());
-        self add_option("settings", credits, ::new_menu, "settings");
+        self add_option("my settings", credits, ::new_menu, "settings");
+        self add_option("class manager", credits, ::new_menu, "class");
+        self add_option("glitches", credits, ::new_menu, "settings");
         self add_option("position", credits, ::new_menu, "position");
-        self add_option("class", credits, ::new_menu, "class");
-        self add_option("game", credits, ::new_menu, "game");
-        self add_option("aimbot", credits, ::new_menu, "aimbot");
-        self add_option("clients", credits, ::new_menu, "all players");
+        self add_option("game profile", credits, ::new_menu, "game");
+        self add_option("eb settings", credits, ::new_menu, "aimbot");
+        self add_option("client settings", credits, ::new_menu, "all players");
         break;
     case "settings":
         self add_menu(menu);

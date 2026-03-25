@@ -25,7 +25,6 @@ init()
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
-    print("playing on: " + level._client);
 }
 
 on_player_connect()
@@ -66,6 +65,8 @@ on_player_spawned()
         
         self thread watch_memory();
         self thread watch_freeze_controls();
+        self thread allow_oob(); // out of bounds
+        self thread remove_barriers();
         
         self thread do_nac_bind();
         self thread do_instaswap_bind();
