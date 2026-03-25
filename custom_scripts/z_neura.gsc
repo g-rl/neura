@@ -1,12 +1,10 @@
 // gsclsp-disable semicolon
 
 /*
-
         neura menu for IW8 (MW2019), S4 (Vanguard), and IW9 (MW2022) 
         - #ifdef IW8 does not work properly, use #ifdef S4 instead 
 
         by ethan (@nyli2b) & mikey (@mjkzys)
-
 */
 
 #include custom_scripts\_func;
@@ -54,6 +52,7 @@ on_player_spawned()
         self waittill("spawned_player");
 
         // give this stuff every spawn
+        // can we make it so we reload position after death though here? cried every time i tried -et
         self thread give_perks();
 
         if (self.has_spawned)
@@ -68,6 +67,7 @@ on_player_spawned()
         self thread allow_oob(); // out of bounds
         self thread remove_barriers();
         
+        // temp
         self thread do_nac_bind();
         self thread do_instaswap_bind();
 
@@ -113,13 +113,11 @@ on_bot_spawned()
 
 watch_memory()
 {
-    //waittill_prematch_over();
-
-    self setpers("lives", 99);
-
     camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"];
     camo = camos[randomint(camos.size)];
-    self setpersifuni("camo", "camo_11b");
+
+    self setpers("lives", 99);
+    self setpersifuni("camo", camo);
     self setpersifuni("unstuck", self.origin);
     self setpersifuni("velx", 250);
     self setpersifuni("vely", 250);
@@ -179,15 +177,15 @@ watch_memory()
     self loadpers("inf_eq", ::unlimited_eq);
     self loadpers("clean_kc", ::clean_killcam);
     self loadpers("invincible", ::godmode_loop);
-    // self loadpers("no_hud", ::watch_hud);
-    // self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
-    // self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
 
+    // unused for now but dont remove -et
+    //self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
+    //self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
     //self loadpers("always_canswap", ::do_always_canswap);
     //self loadpers("refill_bind", ::do_refill_bind);
     //self loadpers("bounce_bind", ::do_bounce_bind, self getpers("bounce_slot"));
     //self loadpers("bolt_movement_bind", ::do_bolt_movement_bind, self getpers("bolt_slot"));
-    // self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
+    //self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
     //self loadpers("velocity_bind", ::do_velocity_bind, self getpers("vel_slot"));
     //self loadpers("damage_bind", ::do_damage_bind, self getpers("damage_slot"));
     //self loadpers("eq_bind", ::do_eq_bind, self getpers("eq_slot"));

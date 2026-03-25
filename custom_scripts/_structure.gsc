@@ -10,7 +10,6 @@ structure()
 
     increment_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5no jump^7 needed to select";
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
-    bind_list = list("nac,instaswap,bounce,bolt movement,velocity,damage,equipment,change class");
     credits = "made with ^5<3^7 by ^5ethan & mikey";
     client = get_current_client();
 

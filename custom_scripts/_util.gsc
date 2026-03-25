@@ -1,6 +1,6 @@
 void() {}
 
-get_current_client()
+get_current_client() // check if s4 or iw8
 {
     return level._client; 
 }
@@ -16,17 +16,13 @@ getorigin_() // so self.origin on iw8 glitches out bounces etc so
 
 nprintln(text)
 {
-    if (!self getpers("messages"))
-        return;
-
+    if (!self getpers("messages")) return;
     self iprintln(text);
 }
 
 nprintlnbold(text)
 {
-    if (!self getpers("messages"))
-        return;
-
+    if (!self getpers("messages")) return;
     self iprintlnbold(text);
 }
 
@@ -126,7 +122,7 @@ loadpers(key, func, args)
     self thread [[func]](args);
 }
 
-createcommand(command, desc, callback)
+createcommand(command, desc, callback) // dont think we're gonna need this anymore lmk tho -et
 {
     self endon("disconnect");
     level endon("game_ended");
@@ -278,7 +274,6 @@ nacto(weapon)
     self giveweapon(weapon);
     self switchtoweapon(weapon);
     waitframe();
-    //waitframe();
     self givegood(x);
 }
 
@@ -290,7 +285,6 @@ instaswapto(weapon)
     self giveweapon(weapon);
     self setspawnweapon(weapon);
     waitframe();
-    //waitframe();
     self givegood(x);
 }
 
@@ -305,7 +299,6 @@ is_true(variable)
     {
         return true;
     }
-
     return false;
 }
 
@@ -322,7 +315,7 @@ get_name()
     return getsubstr(name, (i + 1));
 }
 
-getbasename(weapon)
+getbasename(weapon) // might be a func already idc tho -et
 {
     return weapon.basename;
 }

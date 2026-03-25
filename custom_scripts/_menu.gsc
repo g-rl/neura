@@ -36,6 +36,7 @@ initial_variable()
     self.element_count   = 0;
     self.element_list    = list("text,submenu,toggle,category,slider");
 
+    // we should do flickershaders rainbow color yes ouu so awesome -et
     self.color[0] = (1,1,1); // when cursor is over a option, this is the color. this is white for now
     self.color[1] = (0.109803, 0.129411, 0.156862);
     self.color[2] = (0.133333, 0.152941, 0.180392);
@@ -48,6 +49,7 @@ initial_variable()
     self set_title(self get_menu());
 }
 
+// add sfx for each game -et
 initial_monitor()
 {
     level endon("game_ended");
@@ -966,15 +968,3 @@ update_menu(menu, cursor, force)
             self create_option();
     }
 }
-
-/*
-bind_index(menu, func)
-{
-    self add_menu(menu);
-
-    for(i = 0; i < 4; i++)
-    {
-        self add_option(va("%s -> %s", menu, "[{+actionslot" + i + "}]"), func, i);
-    }
-}
-*/
