@@ -1,5 +1,29 @@
 #include custom_scripts\_util;
 
+togglepers(pers) // wow dude
+{
+    self.pers[pers] = !toggle(self.pers[pers]);
+    print("toggling " + pers);
+}
+
+setpersfloat(value, pers) // wow dude
+{
+    self setpers(pers, float(value));
+    print("set " + pers + " to " + value);
+}
+
+setpersint(value, pers) // wow dude
+{
+    self setpers(pers, float(value));
+    print("set " + pers + " to " + value);
+}
+
+setpersmenu(value, pers) // wow dude
+{
+    self setpers(pers, value);
+    print("set " + pers + " to " + value);
+}
+
 watch_weap_change()
 {
     self endon("disconnect");
@@ -13,66 +37,6 @@ watch_weap_change()
         print(getcompleteweaponname(weapon));
         wait 0.05;
     }
-}
-
-toggle_messages()
-{
-    self.pers["messages"] = !toggle(self.pers["messages"]);
-}
-
-frozen_bots()
-{
-    self.pers["frozen_bots"] = !toggle(self.pers["frozen_bots"]);
-}
-
-autoprone_endgame()
-{
-    self.pers["autoprone_endgame"] = !toggle(self.pers["autoprone_endgame"]);
-}
-
-autoprone_mode(value)
-{
-    self setpers("autoprone_mode", value);
-}
-
-aimbot_delay(value)
-{
-    self setpers("aimbot_delay", float(value));
-}
-
-aimbot_range(value)
-{
-    self setpers("aimbot_range", int(value));
-}
-
-class_wrap(value)
-{
-    self setpers("class_wrap", int(value));
-}
-
-instaswaps_time(value)
-{
-    self setpers("instaswaps_time", float(value));
-}
-
-pos_x(value)
-{
-    self setpers("saveposx", float(value));
-}
-
-pos_y(value)
-{
-    self setpers("saveposy", float(value));
-}
-
-pos_z(value)
-{
-    self setpers("saveposz", float(value));
-}
-
-pos_change_by(value)
-{
-    self setpers("poschangeby", int(value));
 }
 
 do_nac_bind(args, slot)
@@ -1251,7 +1215,7 @@ load_class()
     foreach(weapon in self.pers["curr_class"])
     {
         self giveweapon(weapon);
-        self givemaxammo(weapon);
+        self max_ammo(weapon);
     }
 
     self switchtoweapon(self getweaponslistprimaries()[0]);
@@ -1277,4 +1241,16 @@ reload_class()
 {
     wait 0.5;
     self thread load_class();
+}
+
+max_ammo(item)
+{
+    self setweaponammostock(item, 999);
+    self setweaponammoclip(item, 999);
+    self setweaponammoclip(item, 999, "left");
+    self setweaponammoclip(item, 999, "right");
+    self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
+    self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
+    self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
+    self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
 }

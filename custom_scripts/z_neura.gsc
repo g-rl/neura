@@ -60,16 +60,15 @@ on_player_spawned()
 
         self.neura = [];
         self.has_spawned = true;
-        self.godmode_active = true;
         
         self thread watch_memory();
         self thread watch_freeze_controls();
         self thread allow_oob(); // out of bounds
         self thread remove_barriers();
         
-        // temp
-        self thread do_nac_bind();
-        self thread do_instaswap_bind();
+        // temp until we add binds menu
+        self thread do_nac_bind(); // left dpad
+        self thread do_instaswap_bind(); // up dpad
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -95,7 +94,7 @@ on_player_spawned()
 setup_dvars()
 {
     setdvarifuninitialized("scr_killcam_time", 5);
-    setdvar("MSOOMPMPQS", true); // unlimited sprint
+    setdvar("MSOOMPMPQS", true); // unlimited sprint (iw8 only i think?)
 }
 
 on_bot_spawned()
@@ -179,16 +178,4 @@ watch_memory()
     self loadpers("clean_kc", ::clean_killcam);
     self loadpers("invincible", ::godmode_loop);
     self loadpers("saved_class", ::reload_class);
-
-    // unused for now but dont remove -et
-    //self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
-    //self loadpers("instaswap_bind", ::do_instaswap_bind, self getpers("is_slot"));
-    //self loadpers("always_canswap", ::do_always_canswap);
-    //self loadpers("refill_bind", ::do_refill_bind);
-    //self loadpers("bounce_bind", ::do_bounce_bind, self getpers("bounce_slot"));
-    //self loadpers("bolt_movement_bind", ::do_bolt_movement_bind, self getpers("bolt_slot"));
-    //self loadpers("class_bind", ::do_class_bind, self getpers("class_slot"));
-    //self loadpers("velocity_bind", ::do_velocity_bind, self getpers("vel_slot"));
-    //self loadpers("damage_bind", ::do_damage_bind, self getpers("damage_slot"));
-    //self loadpers("eq_bind", ::do_eq_bind, self getpers("eq_slot"));
 }

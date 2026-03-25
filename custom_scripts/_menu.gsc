@@ -51,14 +51,6 @@ initial_variable()
     self set_title(self get_menu());
 }
 
-vt(var, serverity)
-{
-    // ߺ : red
-    // ߑ : white
-    // ߨ : orange 
-    return "ߨ " + var;
-}
-
 // add sfx for each game -et
 initial_monitor()
 {
@@ -519,21 +511,14 @@ add_bind(text, summary, function, pers, argument_1, argument_2, argument_3)
     self.structure[self.structure.size] = option;
 }
 
-add_pers_toggle(text, summary, function, toggle, array, argument_1, argument_2, argument_3)
+add_pers_toggle(text, summary, function, toggle, argument_1, argument_2, argument_3)
 {
     option          = [];
     option["text"]     = text;
     option["summary"]  = summary;
     option["function"] = function;
     option["toggle"]   = is_true(self.pers[toggle]);
-    if (isdefined(array))
-    {
-        option["slider"] = true;
-        option["is_array"] = true;
-        option["array"]  = array;
-    }
-
-    option["argument_1"] = argument_1;
+    option["argument_1"] = toggle;
     option["argument_2"] = argument_2;
     option["argument_3"] = argument_3;
 

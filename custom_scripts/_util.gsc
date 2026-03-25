@@ -353,3 +353,11 @@ actionslot_to_func(actionslot)
         break;
     }
 }
+
+vt(var, serverity) // adds caution symbol next to text
+{
+    // ߺ : red
+    // ߑ : white
+    // ߨ : orange 
+    return "ߨ " + var;
+}
