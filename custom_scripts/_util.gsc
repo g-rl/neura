@@ -1,6 +1,10 @@
 void() {}
 
-/*
+get_current_client()
+{
+    return level._client; 
+}
+
 getorigin_() // so self.origin on iw8 glitches out bounces etc so
 { 
 #ifdef S4
@@ -8,17 +12,6 @@ getorigin_() // so self.origin on iw8 glitches out bounces etc so
 #else
     return self getorigin();
 #endif
-}
-*/
-
-get_current_client()
-{
-    return level._client; 
-}
-
-getorigin_() // so self.origin on iw8 glitches out bounces etc so
-{
-    return self getorigin(); 
 }
 
 nprintln(text)
@@ -49,14 +42,14 @@ monitor_buttons()
     if (!isdefined(self.button_pressed))
         self.button_pressed = [];
     
-    for(a = 0; a < self.button_actions.size; a++)
+    for (a = 0; a < self.button_actions.size; a++)
     {
         self thread button_monitor("+" + self.button_actions[a]);
         self thread button_monitor("-" + self.button_actions[a]); // this usually works as a fallback to many of these, this is the release bind
     }
     self thread button_monitor("nightvision");
 
-    self setactionslot( 4, "" );
+    self setactionslot(4, "");
 }
 
 isButtonPressed(button)
@@ -322,7 +315,7 @@ get_name()
     if (name[0] != "[")
         return name;
 
-    for(i = (name.size - 1); i >= 0; i--)
+    for (i = (name.size - 1); i >= 0; i--)
         if (name[i] == "]")
             break;
 

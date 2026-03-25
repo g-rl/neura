@@ -12,15 +12,15 @@ structure()
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
     bind_list = list("nac,instaswap,bounce,bolt movement,velocity,damage,equipment,change class");
     credits = "made with ^5<3^7 by ^5ethan & mikey";
-    client = level._client;
+    client = get_current_client();
 
     switch(menu)
     {
     case "neura":
         self add_menu("neura - " + self get_name());
         self add_option("my settings", credits, ::new_menu, "settings");
-        self add_option("class manager", credits, ::new_menu, "class");
         // self add_option("glitches", credits, ::new_menu, "glitches");
+        self add_option("class manager", credits, ::new_menu, "class");
         self add_option("position", credits, ::new_menu, "position");
         self add_option("game profile", credits, ::new_menu, "game");
         self add_option("eb settings", credits, ::new_menu, "aimbot");
@@ -65,7 +65,7 @@ structure()
         self add_menu(menu);
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all,current"));
-        self add_option("take weapon", undefined, ::takecurrent);
+        self add_option("take weapon", undefined, ::take_current);
         self add_iw8_option("primaries", credits, ::new_menu, "primaries (iw8)");
         self add_iw8_option("secondaries", credits, ::new_menu, "secondaries (iw8)");
         break;

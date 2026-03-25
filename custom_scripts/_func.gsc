@@ -955,7 +955,7 @@ look_at_me(player)
     player setplayerangles(vectortoangles(((self.origin)) - (player gettagorigin("j_head"))));
 }
 
-takecurrent()
+take_current()
 {
     self takeweapon(self getcurrentweapon());
 }
@@ -1024,7 +1024,7 @@ refill_weapon_ammo(item)
 
 // weapon utils so please looook at this -et
 
-givegun(weapon)
+givegun(weapon) // jus ez way
 {
     self takeweapon(self getcurrentweapon());
     wait 0.05;
@@ -1032,7 +1032,7 @@ givegun(weapon)
     self switchtoweaponimmediate(weapon);
 }
 
-give_weapon(weapon)
+give_weapon(weapon) // ??
 {
     camo = self getpers("camo");
     variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
@@ -1097,7 +1097,7 @@ give_weapon(weapon)
     }
 }
 
-set_camo(camo)
+set_camo(camo) // ??
 {
     self setpers("camo", camo);
     weapon = self getcurrentweapon();
