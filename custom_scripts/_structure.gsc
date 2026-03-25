@@ -84,48 +84,48 @@ structure()
         break;
     case "primaries (iw8)":
         self add_menu(menu);
-        self add_option("snipers", "^5" + self.neura["weapons"][client]["snipers"][0].size + " ^7weapons available", ::new_menu, "snipers");
-        self add_option("shotguns", "^5" + self.neura["weapons"][client]["shotguns"][0].size + " ^7weapons available", ::new_menu, "shotguns");
+        self add_option("snipers", "^5" + self.neura["weapons"][client]["primary"]["snipers"][0].size + " ^7weapons available", ::new_menu, "snipers");
+        self add_option("shotguns", "^5" + self.neura["weapons"][client]["primary"]["shotguns"][0].size + " ^7weapons available", ::new_menu, "shotguns");
         break;
     case "secondaries (iw8)":
         self add_menu(menu);
-        self add_option("launchers", "^5" + self.neura["weapons"][client]["launchers"][0].size + " ^7weapons available", ::new_menu, "launchers");
-        self add_option("pistols", "^5" + self.neura["weapons"][client]["pistols"][0].size + " ^7weapons available", ::new_menu, "pistols");
-        self add_option("misc", "^5" + self.neura["weapons"][client]["misc"][0].size + " ^7weapons available", ::new_menu, "misc");
+        self add_option("launchers", "^5" + self.neura["weapons"][client]["secondary"]["launchers"][0].size + " ^7weapons available", ::new_menu, "launchers");
+        self add_option("pistols", "^5" + self.neura["weapons"][client]["secondary"]["pistols"][0].size + " ^7weapons available", ::new_menu, "pistols");
+        self add_option("misc", "^5" + self.neura["weapons"][client]["secondary"]["misc"][0].size + " ^7weapons available", ::new_menu, "misc");
         break;
     case "launchers":
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
+        for(i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
         {
-            self add_option(self.neura["weapons"][client][menu][1][i], "id: ^5" + self.neura["weapons"][client][menu][0][i], ::givegun, self.neura["weapons"][client][menu][0][i]);
+            self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], "id: ^5" + self.neura["weapons"][client]["secondary"][menu][0][i], ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
         break;
     case "pistols":
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
+        for(i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
         {
-            self add_option(self.neura["weapons"][client][menu][1][i], undefined, ::givegun, self.neura["weapons"][client][menu][0][i]);
+            self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
         break;
     case "misc":
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
+        for(i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
         {
-            self add_option(self.neura["weapons"][client][menu][1][i], undefined, ::givegun, self.neura["weapons"][client][menu][0][i]);
+            self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
         break;
     case "snipers":
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
+        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
         {
-            self add_option(self.neura["weapons"][client][menu][1][i], undefined, ::givegun, self.neura["weapons"][client][menu][0][i]);
+            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
     case "shotguns":
         self add_menu(menu);
         for(i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
         {
-            self add_option(self.neura["weapons"][client][menu][1][i], undefined, ::givegun, self.neura["weapons"][client][menu][0][i]);
+            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
     case "game settings":
