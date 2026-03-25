@@ -10,7 +10,7 @@ watch_weap_change()
     {
         self waittill("weapon_change", weapon);
         name = weapon.basename;
-        self iprintln(name);
+        print(getcompleteweaponname(weapon));
         wait 0.05;
     }
 }

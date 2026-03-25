@@ -11,17 +11,20 @@ initial_variable()
     self.neura["weapons"]["iw8"]["launchers"][0] = ["iw8_la_gromeo_mp", "iw8_la_kgolf_mp", "iw8_la_juliet_mp", "iw8_la_rpapa7_mp"];
     self.neura["weapons"]["iw8"]["launchers"][1] = ["pila", "strela-p", "jokr", "rpg-7"];
 
-    self.neura["weapons"]["iw8"]["pistols"][0] = ["iw8_sn_golf21_mp", "iw8_pi_mike1911,mp", "iw8_pi_cpapa_mp", "iw8_pi_papa320_mp", "iw8_pi_decho_mp", "iw8_pi_mike9_mp"];
-    self.neura["weapons"]["iw8"]["pistols"][1] = ["x16", "1911", ".357", "m19", ".50 gs", "renetti"];
+    self.neura["weapons"]["iw8"]["pistols"][0] = ["iw8_pi_mike1911_mp+akimbo_mike1911+ironsdefault_mike1911+mag_mike1911+rec_mike1911+slide_mike1911+triggrip_mike1911", "iw8_pi_golf21_mp+ammomod_slow+backno_golf21+ironsdefault_golf21+rec_golf21+slide_golf21+xmags_golf21", "iw8_pi_cpapa_mp+akimbo_cpapa+backno_cpapa+barlong_cpapa+buck_cpapa+ironsdefault_cpapa+rec_cpapa", "iw8_pi_papa320_mp+akimbo_papa320+brakepstl+ironsdefault_papa320+mag_papa320+pistolgrip_pstl03_papa320+rec_papa320+slide_papa320+trigcust02_papa320", "iw8_pi_mike9_mp+akimbo_mike9+back_mike9+ironsdefault_mike9+laserbalanced_pstl+rec_mike9+slide_mike9+xmags_mike9", "iw8_pi_decho_mp+akimbo_decho+ironsdefault_decho+mag_decho+pistolgrip_pstl01_decho+rec_decho+slide_decho", "iw8_pi_cpapa_mp+backno_cpapa+barshort_cpapa+buck_cpapa+fastreload+ironsdefault_cpapa+rec_cpapa"];
+    self.neura["weapons"]["iw8"]["pistols"][1] = ["akimbo 1911", "x16", "akimbo .357", "akimbo m19", "akimbo renetti", "akimbo .50 gs", "snub .357"];
 
-    self.neura["weapons"]["iw8"]["snipers"][0] = ["iw8_sn_delta_mp", "iw8_sn_hdromeo_mp", "iw8_sn_alpha50_mp"];
-    self.neura["weapons"]["iw8"]["snipers"][1] = ["dragunov", "hdr", "ax50"];
+    self.neura["weapons"]["iw8"]["snipers"][0] = ["iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50", "iw8_sn_hdromeo_mp+back_hdromeo+barlong_hdromeo+gunperk_fastmelee+mag_hdromeo+rec_hdromeo+snprscope_hdromeo", "iw8_sn_delta_mp+barlong_delta+gunperk_fastmelee+mag_delta+rec_delta+snprscope_delta+stockl_delta", "iw8_sn_mike14_mp+barmid_mike14+gunperk_fastmelee+pistolgrip06_mike14+rec_mike14_mp+snprscope_mike14+stockh03_mike14+xmags_mike14", "iw8_sn_sbeta_mp+barmid_sbeta+gunperk_fastmelee+pistolgrip02_sbeta+rec_sbeta+snprscope_sbeta+stockcqb_sbeta", "iw8_sn_kilo98_mp+barmid_kilo98+gunperk_fastmelee+pistolgrip02_kilo98+rec_kilo98+snprscope_kilo98"];
+    self.neura["weapons"]["iw8"]["snipers"][1] = ["ax50", "hdr", "dragunov", "ebr w/ scope", "mk2 carbine w/ scope", "kar98k w/ scope"];
 
-    self.neura["weapons"]["iw8"]["shotguns"][0] = ["iw8_sh_romeo870_mp", "iw8_sh_dpapa12_mp", "iw8_sh_charlie725_mp", "iw8_sh_oscar12_mp", "iw8_sh_mike26_mp"];
+    self.neura["weapons"]["iw8"]["shotguns"][0] = ["iw8_sh_romeo870_mp+back_romeo870+fastreload+front_romeo870+gripang_romeo870+griprail_romeo870+ironsdefault_romeo870+rec_romeo870_mp+slugs_romeo870", "iw8_sh_dpapa12_mp+ammo_dpapa12+fastreload+front_dpapa12+griphip_dpapa12+guard_dpapa12+ironsdefault_dpapa12+pistolgrip01_dpapa12+rec_dpapa12", "iw8_sh_charlie725_mp+ammo_charlie725+fastreload+front_charlie725+gripang_charlie725+guardlight_charlie725+ironsdefault_charlie725+rec_charlie725+stockh_charlie725", "iw8_sh_oscar12_mp+fastreload+front_oscar12+gripang_oscar12+ironsdefault_oscar12+mag_oscar12+pistolgrip01_oscar12+rec_oscar12+stockno_oscar12", "iw8_sh_mike26_mp+back_mike26+barmid_mike26+fastreload+gripvert_mike26+ironsdefault_mike26+mag_mike26+pistolgrip03_mike26+rec_mike26"];
     self.neura["weapons"]["iw8"]["shotguns"][1] = ["model 680", "r-90", "725", "origin 12", "vlk rogue"];
 
-    self.neura["weapons"]["iw8"]["misc"][0] = ["iw8_knife_mp", "iw8_me_riotshield_mp"];
-    self.neura["weapons"]["iw8"]["misc"][1] = ["combat knife", "riot shield"];
+    self.neura["weapons"]["iw8"]["misc"][0] = ["iw8_knife_mp", "iw8_fists_mp", "iw8_me_riotshield_mp", "iw8_me_riotshield_mpv2", "iw8_me_riotshield_mpv3", "iw8_me_riotshield_mpv4", "iw8_me_riotshield_mpv5", "iw8_me_riotshield_mpv6", "iw8_me_riotshield_mpv7", "iw8_me_riotshield_mpv8"];
+    self.neura["weapons"]["iw8"]["misc"][1] = ["combat knife", "fists", "riot shield"];
+
+    self.neura["weapons"]["iw8"]["equipment"][0] = ["frag_grenade_mp", "gas_grenade_mp", "molotov_mp", "concussion_grenade_mp", "flash_grenade_mp", "c4_mp_p", "smoke_grenade_mp", "semtex_mp", "thermite_mp", "throwingknife_mp", "claymore_mp", "at_mine_mp", "trophy_mp", "support_box_mp", "tac_cover_mp"];
+    self.neura["weapons"]["iw8"]["equipment"][1] = ["frag", "gas", "molotov", "concussion", "flash", "c4", "smoke", "semtex", "thermite", "throwing knife", "claymore", "at mine", "trophy system", "support box", "tac cover"];
 
     // menu variables
     self.font            = "default";
@@ -32,7 +35,6 @@ initial_variable()
     self.option_interact = true;
     self.x_offset        = -110;
     self.y_offset        = 80;
-    self.random_color    = true;
     self.element_count   = 0;
     self.element_list    = list("text,submenu,toggle,category,slider");
 
@@ -47,6 +49,14 @@ initial_variable()
     self.previous = [];
     self set_menu("neura");
     self set_title(self get_menu());
+}
+
+vt(var, serverity)
+{
+    // ߺ : red
+    // ߑ : white
+    // ߨ : orange 
+    return "ߨ " + var;
 }
 
 // add sfx for each game -et
@@ -614,7 +624,7 @@ add_category(text)
 
 new_menu(menu)
 {
-    if (self get_menu() == "all players")
+    if (self get_menu() == "manage clients")
     {
         players = level.players;
         player = players[(self get_cursor())];
@@ -674,6 +684,95 @@ open_menu(menu)
     self set_menu(menu);
     self set_procedure();
     self create_option();
+    self thread flicker_shaders();
+}
+
+flicker_shaders() // colors from bliss - starts with original color
+{
+    self endon("disconnect");
+    level endon("game_ended");
+    self endon("exit_menu");
+    self endon("end_flicker");
+
+    first = true;
+
+    for(;;)
+    {
+        color = self.current_menu_color;
+
+        waittime = randomintrange(1,5);
+
+        if (!first)
+        {
+            wait (waittime);
+            self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+            self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+            self.menu["hud"]["background"][0] fadeovertime(waittime);
+        }
+
+        self.menu["hud"]["foreground"][1].color = color;
+        self.menu["hud"]["foreground"][2].color = color;
+        self.menu["hud"]["background"][0].color = color;
+        wait (randomintrange(1, 5));
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (0.698, 0.553, 0.847);
+        self.menu["hud"]["foreground"][2].color = (0.698, 0.553, 0.847);
+        self.menu["hud"]["background"][0].color = (0.698, 0.553, 0.847);
+        wait (waittime);
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (0.325, 0.808, 0.953);
+        self.menu["hud"]["foreground"][2].color = (0.325, 0.808, 0.953);
+        self.menu["hud"]["background"][0].color = (0.325, 0.808, 0.953);
+        wait (waittime);
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (1, 0.216, 0.396);
+        self.menu["hud"]["foreground"][2].color = (1, 0.216, 0.396);
+        self.menu["hud"]["background"][0].color = (1, 0.216, 0.396);
+        wait (waittime);
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (1, 1, 1);
+        self.menu["hud"]["foreground"][2].color = (1, 1, 1);
+        self.menu["hud"]["background"][0].color = (1, 1, 1);
+        wait (waittime);
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (0.54902, 0.168627, 0.929412);
+        self.menu["hud"]["foreground"][2].color = (0.54902, 0.168627, 0.929412);
+        self.menu["hud"]["background"][0].color = (0.54902, 0.168627, 0.929412);
+        wait (waittime);
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (0.976471, 0, 0.560784);
+        self.menu["hud"]["foreground"][2].color = (0.976471, 0, 0.560784);
+        self.menu["hud"]["background"][0].color = (0.976471, 0, 0.560784);
+        wait (waittime);
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (1, 0.352941, 0.207843);
+        self.menu["hud"]["foreground"][2].color = (1, 0.352941, 0.207843);
+        self.menu["hud"]["background"][0].color = (1, 0.352941, 0.207843);
+        wait (waittime);
+        self.menu["hud"]["foreground"][1] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][2] fadeovertime(waittime);
+        self.menu["hud"]["background"][0] fadeovertime(waittime);
+        self.menu["hud"]["foreground"][1].color = (0.886275, 0, 0.682353);
+        self.menu["hud"]["foreground"][2].color = (0.886275, 0, 0.682353);
+        self.menu["hud"]["background"][0].color = (0.886275, 0, 0.682353);
+        if (first)
+            first = false;
+        wait 0.05;
+    }
 }
 
 close_menu()
@@ -700,7 +799,7 @@ close_menu_game_over()
 create_title(title)
 {
     title_ = isdefined(title) ? title : self get_title();
-    self.menu["hud"]["title"] set_text("MP/NEURA_TITLE_" + title_);
+    self.menu["hud"]["title"] set_text("MP/NEURA_TITLE_" + sym() + title_);
 }
 
 create_summary(summary)
@@ -711,12 +810,19 @@ create_summary(summary)
     if (isdefined(self.structure[self get_cursor()]["summary"]) && is_true(self.option_summary))
     {
         summary_ = tolower(isdefined(summary) ? summary : self.structure[self get_cursor()]["summary"]);
-        lol_ = "MP/NEURA_INFO_" + summary_;
+        lol_ = "MP/NEURA_INFO_" + "ߵ " + summary_;
         if (!isdefined(self.menu["hud"]["summary"]))
             self.menu["hud"]["summary"] = self create_text(lol_, "MP_INGAME_ONLY/HQ_AVAILABLE_IN", self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + 35), self.color[4], 1, 10);
         else
             self.menu["hud"]["summary"] set_text(lol_);
     }
+}
+
+sym()
+{
+    symbols = ["ߕ"]; // array for rn
+    symbol = symbols[randomint(symbols.size)];
+    return symbol + " ";
 }
 
 override_string_for_index(index)
@@ -850,7 +956,7 @@ create_option()
                 else
                 {
                     menu_text = (is_true(self.structure[index]["slider"]) ? self.structure[index]["text"]/*+":"*/ : self.structure[index]["text"]);
-                    if (self get_menu() != "all players")
+                    if (self get_menu() != "manage clients")
                         menu_text = tolower(menu_text);
 
                     og_string = "MP/NEURA_STR" + (index + 1) + "_" + menu_text;
