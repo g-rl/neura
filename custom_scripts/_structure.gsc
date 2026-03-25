@@ -20,7 +20,7 @@ structure()
         self add_menu("neura - " + self get_name());
         self add_option("my settings", credits, ::new_menu, "settings");
         self add_option("class manager", credits, ::new_menu, "class");
-        self add_option("glitches", credits, ::new_menu, "settings");
+        // self add_option("glitches", credits, ::new_menu, "glitches");
         self add_option("position", credits, ::new_menu, "position");
         self add_option("game profile", credits, ::new_menu, "game");
         self add_option("eb settings", credits, ::new_menu, "aimbot");
