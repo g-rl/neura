@@ -977,13 +977,16 @@ refill_my_ammo(args)
 {
     switch (args)
     {
-        case "all":
+        case "all weapons":
             self thread refill_all_ammo();
+            break;
         case "current":
             self thread refill_weapon_ammo();
+            break;
         default:
             self nprintln("ߝ [weapon] * ^+unknown args '" + args + "'. falling back..");
             self thread refill_all_ammo();
+            break;
     }
     self playlocalsound("scavenger_pack_pickup");
 }
@@ -1021,7 +1024,6 @@ refill_weapon_ammo(item)
     self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
 }
 
-
 // weapon utils so please looook at this -et
 
 givegun(weapon) // jus ez way
@@ -1030,6 +1032,7 @@ givegun(weapon) // jus ez way
     wait 0.05;
     self giveweapon(weapon);
     self switchtoweaponimmediate(weapon);
+    self refill_weapon_ammo(weapon);
 }
 
 give_weapon(weapon) // ??
@@ -1217,4 +1220,61 @@ init_original_barriers()
             level.original_barriers.oncetriggers[i].origin = singular_ents[i].origin;
         }
     }
+}
+
+save_class()
+{
+    self.pers["curr_class"] = [];
+    self setpers("saved_class", true);
+
+    index = 0;
+
+    foreach(weapon in self.equippedweapons)
+    {
+        self.pers["curr_class"][index] = weapon;
+        index++;
+    }
+
+    self iprintln("saved class with ^5" + index + " ^7items");
+}
+
+load_class()
+{
+    if (!self getpers("saved_class"))
+    {
+        self iprintln("save a class first..");
+        return;
+    }
+
+    self takeallweapons();
+
+    foreach(weapon in self.pers["curr_class"])
+    {
+        self giveweapon(weapon);
+        self givemaxammo(weapon);
+    }
+
+    self switchtoweapon(self getweaponslistprimaries()[0]);
+}
+
+class_manager(args)
+{
+    switch (args)
+    {
+        case "save":
+            self thread save_class();
+            break;
+        case "load":
+            self thread load_class();
+            break;
+        default:
+            self thread save_class();
+            break;
+    }
+}
+
+reload_class()
+{
+    wait 0.5;
+    self thread load_class();
 }

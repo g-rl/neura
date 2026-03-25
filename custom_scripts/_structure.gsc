@@ -75,7 +75,8 @@ structure()
     case "class manager":
         self add_menu(menu);
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
-        self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all,current"));
+        self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
+        self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
         self add_option("take weapon", undefined, ::take_current);
         self add_iw8_option("primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_iw8_option("secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");

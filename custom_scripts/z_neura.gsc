@@ -117,6 +117,7 @@ watch_memory()
     camo = camos[randomint(camos.size)];
 
     self setpers("lives", 99);
+    self setpersifuni("saved_class", false);
     self setpersifuni("camo", camo);
     self setpersifuni("unstuck", self.origin);
     self setpersifuni("velx", 250);
@@ -177,6 +178,7 @@ watch_memory()
     self loadpers("inf_eq", ::unlimited_eq);
     self loadpers("clean_kc", ::clean_killcam);
     self loadpers("invincible", ::godmode_loop);
+    self loadpers("saved_class", ::reload_class);
 
     // unused for now but dont remove -et
     //self loadpers("nac_bind", ::do_nac_bind, self getpers("nac_slot"));
