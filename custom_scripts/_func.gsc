@@ -693,11 +693,11 @@ delete_bounce()
     x = int(self getpers("bouncecount"));
 
     if (x == 0)
-        return self nprintln("ߝ [game] * ^+no bounces to delete");
+        return self nprintln("^1no bounces to delete");
 
     x--;
     self setpers("bouncecount", x);
-    self nprintln("ߝ [game] * ^+bounce #" + x + " deleted");
+    self nprintln("^7bounce #^5" + x + " ^7deleted");
 }
 
 monitor_bounces()
@@ -755,7 +755,7 @@ move_bots(args)
             {
                 player setorigin(self.origin);
                 player save_spawn();
-                self nprintln("ߝ [ai] * trying to move all bots to ^+" + self.origin);
+                self nprintln("trying to move all bots to ^5" + self.origin);
                 self playlocalsound("recon_drone_marked_owner");
             }
         }
@@ -767,7 +767,7 @@ move_bots(args)
             {
                 player setorigin(self getcrosshair());
                 player save_spawn();
-                self nprintln("ߝ [ai] * trying to move all bots to ^+" + self getcrosshair());
+                self nprintln("trying to move all bots to ^5" + self getcrosshair());
                 self playlocalsound("recon_drone_marked_owner");
             }
         }
@@ -1066,12 +1066,12 @@ give_weapon(weapon) // ??
     }
 
     if (!isdefined(new_weapon) || new_weapon.basename == "none")
-        self nprintln("ߝ [weapon] * ^1invalid weapon: ^7" + weapon_name);
+        self nprintln("invalid weapon: ^1" + weapon_name);
     else
     {
         if (self hasweapon(new_weapon))
         {
-            self nprintln("ߝ [weapon] * ^+already have: ^7" + weapon_name);
+            self nprintln("already have: ^5" + weapon_name);
             return;
         }
 

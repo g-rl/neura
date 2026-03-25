@@ -166,7 +166,7 @@ watch_memory()
     {
         self notify("stop_bounce_loop");
         self thread monitor_bounces();
-        self iprintln("ߝ [game] * ^+ " + self getpers("bouncecount") + "^7 bounces reloaded");
+        self iprintln("^5" + self getpers("bouncecount") + "^7 bounces reloaded");
     }
 
     self loadpers("autoprone", ::do_auto_prone);
