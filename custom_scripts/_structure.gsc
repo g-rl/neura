@@ -34,7 +34,7 @@ structure()
         self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
         self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
-        self add_pers_toggle("round end prone", undefined, ::togglepers, "autoprone_endgame");
+        self add_pers_toggle("round end prone", undefined, ::togglepers, "autoprone_endgame", true);
         self add_pers_toggle("auto reload", "empty mag at end of round", ::autoreload, "autoreload");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
         break;

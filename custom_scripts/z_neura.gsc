@@ -106,6 +106,7 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
+        self thread reset_position();
         waittill_prematch_over();
         self thread reload_position();
     }

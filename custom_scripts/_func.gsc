@@ -443,7 +443,7 @@ autoprone()
     }
 }
 
-do_auto_prone()
+do_auto_prone(args)
 {
     self endon("disconnect");
     self endon("stop_auto_prone");
@@ -767,9 +767,6 @@ manage_teleport(mode, player)
             break;
         case "them":
             self thread teleport_player(self, player, player);
-            break;
-        case "crosshair":
-            self thread teleport_player(player, self getcrosshair(), player);
             break;
         default:
             self thread teleport_player(player, self, player);
@@ -1245,7 +1242,7 @@ class_manager(args)
     }
 }
 
-reload_class()
+reload_class(args)
 {
     wait 0.5;
     self thread load_class();

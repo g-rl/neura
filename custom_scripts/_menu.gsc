@@ -518,7 +518,7 @@ add_pers_toggle(text, summary, function, toggle, argument_1, argument_2, argumen
     option["summary"]  = summary;
     option["function"] = function;
     option["toggle"]   = is_true(self.pers[toggle]);
-    option["argument_1"] = toggle;
+    option["argument_1"] = isdefined(argument_1) ? toggle : argument_1;
     option["argument_2"] = argument_2;
     option["argument_3"] = argument_3;
 
