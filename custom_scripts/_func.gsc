@@ -3,25 +3,26 @@
 togglepers(pers) // wow dude
 {
     self.pers[pers] = !toggle(self.pers[pers]);
-    print("toggling " + pers);
+    print(pers + " new value: " + self getpers(pers));
 }
 
-setpersfloat(value, pers) // wow dude
+toggledvar(dvar)
 {
-    self setpers(pers, float(value));
-    print("set " + pers + " to " + value);
-}
-
-setpersint(value, pers) // wow dude
-{
-    self setpers(pers, float(value));
-    print("set " + pers + " to " + value);
+    setdvar(dvar, !toggle(getdvarint(dvar)));
+    print(dvar + " new value: " + getdvar(dvar));
 }
 
 setpersmenu(value, pers) // wow dude
 {
     self setpers(pers, value);
     print("set " + pers + " to " + value);
+}
+
+setdvarmenu(value, dvar) // wow dude
+{
+    value = float(value);
+    setdvar(dvar, value);
+    print("set " + dvar + " to " + value);
 }
 
 watch_weap_change()
@@ -63,8 +64,7 @@ do_instaswap_bind(args, slot)
 
     for (;;)
     {
-        self waittill("button_pressed_-actionslot 1");
-
+        self waittill("button_pressed_-actionslot 2");
         if (!self custom_scripts\_menu::in_menu())
         {
             self instaswapto(self getnextweapon());
@@ -967,10 +967,10 @@ refill_all_ammo()
         self setweaponammoclip(item, 999);
         self setweaponammoclip(item, 999, "left");
         self setweaponammoclip(item, 999, "right");
-        self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
-        self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
-        self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
-        self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
+        // self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
+        // self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
+        // self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
+        // self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
         wait 0.05;
     }
 }
@@ -982,10 +982,10 @@ refill_weapon_ammo(item)
     self setweaponammoclip(item, 999);
     self setweaponammoclip(item, 999, "left");
     self setweaponammoclip(item, 999, "right");
-    self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
-    self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
-    self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
-    self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
+    // self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
+    // self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
+    // self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
+    // self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
 }
 
 // weapon utils so please looook at this -et

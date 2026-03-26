@@ -525,6 +525,20 @@ add_pers_toggle(text, summary, function, toggle, argument_1, argument_2, argumen
     self.structure[self.structure.size] = option;
 }
 
+add_dvar_toggle(text, summary, dvar, argument_1, argument_2, argument_3)
+{
+    option          = [];
+    option["text"]     = text;
+    option["summary"]  = summary;
+    option["function"] = ::toggledvar;
+    option["toggle"]   = is_true(getdvarint(dvar));
+    option["argument_1"] = dvar;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+
+    self.structure[self.structure.size] = option;
+}
+
 add_toggle(text, summary, function, toggle, array, argument_1, argument_2, argument_3)
 {
     option          = [];

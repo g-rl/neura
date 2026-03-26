@@ -95,6 +95,7 @@ setup_dvars()
 {
     setdvarifuninitialized("scr_killcam_time", 5);
     setdvar("MSOOMPMPQS", true); // unlimited sprint (iw8 only i think?)
+    setdvar("LNOKTQPLKO", true); // no jump slowdown
 }
 
 on_bot_spawned()
@@ -146,6 +147,9 @@ watch_memory()
     self setpersifuni("frozen_bots", true);
     self setpersifuni("messages", true);
     self setpersifuni("invincible", true);
+    self setpersifuni("autoreload", false);
+    self setpersifuni("autoprone", false);
+    self setpersifuni("aimbot", false);
 
     for (i=1;i<8;i++)
     {
