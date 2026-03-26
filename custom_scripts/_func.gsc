@@ -1052,7 +1052,10 @@ give_weapon(weapon) // ??
         }
 
         self giveweaponinstant(new_weapon);
+
+#ifndef S4
         scripts\mp\weapons::fixupplayerweapons(self, new_weapon);
+#endif
 
         if (variant_id >= 0)
         {
@@ -1103,7 +1106,12 @@ allow_oob()
 
     if (isdefined(self.vehicle) && isdefined(self.vehicle.health) && self.vehicle.health > 0)
     {
+#ifdef S4
+        scripts\mp\outofbounds::_id_3964(self.vehicle, 0);
+#else
         scripts\mp\outofbounds::clearoob(self.vehicle, 0);
+#endif
+
         self setclientomnvar("ui_out_of_bounds_type", 0 );
         self setclientomnvar("ui_out_of_bounds_countdown", 0);
     }
