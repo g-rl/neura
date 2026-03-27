@@ -99,7 +99,7 @@ getpers(key)
 
 setpersifuni(key, value)
 {   
-    if (!isdefined(self.pers[key]))
+    if (!isdefined(getpers(key)))
         setpers(key, value);
 }
 
@@ -110,12 +110,11 @@ haspers(pers)
 
 loadpers(key, func, args)
 {
-    if (!self haspers(key))
+    if (!self getpers(key)) 
     {
-        self setpersifuni(key, false);
         return;
     }
-
+    
     wait 0.05;
 
     // we call any function passed through loadpers with args no matter what - THIS CAN BE UNDEFINED

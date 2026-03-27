@@ -35,7 +35,7 @@ watch_weap_change()
     {
         self waittill("weapon_change", weapon);
         name = weapon.basename;
-        // print(getcompleteweaponname(weapon));
+        print(getcompleteweaponname(weapon));
         wait 0.05;
     }
 }
@@ -920,6 +920,7 @@ look_at_me(player)
 take_current()
 {
     self takeweapon(self getcurrentweapon());
+    self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(self getweaponslistprimaries()[0]);
 }
 
 give_player_shield(player)
@@ -949,7 +950,7 @@ refill_my_ammo(args)
             self thread refill_all_ammo();
             break;
         case "current":
-            self thread refill_weapon_ammo();
+            self thread refill_weapon_ammo(self getcurrentweapon());
             break;
         default:
             self nprintln("ߝ [weapon] * ^+unknown args '" + args + "'. falling back..");
@@ -996,8 +997,12 @@ refill_weapon_ammo(item)
 
 givegun(weapon) // jus ez way
 {
-    self takeweapon(self getcurrentweapon());
-    wait 0.05;
+    if (self getpers("replace_weapon"))
+    {
+        self takeweapon(self getcurrentweapon());
+        wait 0.05;
+    }
+
     self giveweapon(weapon);
     self switchtoweaponimmediate(weapon);
     self refill_weapon_ammo(weapon);
@@ -1227,10 +1232,10 @@ load_class()
     foreach(weapon in self.pers["curr_class"])
     {
         self giveweapon(weapon);
-        self max_ammo(weapon);
+        // self max_ammo(weapon);
     }
 
-    self switchtoweapon(self getweaponslistprimaries()[0]);
+    // self switchtoweapon(self getweaponslistprimaries()[0]);
 }
 
 class_manager(args)
@@ -1238,13 +1243,13 @@ class_manager(args)
     switch (args)
     {
         case "save":
-            self thread save_class();
+            self save_class();
             break;
         case "load":
-            self thread load_class();
+            self load_class();
             break;
         default:
-            self thread save_class();
+            self save_class();
             break;
     }
 }
@@ -1252,19 +1257,13 @@ class_manager(args)
 reload_class(args)
 {
     wait 0.5;
-    self thread load_class();
+    self load_class();
 }
 
 max_ammo(item)
 {
     self setweaponammostock(item, 999);
     self setweaponammoclip(item, 999);
-    self setweaponammoclip(item, 999, "left");
-    self setweaponammoclip(item, 999, "right");
-    self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
-    self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
-    self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
-    self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
 }
 
 toggle_elevators()
@@ -1277,7 +1276,7 @@ toggle_elevators()
         self notify("stop_elevators");
 }
 
-elevators()
+elevators(args)
 {
     self endon("disconnect");
     self endon("stop_elevators");
@@ -1285,34 +1284,35 @@ elevators()
 
     for(;;)
     {
-        if (self adsbuttonpressed() && self isbuttonpressed("+stance") && self isonground() && !self isonladder() && !self ismantling())
+        if (self adsbuttonpressed() && self isbuttonpressed("+stance") && (self isonground() && !self isonladder() && !self ismantling()))
         {
             self thread elevator_logic();
             wait 0.25;
         }
-
-        if (self isbuttonpressed("+gostand"))
-        {
-            self thread stop_elevator();
-            wait 0.05;
-        }
-
         wait 0.05;
     }
 }
 
 elevator_logic()
 {
-    self endon("end_elevator");
+    self endon("end_ele_logic");
     level endon("game_ended");
     self endon("disconnect");
 
     self.elevator = spawn("script_origin", self.origin, 1);
     self playerlinkto(self.elevator, undefined);
+    self.elevating = true;
 
     for(;;)
     {
-        self.elevating = true;
+        if (self isbuttonpressed("+gostand"))
+        {
+            self unlink();
+            self.elevator delete();
+            self.elevating = undefined;
+            self notify("end_ele_logic");
+        }
+
         self.o = self.elevator.origin;
         wait 0.05;
         time = randomintrange(8,20);
@@ -1321,18 +1321,7 @@ elevator_logic()
     }
 }
 
-stop_elevator()
-{
-    if (is_true(self.elevator))
-    {
-        self unlink();
-        self.elevator delete();
-        self.elevating = undefined;
-        self notify("end_elevator");
-    }
-}
-
-reload_alt_swap()
+reload_alt_swap(args)
 {
     weapon = "iw8_pi_golf21_mp+ammomod_slow+backno_golf21+ironsdefault_golf21+rec_golf21+slide_golf21+xmags_golf21";
     self giveweapon(weapon);
@@ -1356,16 +1345,12 @@ toggle_alt_swaps()
     }
 }
 
-give_vish()
-{
-    self setspawnweapon("none");
-    self switchtoweaponimmediate("none");
-    self setspawnweapon("none");
-}
-
 spawnbot()
 {
-    scripts\mp\bots\bots::spawn_bots(1, "axis", undefined, undefined, undefined, "regular");
+    // ok so the actual bot code kicks the bot no matter what..? yeah ok
+    // scripts\mp\bots\bots::spawn_bots(1, "axis", undefined, undefined, undefined, "regular");
+
+    self spawnbotortestclient(); // is this even gonna work ? we dont need the bot to move or anything it could be retarded who cares
 }
 
 toggle_perk(perk) // toggle & store perk data

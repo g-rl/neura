@@ -92,7 +92,7 @@ on_player_spawned()
         // other funcs
         self thread monitor_class();
         self thread round_manager();
-        self thread watch_weap_change();
+        // self thread watch_weap_change();
     }
 }
 
@@ -127,13 +127,9 @@ watch_memory()
     camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"];
     camo = camos[randomint(camos.size)];
 
-    setdvarifuninitialized("wm_x", -424);
-    setdvarifuninitialized("wm_y", 234);
-    setdvarifuninitialized("wm_changeby", 4);
-    setdvarifuninitialized("g_watermark", 1);
+    setdvarifuninitialized("rainbow", 1);
 
     self setpers("lives", 99);
-    self setpersifuni("saved_class", false);
     self setpersifuni("camo", camo);
     self setpersifuni("unstuck", self.origin);
     self setpersifuni("velx", 250);
@@ -168,7 +164,9 @@ watch_memory()
     self setpersifuni("aimbot", false);
     self setpersifuni("elevators", false);
     self setpersifuni("alt_swap", false);
-    
+    self setpersifuni("replace_weapon", false);
+    self setpersifuni("saved_class", false);
+
     for (i=1;i<8;i++)
     {
         self setpersifuni("boltpos" + i, "0");
@@ -187,7 +185,7 @@ watch_memory()
     {
         self notify("stop_bounce_loop");
         self thread monitor_bounces();
-        self iprintln("^5" + self getpers("bouncecount") + "^7 bounces reloaded");
+        self iprintln("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
     }
 
     self loadpers("autoprone", ::do_auto_prone);

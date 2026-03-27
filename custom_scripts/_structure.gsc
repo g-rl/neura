@@ -29,15 +29,15 @@ structure()
     case "mods & toggles":
         self add_menu(menu);
         self add_pers_toggle("invincibility", undefined, ::toggle_invincibility, "invincible");
-        self add_pers_toggle("elevators", "fake elevators - [{+speed_throw}] + [{+stance}]", ::toggle_elevators, "elevators");
-        self add_pers_toggle("alt swaps", "only gives a third weapon", ::toggle_alt_swaps, "alt_swap");
+        self add_pers_toggle("elevators", undefined, ::toggle_elevators, "elevators");
+        self add_pers_toggle("alt swaps", undefined, ::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("infinite equipment", undefined, ::toggle_inf_eq, "inf_eq");
-        self add_pers_toggle("instaswaps", "frag equipment swaps - [{+frag}]", ::instaswaps, "instaswaps");
+        self add_pers_toggle("instaswaps", undefined, ::instaswaps, "instaswaps");
         self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
         self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
         self add_pers_toggle("round end prone", undefined, ::togglepers, "autoprone_endgame", true);
-        self add_pers_toggle("auto reload", "empty mag at end of round", ::autoreload, "autoreload");
+        self add_pers_toggle("auto reload", undefined, ::autoreload, "autoreload");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
         break;
     case "position":
@@ -65,24 +65,24 @@ structure()
         break;
     case "glitches":
         self add_menu(menu);
-        self add_option("give vish", undefined, ::give_vish);
         self add_option("switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "equipment");
         break;
     case "equipment":
         self add_menu(menu);
         for(i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
         {
-            self add_option(self.neura["weapons"][client][menu][1][i], "id: ^5" + self.neura["weapons"][client][menu][0][i], ::nacto, self.neura["weapons"][client][menu][0][i]);
+            self add_option(self.neura["weapons"][client][menu][1][i], undefined, ::nacto, self.neura["weapons"][client][menu][0][i]);
         }
         break;
     case "class manager":
         self add_menu(menu);
-        self add_increment(vt("class wrap"), increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap"); // unused until we add binds
-        self add_array("perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]);
+        // self add_increment(vt("class wrap"), increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap"); // unused until we add binds
+        // self add_array("perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]);
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
         self add_option("take weapon", undefined, ::take_current);
+        self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
         self add_iw8_option("primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_iw8_option("secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
         break;
@@ -90,6 +90,9 @@ structure()
         self add_menu(menu);
         self add_option("snipers", "^5" + self.neura["weapons"][client]["primary"]["snipers"][0].size + " ^7weapons available", ::new_menu, "snipers");
         self add_option("shotguns", "^5" + self.neura["weapons"][client]["primary"]["shotguns"][0].size + " ^7weapons available", ::new_menu, "shotguns");
+        self add_option("assault rifles", "^5" + self.neura["weapons"][client]["primary"]["assault rifles"][0].size + " ^7weapons available", ::new_menu, "assault rifles");
+        self add_option("sub machine guns", "^5" + self.neura["weapons"][client]["primary"]["sub machine guns"][0].size + " ^7weapons available", ::new_menu, "sub machine guns");
+        self add_option("light machine guns", "^5" + self.neura["weapons"][client]["primary"]["light machine guns"][0].size + " ^7weapons available", ::new_menu, "light machine guns");
         break;
     case "secondaries (iw8)":
         self add_menu(menu);
@@ -126,6 +129,27 @@ structure()
         }
         break;
     case "shotguns":
+        self add_menu(menu);
+        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+        }
+        break;
+    case "assault rifles":
+        self add_menu(menu);
+        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+        }
+        break;
+    case "light machine guns":
+        self add_menu(menu);
+        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+        }
+        break;
+    case "sub machine guns":
         self add_menu(menu);
         for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
         {
