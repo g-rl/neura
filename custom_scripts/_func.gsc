@@ -333,7 +333,7 @@ instaswaps()
     self.pers["instaswaps"] = !self.pers["instaswaps"];
 }
 
-do_instaswaps()
+do_instaswaps(args)
 {
     self endon("disconnect");
     level endon("game_ended");
