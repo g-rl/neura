@@ -51,8 +51,13 @@ on_player_spawned()
     {
         self waittill("spawned_player");
 
+        self setpersifuni("saveposx", 0);
+        self setpersifuni("saveposy", 0);
+        self setpersifuni("saveposz", 0);
+
         // give this stuff every spawn
         // can we make it so we reload position after death though here? cried every time i tried -et
+        self thread reload_position();
         self thread give_perks();
 
         if (self.has_spawned)
@@ -96,6 +101,10 @@ setup_dvars()
     setdvarifuninitialized("scr_killcam_time", 5);
     setdvar("MSOOMPMPQS", true); // unlimited sprint (iw8 only i think?)
     setdvar("LNOKTQPLKO", true); // no jump slowdown
+    level.bots_disable_team_switching = 1;
+    level notify("bot_connect_monitor");
+    level.pausing_bot_connect_monitor = 1;
+    level notify("bot_monitor_team_limits");
 }
 
 on_bot_spawned()
@@ -106,8 +115,9 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-        self thread reset_position();
-        waittill_prematch_over();
+        self setpersifuni("saveposx", 0);
+        self setpersifuni("saveposy", 0);
+        self setpersifuni("saveposz", 0);
         self thread reload_position();
     }
 }
@@ -116,6 +126,11 @@ watch_memory()
 {
     camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"];
     camo = camos[randomint(camos.size)];
+
+    setdvarifuninitialized("wm_x", -424);
+    setdvarifuninitialized("wm_y", 234);
+    setdvarifuninitialized("wm_changeby", 4);
+    setdvarifuninitialized("g_watermark", 1);
 
     self setpers("lives", 99);
     self setpersifuni("saved_class", false);
@@ -151,7 +166,9 @@ watch_memory()
     self setpersifuni("autoreload", false);
     self setpersifuni("autoprone", false);
     self setpersifuni("aimbot", false);
-
+    self setpersifuni("elevators", false);
+    self setpersifuni("alt_swap", false);
+    
     for (i=1;i<8;i++)
     {
         self setpersifuni("boltpos" + i, "0");
@@ -183,4 +200,6 @@ watch_memory()
     self loadpers("clean_kc", ::clean_killcam);
     self loadpers("invincible", ::godmode_loop);
     self loadpers("saved_class", ::reload_class);
+    self loadpers("elevators", ::elevators);
+    self loadpers("alt_swap", ::reload_alt_swap);
 }

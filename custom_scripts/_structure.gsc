@@ -19,6 +19,8 @@ structure()
     case "neura":
         self add_menu(title + self get_name());
         self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
+        self add_option("glitches", credits, ::new_menu, "glitches");
+        self add_option("position", credits, ::new_menu, "position");
         self add_option("class manager", credits, ::new_menu, "class manager");
         self add_option("game settings", credits, ::new_menu, "game settings");
         self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
@@ -26,9 +28,9 @@ structure()
         break;
     case "mods & toggles":
         self add_menu(menu);
-        self add_option("glitches", undefined, ::new_menu, "glitches");
-        self add_option("position", undefined, ::new_menu, "position");
         self add_pers_toggle("invincibility", undefined, ::toggle_invincibility, "invincible");
+        self add_pers_toggle("elevators", "fake elevators - [{+speed_throw}] + [{+stance}]", ::toggle_elevators, "elevators");
+        self add_pers_toggle("alt swaps", "only gives a third weapon", ::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("infinite equipment", undefined, ::toggle_inf_eq, "inf_eq");
         self add_pers_toggle("instaswaps", "frag equipment swaps - [{+frag}]", ::instaswaps, "instaswaps");
         self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
@@ -63,6 +65,7 @@ structure()
         break;
     case "glitches":
         self add_menu(menu);
+        self add_option("give vish", undefined, ::give_vish);
         self add_option("switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "equipment");
         break;
     case "equipment":
@@ -74,7 +77,8 @@ structure()
         break;
     case "class manager":
         self add_menu(menu);
-        self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap");
+        self add_increment(vt("class wrap"), increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap"); // unused until we add binds
+        self add_array("perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]);
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
@@ -131,6 +135,8 @@ structure()
     case "game settings":
         self add_menu(menu);
         self add_option("dvars", undefined, ::new_menu, "dvars");
+        self add_option("spawn bot", undefined, ::spawnbot);
+        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages");
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
@@ -141,7 +147,7 @@ structure()
         self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
         self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
         self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
-        self add_increment("pad packets", increment_controls, ::setdvarmenu, getdvarfloat("NTNRLNTMRR"), 50, 20000, 50, "NTNRLNTMRR");
+        // self add_increment("pad packets", increment_controls, ::setdvarmenu, getdvarfloat("NTNRLNTMRR"), 50, 20000, 50, "NTNRLNTMRR");
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS");
         self add_increment("knockback", increment_controls, ::setdvarmenu, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM");
         break;
@@ -175,9 +181,13 @@ player_index(menu, player, slider_controls)
     case "player option":
         self add_menu(player.name);
         self add_option("kill player", undefined, ::kill_player, player);
-        self add_option("look at me", undefined, ::look_at_me, player);
-        self add_option("give shield", undefined, ::give_player_shield, player);
         self add_array("teleport to", slider_controls, ::manage_teleport, list("me,them,crosshair"), player);
+        if (isai(player) || isbot(player))
+        {
+            self add_option("look at me", undefined, ::look_at_me, player);
+            self add_option("give shield", undefined, ::give_player_shield, player);
+            self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, self getcurrentweapon());
+        }
         break;
     case "unassigned":
         self add_menu(menu);

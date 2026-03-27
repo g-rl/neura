@@ -35,7 +35,7 @@ watch_weap_change()
     {
         self waittill("weapon_change", weapon);
         name = weapon.basename;
-        print(getcompleteweaponname(weapon));
+        // print(getcompleteweaponname(weapon));
         wait 0.05;
     }
 }
@@ -826,6 +826,7 @@ give_perks()
     {
         foreach (perk in self.neura["soh_perk_list"])
         {
+            self.pers["my_perks"][perk] = perk;
             scripts\mp\utility\perk::giveperk(perk); // giveperk
         }
     }
@@ -833,12 +834,14 @@ give_perks()
     {
         foreach (perk in self.neura["soh_perk_list"])
         {
+            self.pers["my_perks"][perk] = undefined;
             scripts\mp\utility\perk::removeperk(perk);
         }
     }
 
     foreach (perk in self.neura["perk_list"])
     {
+        self.pers["my_perks"][perk] = perk;
         scripts\mp\utility\perk::giveperk(perk);
     }
 }
@@ -907,8 +910,6 @@ post_prematch_start()
 #else
     self iprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 #endif
-
-    self thread reload_position();
 }
 
 look_at_me(player)
@@ -926,6 +927,12 @@ give_player_shield(player)
     player giveweapon("iw8_me_riotshield_mp");
     player setspawnweapon("iw8_me_riotshield_mp");
     player setorigin(player.origin - (0,0,2));
+}
+
+set_bot_weapon(player, weapon)
+{
+    player giveweapon(weapon);
+    player setspawnweapon(weapon);
 }
 
 teleport_to_cross(player)
@@ -1258,4 +1265,132 @@ max_ammo(item)
     self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
     self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
     self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
+}
+
+toggle_elevators()
+{
+    self.pers["elevators"] = !toggle(self.pers["elevators"]);
+
+    if (self getpers("elevators"))
+        self thread elevators();
+    else
+        self notify("stop_elevators");
+}
+
+elevators()
+{
+    self endon("disconnect");
+    self endon("stop_elevators");
+    level endon("game_ended");
+
+    for(;;)
+    {
+        if (self adsbuttonpressed() && self isbuttonpressed("+stance") && self isonground() && !self isonladder() && !self ismantling())
+        {
+            self thread elevator_logic();
+            wait 0.25;
+        }
+
+        if (self isbuttonpressed("+gostand"))
+        {
+            self thread stop_elevator();
+            wait 0.05;
+        }
+
+        wait 0.05;
+    }
+}
+
+elevator_logic()
+{
+    self endon("end_elevator");
+    level endon("game_ended");
+    self endon("disconnect");
+
+    self.elevator = spawn("script_origin", self.origin, 1);
+    self playerlinkto(self.elevator, undefined);
+
+    for(;;)
+    {
+        self.elevating = true;
+        self.o = self.elevator.origin;
+        wait 0.05;
+        time = randomintrange(8,20);
+        self.elevator.origin = self.o + (0, 0, time);
+        wait 0.05;
+    }
+}
+
+stop_elevator()
+{
+    if (is_true(self.elevator))
+    {
+        self unlink();
+        self.elevator delete();
+        self.elevating = undefined;
+        self notify("end_elevator");
+    }
+}
+
+reload_alt_swap()
+{
+    weapon = "iw8_pi_golf21_mp+ammomod_slow+backno_golf21+ironsdefault_golf21+rec_golf21+slide_golf21+xmags_golf21";
+    self giveweapon(weapon);
+    self.alt_swap_weap = weapon;
+}
+
+toggle_alt_swaps()
+{
+    self.pers["alt_swap"] = !toggle(self.pers["alt_swap"]);
+    weapon = "iw8_pi_golf21_mp+ammomod_slow+backno_golf21+ironsdefault_golf21+rec_golf21+slide_golf21+xmags_golf21";
+    if (self getpers("alt_swap"))
+    {
+        self giveweapon(weapon);
+    }
+    else
+    {
+        self notify("stop_alt_swap");
+        next = self getnextweapon();
+        self takeweapon(weapon);
+        self switchtoweapon(next);
+    }
+}
+
+give_vish()
+{
+    self setspawnweapon("none");
+    self switchtoweaponimmediate("none");
+    self setspawnweapon("none");
+}
+
+spawnbot()
+{
+    scripts\mp\bots\bots::spawn_bots(1, "axis", undefined, undefined, undefined, "regular");
+}
+
+toggle_perk(perk) // toggle & store perk data
+{
+    if (self scripts\mp\utility\perk::_hasperk(perk))
+    {
+        scripts\mp\utility\perk::giveperk(perk);
+        self.pers["my_perks"][perk] = perk;
+        self iprintln("^5" + perk + " ^7given");
+    }
+    else
+    {
+        self scripts\mp\utility\perk::removeperk(perk);
+        self.pers["my_perks"][perk] = undefined;
+        self iprintln("^5" + perk + " ^7taken");
+    }
+}
+
+set_perks()
+{
+    foreach (perk in self.pers["my_perks"])
+    {
+        if (self.pers["my_perks"].size == 0)
+            return;
+
+        scripts\mp\utility\perk::giveperk(perk);
+    }
 }

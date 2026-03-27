@@ -1,12 +1,28 @@
 #include custom_scripts\_func;
 #include custom_scripts\_util;
 
+rainbow_menu()
+{
+    if (getdvarint("rainbow") == 1)
+    {
+        setdvar("rainbow", 0);
+        self notify("end_flicker");
+    }
+    else
+    {
+        setdvar("rainbow", 1);
+        self thread flicker_shaders();
+    }
+}
+
 initial_variable()
 {
     // [0]: ID
     // [1]: Display Name
     self.neura["soh_perk_list"] = list("specialty_fastreload,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
     self.neura["perk_list"] = list("specialty_marathon,specialty_holdbreath,specialty_lightweight");
+    
+    self.neura["perks"] = list("specialty_fastreload,specialty_lightweight,specialty_marathon,specialty_holdbreath,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
 
     self.neura["weapons"]["iw8"]["primary"]["snipers"][0] = ["iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50", "iw8_sn_hdromeo_mp+back_hdromeo+barlong_hdromeo+gunperk_fastmelee+mag_hdromeo+rec_hdromeo+snprscope_hdromeo", "iw8_sn_delta_mp+barlong_delta+gunperk_fastmelee+mag_delta+rec_delta+snprscope_delta+stockl_delta", "iw8_sn_mike14_mp+barmid_mike14+gunperk_fastmelee+pistolgrip06_mike14+rec_mike14_mp+snprscope_mike14+stockh03_mike14+xmags_mike14", "iw8_sn_sbeta_mp+barmid_sbeta+gunperk_fastmelee+pistolgrip02_sbeta+rec_sbeta+snprscope_sbeta+stockcqb_sbeta", "iw8_sn_kilo98_mp+barmid_kilo98+gunperk_fastmelee+pistolgrip02_kilo98+rec_kilo98+snprscope_kilo98"];
     self.neura["weapons"]["iw8"]["primary"]["snipers"][1] = ["ax50", "hdr", "dragunov", "ebr w/ scope", "mk2 carbine w/ scope", "kar98k w/ scope"];
@@ -79,7 +95,13 @@ initial_monitor()
                 menu   = self get_menu();
                 cursor = self get_cursor();
 
-                if (self UseButtonPressed()) // back
+                // force close if melee pressed
+                if (self isbuttonpressed("+melee_zoom"))
+                {
+                    self close_menu();
+                    self playlocalsound("mp_killstreak_tablet_gear");
+                }
+                else if (self usebuttonpressed()) // back
                 {
                    // self sfx("zmb_powerup_activate");
 
@@ -683,7 +705,10 @@ open_menu(menu)
     self set_menu(menu);
     self set_procedure();
     self create_option();
-    self thread flicker_shaders();
+
+    if (getdvarint("rainbow") == 1)
+        self thread flicker_shaders();
+
 }
 
 flicker_shaders() // colors from bliss - starts with original color
