@@ -70,10 +70,6 @@ on_player_spawned()
         self thread watch_freeze_controls();
         self thread allow_oob(); // out of bounds
         self thread remove_barriers();
-        
-        // temp until we add binds menu
-        self thread do_nac_bind(); // left dpad
-        self thread do_instaswap_bind(); // up dpad
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -100,7 +96,7 @@ setup_dvars()
 {
     setdvarifuninitialized("scr_killcam_time", 5);
     setdvar("MSOOMPMPQS", true); // unlimited sprint (iw8 only i think?)
-    setdvar("LNOKTQPLKO", true); // no jump slowdown
+    setdvar("LNOKTQPLKO", false); // jump slowdown
     level.bots_disable_team_switching = 1;
     level notify("bot_connect_monitor");
     level.pausing_bot_connect_monitor = 1;
@@ -115,10 +111,16 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
+
+        // self setpersifuni("bot_weapon", "iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50");
         self setpersifuni("saveposx", 0);
         self setpersifuni("saveposy", 0);
         self setpersifuni("saveposz", 0);
+        // self setpersifuni("replace_weapon", true);
         self thread reload_position();
+        // weapon = self getpers("bot_weapon");
+        // self giveweapon(weapon);
+        // self setspawnweapon(weapon);
     }
 }
 
@@ -200,4 +202,10 @@ watch_memory()
     self loadpers("saved_class", ::reload_class);
     self loadpers("elevators", ::elevators);
     self loadpers("alt_swap", ::reload_alt_swap);
+
+    self setup_bind("instaswap", false, ::do_instaswap_bind);
+    self setup_bind("nac", false, ::do_nac_bind);
+    self setup_bind("class", false, ::do_class_bind);
+    self setup_bind("eq", false, ::do_eq_bind);
+    self setup_bind("damage", false, ::do_damage_bind);
 }

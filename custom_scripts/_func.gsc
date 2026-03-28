@@ -1,5 +1,45 @@
 #include custom_scripts\_util;
 
+change_player_team(player)
+{
+    if (player ishost())
+    {
+        self iprintln("unable to change host team");
+        return;
+    }
+
+    if (player.team == "allies")
+    {
+        player.team = "axis";
+        player.sessionstate = "spectator";
+        waitframe();
+        player notify("luinotifyserver", "team_select", 0);
+        waitframe();
+        player notify("luinotifyserver", "class_select", player.class);
+        waitframe();
+        player.sessionstate = "playing";
+    }
+    else
+    {
+        player.team = "allies";
+        player.sessionstate = "spectator";
+        waitframe();
+        player notify("luinotifyserver", "team_select", 1);
+        waitframe();
+        player notify("luinotifyserver", "class_select", player.class);
+        waitframe();
+        player.sessionstate = "playing";
+    }
+}
+
+set_to_gunner(player)
+{
+}
+
+set_to_predator(player)
+{
+}
+
 togglepers(pers) // wow dude
 {
     self.pers[pers] = !toggle(self.pers[pers]);
@@ -11,6 +51,7 @@ toggledvar(dvar)
     setdvar(dvar, !toggle(getdvarint(dvar)));
     print(dvar + " new value: " + getdvar(dvar));
 }
+
 
 setpersmenu(value, pers) // wow dude
 {
@@ -40,6 +81,21 @@ watch_weap_change()
     }
 }
 
+toggle_nac_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_nac_bind(1, i);
+    else
+        self notify("stop_nac_bind");
+}
+
 do_nac_bind(args, slot)
 {
     self endon("disconnect");
@@ -47,13 +103,28 @@ do_nac_bind(args, slot)
     level endon("game_ended");
     for (;;)
     {
-        self waittill("button_pressed_-actionslot 3");
+        self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_menu::in_menu())
         {
             self nacto(self getnextweapon());
             wait 0.05;
         }
     }
+}
+
+toggle_instaswap_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_instaswap_bind(1, i);
+    else
+        self notify("stop_instaswap_bind");
 }
 
 do_instaswap_bind(args, slot)
@@ -64,7 +135,7 @@ do_instaswap_bind(args, slot)
 
     for (;;)
     {
-        self waittill("button_pressed_-actionslot 2");
+        self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_menu::in_menu())
         {
             self instaswapto(self getnextweapon());
@@ -768,6 +839,8 @@ manage_teleport(mode, player)
         case "them":
             self thread teleport_player(self, player, player);
             break;
+        case "crosshair":
+            self thread teleport_to_cross(player);
         default:
             self thread teleport_player(player, self, player);
             break;        
@@ -811,8 +884,137 @@ monitor_class()
 
         // give fast perks too
         self thread give_perks();
-
         wait 0.05;
+    }
+}
+
+toggle_eq_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_eq_bind(1, i);
+    else
+        self notify("stop_eq_bind");
+}
+
+do_eq_bind(args, slot)
+{
+    self endon("stop_eq_bind");
+    self endon("disconnect");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            x = self getcurrentweapon();
+            self nacto(self getpers("eq_weapon"));
+
+            if (self getpers("eq_putaway"))
+            {
+                self switchtoweapon(x);
+            }
+        }
+    }
+}
+
+toggle_damage_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_damage_bind(1, i);
+    else
+        self notify("stop_damage_bind");
+}
+
+do_damage_bind(args, slot)
+{
+    self endon("stop_damage_bind");
+    self endon("disconnect");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            player = self getenemyplayer();
+            if (player == self)
+            {
+                self iprintlnbold("^5spawn an enemy");
+                continue;
+            }
+
+            active = false;
+            if (self getpers("invincible") == 1) active = true;
+            if (active) self.no_damage = false;
+            self [[level.callbackPlayerDamage]]( player, player, (self.health / 2), 8, "MOD_RIFLE_BULLET", self getcurrentweapon(), self.origin, (0,0,0), "neck", 0 );
+            if (active) self.no_damage = true;
+        }
+     }
+}
+
+
+toggle_class_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+
+    if (self.pers[index])
+        self thread do_class_bind(1, i);
+    else
+        self notify("stop_class_bind");
+}
+
+do_class_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_class_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            index = int(scripts\mp\class::getclassindex(self.class) + 1);
+            index++;
+
+            if (index > int(self getpers("class_wrap"))) 
+            {
+                index = 1;
+            }
+
+            self.class = "custom" + index;
+            scripts\mp\class::setclass(self.class);
+            self.tag_stowed_back = undefined;
+            self.tag_stowed_hip = undefined;
+            scripts\mp\class::giveloadout(self.pers["team"], self.class);
+
+            if (self getpers("class_can"))
+            {
+                self alwayscan(self getcurrentweapon());
+            }
+
+            super = scripts\mp\supers::getcurrentsuper();
+            if (isdefined(super)) // supers = field upgrade
+            {
+                self thread scripts\mp\supers::givesuperweapon(super);
+                self thread scripts\mp\supers::givesuperpoints(scripts\mp\supers::getsuperpointsneeded());
+            }
+        }
     }
 }
 
@@ -928,18 +1130,22 @@ give_player_shield(player)
     player giveweapon("iw8_me_riotshield_mp");
     player setspawnweapon("iw8_me_riotshield_mp");
     player setorigin(player.origin - (0,0,2));
+    player setpers("bot_weapon", "iw8_me_riotshield_mp");
 }
 
 set_bot_weapon(player, weapon)
 {
     player giveweapon(weapon);
     player setspawnweapon(weapon);
+    player setpers("bot_weapon", getcompleteweaponname(weapon));
 }
 
 teleport_to_cross(player)
 {
-    player setorigin(self getcrosshair());
+    crosshair = self getcrosshair();
+    player setorigin(crosshair);
     self look_at_me(player);
+    player save_spawn();
 }
 
 refill_my_ammo(args)
@@ -995,7 +1201,7 @@ refill_weapon_ammo(item)
 
 // weapon utils so please looook at this -et
 
-givegun(weapon) // jus ez way
+givegun(weapon)
 {
     if (self getpers("replace_weapon"))
     {
@@ -1378,4 +1584,19 @@ set_perks()
 
         scripts\mp\utility\perk::giveperk(perk);
     }
+}
+
+alwayscan(weapon)
+{
+    if (self getpers("instaswap"))
+    {
+        if (self is_valid_weapon(weapon))
+        {
+            return;
+        }
+    }
+
+    self takegood(weapon);
+    self givegood(weapon);
+    self switchtoweapon(weapon);
 }

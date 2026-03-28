@@ -1,5 +1,22 @@
 void() {}
 
+setup_bind(pers, value, func) // my bind system is so ugly but it works for now lol
+{
+    for(i = 0; i < 4; i++) 
+    {
+        bind = "+actionslot " + (i + 1);
+        index = i + 1;
+        new_pers = pers + "_" + index;
+
+        self setpersifuni(new_pers, value);
+
+        if (is_true(self getpers(new_pers)))
+        {
+            self thread [[func]](bind, pers);
+        }
+    }
+}
+
 get_current_client() // check if s4 or iw8
 {
     return level._client; 

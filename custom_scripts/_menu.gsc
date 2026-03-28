@@ -30,7 +30,6 @@ initial_variable()
     self.neura["weapons"]["iw8"]["primary"]["shotguns"][0] = ["iw8_sh_romeo870_mp+back_romeo870+fastreload+front_romeo870+gripang_romeo870+griprail_romeo870+ironsdefault_romeo870+rec_romeo870_mp+slugs_romeo870", "iw8_sh_dpapa12_mp+ammo_dpapa12+fastreload+front_dpapa12+griphip_dpapa12+guard_dpapa12+ironsdefault_dpapa12+pistolgrip01_dpapa12+rec_dpapa12", "iw8_sh_charlie725_mp+ammo_charlie725+fastreload+front_charlie725+gripang_charlie725+guardlight_charlie725+ironsdefault_charlie725+rec_charlie725+stockh_charlie725", "iw8_sh_oscar12_mp+fastreload+front_oscar12+gripang_oscar12+ironsdefault_oscar12+mag_oscar12+pistolgrip01_oscar12+rec_oscar12+stockno_oscar12", "iw8_sh_mike26_mp+back_mike26+barmid_mike26+fastreload+gripvert_mike26+ironsdefault_mike26+mag_mike26+pistolgrip03_mike26+rec_mike26"];
     self.neura["weapons"]["iw8"]["primary"]["shotguns"][1] = ["model 680", "r-90", "725", "origin 12", "vlk rogue"];
 
-
     self.neura["weapons"]["iw8"]["primary"]["assault rifles"][0] = ["iw8_ar_falima_mp+back_falima+brake01+front_falima+mmags_falima+pistolgrip01_falima+rec_falima+snprscope_mike14_ar", "iw8_ar_akilo47_mp+back_akilo47_mp+bayonet_akilo47+drums_akilo47+front_akilo47_mp+ironsdefault_akilo47+rec_akilo47+ub_golf25_smoke", "iw8_ar_scharlie_mp+back_scharlie+fastreload+front_scharlie+ironsdefault_scharlie+mag_scharlie+rec_scharlie+selectsemi+silencersleeve", "iw8_ar_sierra552_mp+barshort_sierra552+fastreload+ironsdefault_sierra552+pistolgrip01_sierra552+rec_sierra552+selectsemi+stockh_sierra552+xmagslrg_sierra", "iw8_ar_tango21_mp+barshort_tango21+fastreload+gripang+ironsdefault_tango21+mag_tango21+rec_tango21+selectsemi+stockh_tango21", "iw8_ar_mike4_mp+back_mike4+comp+front_mike4+glincendiary+ironsdefault_mike4+mag_mike4+pistolgrip01_mike4+rec_mike4", "iw8_ar_mike4_mp+back_mike4+comp+front_mike4+ironsdefault_mike4+mag_mike4+pistolgrip01_mike4+rec_mike4+selectsemi", "iw8_ar_asierra12_mp+fastreload+front_asierra12+ironsdefault_asierra12+mag_asierra12+rec_asierra12+selectsemi+stockl_asierra12+toprail_asierra12", "iw8_ar_kilo433_mp+back_kilo433+fastreload+front_kilo433+griphip+ironsdefault_kilo433+mag_kilo433+rec_kilo433+selectsemi", "iw8_ar_falpha_mp+fastreload+front_falpha+gripangpro+ironsdefault_falpha+mag_falpha+rec_falpha+selectsemi_falpha+toprail_falpha+triggrip_falpha", "iw8_ar_mcharlie_mp+back_mcharlie+front_mcharlie+gunperk_fastmelee+ironsdefault_mcharlie+mag_mcharlie+rec_mcharlie+selectsemi"];
     self.neura["weapons"]["iw8"]["primary"]["assault rifles"][1] = ["scoped fal", "smoke launcher ak47", "silenced scar", "short grau 5.56", "ram-7", "incendiary m4", "m4", "oden", "kilo 141", "fr 5.56", "m13"];
 
@@ -49,8 +48,8 @@ initial_variable()
     self.neura["weapons"]["iw8"]["secondary"]["misc"][0] = ["iw8_knife_mp", "iw8_fists_mp", "iw8_me_riotshield_mp"];
     self.neura["weapons"]["iw8"]["secondary"]["misc"][1] = ["combat knife", "fists", "riot shield"];
 
-    self.neura["weapons"]["iw8"]["equipment"][0] = ["frag_grenade_mp", "gas_grenade_mp", "molotov_mp", "concussion_grenade_mp", "flash_grenade_mp", "c4_mp_p", "semtex_mp", "thermite_mp", "throwingknife_mp", "claymore_mp", "at_mine_mp", "trophy_mp", "support_box_mp", "tac_cover_mp"];
-    self.neura["weapons"]["iw8"]["equipment"][1] = ["frag", "gas", "molotov", "concussion", "flash", "c4", "semtex", "thermite", "throwing knife", "claymore", "at mine", "trophy system", "support box", "tac cover"];
+    self.neura["weapons"]["iw8"]["equipment"][0] = ["frag_grenade_mp", "gas_grenade_mp", "molotov_mp", "concussion_grenade_mp", "flash_grenade_mp", "c4_mp_p", "semtex_mp", "thermite_mp", "throwingknife_mp", "claymore_mp", "at_mine_mp", "trophy_mp", "support_box_mp", "tac_cover_mp", "emp_drone_player_mp", "equip_adrenaline"];
+    self.neura["weapons"]["iw8"]["equipment"][1] = ["frag", "gas", "molotov", "concussion", "flash", "c4", "semtex", "thermite", "throwing knife", "claymore", "at mine", "trophy system", "support box", "tac cover", "emp drone", "adrenaline"];
 
     // menu variables
     self.font            = "default";
@@ -527,20 +526,21 @@ add_option(text, summary, function, argument_1, argument_2, argument_3)
     self.structure[self.structure.size] = option;
 }
 
-add_bind(text, summary, function, pers, argument_1, argument_2, argument_3)
+// add_toggle(text, summary, function, toggle, array, argument_1, argument_2, argument_3)
+add_bind(name, func, pers, end_on) // lol im so lazy bro idc
 {
-    option            = [];
-    option["text"]       = text;
-    option["summary"]    = summary;
-    option["function"]   = function;
-    option["slider"]     = true;
-    option["is_array"]   = true;
-    option["array"]      = list("off,[{+actionslot 1}],[{+actionslot 2}],[{+actionslot 3}],[{+actionslot 4}]");
-    option["argument_1"] = argument_1;
-    option["argument_2"] = argument_2;
-    option["argument_3"] = argument_3;
-    
-    self.structure[self.structure.size] = option;
+    self add_menu(name);
+
+    for(i = 0; i < 4; i++) 
+    {
+        option = name + " -> " + "[{+actionslot " + (i + 1) + "}]";
+        bind = "+actionslot " + (i + 1);
+        index = i + 1;
+        prev_index = index - 1;
+        end_on = pers;
+        // toggle_nac_bind(bind, i, pers)
+        self add_toggle(option, undefined, func, self.pers[pers + "_" + index], undefined, bind, index, pers);
+    }
 }
 
 add_pers_toggle(text, summary, function, toggle, argument_1, argument_2, argument_3)
