@@ -89,13 +89,9 @@ change_player_team(player)
     }
 }
 
-set_to_gunner(player)
-{
-}
-
-set_to_predator(player)
-{
-}
+// todo
+set_to_gunner(player) {}
+set_to_predator(player) {}
 
 togglepers(pers) // wow dude
 {
@@ -112,7 +108,7 @@ toggledvar(dvar)
 setpersmenu(value, pers) // wow dude
 {
     self setpers(pers, value);
-    print("set " + pers + " to " + value);
+    waitframe();
     self playlocalsound("weap_ammo_pickup");
 }
 
@@ -120,7 +116,7 @@ setdvarmenu(value, dvar) // wow dude
 {
     value = float(value);
     setdvar(dvar, value);
-    print("set " + dvar + " to " + value);
+    waitframe();
     self playlocalsound("weap_ammo_pickup");
 }
 
