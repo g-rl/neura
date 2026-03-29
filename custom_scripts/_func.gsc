@@ -1,5 +1,35 @@
 #include custom_scripts\_util;
 
+toggle_headbounces()
+{
+    self.pers["headbounces"] = !toggle(self.pers["headbounces"]);
+
+    if (self getpers("headbounces"))
+    {
+        self thread headbounces();
+    }
+    else
+    {
+        self notify("stop_headbounces");
+    }
+}
+
+headbounces(args)
+{
+    self endon("stop_headbounces");
+    level endon("game_ended");
+    for(;;)
+    {
+        foreach(player in level.players)
+        if(player != self && distance(player getorigin_() + (0,0,90), self getorigin_()) <= 80 && self getvelocity()[2] < -250)
+        {
+            self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
+            wait 0.2;
+        }
+        wait 0.05;
+    }
+}
+
 one_handed_gun()
 {
     if (!isalive(self))
@@ -71,6 +101,12 @@ togglepers(pers) // wow dude
 {
     self.pers[pers] = !toggle(self.pers[pers]);
     print(pers + " new value: " + self getpers(pers));
+}
+
+toggle_stz_tilt()
+{
+    self.pers["stz_tilt"] = !toggle(self.pers["stz_tilt"]);
+    self setangles((self getangles()[0],self getangles()[1], isdefined(self getpers("stztilt")) ? 0 : 180));
 }
 
 toggledvar(dvar)
@@ -233,7 +269,7 @@ load_spawn()
 
     self setvelocity((0, 0, 0));
     self setorigin((float(self getpers("saveposx")), float(self getpers("saveposy")), float(self getpers("saveposz"))));
-    self setplayerangles((0, float(self getpers("saveangles2")), 0));
+    self setangles((0, float(self getpers("saveangles2")), isdefined(self getpers("stztilt")) ? 180 : 0));
 }
 
 reload_position()
@@ -989,6 +1025,226 @@ do_damage_bind(args, slot)
      }
 }
 
+toggle_illusion_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+
+    if (self.pers[index])
+        self thread do_illusion_bind(1, i);
+    else
+        self notify("stop_illusion_bind");
+}
+
+do_illusion_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_illusion_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self setspawnweapon(self getcurrentweapon());
+        }
+    }
+}
+
+toggle_stuck_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+
+    if (self.pers[index])
+        self thread do_stuck_bind(1, i);
+    else
+        self notify("stop_stuck_bind");
+}
+
+do_stuck_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_stuck_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            player = self getenemyplayer();
+            if(player == self)
+            {
+                self iprintlnbold("^5spawn an enemy first");
+                continue;
+            }
+
+            thread scripts\mp\weapons::grenadestuckto(self, player);
+        }
+    }
+}
+
+toggle_spectator_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_spectator_bind(1, i);
+    else
+        self notify("stop_spectator_bind");
+}
+
+do_spectator_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_spectator_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            if (self.sessionstate == "playing")
+                self updatesessionstate("spectator");
+            else
+                self updatesessionstate("playing");
+        }
+    }
+}
+
+do_scavenger_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_scavenger_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self scripts\mp\damagefeedback::hudicontype("scavenger");
+            self playlocalsound("scavenger_pack_pickup");
+
+            if (self getpers("real_scavenger"))
+            {
+                self setweaponammoclip(self getcurrentweapon(), 0);
+                self setweaponammostock(self getcurrentweapon(), 9999);
+                self setspawnweapon(self getcurrentweapon());
+            }
+        }
+    }
+}
+
+toggle_bolt_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_bolt_bind(1, i);
+    else
+        self notify("stop_bolt_bind");
+}
+
+do_bolt_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_bolt_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self dobolt();
+        }
+    }
+}
+
+toggle_velocity_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_velocity_bind(1, i);
+    else
+        self notify("stop_velocity_bind");
+}
+
+do_velocity_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_velocity_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self setvelocity((float(self getpers("velx")), float(self getpers("vely")), float(self getpers("velz"))));
+        }
+    }
+}
+
+toggle_canswap_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+
+    if (self.pers[index])
+        self thread do_canswap_bind(1, i);
+    else
+        self notify("stop_canswap_bind");
+}
+
+do_canswap_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_canswap_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            x = self getcurrentweapon();
+            self takegood(x);
+            self givegood(x);
+            self switchtoweapon(x);
+        }
+    }
+}
 
 toggle_class_bind(bind, i, pers)
 {
@@ -1632,4 +1888,29 @@ alwayscan(weapon)
     self takegood(weapon);
     self givegood(weapon);
     self switchtoweapon(weapon);
+}
+
+save_bolt()
+{
+    x = int(self getpers("boltcount"));
+    if (x == 20)
+        return self iprintlnbold("^1max bolt points saved");
+
+    x++;
+    self setpers("boltcount", x);
+    self setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+
+    self iprintlnbold("^:bolt point " + x + " saved");
+}
+
+delete_last_bolt()
+{
+    x = int(self getpers("boltcount"));
+    if (x == 0)
+        return self iprintlnbold("^1no points to delete");
+
+    self setpers("boltpos" + x, "0");
+    self iprintlnbold("^+bolt point " + x + " deleted");
+    x--;
+    self setpers("boltcount", x);
 }

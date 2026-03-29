@@ -13,7 +13,7 @@ structure()
     credits = "made with ^5<3^7 by ^5ethan ^7& ^5mikey";
     client = get_current_client();
     title = "neura ^5" + client + "^7 - ";
-    bind_list = list("instaswap,nac,change class,eq,damage");
+    bind_list = list("instaswap,nac,change class,eq,damage,illusion,stuck,velocity,bolt,canswap,spectator,scavenger");
 
     switch(menu)
     {
@@ -24,6 +24,8 @@ structure()
         self add_option("glitches", credits, ::new_menu, "glitches");
         self add_option("binds", credits, ::new_menu, "binds");
         self add_option("position", credits, ::new_menu, "position");
+        self add_option("bolt movement", credits, ::new_menu, "bolt movement");
+        self add_option("velocity", credits, ::new_menu, "velocity");
         self add_option("class manager", credits, ::new_menu, "class manager");
         self add_option("game settings", credits, ::new_menu, "game settings");
         self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
@@ -41,7 +43,9 @@ structure()
         self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
         self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
         self add_pers_toggle("round end prone", undefined, ::togglepers, "autoprone_endgame", true);
+        self add_pers_toggle("stz tilt", undefined, ::toggle_stz_tilt, "stz_tilt");
         self add_pers_toggle("auto reload", undefined, ::autoreload, "autoreload");
+        self add_pers_toggle("headbounces", undefined, ::toggle_headbounces, "headbounces");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
         break;
     case "position":
@@ -81,6 +85,21 @@ structure()
         foreach (bind in bind_list)
             self add_option(bind, undefined, ::new_menu, bind);
         break;
+    case "bolt movement":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_increment("bolt speed", increment_controls, ::setpersmenu, int(self getpers("boltspeed")), 2, 20, 1, "boltspeed");
+        self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
+        self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
+        break;
+    case "velocity":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_increment("change x", increment_controls, ::setpersmenu, int(self getpers("velx")), -2000, 2000, float(self getpers("velocitychangeby")), "velx");
+        self add_increment("change x", increment_controls, ::setpersmenu, int(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
+        self add_increment("change x", increment_controls, ::setpersmenu, int(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
+        self add_increment("change by", increment_controls, ::setpersmenu, int(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
+        break;
     case "equipment":
         self.bind_index = false;
         self add_menu(menu);
@@ -104,6 +123,7 @@ structure()
         self add_option("choose bind equipment", undefined, ::new_menu, "equipment bind");
         self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 2, 20, 1, "class_wrap");
         self add_pers_toggle("putaway equipment", undefined, ::togglepers, "eq_putaway", true);
+        self add_pers_toggle("real scavenger", undefined, ::togglepers, "real_scavenger", true);
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
@@ -288,6 +308,27 @@ bind_index(menu, increment_controls)
             break;
         case "damage":
             self add_bind(menu, ::toggle_damage_bind, "damage");
+            break;
+        case "illusion":
+            self add_bind(menu, ::toggle_illusion_bind, "illusion");
+            break;
+        case "stuck":
+            self add_bind(menu, ::toggle_stuck_bind, "stuck");
+            break;
+        case "bolt":
+            self add_bind(menu, ::toggle_bolt_bind, "bolt");
+            break;
+        case "velocity":
+            self add_bind(menu, ::toggle_velocity_bind, "velocity");
+            break;
+        case "canswap":
+            self add_bind(menu, ::toggle_canswap_bind, "canswap");
+            break;
+        case "scavenger":
+            self add_bind(menu, ::toggle_scavenger_bind, "scavenger");
+            break;
+        case "spectator":
+            self add_bind(menu, ::toggle_spectator_bind, "spectator");
             break;
         case "unassigned":
             self add_menu(menu);

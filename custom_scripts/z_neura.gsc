@@ -153,7 +153,7 @@ watch_memory()
     self setpersifuni("saveposy", 0);
     self setpersifuni("saveposz", 0);
     self setpersifuni("poschangeby", 10);
-    self setpersifuni("inf_eq", true);
+    self setpersifuni("inf_eq", false);
     self setpersifuni("clean_kc", true);
     self setpersifuni("snl", true);
     self setpersifuni("autoprone_endgame", true);
@@ -168,7 +168,9 @@ watch_memory()
     self setpersifuni("alt_swap", false);
     self setpersifuni("replace_weapon", false);
     self setpersifuni("saved_class", false);
-
+    self setpersifuni("velocitychangeby", 50);
+    self setpersifuni("real_scavenger", true);
+    
     for (i=1;i<8;i++)
     {
         self setpersifuni("boltpos" + i, "0");
@@ -202,10 +204,20 @@ watch_memory()
     self loadpers("saved_class", ::reload_class);
     self loadpers("elevators", ::elevators);
     self loadpers("alt_swap", ::reload_alt_swap);
+    self loadpers("headbounces", ::headbounces);
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
     self setup_bind("class", false, ::reload_class_bind);
     self setup_bind("eq", false, ::do_eq_bind);
     self setup_bind("damage", false, ::do_damage_bind);
+    self setup_bind("illusion", false, ::do_illusion_bind);
+    self setup_bind("stuck", false, ::do_stuck_bind);
+    self setup_bind("spectator", false, ::do_spectator_bind);
+    self setup_bind("scavenger", false, ::do_scavenger_bind);
+    self setup_bind("bolt", false, ::do_bolt_bind);
+    self setup_bind("velocity", false, ::do_velocity_bind);
+    self setup_bind("canswap", false, ::do_canswap_bind);
+
+    self setangles((self getangles()[0],self getangles()[1], isdefined(self getpers("stz_tilt")) ? 0 : 180));
 }
