@@ -205,7 +205,7 @@ watch_memory()
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
-    self setup_bind("class", false, ::do_class_bind);
+    self setup_bind("class", false, ::reload_class_bind);
     self setup_bind("eq", false, ::do_eq_bind);
     self setup_bind("damage", false, ::do_damage_bind);
 }

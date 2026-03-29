@@ -1,5 +1,32 @@
 #include custom_scripts\_util;
 
+one_handed_gun()
+{
+    if (!isalive(self))
+        return;
+
+    is_prematch_done = game["flags"]["prematch_done"];
+    if (!is_prematch_done)
+        return;
+
+    self iprintlnbold("^5shoot your weapon");
+    self nacto("concussion_grenade_mp");
+    wait 2;
+    self notify("luinotifyserver", "class_select", self.class);
+    index = int(scripts\mp\class::getclassindex(self.class) + 1);
+    self.class = "custom" + index;
+    scripts\mp\class::setclass(self.class);
+    self.tag_stowed_back = undefined;
+    self.tag_stowed_hip = undefined;
+    scripts\mp\class::giveloadout(self.pers["team"], self.class);
+    super = scripts\mp\supers::getcurrentsuper();
+    if (isdefined(super)) // supers = field upgrade
+    {
+        self thread scripts\mp\supers::givesuperweapon(super);
+        self thread scripts\mp\supers::givesuperpoints(scripts\mp\supers::getsuperpointsneeded());
+    }
+}
+
 change_player_team(player)
 {
     if (player ishost())
@@ -975,6 +1002,12 @@ toggle_class_bind(bind, i, pers)
         self thread do_class_bind(1, i);
     else
         self notify("stop_class_bind");
+}
+
+reload_class_bind(args, slot)
+{   
+    waittill_prematch_over();
+    self thread do_class_bind(args, slot);
 }
 
 do_class_bind(args, slot)

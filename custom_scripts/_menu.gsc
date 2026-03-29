@@ -48,8 +48,8 @@ initial_variable()
     self.neura["weapons"]["iw8"]["secondary"]["misc"][0] = ["iw8_knife_mp", "iw8_fists_mp", "iw8_me_riotshield_mp"];
     self.neura["weapons"]["iw8"]["secondary"]["misc"][1] = ["combat knife", "fists", "riot shield"];
 
-    self.neura["weapons"]["iw8"]["equipment"][0] = ["frag_grenade_mp", "gas_grenade_mp", "molotov_mp", "concussion_grenade_mp", "flash_grenade_mp", "c4_mp_p", "semtex_mp", "thermite_mp", "throwingknife_mp", "claymore_mp", "at_mine_mp", "trophy_mp", "support_box_mp", "tac_cover_mp", "emp_drone_player_mp", "equip_adrenaline"];
-    self.neura["weapons"]["iw8"]["equipment"][1] = ["frag", "gas", "molotov", "concussion", "flash", "c4", "semtex", "thermite", "throwing knife", "claymore", "at mine", "trophy system", "support box", "tac cover", "emp drone", "adrenaline"];
+    self.neura["weapons"]["iw8"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "flash_grenade_mp", "c4_mp_p", "semtex_mp", "thermite_mp", "throwingknife_mp", "claymore_mp", "at_mine_mp", "trophy_mp", "support_box_mp", "tac_cover_mp", "emp_drone_player_mp"];
+    self.neura["weapons"]["iw8"]["equipment"][1] = ["frag", "molotov", "concussion", "flash", "c4", "semtex", "thermite", "throwing knife", "claymore", "at mine", "trophy system", "support box", "tac cover", "emp drone"];
 
     // menu variables
     self.font            = "default";

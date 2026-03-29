@@ -72,6 +72,7 @@ structure()
     case "glitches":
         self.bind_index = false;
         self add_menu(menu);
+        self add_option("one handed gun", undefined, ::one_handed_gun);
         self add_option("switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "equipment");
         break;
     case "binds":
