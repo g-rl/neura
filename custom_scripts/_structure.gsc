@@ -29,23 +29,32 @@ structure()
         self add_option("class manager", credits, ::new_menu, "class manager");
         self add_option("game settings", credits, ::new_menu, "game settings");
         self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
-        self add_option("client settings", credits, ::new_menu, "manage clients");
         break;
     case "mods & toggles":
         self.bind_index = false;
         self add_menu(menu);
+        self add_option("toggle settings", undefined, ::new_menu, "toggle settings");
         self add_pers_toggle("invincibility", undefined, ::toggle_invincibility, "invincible");
         self add_pers_toggle("elevators", undefined, ::toggle_elevators, "elevators");
         self add_pers_toggle("alt swaps", undefined, ::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("infinite equipment", undefined, ::toggle_inf_eq, "inf_eq");
         self add_pers_toggle("instaswaps", undefined, ::instaswaps, "instaswaps");
-        self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
-        self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
         self add_pers_toggle("round end prone", undefined, ::togglepers, "autoprone_endgame", true);
         self add_pers_toggle("auto reload", undefined, ::autoreload, "autoreload");
         self add_pers_toggle("headbounces", undefined, ::toggle_headbounces, "headbounces");
+        self add_pers_toggle("putaway equipment", undefined, ::togglepers, "eq_putaway", true);
+        self add_pers_toggle("real scavenger", undefined, ::togglepers, "real_scavenger", true);
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
+        break;
+    case "toggle settings":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 2, 20, 1, "class_wrap");
+        self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
+        self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
+        self add_array("stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
+        self add_option("choose equipment (bind)", undefined, ::new_menu, "equipment bind");
         break;
     case "position":
         self.bind_index = false;
@@ -119,10 +128,6 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         // self add_array("perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]);
-        self add_option("choose bind equipment", undefined, ::new_menu, "equipment bind");
-        self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 2, 20, 1, "class_wrap");
-        self add_pers_toggle("putaway equipment", undefined, ::togglepers, "eq_putaway", true);
-        self add_pers_toggle("real scavenger", undefined, ::togglepers, "real_scavenger", true);
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));

@@ -102,6 +102,7 @@ togglepers(pers) // wow dude
     self.pers[pers] = !toggle(self.pers[pers]);
     print(pers + " new value: " + self getpers(pers));
 }
+
 toggledvar(dvar)
 {
     setdvar(dvar, !toggle(getdvarint(dvar)));
@@ -112,6 +113,7 @@ setpersmenu(value, pers) // wow dude
 {
     self setpers(pers, value);
     print("set " + pers + " to " + value);
+    self playlocalsound("weap_ammo_pickup");
 }
 
 setdvarmenu(value, dvar) // wow dude
@@ -119,6 +121,7 @@ setdvarmenu(value, dvar) // wow dude
     value = float(value);
     setdvar(dvar, value);
     print("set " + dvar + " to " + value);
+    self playlocalsound("weap_ammo_pickup");
 }
 
 watch_weap_change()
@@ -1075,14 +1078,55 @@ do_stuck_bind(args, slot)
         if (!self custom_scripts\_menu::in_menu())
         {
             player = self getenemyplayer();
+
             if(player == self)
             {
                 self iprintlnbold("^5spawn an enemy first");
                 continue;
             }
 
-            thread scripts\mp\weapons::grenadestuckto(self, player);
+            thread grenadestuckto_stub(self, player, self getpers("stuck_weapon") + "_mp");
         }
+    }
+}
+
+grenadestuckto_stub( var_0, var_1, var_2 )
+{
+    if ( !isdefined( self ) )
+    {
+        var_0.stuckenemyentity = var_1;
+        var_1.stuckbygrenade = var_0;
+        var_1._id_1254B = var_0.owner;
+    }
+    else if ( level.teambased && isdefined( var_1.team ) && var_1.team == self.team )
+        var_0.isstuck = "friendly";
+    else
+    {
+        var_3 = undefined;
+        var_4 = "incoming_stuck";
+
+        switch ( var_2 )
+        {
+            case "semtex_mp":
+                var_3 = "semtex_stuck";
+                break;
+            case "molotov_mp":
+                var_3 = "molotov_stuck";
+                var_4 = "flavor_surprise";
+                break;
+            case "thermite_mp":
+                var_3 = "thermite_attacker_stuck";
+                var_4 = "flavor_surprise";
+                break;
+        }
+
+        var_0.isstuck = "enemy";
+        var_0.stuckenemyentity = var_1;
+        var_1.stuckbygrenade = var_0;
+        var_1._id_1254B = var_0.owner;
+        self notify( "grenade_stuck_enemy" );
+        level thread scripts\mp\battlechatter_mp::trysaylocalsound( var_1, var_4 );
+        scripts\mp\weapons::grenadestucktosplash( var_3, var_1 );
     }
 }
 

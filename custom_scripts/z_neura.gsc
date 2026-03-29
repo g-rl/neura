@@ -171,6 +171,7 @@ watch_memory()
     self setpersifuni("velocitychangeby", 50);
     self setpersifuni("real_scavenger", true);
     self setpersifuni("headbounces", false);
+    self setpersifuni("stuck_weapon", "semtex");
 
     for (i=1;i<8;i++)
     {
