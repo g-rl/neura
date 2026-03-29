@@ -29,6 +29,7 @@ structure()
         self add_option("class manager", credits, ::new_menu, "class manager");
         self add_option("game settings", credits, ::new_menu, "game settings");
         self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
+        self add_option("client settings", credits, ::new_menu, "manage clients");
         break;
     case "mods & toggles":
         self.bind_index = false;
