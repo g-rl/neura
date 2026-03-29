@@ -81,7 +81,7 @@ initial_monitor()
 {
     level endon("game_ended");
     self endon("disconnect");
-    for(;;)
+    for (;;)
     {
         if (isalive(self))
         {
@@ -275,7 +275,7 @@ execute_function(function, argument_1, argument_2, argument_3, argument_4)
 is_option(menu, cursor, player)
 {
     if (isdefined(self.structure) && self.structure.size)
-        for(i = 0; i < self.structure.size; i++)
+        for (i = 0; i < self.structure.size; i++)
             if (player.structure[cursor]["text"] == self.structure[i]["text"] && self get_menu() == menu)
                 return true;
 
@@ -460,7 +460,7 @@ set_shader(shader, width, height)
 
 clear_option()
 {
-    for(i = 0; i < self.element_list.size; i++)
+    for (i = 0; i < self.element_list.size; i++)
     {
         clear_all(self.menu["hud"][self.element_list[i]]);
         self.menu["hud"][self.element_list[i]] = [];
@@ -473,7 +473,7 @@ clear_all(array)
         return;
 
     keys = getarraykeys(array);
-    for(i = 0; i < keys.size; i++)
+    for (i = 0; i < keys.size; i++)
     {
         if (isarray(array[keys[i]]))
         {
@@ -531,7 +531,7 @@ add_bind(name, func, pers, end_on) // lol im so lazy bro idc
 {
     self add_menu(name);
 
-    for(i = 0; i < 4; i++) 
+    for (i = 0; i < 4; i++) 
     {
         option = name + " -> " + "[{+actionslot " + (i + 1) + "}]";
         bind = "+actionslot " + (i + 1);
@@ -730,7 +730,7 @@ flicker_shaders() // colors from bliss - starts with original color
 
     first = true;
 
-    for(;;)
+    for (;;)
     {
         color = self.current_menu_color;
 
@@ -921,7 +921,7 @@ create_option()
     if (isdefined(self.structure) && self.structure.size)
     {
         limit = min(self.structure.size, self.option_limit);
-        for(i = 0; i < limit; i++)
+        for (i = 0; i < limit; i++)
         {
             index      = (i + start);
             cursor     = (self get_cursor() == index);

@@ -13,7 +13,7 @@ structure()
     credits = "made with ^5<3^7 by ^5ethan ^7& ^5mikey";
     client = get_current_client();
     title = "neura ^5" + client + "^7 - ";
-    bind_list = list("instaswap,nac,change class,eq,damage,illusion,stuck,velocity,bolt,canswap,spectator,scavenger");
+    bind_list = list("instaswap,nac,change class,eq,damage,illusion,stuck,velocity,bolt,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
@@ -66,7 +66,7 @@ structure()
         self add_option("save position", undefined, ::save_spawn);
         self add_option("load position", undefined, ::load_spawn);
         self add_option("reset position", undefined, ::reset_position);
-        if(float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
+        if (float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
         {
             self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("saveposx")), -500000, 5000000, float(self getpers("poschangeby")), "saveposx");
             self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("saveposy")), -500000, 5000000, float(self getpers("poschangeby")), "saveposy");
@@ -96,7 +96,7 @@ structure()
     case "bolt movement":
         self.bind_index = false;
         self add_menu(menu);
-        self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 2, 20, 1, "boltspeed");
+        self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 0.1, 10, 0.1, "boltspeed");
         self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
         self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
         break;
@@ -111,7 +111,7 @@ structure()
     case "equipment":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client][menu][1][i], undefined, ::nacto, self.neura["weapons"][client][menu][0][i]);
         }
@@ -119,7 +119,7 @@ structure()
     case "equipment bind":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
         }
@@ -155,7 +155,7 @@ structure()
     case "launchers":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], "id: ^5" + self.neura["weapons"][client]["secondary"][menu][0][i], ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
@@ -163,7 +163,7 @@ structure()
     case "pistols":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
@@ -171,7 +171,7 @@ structure()
     case "misc":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
@@ -179,7 +179,7 @@ structure()
     case "snipers":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
@@ -187,7 +187,7 @@ structure()
     case "shotguns":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
@@ -195,7 +195,7 @@ structure()
     case "assault rifles":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
@@ -203,7 +203,7 @@ structure()
     case "light machine guns":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
@@ -211,7 +211,7 @@ structure()
     case "sub machine guns":
         self.bind_index = false;
         self add_menu(menu);
-        for(i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
@@ -333,6 +333,12 @@ bind_index(menu, increment_controls)
             break;
         case "spectator":
             self add_bind(menu, ::toggle_spectator_bind, "spectator");
+            break;
+        case "empty clip":
+            self add_bind(menu, ::toggle_emptyclip_bind, "empty_clip");
+            break;
+        case "one bullet":
+            self add_bind(menu, ::toggle_onebullet_bind, "one_bullet");
             break;
         case "unassigned":
             self add_menu(menu);

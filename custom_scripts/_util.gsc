@@ -1,8 +1,8 @@
 void() {}
 
-setup_bind(pers, value, func) // my bind system is so ugly but it works for now lol
+setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
-    for(i = 0; i < 4; i++) 
+    for (i = 0; i < 4; i++) 
     {
         bind = "+actionslot " + (i + 1);
         index = i + 1;

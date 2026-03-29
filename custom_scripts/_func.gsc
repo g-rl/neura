@@ -18,10 +18,10 @@ headbounces(args)
 {
     self endon("stop_headbounces");
     level endon("game_ended");
-    for(;;)
+    for (;;)
     {
         foreach(player in level.players)
-        if(player != self && distance(player getorigin_() + (0,0,90), self getorigin_()) <= 80 && self getvelocity()[2] < -250)
+        if (player != self && distance(player getorigin_() + (0,0,90), self getorigin_()) <= 80 && self getvelocity()[2] < -250)
         {
             self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
             wait 0.2;
@@ -165,6 +165,111 @@ do_nac_bind(args, slot)
         if (!self custom_scripts\_menu::in_menu())
         {
             self nacto(self getnextweapon());
+            wait 0.05;
+        }
+    }
+}
+
+toggle_emptyclip_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_emptyclip_bind(1, i);
+    else
+        self notify("stop_emptyclip_bind");
+}
+
+do_emptyclip_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_emptyclip_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self thread do_emptyclip();
+            wait 0.05;
+        }
+    }
+}
+
+toggle_onebullet_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_onebullet_bind(1, i);
+    else
+        self notify("stop_onebullet_bind");
+}
+
+do_onebullet_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_onebullet_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            self thread do_clip2one();
+            wait 0.05;
+        }
+    }
+}
+
+do_clip2one()
+{
+    weapon = self getcurrentweapon();
+    self setweaponammoclip(weapon, 0 + 1);
+}
+
+do_emptyclip()
+{
+    weapon = self getcurrentweapon();
+    self setweaponammoclip(weapon, 0);
+}
+
+toggle_thirdeye_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_thirdeye_bind(1, i);
+    else
+        self notify("stop_thirdeye_bind");
+}
+
+do_thirdeye_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_thirdeye_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_menu::in_menu())
+        {
+            // self scripts\common\utility::shellshock("explosion", 0.005);
             wait 0.05;
         }
     }
@@ -1079,7 +1184,7 @@ do_stuck_bind(args, slot)
         {
             player = self getenemyplayer();
 
-            if(player == self)
+            if (player == self)
             {
                 self iprintlnbold("^5spawn an enemy first");
                 continue;
@@ -1849,7 +1954,7 @@ elevators(args)
     self endon("stop_elevators");
     level endon("game_ended");
 
-    for(;;)
+    for (;;)
     {
         if (self adsbuttonpressed() && self isbuttonpressed("+stance") && (self isonground() && !self isonladder() && !self ismantling()))
         {
@@ -1870,7 +1975,7 @@ elevator_logic()
     self playerlinkto(self.elevator, undefined);
     self.elevating = true;
 
-    for(;;)
+    for (;;)
     {
         if (self isbuttonpressed("+gostand"))
         {
