@@ -25,11 +25,11 @@ structure()
         self add_option("binds", credits, ::new_menu, "binds");
         self add_option("position", credits, ::new_menu, "position");
         self add_option("bolt movement", credits, ::new_menu, "bolt movement");
-        self add_option("velocity", credits, ::new_menu, "velocity");
+        self add_option("edit velocity", credits, ::new_menu, "edit velocity");
         self add_option("class manager", credits, ::new_menu, "class manager");
         self add_option("game settings", credits, ::new_menu, "game settings");
         self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
-        self add_option("client settings", credits, ::new_menu, "manage clients");\
+        self add_option("client settings", credits, ::new_menu, "manage clients");
         break;
     case "mods & toggles":
         self.bind_index = false;
@@ -43,7 +43,6 @@ structure()
         self add_pers_toggle("auto prone", undefined, ::autoprone, "autoprone");
         self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
         self add_pers_toggle("round end prone", undefined, ::togglepers, "autoprone_endgame", true);
-        self add_pers_toggle("stz tilt", undefined, ::toggle_stz_tilt, "stz_tilt");
         self add_pers_toggle("auto reload", undefined, ::autoreload, "autoreload");
         self add_pers_toggle("headbounces", undefined, ::toggle_headbounces, "headbounces");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
@@ -88,17 +87,17 @@ structure()
     case "bolt movement":
         self.bind_index = false;
         self add_menu(menu);
-        self add_increment("bolt speed", increment_controls, ::setpersmenu, int(self getpers("boltspeed")), 2, 20, 1, "boltspeed");
+        self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 2, 20, 1, "boltspeed");
         self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
         self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
         break;
-    case "velocity":
+    case "edit velocity":
         self.bind_index = false;
         self add_menu(menu);
-        self add_increment("change x", increment_controls, ::setpersmenu, int(self getpers("velx")), -2000, 2000, float(self getpers("velocitychangeby")), "velx");
-        self add_increment("change x", increment_controls, ::setpersmenu, int(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
-        self add_increment("change x", increment_controls, ::setpersmenu, int(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
-        self add_increment("change by", increment_controls, ::setpersmenu, int(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
+        self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("velx")), -2000, 2000, float(self getpers("velocitychangeby")), "velx");
+        self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
+        self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
+        self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
         break;
     case "equipment":
         self.bind_index = false;
@@ -216,7 +215,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("dvars", undefined, ::new_menu, "dvars");
-        self add_option("spawn bot", undefined, ::spawnbot);
+        // self add_option("spawn bot", undefined, ::spawnbot);
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages");

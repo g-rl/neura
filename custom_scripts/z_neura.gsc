@@ -170,7 +170,8 @@ watch_memory()
     self setpersifuni("saved_class", false);
     self setpersifuni("velocitychangeby", 50);
     self setpersifuni("real_scavenger", true);
-    
+    self setpersifuni("headbounces", false);
+
     for (i=1;i<8;i++)
     {
         self setpersifuni("boltpos" + i, "0");
@@ -218,6 +219,4 @@ watch_memory()
     self setup_bind("bolt", false, ::do_bolt_bind);
     self setup_bind("velocity", false, ::do_velocity_bind);
     self setup_bind("canswap", false, ::do_canswap_bind);
-
-    self setangles((self getangles()[0],self getangles()[1], isdefined(self getpers("stz_tilt")) ? 0 : 180));
 }

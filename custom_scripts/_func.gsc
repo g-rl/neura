@@ -102,19 +102,11 @@ togglepers(pers) // wow dude
     self.pers[pers] = !toggle(self.pers[pers]);
     print(pers + " new value: " + self getpers(pers));
 }
-
-toggle_stz_tilt()
-{
-    self.pers["stz_tilt"] = !toggle(self.pers["stz_tilt"]);
-    self setangles((self getangles()[0],self getangles()[1], isdefined(self getpers("stztilt")) ? 0 : 180));
-}
-
 toggledvar(dvar)
 {
     setdvar(dvar, !toggle(getdvarint(dvar)));
     print(dvar + " new value: " + getdvar(dvar));
 }
-
 
 setpersmenu(value, pers) // wow dude
 {
@@ -269,7 +261,7 @@ load_spawn()
 
     self setvelocity((0, 0, 0));
     self setorigin((float(self getpers("saveposx")), float(self getpers("saveposy")), float(self getpers("saveposz"))));
-    self setangles((0, float(self getpers("saveangles2")), isdefined(self getpers("stztilt")) ? 180 : 0));
+    self setplayerangles((0, float(self getpers("saveangles2")), 0));
 }
 
 reload_position()
@@ -1120,11 +1112,24 @@ do_spectator_bind(args, slot)
         if (!self custom_scripts\_menu::in_menu())
         {
             if (self.sessionstate == "playing")
-                self updatesessionstate("spectator");
+                self scripts\mp\utility\player::updatesessionstate("spectator");
             else
-                self updatesessionstate("playing");
+                self scripts\mp\utility\player::updatesessionstate("playing");
         }
     }
+}
+
+toggle_scavenger_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_scavenger_bind(1, i);
+    else
+        self notify("stop_scavenger_bind");
 }
 
 do_scavenger_bind(args, slot)
@@ -1177,9 +1182,32 @@ do_bolt_bind(args, slot)
 
         if (!self custom_scripts\_menu::in_menu())
         {
-            self dobolt();
+            self start_bolt();
         }
     }
+}
+
+start_bolt()
+{
+    x = int (self getpers("boltcount"));
+    if (x == 0)
+        return self iprintlnbold("^1set bolt points first");
+
+    bolt_model = spawn("script_model", self.origin);
+    bolt_model setmodel("tag_origin");
+    self.current_bolt = bolt_model; // store
+    self playerlinkto(bolt_model);
+
+    for (i=1; i<(x + 1); i++)
+    {
+        keys = strtok(self getpers("boltpos" + i), ",");
+        position = (float(keys[0]), float(keys[1]), float(keys[2]));
+        bolt_model moveto(position, float(self getpers("boltspeed")), 0, 0);
+        wait float(self getpers("boltspeed"));
+    }
+
+    self unlink();
+    bolt_model delete();
 }
 
 toggle_velocity_bind(bind, i, pers)
