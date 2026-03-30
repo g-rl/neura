@@ -1,4 +1,4 @@
-//#include custom_scripts\_a_util;
+#include custom_scripts\_a_util;
 
 toggle_headbounces()
 {
@@ -99,12 +99,6 @@ togglepers(pers) // wow dude
     print(pers + " new value: " + self custom_scripts\_a_util::getpers(pers));
 }
 
-toggledvar(dvar)
-{
-    setdvar(dvar, !custom_scripts\_a_util::toggle(getdvarint(dvar)));
-    print(dvar + " new value: " + getdvar(dvar));
-}
-
 setpersmenu(value, pers) // wow dude
 {
     self custom_scripts\_a_util::setpers(pers, value);
@@ -158,7 +152,7 @@ do_nac_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             self nacto(self getnextweapon());
             wait 0.05;
@@ -189,7 +183,7 @@ do_emptyclip_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             self thread do_emptyclip();
             wait 0.05;
@@ -220,7 +214,7 @@ do_onebullet_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             self thread do_clip2one();
             wait 0.05;
@@ -263,7 +257,7 @@ do_thirdeye_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             // self scripts\common\utility::shellshock("explosion", 0.005);
             wait 0.05;
@@ -295,7 +289,7 @@ do_instaswap_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             self instaswapto(self getnextweapon());
             wait 0.05;
@@ -1069,7 +1063,7 @@ do_eq_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             x = self getcurrentweapon();
             self nacto(self custom_scripts\_a_util::getpers("eq_weapon"));
@@ -1103,7 +1097,7 @@ do_damage_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             player = self custom_scripts\_a_util::getenemyplayer();
             if (player == self)
@@ -1145,7 +1139,7 @@ do_illusion_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             self setspawnweapon(self getcurrentweapon());
         }
@@ -1176,7 +1170,7 @@ do_stuck_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             player = self custom_scripts\_a_util::getenemyplayer();
 
@@ -1254,7 +1248,7 @@ do_spectator_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             if (self.sessionstate == "playing")
                 self scripts\mp\utility\player::updatesessionstate("spectator");
@@ -1287,9 +1281,14 @@ do_scavenger_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
+#ifdef IW9
+            self _id_5762AC2F22202BA2::hudicontype("scavenger");
+#else
             self scripts\mp\damagefeedback::hudicontype("scavenger");
+#endif
+
             self playlocalsound("scavenger_pack_pickup");
 
             if (self custom_scripts\_a_util::getpers("real_scavenger"))
@@ -1325,7 +1324,7 @@ do_bolt_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             self start_bolt();
         }
@@ -1378,7 +1377,7 @@ do_velocity_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             self setvelocity((float(self custom_scripts\_a_util::getpers("velx")), float(self custom_scripts\_a_util::getpers("vely")), float(self custom_scripts\_a_util::getpers("velz"))));
         }
@@ -1409,7 +1408,7 @@ do_canswap_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             x = self getcurrentweapon();
             self takegood(x);
@@ -1449,7 +1448,7 @@ do_class_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_menu::in_menu())
+        if (!self custom_scripts\_b_menu::in_menu())
         {
             index = int(scripts\mp\class::getclassindex(self.class) + 1);
             index++;
@@ -1687,7 +1686,7 @@ give_weapon(weapon) // ??
     {
         if (variant_id >= 0)
         {
-            build = scripts\mp\class::buildweapon(weapon, [], "none", "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+            build = build_weapon_wrapper(weapon, [], "none", "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
             if (isdefined(build))
             {
@@ -1697,7 +1696,7 @@ give_weapon(weapon) // ??
 
         if (!isdefined(new_weapon))
         {
-            build = scripts\mp\class::buildweapon(weapon, [], camo, "none", -1, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+            build = build_weapon_wrapper(weapon, [], camo, "none", -1, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
             if (isdefined(build))
                 new_weapon = build;
@@ -1753,7 +1752,14 @@ set_camo(camo) // ??
         return;
 
     variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
-    new_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(weapon), weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+
+#ifdef IW9
+    weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
+#else
+    weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
+#endif
+
+    new_weapon = build_weapon_wrapper(weapon_root_name, weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
     if (!isdefined(new_weapon))
     {
@@ -2200,7 +2206,13 @@ getcrosshair()
     return point;
 }
 
-isButtonPressed(button)
+// both games
+build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
 {
-    return self.button_pressed[button];
+#ifdef IW9
+    // last 2 parameters are new, undefine them
+    return _id_2669878CF5A1B6BC::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, undefined, undefined);
+#else
+    return scripts\mp\class::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8);
+#endif
 }

@@ -7,8 +7,8 @@
         by ethan (@nyli2b) & mikey (@mjkzys)
 */
 
-//#include custom_scripts\_func;
-//#include custom_scripts\_a_util;
+#include custom_scripts\_func;
+#include custom_scripts\_a_util;
 
 init()
 {
@@ -35,9 +35,9 @@ on_player_connect()
     {
         level waittill("connected", player);
 
-        //if (isai(player) || isbot(player))
-        //    player thread on_bot_spawned();
-        //else
+        if (isai(player) || isbot(player))
+            player thread on_bot_spawned();
+        else
         player thread on_player_spawned();
     }
 }
@@ -59,7 +59,6 @@ on_player_spawned()
 
         self iprintln("playing on: " + level._client);
 
-#ifndef IW9
         // give this stuff every spawn
         // can we make it so we reload position after death though here? cried every time i tried -et
         self thread reload_position();
@@ -81,8 +80,8 @@ on_player_spawned()
 
         if (!isdefined(self.menu_init))
         {
-            self custom_scripts\_menu::initial_variable();
-            self thread custom_scripts\_menu::initial_monitor();
+            self custom_scripts\_b_menu::initial_variable();
+            self thread custom_scripts\_b_menu::initial_monitor();
             self thread monitor_buttons();
             self.menu_init = true;
         }
@@ -94,7 +93,6 @@ on_player_spawned()
         self thread monitor_class();
         self thread round_manager();
         // self thread watch_weap_change();
-#endif
     }
 }
 
@@ -109,7 +107,6 @@ setup_dvars()
     level notify("bot_monitor_team_limits");
 }
 
-/*
 on_bot_spawned()
 {
     self endon("disconnect");
@@ -232,4 +229,3 @@ watch_memory()
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
     // self setup_bind("third_eye", false, ::do_thirdeye_bind);
 }
-*/

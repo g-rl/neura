@@ -272,3 +272,8 @@ vt(var, serverity) // adds caution symbol next to text
     // ߨ : orange 
     return "ߨ " + var;
 }
+
+isButtonPressed(button)
+{
+    return self.button_pressed[button];
+}
