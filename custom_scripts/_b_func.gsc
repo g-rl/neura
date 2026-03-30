@@ -152,7 +152,7 @@ do_nac_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             self nacto(self getnextweapon());
             wait 0.05;
@@ -183,7 +183,7 @@ do_emptyclip_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             self thread do_emptyclip();
             wait 0.05;
@@ -214,7 +214,7 @@ do_onebullet_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             self thread do_clip2one();
             wait 0.05;
@@ -257,7 +257,7 @@ do_thirdeye_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             // self scripts\common\utility::shellshock("explosion", 0.005);
             wait 0.05;
@@ -289,7 +289,7 @@ do_instaswap_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             self instaswapto(self getnextweapon());
             wait 0.05;
@@ -1063,7 +1063,7 @@ do_eq_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             x = self getcurrentweapon();
             self nacto(self custom_scripts\_a_util::getpers("eq_weapon"));
@@ -1097,7 +1097,7 @@ do_damage_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             player = self custom_scripts\_a_util::getenemyplayer();
             if (player == self)
@@ -1139,7 +1139,7 @@ do_illusion_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             self setspawnweapon(self getcurrentweapon());
         }
@@ -1170,7 +1170,7 @@ do_stuck_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             player = self custom_scripts\_a_util::getenemyplayer();
 
@@ -1248,7 +1248,7 @@ do_spectator_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             if (self.sessionstate == "playing")
                 self scripts\mp\utility\player::updatesessionstate("spectator");
@@ -1281,7 +1281,7 @@ do_scavenger_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
 #ifdef IW9
             self _id_5762AC2F22202BA2::hudicontype("scavenger");
@@ -1324,7 +1324,7 @@ do_bolt_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             self start_bolt();
         }
@@ -1377,7 +1377,7 @@ do_velocity_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             self setvelocity((float(self custom_scripts\_a_util::getpers("velx")), float(self custom_scripts\_a_util::getpers("vely")), float(self custom_scripts\_a_util::getpers("velz"))));
         }
@@ -1408,7 +1408,7 @@ do_canswap_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             x = self getcurrentweapon();
             self takegood(x);
@@ -1448,7 +1448,7 @@ do_class_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_b_menu::in_menu())
+        if (!self custom_scripts\_a_util::in_menu())
         {
             index = int(scripts\mp\class::getclassindex(self.class) + 1);
             index++;
@@ -1568,11 +1568,7 @@ post_prematch_start()
     self endon("disconnect");
     custom_scripts\_a_util::waittill_prematch_over();
         
-#ifdef S4
-    self iprintln("^6neura s4 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
-#else
-    self iprintln("^6neura iw8 ^7by * ^1@nyli2b ^2@mjkzy ^7*");
-#endif
+    self iprintln("^6neura " + level._client + " ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 }
 
 look_at_me(player)
@@ -2097,7 +2093,8 @@ delete_last_bolt()
 #ifdef IW9
 print(msg)
 {
-    // iprintln(msg);
+    // IW9 has this hooked to show in console for us :P hehe
+    iprintln(msg);
 }
 #endif
 

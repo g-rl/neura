@@ -1,4 +1,4 @@
-#include custom_scripts\_func;
+#include custom_scripts\_b_func;
 #include custom_scripts\_a_util;
 
 rainbow_menu()
@@ -85,7 +85,7 @@ initial_monitor()
     {
         if (isalive(self))
         {
-            if (!self in_menu())
+            if (!self custom_scripts\_a_util::in_menu())
             {
                 if (self adsButtonPressed() && self isButtonPressed("-actionslot 1"))
                 {
@@ -245,11 +245,6 @@ set_cursor(cursor)
 set_procedure()
 {
     self.in_menu = !is_true(self.in_menu);
-}
-
-in_menu()
-{
-    return is_true(self.in_menu);
 }
 
 execute_function(function, argument_1, argument_2, argument_3, argument_4)
@@ -825,7 +820,7 @@ close_menu()
 
 close_menu_if_open()
 {
-    if (self in_menu())
+    if (self custom_scripts\_a_util::in_menu())
         self close_menu();
 }
 
@@ -1100,7 +1095,7 @@ update_menu(menu, cursor, force)
     {
         foreach(player in level.players)
         {
-            if (!isdefined(player) || !player in_menu())
+            if (!isdefined(player) || !player custom_scripts\_a_util::in_menu())
                 continue;
 
             if (player get_menu() == menu || self != player && player is_option(menu, cursor, self))
@@ -1110,7 +1105,7 @@ update_menu(menu, cursor, force)
     }
     else
     {
-        if (isdefined(self) && self in_menu())
+        if (isdefined(self) && self custom_scripts\_a_util::in_menu())
             self create_option();
     }
 }
@@ -1156,15 +1151,15 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("toggle settings", undefined, ::new_menu, "toggle settings");
-        self add_pers_toggle("invincibility", undefined, custom_scripts\_func::toggle_invincibility, "invincible");
-        self add_pers_toggle("elevators", undefined, custom_scripts\_func::toggle_elevators, "elevators");
-        self add_pers_toggle("alt swaps", undefined, custom_scripts\_func::toggle_alt_swaps, "alt_swap");
-        self add_pers_toggle("infinite equipment", undefined, custom_scripts\_func::toggle_inf_eq, "inf_eq");
-        self add_pers_toggle("instaswaps", undefined, custom_scripts\_func::instaswaps, "instaswaps");
-        self add_pers_toggle("auto prone", undefined, custom_scripts\_func::autoprone, "autoprone");
-        self add_pers_toggle("round end prone", undefined, custom_scripts\_func::togglepers, "autoprone_endgame", true);
-        self add_pers_toggle("auto reload", undefined, custom_scripts\_func::autoreload, "autoreload");
-        self add_pers_toggle("headbounces", undefined, custom_scripts\_func::toggle_headbounces, "headbounces");
+        self add_pers_toggle("invincibility", undefined, custom_scripts\_b_func::toggle_invincibility, "invincible");
+        self add_pers_toggle("elevators", undefined, custom_scripts\_b_func::toggle_elevators, "elevators");
+        self add_pers_toggle("alt swaps", undefined, custom_scripts\_b_func::toggle_alt_swaps, "alt_swap");
+        self add_pers_toggle("infinite equipment", undefined, custom_scripts\_b_func::toggle_inf_eq, "inf_eq");
+        self add_pers_toggle("instaswaps", undefined, custom_scripts\_b_func::instaswaps, "instaswaps");
+        self add_pers_toggle("auto prone", undefined, custom_scripts\_b_func::autoprone, "autoprone");
+        self add_pers_toggle("round end prone", undefined, custom_scripts\_b_func::togglepers, "autoprone_endgame", true);
+        self add_pers_toggle("auto reload", undefined, custom_scripts\_b_func::autoreload, "autoreload");
+        self add_pers_toggle("headbounces", undefined, custom_scripts\_b_func::toggle_headbounces, "headbounces");
         self add_pers_toggle("putaway equipment", undefined, ::togglepers, "eq_putaway", true);
         self add_pers_toggle("real scavenger", undefined, ::togglepers, "real_scavenger", true);
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");

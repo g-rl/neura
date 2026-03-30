@@ -121,10 +121,8 @@ haspers(pers)
 
 loadpers(key, func, args)
 {
-    if (!self getpers(key)) 
-    {
+    if (!isdefined(getpers(key)))
         return;
-    }
     
     wait 0.05;
 
@@ -276,4 +274,11 @@ vt(var, serverity) // adds caution symbol next to text
 isButtonPressed(button)
 {
     return self.button_pressed[button];
+}
+
+// this is for _menu really - this is done for import order to work on IW9
+// i am not sure why this game is so mean about it
+in_menu()
+{
+    return is_true(self.in_menu);
 }
