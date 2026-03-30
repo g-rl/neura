@@ -1,4 +1,9 @@
-void() {}
+// this is a utility file and never has includes
+
+void()
+{
+    
+}
 
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
@@ -65,11 +70,6 @@ monitor_buttons()
     self setactionslot(4, "");
 }
 
-isButtonPressed(button)
-{
-    return self.button_pressed[button];
-}
-
 // pauses timer after 5-8 seconds to let the tactical/equipment delay disable
 pause_timer_cooldown_bypass()
 {
@@ -91,12 +91,6 @@ waittill_prematch_over()
             wait 0.05;
         }
     }
-}
-
-getcrosshair()
-{
-    point = scripts\engine\trace::_bullet_trace(self geteye(), self geteye() + anglestoforward(self getplayerangles()) * 1000000, 0, self)["position"];
-    return point;
 }
 
 setpers(key, value)
@@ -203,105 +197,6 @@ is_valid_weapon(weapon)
         return true;
 
     return (weapon.basename == "equip_throwing_knife");
-}
-
-switchto(weapon) 
-{
-    current = self getcurrentweapon();
-    clip = self getweaponammoclip(current);
-    stock = self getweaponammostock(current);
-
-    self takeweapon(current);
-    self switchtoweapon(weapon);
-    wait 0.05;
-    self giveweapon(current);
-    self setweaponammoclip(current, clip);
-    self setweaponammostock(current, stock);
-}
-
-takegood(gun)
-{
-    self.goodgun = gun;
-    self.getclip =  self getweaponammoclip(gun);
-    self.getstock = self getweaponammostock(gun);
-    self takeweapon(gun);
-}
-
-givegood(gun)
-{
-    self giveweapon(self.goodgun);
-    self setweaponammoclip(self.goodgun, self.getclip);
-    self setweaponammostock(self.goodgun, self.getstock);
-}
-
-getprevweapon() 
-{
-    real_weaps = self getrealweapons();
-    x = self getcurrentweapon();
-    for (i = 0 ; i < real_weaps.size ; i++)
-    {
-        if (x == real_weaps[i])
-        {
-            y = i - 1;
-            if (y < 0)
-                y = real_weaps.size - 1;
-
-            if (isdefined(real_weaps[y]))
-                return real_weaps[y];
-            return real_weaps[0];
-        }
-    }
-}
-
-getnextweapon()
-{
-    z = self getrealweapons();
-    x = self getcurrentweapon();
-    for (i = 0 ; i < z.size ; i++)
-    {
-        if (x == z[i])
-        {
-            if (isdefined(z[i + 1]))
-            return z[i + 1];
-            else
-            return z[0];
-        }
-    }
-}
-
-getrealweapons()
-{
-    weapons = self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
-    for (i = 0; i < weapons.size; i++)
-    {
-        if (issubstr(weapons[i].basename, "knifestab"))
-        {
-            weapons[i] = undefined;
-        }
-    }
-    return weapons;
-}
-
-nacto(weapon)
-{
-    x = self getcurrentweapon();
-    self takegood(x);
-    if (!self hasweapon(weapon))
-    self giveweapon(weapon);
-    self switchtoweapon(weapon);
-    waitframe();
-    self givegood(x);
-}
-
-instaswapto(weapon)
-{
-    x = self getcurrentweapon();
-    self takegood(x);
-    if (!self hasweapon(weapon))
-    self giveweapon(weapon);
-    self setspawnweapon(weapon);
-    waitframe();
-    self givegood(x);
 }
 
 toggle(variable) 

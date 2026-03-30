@@ -22,9 +22,17 @@ set "IW8_DIR=%IW8_DIR:"=%"
 set /p "S4_DIR=Enter S4 mod directory (s4-mod): "
 set "S4_DIR=%S4_DIR:"=%"
 
+:: Ask for IW9 mod directory
+set "IW9_DIR="
+set /p "IW9_DIR=Enter IW9 mod directory (optional, press Enter to skip): "
+set "IW9_DIR=%IW9_DIR:"=%"
+
 :: Create symlinks
 mklink /D "%IW8_DIR%\custom_scripts" "%SOURCE%"
 mklink /D "%S4_DIR%\custom_scripts" "%SOURCE%"
+if defined IW9_DIR (
+    mklink /D "%IW9_DIR%\custom_scripts" "%SOURCE%"
+)
 
 echo.
 echo Done!

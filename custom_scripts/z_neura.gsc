@@ -7,15 +7,17 @@
         by ethan (@nyli2b) & mikey (@mjkzys)
 */
 
-#include custom_scripts\_func;
-#include custom_scripts\_util;
+//#include custom_scripts\_func;
+//#include custom_scripts\_a_util;
 
 init()
 {
 #ifdef S4
     level._client = "s4";
+#elifdef IW9
+    level._client = "iw9";
 #else
-    level._client = "iw8";
+    level._client = "iw8"; // this is for 1.20, this will be updated later to use the macro later properly maybe?
 #endif
     level.is_setup = false;
     level.is_debug = true;
@@ -33,10 +35,10 @@ on_player_connect()
     {
         level waittill("connected", player);
 
-        if (isai(player) || isbot(player))
-            player thread on_bot_spawned();
-        else
-            player thread on_player_spawned();
+        //if (isai(player) || isbot(player))
+        //    player thread on_bot_spawned();
+        //else
+        player thread on_player_spawned();
     }
 }
 
@@ -51,10 +53,13 @@ on_player_spawned()
     {
         self waittill("spawned_player");
 
-        self setpersifuni("saveposx", 0);
-        self setpersifuni("saveposy", 0);
-        self setpersifuni("saveposz", 0);
+        //self setpersifuni("saveposx", 0);
+        //self setpersifuni("saveposy", 0);
+        //self setpersifuni("saveposz", 0);
 
+        self iprintln("playing on: " + level._client);
+
+#ifndef IW9
         // give this stuff every spawn
         // can we make it so we reload position after death though here? cried every time i tried -et
         self thread reload_position();
@@ -89,12 +94,13 @@ on_player_spawned()
         self thread monitor_class();
         self thread round_manager();
         // self thread watch_weap_change();
+#endif
     }
 }
 
 setup_dvars()
 {
-    setdvarifuninitialized("scr_killcam_time", 5);
+    //setdvarifuninitialized("scr_killcam_time", 5);
     setdvar("MSOOMPMPQS", true); // unlimited sprint (iw8 only i think?)
     setdvar("LNOKTQPLKO", false); // jump slowdown
     level.bots_disable_team_switching = 1;
@@ -103,6 +109,7 @@ setup_dvars()
     level notify("bot_monitor_team_limits");
 }
 
+/*
 on_bot_spawned()
 {
     self endon("disconnect");
@@ -225,3 +232,4 @@ watch_memory()
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
     // self setup_bind("third_eye", false, ::do_thirdeye_bind);
 }
+*/

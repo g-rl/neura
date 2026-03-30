@@ -1,5 +1,5 @@
 #include custom_scripts\_func;
-#include custom_scripts\_util;
+//#include custom_scripts\_a_util;
 
 rainbow_menu()
 {
@@ -381,7 +381,7 @@ set_text( text )
 
 create_text(text, override, font, font_scale, alignment, relative, x_offset, y_offset, color, alpha, sort)
 {
-    element                = self scripts\mp\hud_util::createfontstring(font, font_scale);
+    element                = self scripts\mp\hud_a_util::createfontstring(font, font_scale);
     if (isdefined(element))
     {
         element.color          = color;
@@ -394,7 +394,7 @@ create_text(text, override, font, font_scale, alignment, relative, x_offset, y_o
         element.hidewheninmenu = false;
         element.showinkillcam = 0;
 
-        element scripts\mp\hud_util::setpoint(alignment, relative, x_offset, y_offset);
+        element scripts\mp\hud_a_util::setpoint(alignment, relative, x_offset, y_offset);
         element set_text(text);
 
         self.element_count++;
@@ -417,8 +417,8 @@ create_shader(shader, alignment, relative, x_offset, y_offset, width, height, co
     element.hidden         = false;
     element.hidewheninmenu = true;
 
-    element scripts\mp\hud_util::setparent(level.uiparent);
-    element scripts\mp\hud_util::setpoint(alignment, relative, x_offset, y_offset);
+    element scripts\mp\hud_a_util::setparent(level.uiparent);
+    element scripts\mp\hud_a_util::setpoint(alignment, relative, x_offset, y_offset);
     element set_shader(shader, width, height);
     
     self.element_count++;
