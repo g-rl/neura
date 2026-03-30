@@ -7,8 +7,8 @@
         by ethan (@nyli2b) & mikey (@mjkzys)
 */
 
-#include custom_scripts\_b_func;
-#include custom_scripts\_a_util;
+#include custom_scripts\_z_func;
+#include custom_scripts\_util;
 
 init()
 {
@@ -96,8 +96,8 @@ on_player_spawned()
 
         if (!isdefined(self.menu_init))
         {
-            self custom_scripts\_b_menu::initial_variable();
-            self thread custom_scripts\_b_menu::initial_monitor();
+            self custom_scripts\_z_menu::initial_variable();
+            self thread custom_scripts\_z_menu::initial_monitor();
             self thread monitor_buttons();
             self.menu_init = true;
         }

@@ -1,10 +1,10 @@
-#include custom_scripts\_a_util;
+#include custom_scripts\_util;
 
 toggle_headbounces()
 {
-    self.pers["headbounces"] = !custom_scripts\_a_util::toggle(self.pers["headbounces"]);
+    self.pers["headbounces"] = !custom_scripts\_util::toggle(self.pers["headbounces"]);
 
-    if (self custom_scripts\_a_util::getpers("headbounces"))
+    if (self custom_scripts\_util::getpers("headbounces"))
     {
         self thread headbounces();
     }
@@ -21,7 +21,7 @@ headbounces(args)
     for (;;)
     {
         foreach(player in level.players)
-        if (player != self && distance(player custom_scripts\_a_util::getorigin_() + (0,0,90), self custom_scripts\_a_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
+        if (player != self && distance(player custom_scripts\_util::getorigin_() + (0,0,90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
         {
             self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
             wait 0.2;
@@ -95,13 +95,13 @@ set_to_predator(player) {}
 
 togglepers(pers) // wow dude
 {
-    self.pers[pers] = !custom_scripts\_a_util::toggle(self.pers[pers]);
-    print(pers + " new value: " + self custom_scripts\_a_util::getpers(pers));
+    self.pers[pers] = !custom_scripts\_util::toggle(self.pers[pers]);
+    print(pers + " new value: " + self custom_scripts\_util::getpers(pers));
 }
 
 setpersmenu(value, pers) // wow dude
 {
-    self custom_scripts\_a_util::setpers(pers, value);
+    self custom_scripts\_util::setpers(pers, value);
     wait 0.05;
     self playlocalsound("weap_ammo_pickup");
 }
@@ -133,7 +133,7 @@ toggle_nac_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     wait 0.05;
@@ -152,7 +152,7 @@ do_nac_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             self nacto(self getnextweapon());
             wait 0.05;
@@ -164,7 +164,7 @@ toggle_emptyclip_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     wait 0.05;
@@ -183,7 +183,7 @@ do_emptyclip_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             self thread do_emptyclip();
             wait 0.05;
@@ -195,7 +195,7 @@ toggle_onebullet_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     wait 0.05;
@@ -214,7 +214,7 @@ do_onebullet_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             self thread do_clip2one();
             wait 0.05;
@@ -238,7 +238,7 @@ toggle_thirdeye_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     wait 0.05;
@@ -257,7 +257,7 @@ do_thirdeye_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             // self scripts\common\utility::shellshock("explosion", 0.005);
             wait 0.05;
@@ -269,7 +269,7 @@ toggle_instaswap_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     wait 0.05;
@@ -289,7 +289,7 @@ do_instaswap_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             self instaswapto(self getnextweapon());
             wait 0.05;
@@ -308,9 +308,9 @@ save_pos_bind()
         if (self getstance() == "crouch")
         {
             self thread save_spawn();
-            self custom_scripts\_a_util::nprintlnbold("ߝ [position] * saved @ ^6" + self.origin);
+            self custom_scripts\_util::nprintlnbold("ߝ [position] * saved @ ^6" + self.origin);
             wait 1;
-            self custom_scripts\_a_util::nprintlnbold(" ");
+            self custom_scripts\_util::nprintlnbold(" ");
             wait 0.05;
         }
     }
@@ -334,37 +334,37 @@ load_pos_bind()
 
 save_spawn()
 {
-    self custom_scripts\_a_util::setpers("saveposx", self getorigin()[0]);
-    self custom_scripts\_a_util::setpers("saveposy", self getorigin()[1]);
-    self custom_scripts\_a_util::setpers("saveposz", self getorigin()[2]);
-    self custom_scripts\_a_util::setpers("saveangles1", self getplayerangles()[0]);
-    self custom_scripts\_a_util::setpers("saveangles2", self getplayerangles()[1]);
-    self custom_scripts\_a_util::setpers("saveangles3", self getplayerangles()[2]);
+    self custom_scripts\_util::setpers("saveposx", self getorigin()[0]);
+    self custom_scripts\_util::setpers("saveposy", self getorigin()[1]);
+    self custom_scripts\_util::setpers("saveposz", self getorigin()[2]);
+    self custom_scripts\_util::setpers("saveangles1", self getplayerangles()[0]);
+    self custom_scripts\_util::setpers("saveangles2", self getplayerangles()[1]);
+    self custom_scripts\_util::setpers("saveangles3", self getplayerangles()[2]);
 }
 
 reset_position()
 {
-    self custom_scripts\_a_util::setpers("saveposx", 0);
-    self custom_scripts\_a_util::setpers("saveposy", 0);
-    self custom_scripts\_a_util::setpers("saveposz", 0);
+    self custom_scripts\_util::setpers("saveposx", 0);
+    self custom_scripts\_util::setpers("saveposy", 0);
+    self custom_scripts\_util::setpers("saveposz", 0);
 }
 
 load_spawn()
 {
-    if (float(self custom_scripts\_a_util::getpers("saveposx")) == 0 && float(self custom_scripts\_a_util::getpers("saveposy")) == 0 && float(self custom_scripts\_a_util::getpers("saveposz")) == 0)
+    if (float(self custom_scripts\_util::getpers("saveposx")) == 0 && float(self custom_scripts\_util::getpers("saveposy")) == 0 && float(self custom_scripts\_util::getpers("saveposz")) == 0)
     {
-        self custom_scripts\_a_util::nprintlnbold("^6save a position first");
+        self custom_scripts\_util::nprintlnbold("^6save a position first");
         return;
     }
 
     self setvelocity((0, 0, 0));
-    self setorigin((float(self custom_scripts\_a_util::getpers("saveposx")), float(self custom_scripts\_a_util::getpers("saveposy")), float(self custom_scripts\_a_util::getpers("saveposz"))));
-    self setplayerangles((0, float(self custom_scripts\_a_util::getpers("saveangles2")), 0));
+    self setorigin((float(self custom_scripts\_util::getpers("saveposx")), float(self custom_scripts\_util::getpers("saveposy")), float(self custom_scripts\_util::getpers("saveposz"))));
+    self setplayerangles((0, float(self custom_scripts\_util::getpers("saveangles2")), 0));
 }
 
 reload_position()
 {
-    if (float(self custom_scripts\_a_util::getpers("saveposx")) != 0 && float(self custom_scripts\_a_util::getpers("saveposy")) != 0 && float(self custom_scripts\_a_util::getpers("saveposz")) != 0)
+    if (float(self custom_scripts\_util::getpers("saveposx")) != 0 && float(self custom_scripts\_util::getpers("saveposy")) != 0 && float(self custom_scripts\_util::getpers("saveposz")) != 0)
     {
         self load_spawn();
     }
@@ -372,9 +372,9 @@ reload_position()
 
 toggle_snl()
 {
-    self.pers["snl"] = !custom_scripts\_a_util::toggle(self.pers["snl"]);
+    self.pers["snl"] = !custom_scripts\_util::toggle(self.pers["snl"]);
 
-    if (self custom_scripts\_a_util::getpers("snl"))
+    if (self custom_scripts\_util::getpers("snl"))
     {
         self thread setup_snl();
     }
@@ -392,9 +392,9 @@ setup_snl(args)
 
 toggle_invincibility()
 {
-    self.pers["invincible"] = !custom_scripts\_a_util::toggle(self.pers["invincible"]);
+    self.pers["invincible"] = !custom_scripts\_util::toggle(self.pers["invincible"]);
 
-    if (self custom_scripts\_a_util::getpers("invincible"))
+    if (self custom_scripts\_util::getpers("invincible"))
     {
         self thread godmode_loop();
     }
@@ -427,7 +427,7 @@ godmode_loop(args)
     {
         self waittill("damage", var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9);
 
-        if (custom_scripts\_a_util::is_true(self.no_damage))
+        if (custom_scripts\_util::is_true(self.no_damage))
         {
             self.health = self.maxhealth;
         }
@@ -447,14 +447,14 @@ ufo_mode()
 
     if (!self.pers["ufo_mode"])
     {
-        self custom_scripts\_a_util::nprintln("ufo mode ^2on");
+        self custom_scripts\_util::nprintln("ufo mode ^2on");
         self.isactive = 0;
         self.noclipmonitor = 1;
         self thread noclip_monitor();
     }
     else if (self.pers["ufo_mode"])
     {
-        self custom_scripts\_a_util::nprintln("ufo mode ^1off");
+        self custom_scripts\_util::nprintln("ufo mode ^1off");
         self notify("stop_noclip");
         self.isactive = 0;
         self.noclipanchor = undefined;
@@ -545,12 +545,12 @@ instaswaps()
 
     if (!self.pers["instaswaps"])
     {
-        self custom_scripts\_a_util::nprintln("bo2 instaswaps ^2on");
+        self custom_scripts\_util::nprintln("bo2 instaswaps ^2on");
         self thread do_instaswaps();
     }
     else if (self.pers["instaswaps"])
     {
-        self custom_scripts\_a_util::nprintln("bo2 instaswaps ^1off");
+        self custom_scripts\_util::nprintln("bo2 instaswaps ^1off");
         self notify("stop_instaswaps");
     }
 
@@ -584,7 +584,7 @@ do_instaswaps(args)
 
         self.is_swapping = true;
 
-        wait (float(self custom_scripts\_a_util::getpers(("instaswaps_time"))));
+        wait (float(self custom_scripts\_util::getpers(("instaswaps_time"))));
         self switchto(self getprevweapon());
 
         self.is_swapping = undefined;
@@ -593,9 +593,9 @@ do_instaswaps(args)
 
 aimbot()
 {
-    self.pers["aimbot"] = !custom_scripts\_a_util::toggle(self.pers["aimbot"]);
+    self.pers["aimbot"] = !custom_scripts\_util::toggle(self.pers["aimbot"]);
 
-    if (self custom_scripts\_a_util::getpers("aimbot"))
+    if (self custom_scripts\_util::getpers("aimbot"))
     {
         self thread do_aimbot();
     }
@@ -616,8 +616,8 @@ do_aimbot(args)
         self waittill("weapon_fired");
 
         center = self getcrosshair();
-        range = int(self custom_scripts\_a_util::getpers("aimbot_range"));
-        delay = float(self custom_scripts\_a_util::getpers("aimbot_delay"));
+        range = int(self custom_scripts\_util::getpers("aimbot_range"));
+        delay = float(self custom_scripts\_util::getpers("aimbot_delay"));
 
         current = self getcurrentweapon();
 
@@ -626,13 +626,13 @@ do_aimbot(args)
             if (!isdefined(player) || !isalive(player))
                 continue;
 
-            if (custom_scripts\_a_util::is_valid_weapon(current))
+            if (custom_scripts\_util::is_valid_weapon(current))
             {
                 if (player != self)
                 {
                     if (distance(player.origin, center) < range)
                     {
-                        // custom_scripts\_a_util::nprintln("bruh.....");
+                        // custom_scripts\_util::nprintln("bruh.....");
 
                         if (delay > 0)
                         {
@@ -655,9 +655,9 @@ do_aimbot(args)
 
 autoprone()
 {
-    self.pers["autoprone"] = !custom_scripts\_a_util::toggle(self.pers["autoprone"]);
+    self.pers["autoprone"] = !custom_scripts\_util::toggle(self.pers["autoprone"]);
 
-    if (self custom_scripts\_a_util::getpers("autoprone"))
+    if (self custom_scripts\_util::getpers("autoprone"))
     {
         self thread do_auto_prone();
     }
@@ -682,13 +682,13 @@ do_auto_prone(args)
     {
         self waittill("weapon_fired", weapon);
 
-        if (self custom_scripts\_a_util::getpers("autoprone_mode") == "air")
+        if (self custom_scripts\_util::getpers("autoprone_mode") == "air")
         {
             if (self isonground() || self isonladder())// || self ismantling())
                 continue;
         }
 
-        if (custom_scripts\_a_util::is_valid_weapon(weapon))
+        if (custom_scripts\_util::is_valid_weapon(weapon))
         {
             self thread auto_prone_logic();
             wait 0.5;
@@ -727,9 +727,9 @@ game_ended_prone()
 
 autoreload()
 {
-    self.pers["autoreload"] = !custom_scripts\_a_util::toggle(self.pers["autoreload"]);
+    self.pers["autoreload"] = !custom_scripts\_util::toggle(self.pers["autoreload"]);
 
-    if (self custom_scripts\_a_util::getpers("autoreload"))
+    if (self custom_scripts\_util::getpers("autoreload"))
     {
         self thread do_auto_reload();
     }
@@ -792,7 +792,7 @@ drop_util(type)
             }
             break;
         default:
-            self custom_scripts\_a_util::nprintln("^6use canswap, current, alt, primary, or all..");
+            self custom_scripts\_util::nprintln("^6use canswap, current, alt, primary, or all..");
             break;        
     }
 }
@@ -802,7 +802,7 @@ monitor_dvars()
     /*
     level endon("game_ended");
     self endon("disconnect");
-    custom_scripts\_a_util::waittill_prematch_over();
+    custom_scripts\_util::waittill_prematch_over();
     */
 
     // TODO
@@ -817,9 +817,9 @@ monitor_dvars()
 
 toggle_inf_eq()
 {
-    self.pers["inf_eq"] = !custom_scripts\_a_util::toggle(self.pers["inf_eq"]);
+    self.pers["inf_eq"] = !custom_scripts\_util::toggle(self.pers["inf_eq"]);
 
-    if (self custom_scripts\_a_util::getpers("inf_eq"))
+    if (self custom_scripts\_util::getpers("inf_eq"))
     {
         self thread unlimited_eq();
     }
@@ -855,19 +855,19 @@ manage_bounce(mode)
             self thread delete_bounce();
             break;
         default:
-            self custom_scripts\_a_util::nprintln("^6use spawn or delete..");
+            self custom_scripts\_util::nprintln("^6use spawn or delete..");
             break;        
     }
 }
 
 spawn_bounce()
 {
-    x = int(self custom_scripts\_a_util::getpers("bouncecount"));
+    x = int(self custom_scripts\_util::getpers("bouncecount"));
     x++;
 
-    self custom_scripts\_a_util::setpers("bouncecount", x);
-    self custom_scripts\_a_util::setpers("bouncepos" + x, self custom_scripts\_a_util::getorigin_()[0] + "," + self custom_scripts\_a_util::getorigin_()[1] + "," + self custom_scripts\_a_util::getorigin_()[2]);
-    self custom_scripts\_a_util::nprintln("bounce #" + x + " spawned at ^6" + self custom_scripts\_a_util::getorigin_());
+    self custom_scripts\_util::setpers("bouncecount", x);
+    self custom_scripts\_util::setpers("bouncepos" + x, self custom_scripts\_util::getorigin_()[0] + "," + self custom_scripts\_util::getorigin_()[1] + "," + self custom_scripts\_util::getorigin_()[2]);
+    self custom_scripts\_util::nprintln("bounce #" + x + " spawned at ^6" + self custom_scripts\_util::getorigin_());
 
     if (x == 1)
     {
@@ -878,14 +878,14 @@ spawn_bounce()
 
 delete_bounce()
 {
-    x = int(self custom_scripts\_a_util::getpers("bouncecount"));
+    x = int(self custom_scripts\_util::getpers("bouncecount"));
 
     if (x == 0)
-        return self custom_scripts\_a_util::nprintln("^1no bounces to delete");
+        return self custom_scripts\_util::nprintln("^1no bounces to delete");
 
     x--;
-    self custom_scripts\_a_util::setpers("bouncecount", x);
-    self custom_scripts\_a_util::nprintln("^7bounce #^5" + x + " ^7deleted");
+    self custom_scripts\_util::setpers("bouncecount", x);
+    self custom_scripts\_util::nprintln("^7bounce #^5" + x + " ^7deleted");
 }
 
 monitor_bounces()
@@ -896,11 +896,11 @@ monitor_bounces()
     
     for (;;)
     {
-        for (i = 1; i < int(self custom_scripts\_a_util::getpers("bouncecount")) + 1; i++)
+        for (i = 1; i < int(self custom_scripts\_util::getpers("bouncecount")) + 1; i++)
         {
-            pos = custom_scripts\_a_util::perstovector(self custom_scripts\_a_util::getpers("bouncepos" + i));
+            pos = custom_scripts\_util::perstovector(self custom_scripts\_util::getpers("bouncepos" + i));
 
-            if (distance(self custom_scripts\_a_util::getorigin_(), pos) < 90 && self getvelocity()[2] < -250) // ? custom_scripts\_a_util::getorigin_ is messing this up i think
+            if (distance(self custom_scripts\_util::getorigin_(), pos) < 90 && self getvelocity()[2] < -250) // ? custom_scripts\_util::getorigin_ is messing this up i think
             {
                 self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
                 wait 0.2;
@@ -922,7 +922,7 @@ watch_freeze_controls()
         {
             if (isai(player) || isbot(player))
             {
-                player freezecontrols(self custom_scripts\_a_util::getpers("frozen_bots"));
+                player freezecontrols(self custom_scripts\_util::getpers("frozen_bots"));
             }
             wait 0.05;
         }
@@ -943,7 +943,7 @@ move_bots(args)
             {
                 player setorigin(self.origin);
                 player save_spawn();
-                self custom_scripts\_a_util::nprintln("trying to move all bots to ^5" + self.origin);
+                self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self.origin);
                 self playlocalsound("recon_drone_marked_owner");
             }
         }
@@ -955,7 +955,7 @@ move_bots(args)
             {
                 player setorigin(self getcrosshair());
                 player save_spawn();
-                self custom_scripts\_a_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
+                self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
                 self playlocalsound("recon_drone_marked_owner");
             }
         }
@@ -967,14 +967,14 @@ move_bots(args)
 kill_player(player)
 {
     player suicide();
-    self custom_scripts\_a_util::nprintln("killed ^1" + player.name);
+    self custom_scripts\_util::nprintln("killed ^1" + player.name);
 }
 
 teleport_player(from, to, player)
 {
     if (from == to)
     {
-        from custom_scripts\_a_util::nprintln("^1you cannot teleport to yourself.");
+        from custom_scripts\_util::nprintln("^1you cannot teleport to yourself.");
         return;
     }
 
@@ -1007,7 +1007,7 @@ monitor_class()
 
     game["strings"]["change_class"] = ""; 
 
-    custom_scripts\_a_util::waittill_prematch_over();
+    custom_scripts\_util::waittill_prematch_over();
 
     for (;;)
     {
@@ -1045,7 +1045,7 @@ toggle_eq_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
@@ -1063,12 +1063,12 @@ do_eq_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             x = self getcurrentweapon();
-            self nacto(self custom_scripts\_a_util::getpers("eq_weapon"));
+            self nacto(self custom_scripts\_util::getpers("eq_weapon"));
 
-            if (self custom_scripts\_a_util::getpers("eq_putaway"))
+            if (self custom_scripts\_util::getpers("eq_putaway"))
             {
                 self switchtoweapon(x);
             }
@@ -1080,7 +1080,7 @@ toggle_damage_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
@@ -1097,9 +1097,9 @@ do_damage_bind(args, slot)
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
-            player = self custom_scripts\_a_util::getenemyplayer();
+            player = self custom_scripts\_util::getenemyplayer();
             if (player == self)
             {
                 self iprintlnbold("^5spawn an enemy");
@@ -1107,7 +1107,7 @@ do_damage_bind(args, slot)
             }
 
             active = false;
-            if (self custom_scripts\_a_util::getpers("invincible") == 1) active = true;
+            if (self custom_scripts\_util::getpers("invincible") == 1) active = true;
             if (active) self.no_damage = false;
             self [[level.callbackPlayerDamage]]( player, player, (self.health / 2), 8, "MOD_RIFLE_BULLET", self getcurrentweapon(), self.origin, (0,0,0), "neck", 0 );
             if (active) self.no_damage = true;
@@ -1119,7 +1119,7 @@ toggle_illusion_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
 
@@ -1139,7 +1139,7 @@ do_illusion_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             self setspawnweapon(self getcurrentweapon());
         }
@@ -1150,7 +1150,7 @@ toggle_stuck_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
 
@@ -1170,9 +1170,9 @@ do_stuck_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
-            player = self custom_scripts\_a_util::getenemyplayer();
+            player = self custom_scripts\_util::getenemyplayer();
 
             if (player == self)
             {
@@ -1180,7 +1180,7 @@ do_stuck_bind(args, slot)
                 continue;
             }
 
-            thread grenadestuckto_stub(self, player, self custom_scripts\_a_util::getpers("stuck_weapon") + "_mp");
+            thread grenadestuckto_stub(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
         }
     }
 }
@@ -1229,7 +1229,7 @@ toggle_spectator_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
@@ -1248,7 +1248,7 @@ do_spectator_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             if (self.sessionstate == "playing")
                 self scripts\mp\utility\player::updatesessionstate("spectator");
@@ -1262,7 +1262,7 @@ toggle_scavenger_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
@@ -1281,7 +1281,7 @@ do_scavenger_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
 #ifdef IW9
             self _id_5762AC2F22202BA2::hudicontype("scavenger");
@@ -1291,7 +1291,7 @@ do_scavenger_bind(args, slot)
 
             self playlocalsound("scavenger_pack_pickup");
 
-            if (self custom_scripts\_a_util::getpers("real_scavenger"))
+            if (self custom_scripts\_util::getpers("real_scavenger"))
             {
                 self setweaponammoclip(self getcurrentweapon(), 0);
                 self setweaponammostock(self getcurrentweapon(), 9999);
@@ -1305,7 +1305,7 @@ toggle_bolt_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
@@ -1324,7 +1324,7 @@ do_bolt_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             self start_bolt();
         }
@@ -1333,7 +1333,7 @@ do_bolt_bind(args, slot)
 
 start_bolt()
 {
-    x = int (self custom_scripts\_a_util::getpers("boltcount"));
+    x = int (self custom_scripts\_util::getpers("boltcount"));
     if (x == 0)
         return self iprintlnbold("^1set bolt points first");
 
@@ -1344,10 +1344,10 @@ start_bolt()
 
     for (i=1; i<(x + 1); i++)
     {
-        keys = strtok(self custom_scripts\_a_util::getpers("boltpos" + i), ",");
+        keys = strtok(self custom_scripts\_util::getpers("boltpos" + i), ",");
         position = (float(keys[0]), float(keys[1]), float(keys[2]));
-        bolt_model moveto(position, float(self custom_scripts\_a_util::getpers("boltspeed")), 0, 0);
-        wait float(self custom_scripts\_a_util::getpers("boltspeed"));
+        bolt_model moveto(position, float(self custom_scripts\_util::getpers("boltspeed")), 0, 0);
+        wait float(self custom_scripts\_util::getpers("boltspeed"));
     }
 
     self unlink();
@@ -1358,7 +1358,7 @@ toggle_velocity_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
@@ -1377,9 +1377,9 @@ do_velocity_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
-            self setvelocity((float(self custom_scripts\_a_util::getpers("velx")), float(self custom_scripts\_a_util::getpers("vely")), float(self custom_scripts\_a_util::getpers("velz"))));
+            self setvelocity((float(self custom_scripts\_util::getpers("velx")), float(self custom_scripts\_util::getpers("vely")), float(self custom_scripts\_util::getpers("velz"))));
         }
     }
 }
@@ -1388,7 +1388,7 @@ toggle_canswap_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
 
@@ -1408,7 +1408,7 @@ do_canswap_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             x = self getcurrentweapon();
             self takegood(x);
@@ -1422,7 +1422,7 @@ toggle_class_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_a_util::toggle(self.pers[index]);
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
 
@@ -1434,7 +1434,7 @@ toggle_class_bind(bind, i, pers)
 
 reload_class_bind(args, slot)
 {   
-    custom_scripts\_a_util::waittill_prematch_over();
+    custom_scripts\_util::waittill_prematch_over();
     self thread do_class_bind(args, slot);
 }
 
@@ -1448,12 +1448,12 @@ do_class_bind(args, slot)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
 
-        if (!self custom_scripts\_a_util::in_menu())
+        if (!self custom_scripts\_util::in_menu())
         {
             index = int(scripts\mp\class::getclassindex(self.class) + 1);
             index++;
 
-            if (index > int(self custom_scripts\_a_util::getpers("class_wrap"))) 
+            if (index > int(self custom_scripts\_util::getpers("class_wrap"))) 
             {
                 index = 1;
             }
@@ -1464,7 +1464,7 @@ do_class_bind(args, slot)
             self.tag_stowed_hip = undefined;
             scripts\mp\class::giveloadout(self.pers["team"], self.class);
 
-            if (self custom_scripts\_a_util::getpers("class_can"))
+            if (self custom_scripts\_util::getpers("class_can"))
             {
                 self alwayscan(self getcurrentweapon());
             }
@@ -1481,11 +1481,11 @@ do_class_bind(args, slot)
 
 give_perks()
 {
-    custom_scripts\_a_util::waittill_prematch_over();
+    custom_scripts\_util::waittill_prematch_over();
 
     wait 0.05;
 
-    if (isdefined(self custom_scripts\_a_util::getpers("soh")))
+    if (isdefined(self custom_scripts\_util::getpers("soh")))
     {
         foreach (perk in self.neura["soh_perk_list"])
         {
@@ -1528,9 +1528,9 @@ round_manager()
 
 toggle_clean_kc()
 {
-    self.pers["clean_kc"] = !custom_scripts\_a_util::toggle(self.pers["clean_kc"]);
+    self.pers["clean_kc"] = !custom_scripts\_util::toggle(self.pers["clean_kc"]);
 
-    if (self custom_scripts\_a_util::getpers("clean_kc"))
+    if (self custom_scripts\_util::getpers("clean_kc"))
     {
         self thread clean_killcam();
     }
@@ -1566,7 +1566,7 @@ post_prematch_start()
 {
     level endon("game_ended");
     self endon("disconnect");
-    custom_scripts\_a_util::waittill_prematch_over();
+    custom_scripts\_util::waittill_prematch_over();
         
     self iprintln("^6neura " + level._client + " ^7by * ^1@nyli2b ^2@mjkzy ^7*");
 }
@@ -1587,14 +1587,14 @@ give_player_shield(player)
     player giveweapon("iw8_me_riotshield_mp");
     player setspawnweapon("iw8_me_riotshield_mp");
     player setorigin(player.origin - (0,0,2));
-    player custom_scripts\_a_util::setpers("bot_weapon", "iw8_me_riotshield_mp");
+    player custom_scripts\_util::setpers("bot_weapon", "iw8_me_riotshield_mp");
 }
 
 set_bot_weapon(player, weapon)
 {
     player giveweapon(weapon);
     player setspawnweapon(weapon);
-    player custom_scripts\_a_util::setpers("bot_weapon", getcompleteweaponname(weapon));
+    player custom_scripts\_util::setpers("bot_weapon", getcompleteweaponname(weapon));
 }
 
 teleport_to_cross(player)
@@ -1616,7 +1616,7 @@ refill_my_ammo(args)
             self thread refill_weapon_ammo(self getcurrentweapon());
             break;
         default:
-            self custom_scripts\_a_util::nprintln("ߝ [weapon] * ^+unknown args '" + args + "'. falling back..");
+            self custom_scripts\_util::nprintln("ߝ [weapon] * ^+unknown args '" + args + "'. falling back..");
             self thread refill_all_ammo();
             break;
     }
@@ -1660,7 +1660,7 @@ refill_weapon_ammo(item)
 
 givegun(weapon)
 {
-    if (self custom_scripts\_a_util::getpers("replace_weapon"))
+    if (self custom_scripts\_util::getpers("replace_weapon"))
     {
         self takeweapon(self getcurrentweapon());
         wait 0.05;
@@ -1673,7 +1673,7 @@ givegun(weapon)
 
 give_weapon(weapon) // ??
 {
-    camo = self custom_scripts\_a_util::getpers("camo");
+    camo = self custom_scripts\_util::getpers("camo");
     variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
     new_weapon = undefined;
     weapon_name = weapon.basename;
@@ -1702,17 +1702,17 @@ give_weapon(weapon) // ??
     }
 
     if (!isdefined(new_weapon) || new_weapon.basename == "none")
-        self custom_scripts\_a_util::nprintln("invalid weapon: ^1" + weapon_name);
+        self custom_scripts\_util::nprintln("invalid weapon: ^1" + weapon_name);
     else
     {
         if (self hasweapon(new_weapon))
         {
-            self custom_scripts\_a_util::nprintln("already have: ^5" + weapon_name);
+            self custom_scripts\_util::nprintln("already have: ^5" + weapon_name);
             return;
         }
 
         real_weapons = self getrealweapons(); // var_7
-        weapon_limit = self custom_scripts\_a_util::getpers("max_weapons"); // var_8
+        weapon_limit = self custom_scripts\_util::getpers("max_weapons"); // var_8
 
         // custom weapon limit
         if (real_weapons.size >= weapon_limit)
@@ -1731,17 +1731,17 @@ give_weapon(weapon) // ??
 
         if (variant_id >= 0)
         {
-            self custom_scripts\_a_util::nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(variant " + variant_id + ")" );
+            self custom_scripts\_util::nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(variant " + variant_id + ")" );
             return;
         }
 
-        self custom_scripts\_a_util::nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(" + camo + ")" );
+        self custom_scripts\_util::nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(" + camo + ")" );
     }
 }
 
 set_camo(camo) // ??
 {
-    self custom_scripts\_a_util::setpers("camo", camo);
+    self custom_scripts\_util::setpers("camo", camo);
     weapon = self getcurrentweapon();
 
     if (!isdefined(weapon) || weapon.basename == "none")
@@ -1759,7 +1759,7 @@ set_camo(camo) // ??
 
     if (!isdefined(new_weapon))
     {
-        self custom_scripts\_a_util::nprintln("^1unable to apply camo..");
+        self custom_scripts\_util::nprintln("^1unable to apply camo..");
         return;
     }
 
@@ -1876,7 +1876,7 @@ init_original_barriers()
 save_class()
 {
     self.pers["curr_class"] = [];
-    self custom_scripts\_a_util::setpers("saved_class", true);
+    self custom_scripts\_util::setpers("saved_class", true);
 
     index = 0;
 
@@ -1891,7 +1891,7 @@ save_class()
 
 load_class()
 {
-    if (!self custom_scripts\_a_util::getpers("saved_class"))
+    if (!self custom_scripts\_util::getpers("saved_class"))
     {
         self iprintln("save a class first..");
         return;
@@ -1938,9 +1938,9 @@ max_ammo(item)
 
 toggle_elevators()
 {
-    self.pers["elevators"] = !custom_scripts\_a_util::toggle(self.pers["elevators"]);
+    self.pers["elevators"] = !custom_scripts\_util::toggle(self.pers["elevators"]);
 
-    if (self custom_scripts\_a_util::getpers("elevators"))
+    if (self custom_scripts\_util::getpers("elevators"))
         self thread elevators();
     else
         self notify("stop_elevators");
@@ -2000,9 +2000,9 @@ reload_alt_swap(args)
 
 toggle_alt_swaps()
 {
-    self.pers["alt_swap"] = !custom_scripts\_a_util::toggle(self.pers["alt_swap"]);
+    self.pers["alt_swap"] = !custom_scripts\_util::toggle(self.pers["alt_swap"]);
     weapon = "iw8_pi_golf21_mp+ammomod_slow+backno_golf21+ironsdefault_golf21+rec_golf21+slide_golf21+xmags_golf21";
-    if (self custom_scripts\_a_util::getpers("alt_swap"))
+    if (self custom_scripts\_util::getpers("alt_swap"))
     {
         self giveweapon(weapon);
     }
@@ -2052,9 +2052,9 @@ set_perks()
 
 alwayscan(weapon)
 {
-    if (self custom_scripts\_a_util::getpers("instaswap"))
+    if (self custom_scripts\_util::getpers("instaswap"))
     {
-        if (self custom_scripts\_a_util::is_valid_weapon(weapon))
+        if (self custom_scripts\_util::is_valid_weapon(weapon))
         {
             return;
         }
@@ -2067,27 +2067,27 @@ alwayscan(weapon)
 
 save_bolt()
 {
-    x = int(self custom_scripts\_a_util::getpers("boltcount"));
+    x = int(self custom_scripts\_util::getpers("boltcount"));
     if (x == 20)
         return self iprintlnbold("^1max bolt points saved");
 
     x++;
-    self custom_scripts\_a_util::setpers("boltcount", x);
-    self custom_scripts\_a_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+    self custom_scripts\_util::setpers("boltcount", x);
+    self custom_scripts\_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
 
     self iprintlnbold("^:bolt point " + x + " saved");
 }
 
 delete_last_bolt()
 {
-    x = int(self custom_scripts\_a_util::getpers("boltcount"));
+    x = int(self custom_scripts\_util::getpers("boltcount"));
     if (x == 0)
         return self iprintlnbold("^1no points to delete");
 
-    self custom_scripts\_a_util::setpers("boltpos" + x, "0");
+    self custom_scripts\_util::setpers("boltpos" + x, "0");
     self iprintlnbold("^+bolt point " + x + " deleted");
     x--;
-    self custom_scripts\_a_util::setpers("boltcount", x);
+    self custom_scripts\_util::setpers("boltcount", x);
 }
 
 #ifdef IW9
