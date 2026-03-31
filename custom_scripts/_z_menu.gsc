@@ -194,7 +194,7 @@ initial_monitor()
 
 setup_bind(pers, value, func)
 {
-    self setpersifuni(pers, value);
+    self setpers_if_uninitialized(pers, value);
 
     if (self getpers(pers) != "^1off^7")
     {

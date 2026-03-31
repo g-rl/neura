@@ -541,8 +541,6 @@ disable_noclip()
 
 instaswaps()
 {
-    if (!isdefined(self.pers["instaswaps"])) self.pers["instaswaps"] = false;
-
     if (!self.pers["instaswaps"])
     {
         self custom_scripts\_util::nprintln("bo2 instaswaps ^2on");

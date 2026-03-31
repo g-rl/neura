@@ -13,7 +13,7 @@ setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
         index = i + 1;
         new_pers = pers + "_" + index;
 
-        self setpersifuni(new_pers, value);
+        self setpers_if_uninitialized(new_pers, value);
 
         if (is_true(self getpers(new_pers)))
         {
@@ -108,7 +108,7 @@ getpers(key)
     return self.pers[key];
 }
 
-setpersifuni(key, value)
+setpers_if_uninitialized(key, value)
 {   
     if (!isdefined(getpers(key)))
         setpers(key, value);
@@ -121,7 +121,7 @@ haspers(pers)
 
 loadpers(key, func, args)
 {
-    if (!isdefined(getpers(key)))
+    if (!getpers(key))
         return;
     
     wait 0.05;

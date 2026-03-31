@@ -53,9 +53,9 @@ on_player_spawned()
     {
         self waittill("spawned_player");
 
-        //self setpersifuni("saveposx", 0);
-        //self setpersifuni("saveposy", 0);
-        //self setpersifuni("saveposz", 0);
+        //self setpers_if_uninitialized("saveposx", 0);
+        //self setpers_if_uninitialized("saveposy", 0);
+        //self setpers_if_uninitialized("saveposz", 0);
 
         // give this stuff every spawn
         // can we make it so we reload position after death though here? cried every time i tried -et
@@ -115,11 +115,11 @@ on_bot_spawned()
     {
         self waittill("spawned_player");
 
-        // self setpersifuni("bot_weapon", "iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50");
-        self setpersifuni("saveposx", 0);
-        self setpersifuni("saveposy", 0);
-        self setpersifuni("saveposz", 0);
-        // self setpersifuni("replace_weapon", true);
+        // self setpers_if_uninitialized("bot_weapon", "iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50");
+        self setpers_if_uninitialized("saveposx", 0);
+        self setpers_if_uninitialized("saveposy", 0);
+        self setpers_if_uninitialized("saveposz", 0);
+        // self setpers_if_uninitialized("replace_weapon", true);
         self thread reload_position();
         // weapon = self getpers("bot_weapon");
         // self giveweapon(weapon);
@@ -135,58 +135,59 @@ watch_memory()
     setdvarifuninitialized("rainbow", 1);
 
     self setpers("lives", 99);
-    self setpersifuni("camo", camo);
-    self setpersifuni("unstuck", self.origin);
-    self setpersifuni("velx", 250);
-    self setpersifuni("vely", 250);
-    self setpersifuni("velz", 250);
-    self setpersifuni("boltcount", "0");
-    self setpersifuni("boltspeed", "1.2");
-    self setpersifuni("class_wrap", "5");
-    self setpersifuni("class_can", true);
-    self setpersifuni("soh", true);
-    self setpersifuni("eq_weapon", "c4_mp_p");
-    self setpersifuni("eq_putaway", false);
-    self setpersifuni("ufo_mode", true);
-    self setpersifuni("timescale", false);
-    self setpersifuni("instaswaps_time", 0.19);
-    self setpersifuni("aimbot_range", 1200);
-    self setpersifuni("aimbot_delay", 0);
-    self setpersifuni("saveposx", 0);
-    self setpersifuni("saveposy", 0);
-    self setpersifuni("saveposz", 0);
-    self setpersifuni("poschangeby", 10);
-    self setpersifuni("inf_eq", false);
-    self setpersifuni("clean_kc", true);
-    self setpersifuni("snl", true);
-    self setpersifuni("autoprone_endgame", true);
-    self setpersifuni("autoprone_mode", "air");
-    self setpersifuni("frozen_bots", true);
-    self setpersifuni("messages", true);
-    self setpersifuni("invincible", true);
-    self setpersifuni("autoreload", false);
-    self setpersifuni("autoprone", false);
-    self setpersifuni("aimbot", false);
-    self setpersifuni("elevators", false);
-    self setpersifuni("alt_swap", false);
-    self setpersifuni("replace_weapon", false);
-    self setpersifuni("saved_class", false);
-    self setpersifuni("velocitychangeby", 50);
-    self setpersifuni("real_scavenger", true);
-    self setpersifuni("headbounces", false);
-    self setpersifuni("stuck_weapon", "semtex");
+    self setpers_if_uninitialized("camo", camo);
+    self setpers_if_uninitialized("unstuck", self.origin);
+    self setpers_if_uninitialized("velx", 250);
+    self setpers_if_uninitialized("vely", 250);
+    self setpers_if_uninitialized("velz", 250);
+    self setpers_if_uninitialized("boltcount", "0");
+    self setpers_if_uninitialized("boltspeed", "1.2");
+    self setpers_if_uninitialized("class_wrap", "5");
+    self setpers_if_uninitialized("class_can", true);
+    self setpers_if_uninitialized("soh", true);
+    self setpers_if_uninitialized("eq_weapon", "c4_mp_p");
+    self setpers_if_uninitialized("eq_putaway", false);
+    self setpers_if_uninitialized("ufo_mode", true);
+    self setpers_if_uninitialized("timescale", false);
+    self setpers_if_uninitialized("instaswaps_time", 0.19);
+    self setpers_if_uninitialized("aimbot_range", 1200);
+    self setpers_if_uninitialized("aimbot_delay", 0);
+    self setpers_if_uninitialized("saveposx", 0);
+    self setpers_if_uninitialized("saveposy", 0);
+    self setpers_if_uninitialized("saveposz", 0);
+    self setpers_if_uninitialized("poschangeby", 10);
+    self setpers_if_uninitialized("inf_eq", false);
+    self setpers_if_uninitialized("clean_kc", true);
+    self setpers_if_uninitialized("snl", true);
+    self setpers_if_uninitialized("autoprone_endgame", true);
+    self setpers_if_uninitialized("autoprone_mode", "air");
+    self setpers_if_uninitialized("frozen_bots", true);
+    self setpers_if_uninitialized("messages", true);
+    self setpers_if_uninitialized("invincible", true);
+    self setpers_if_uninitialized("autoreload", false);
+    self setpers_if_uninitialized("autoprone", false);
+    self setpers_if_uninitialized("instaswaps", false);
+    self setpers_if_uninitialized("aimbot", false);
+    self setpers_if_uninitialized("elevators", false);
+    self setpers_if_uninitialized("alt_swap", false);
+    self setpers_if_uninitialized("replace_weapon", false);
+    self setpers_if_uninitialized("saved_class", false);
+    self setpers_if_uninitialized("velocitychangeby", 50);
+    self setpers_if_uninitialized("real_scavenger", true);
+    self setpers_if_uninitialized("headbounces", false);
+    self setpers_if_uninitialized("stuck_weapon", "semtex");
 
     for (i=1;i<8;i++)
     {
-        self setpersifuni("boltpos" + i, "0");
+        self setpers_if_uninitialized("boltpos" + i, "0");
         wait 0.05;
     }
 
-    self setpersifuni("bouncecount", "0");
+    self setpers_if_uninitialized("bouncecount", "0");
     for (i = 1; i < 8; i++)
     {
 
-        self setpersifuni("bouncepos" + i, "0");
+        self setpers_if_uninitialized("bouncepos" + i, "0");
         wait 0.05;
     }
 
