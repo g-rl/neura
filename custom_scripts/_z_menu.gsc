@@ -969,8 +969,8 @@ create_option()
 
             if (is_true(self.structure[index]["category"]))
             {
-                og_string = "MP/NEURA_STR" + (index + 1) + "_" + tolower(self.structure[index]["text"]);
-                override_string = override_string_for_index(index + 1);
+                og_string = "MP/NEURA_STR" + (i + 1) + "_" + tolower(self.structure[index]["text"]);
+                override_string = override_string_for_index(i + 1);
 
                 self.menu["hud"]["category"][0][index] = self create_text(og_string, override_string, self.font, self.font_scale, "CENTER", "TOPCENTER", (self.x_offset + 102), (self.y_offset + ((i * self.option_spacing) + 24)), self.color[0], 1, 10);
                 self.menu["hud"]["category"][1][index] = self create_shader("white", "TOP_LEFT", "TOPCENTER", (self.x_offset + 4), (self.y_offset + ((i * self.option_spacing) + 24)), 30, 1, self.color[0], 1, 10);
@@ -994,8 +994,8 @@ create_option()
                     if (self get_menu() != "manage clients")
                         menu_text = tolower(menu_text);
 
-                    og_string = "MP/NEURA_STR" + (index + 1) + "_" + menu_text;
-                    override_string = override_string_for_index(index + 1);
+                    og_string = "MP/NEURA_STR" + (i + 1) + "_" + tolower(self.structure[index]["text"]);
+                    override_string = override_string_for_index(i + 1);
 
                     self.menu["hud"]["text"][index] = self create_text(og_string, override_string, self.font, self.font_scale, "TOP_LEFT", "TOPCENTER", isdefined(self.structure[index]["toggle"]) ? (self.x_offset + 4) : (self.x_offset + 4), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
                 }

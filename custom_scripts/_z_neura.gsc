@@ -49,47 +49,30 @@ on_player_spawned()
 
     self.has_spawned = false;
 
-    print("on_player_spawned");
-
     for (;;)
     {
         self waittill("spawned_player");
-
-        print("yo 1");
 
         //self setpersifuni("saveposx", 0);
         //self setpersifuni("saveposy", 0);
         //self setpersifuni("saveposz", 0);
 
-        self iprintln("playing on: " + level._client);
-
-        print("yo 2");
-
         // give this stuff every spawn
         // can we make it so we reload position after death though here? cried every time i tried -et
         //self thread reload_position();
-        print("yo 3");
-        self thread give_perks();
 
-        print("yo 4");
+        self thread give_perks();
 
         if (self.has_spawned)
             continue;
 
-        print("yo 5");
         self.neura = [];
         self.has_spawned = true;
         
-        print("yo 6");
         self thread watch_memory();
-        print("yo 7");
         self thread watch_freeze_controls();
-        print("yo 8");
         self thread allow_oob(); // out of bounds
-        print("yo 9");
         self thread remove_barriers();
-
-        print("yo 10");
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -101,8 +84,6 @@ on_player_spawned()
             self thread monitor_buttons();
             self.menu_init = true;
         }
-
-        print("yo 11");
 
         self thread pause_timer_cooldown_bypass();
         self thread post_prematch_start();
