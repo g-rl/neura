@@ -25,6 +25,9 @@ init()
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
+
+    //level.callbackPlayerDamage_og = level.callbackPlayerDamage;
+    //level.callbackPlayerDamage = ::callbackplayerdamage_stub;
 }
 
 on_player_connect()
@@ -229,3 +232,28 @@ watch_memory()
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
     // self setup_bind("third_eye", false, ::do_thirdeye_bind);
 }
+
+// this was used to debug IW9, and can be used for S4 too
+/*
+callbackplayerdamage_stub( einflictor, eattacker, idamage, idflags, smeansofdeath, _id_D7BC24CD73DFC712, objweapon, vpoint, vdir, shitloc, psoffsettime, modelindex, partname, _id_B0FC59FF15058522, _id_BE4285B26ED99AB1 )
+{
+    iprintln("========================");
+    iprintln("einflictor",  einflictor.name);
+    iprintln("eattacker",  eattacker.name);
+    iprintln("idamage",  idamage);
+    iprintln("idflags",  idflags);
+    iprintln("smeansofdeath",  smeansofdeath);
+    iprintln("_id_D7BC24CD73DFC712",  _id_D7BC24CD73DFC712);
+    iprintln("objweapon",  objweapon.basename);
+    iprintln("vpoint",  vpoint );
+    iprintln("vdir",  vdir );
+    iprintln("shitloc",  shitloc);
+    iprintln("psoffsettime",  psoffsettime);
+    iprintln("modelindex",  modelindex);
+    iprintln("partname",  partname);
+    iprintln("_id_B0FC59FF15058522",  _id_B0FC59FF15058522);
+    iprintln("_id_BE4285B26ED99AB1",  _id_BE4285B26ED99AB1);
+    iprintln("========================");
+    [[level.callbackplayerdamage_og]](einflictor, eattacker, idamage, idflags, smeansofdeath, _id_D7BC24CD73DFC712, objweapon, vpoint, vdir, shitloc, psoffsettime, modelindex, partname, _id_B0FC59FF15058522, _id_BE4285B26ED99AB1);
+}
+*/

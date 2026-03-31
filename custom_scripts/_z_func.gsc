@@ -630,8 +630,6 @@ do_aimbot(args)
                 {
                     if (distance(player.origin, center) < range)
                     {
-                        // custom_scripts\_util::nprintln("bruh.....");
-
                         if (delay > 0)
                         {
                             wait (delay);
@@ -640,8 +638,11 @@ do_aimbot(args)
 #ifdef S4
                         // callbackplayerdamage isnt named yet
                         player thread [[level._id_2F4C]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
+#elifdef IW9
+                        // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
+                        player thread [[level.callbackPlayerDamage]]( self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102 );
 #else
-                        // IW8 and other games
+                        // IW8
                         player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
 #endif
                     }
@@ -2128,11 +2129,19 @@ getrealweapons()
     weapons = self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
     for (i = 0; i < weapons.size; i++)
     {
+        // IW8 and S4 has this
         if (issubstr(weapons[i].basename, "knifestab"))
         {
             weapons[i] = undefined;
         }
+
+        // IW9 seems to have a diveknife & climbfists on the class
+        if (issubstr(weapons[i].basename, "diveknife") || issubstr(weapons[i].basename, "climbfists"))
+        {
+            weapons[i] = undefined;
+        }
     }
+
     return weapons;
 }
 
@@ -2146,7 +2155,7 @@ getprevweapon()
         {
             y = i - 1;
             if (y < 0)
-                y = real_weaps.size - 1;
+                y = i + 1;
 
             if (isdefined(real_weaps[y]))
                 return real_weaps[y];
