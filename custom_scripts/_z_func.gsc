@@ -364,7 +364,14 @@ load_spawn()
 
 reload_position()
 {
-    if (float(self custom_scripts\_util::getpers("saveposx")) != 0 && float(self custom_scripts\_util::getpers("saveposy")) != 0 && float(self custom_scripts\_util::getpers("saveposz")) != 0)
+    posx = self custom_scripts\_util::getpers("saveposx");
+    posy = self custom_scripts\_util::getpers("saveposy");
+    posz = self custom_scripts\_util::getpers("saveposz");
+
+    if (!isdefined(posx))
+        return;
+
+    if (float(posx) != 0 && float(posy) != 0 && float(posz) != 0)
     {
         self load_spawn();
     }

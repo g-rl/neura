@@ -61,9 +61,7 @@ on_player_spawned()
         //self setpers_if_uninitialized("saveposz", 0);
 
         // give this stuff every spawn
-        // can we make it so we reload position after death though here? cried every time i tried -et
-        //self thread reload_position();
-
+        self thread reload_position();
         self thread give_perks();
 
         if (self.has_spawned)
