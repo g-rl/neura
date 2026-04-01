@@ -2,8 +2,6 @@
 
 /*
         neura menu for IW8 (MW2019), S4 (Vanguard), and IW9 (MW2022) 
-        - #ifdef IW8 does not work properly, use #ifdef S4 instead 
-
         by ethan (@nyli2b) & mikey (@mjkzys)
 */
 

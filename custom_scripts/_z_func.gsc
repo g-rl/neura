@@ -99,7 +99,7 @@ set_to_predator(player) {}
 togglepers(pers) // wow dude
 {
     self.pers[pers] = !custom_scripts\_util::toggle(self.pers[pers]);
-    print(pers + " new value: " + self custom_scripts\_util::getpers(pers));
+    //print(pers + " new value: " + self custom_scripts\_util::getpers(pers));
 }
 
 setpersmenu(value, pers) // wow dude
@@ -127,7 +127,7 @@ watch_weap_change()
     {
         self waittill("weapon_change", weapon);
         name = weapon.basename;
-        print(getcompleteweaponname(weapon));
+        //print(getcompleteweaponname(weapon));
         wait 0.05;
     }
 }
@@ -2098,14 +2098,6 @@ delete_last_bolt()
     x--;
     self custom_scripts\_util::setpers("boltcount", x);
 }
-
-#ifdef IW9
-print(msg)
-{
-    // IW9 has this hooked to show in console for us :P hehe
-    iprintln(msg);
-}
-#endif
 
 nacto(weapon)
 {
