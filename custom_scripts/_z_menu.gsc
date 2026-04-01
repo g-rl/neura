@@ -24,6 +24,7 @@ initial_variable()
     
     self.neura["perks"] = list("specialty_fastreload,specialty_lightweight,specialty_marathon,specialty_holdbreath,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
 
+    // mw19
     self.neura["weapons"]["iw8"]["primary"]["snipers"][0] = ["iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50", "iw8_sn_hdromeo_mp+back_hdromeo+barlong_hdromeo+gunperk_fastmelee+mag_hdromeo+rec_hdromeo+snprscope_hdromeo", "iw8_sn_delta_mp+barlong_delta+gunperk_fastmelee+mag_delta+rec_delta+snprscope_delta+stockl_delta", "iw8_sn_mike14_mp+barmid_mike14+gunperk_fastmelee+pistolgrip06_mike14+rec_mike14_mp+snprscope_mike14+stockh03_mike14+xmags_mike14", "iw8_sn_sbeta_mp+barmid_sbeta+gunperk_fastmelee+pistolgrip02_sbeta+rec_sbeta+snprscope_sbeta+stockcqb_sbeta", "iw8_sn_kilo98_mp+barmid_kilo98+gunperk_fastmelee+pistolgrip02_kilo98+rec_kilo98+snprscope_kilo98"];
     self.neura["weapons"]["iw8"]["primary"]["snipers"][1] = ["ax50", "hdr", "dragunov", "ebr w/ scope", "mk2 carbine w/ scope", "kar98k w/ scope"];
 
@@ -50,6 +51,10 @@ initial_variable()
 
     self.neura["weapons"]["iw8"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "flash_grenade_mp", "c4_mp_p", "semtex_mp", "thermite_mp", "throwingknife_mp", "claymore_mp", "at_mine_mp", "trophy_mp", "support_box_mp", "tac_cover_mp", "emp_drone_player_mp"];
     self.neura["weapons"]["iw8"]["equipment"][1] = ["frag", "molotov", "concussion", "flash", "c4", "semtex", "thermite", "throwing knife", "claymore", "at mine", "trophy system", "support box", "tac cover", "emp drone"];
+
+    // mwii
+    self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp"];
+    self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", vt("bunker buster (burrowed)"), vt("bunker buster (not burrowed)"), "heartbeat sensor", vt("throwing stars")];
 
     // menu variables
     self.font            = "default";
@@ -497,7 +502,21 @@ add_menu(title, shader)
 
 add_iw8_option(text, summary, function, argument_1, argument_2, argument_3)
 {
-#ifndef S4
+#ifdef IW8
+    option            = [];
+    option["text"]       = text;
+    option["summary"]    = summary;
+    option["function"]   = function;
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+    self.structure[self.structure.size] = option;
+#endif
+}
+
+add_iw9_option(text, summary, function, argument_1, argument_2, argument_3)
+{
+#ifdef IW9
     option            = [];
     option["text"]       = text;
     option["summary"]    = summary;
@@ -607,6 +626,42 @@ add_array(text, summary, function, array, argument_1, argument_2, argument_3)
     option["argument_3"] = argument_3;
 
     self.structure[self.structure.size] = option;
+}
+
+add_iw8_array(text, summary, function, array, argument_1, argument_2, argument_3)
+{
+#ifdef IW8
+    option            = [];
+    option["text"]       = text;
+    option["summary"]    = summary;
+    option["function"]   = function;
+    option["slider"]     = true;
+    option["is_array"]   = true;
+    option["array"]      = array;
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+
+    self.structure[self.structure.size] = option;
+#endif
+}
+
+add_iw9_array(text, summary, function, array, argument_1, argument_2, argument_3)
+{
+#ifdef IW8
+    option            = [];
+    option["text"]       = text;
+    option["summary"]    = summary;
+    option["function"]   = function;
+    option["slider"]     = true;
+    option["is_array"]   = true;
+    option["array"]      = array;
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+
+    self.structure[self.structure.size] = option;
+#endif
 }
 
 actionslot_notify_map(slot)
@@ -1150,7 +1205,6 @@ structure()
     case "mods & toggles":
         self.bind_index = false;
         self add_menu(menu);
-        self add_option("toggle settings", undefined, ::new_menu, "toggle settings");
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
         self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
         self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
@@ -1163,15 +1217,12 @@ structure()
         self add_pers_toggle("putaway equipment", undefined, ::togglepers, "eq_putaway", true);
         self add_pers_toggle("real scavenger", undefined, ::togglepers, "real_scavenger", true);
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
-        break;
-    case "toggle settings":
-        self.bind_index = false;
-        self add_menu(menu);
         self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 2, 20, 1, "class_wrap");
         self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
-        self add_array("stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
-        self add_option("choose equipment (bind)", undefined, ::new_menu, "equipment bind");
+        self add_iw8_array("stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
+        self add_iw8_option("choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw8)");
+        self add_iw9_option("choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw9)");
         break;
     case "position":
         self.bind_index = false;
@@ -1202,7 +1253,8 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("one handed gun", undefined, ::one_handed_gun);
-        self add_option("switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "equipment");
+        self add_iw8_option("switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw8)");
+        self add_iw9_option("switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw9)");
         break;
     case "binds":
         self.bind_index = true;
@@ -1225,15 +1277,31 @@ structure()
         self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
         break;
-    case "equipment":
+    case "switch to equipment (iw8)":
         self.bind_index = false;
         self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client][menu][0].size; i++) 
+        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
         {
-            self add_option(self.neura["weapons"][client][menu][1][i], undefined, ::nacto, self.neura["weapons"][client][menu][0][i]);
+            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
         }
         break;
-    case "equipment bind":
+    case "switch to equipment (iw9)":
+        self.bind_index = false;
+        self add_menu(menu);
+        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
+        }
+        break;
+    case "equipment bind (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
+        }
+        break;
+    case "equipment bind (iw9)":
         self.bind_index = false;
         self add_menu(menu);
         for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
@@ -1389,11 +1457,12 @@ player_index(menu, player, slider_controls)
         self add_menu(player.name);
         self add_option("kill player", undefined, ::kill_player, player);
         self add_option("change team", undefined, ::change_player_team, player);
-        self add_array("teleport to", slider_controls, ::manage_teleport, list("me,them,crosshair"), player);
+        self add_array("teleport to", slider_controls, ::manage_teleport, list("me,them"), player);
         if (isai(player) || isbot(player))
         {
             self add_option("look at me", undefined, ::look_at_me, player);
-            self add_option("give shield", undefined, ::give_player_shield, player);
+            self add_iw8_option("give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
+            self add_iw9_option("give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
             self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, player, self getcurrentweapon());
         }
         break;

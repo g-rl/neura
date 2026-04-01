@@ -1588,12 +1588,12 @@ take_current()
     self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(self getweaponslistprimaries()[0]);
 }
 
-give_player_shield(player)
+give_player_shield(player, shield)
 {
-    player giveweapon("iw8_me_riotshield_mp");
-    player setspawnweapon("iw8_me_riotshield_mp");
+    player giveweapon(shield);
+    player setspawnweapon(shield);
     player setorigin(player.origin - (0,0,2));
-    player custom_scripts\_util::setpers("bot_weapon", "iw8_me_riotshield_mp");
+    player custom_scripts\_util::setpers("bot_weapon", shield);
 }
 
 set_bot_weapon(player, weapon)
