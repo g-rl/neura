@@ -40,7 +40,10 @@ one_handed_gun()
         return;
 
     self iprintlnbold("^5shoot your weapon");
-    self nacto("concussion_grenade_mp");
+
+    // interrogation_tools_mp
+    self nacto("snapshot_grenade_mp"); // concussion_grenade_mp, iw8_gunless_last_stand_enter falling, ks_gesture_phone_mp phone,
+
     wait 2;
     self notify("luinotifyserver", "class_select", self.class);
     index = int(scripts\mp\class::getclassindex(self.class) + 1);
