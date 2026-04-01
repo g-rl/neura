@@ -502,30 +502,32 @@ add_menu(title, shader)
 
 add_iw8_option(text, summary, function, argument_1, argument_2, argument_3)
 {
-#ifdef IW8
-    option            = [];
-    option["text"]       = text;
-    option["summary"]    = summary;
-    option["function"]   = function;
-    option["argument_1"] = argument_1;
-    option["argument_2"] = argument_2;
-    option["argument_3"] = argument_3;
-    self.structure[self.structure.size] = option;
-#endif
+    if (level._client == "iw8")
+    {
+        option            = [];
+        option["text"]       = text;
+        option["summary"]    = summary;
+        option["function"]   = function;
+        option["argument_1"] = argument_1;
+        option["argument_2"] = argument_2;
+        option["argument_3"] = argument_3;
+        self.structure[self.structure.size] = option;
+    }
 }
 
 add_iw9_option(text, summary, function, argument_1, argument_2, argument_3)
 {
-#ifdef IW9
-    option            = [];
-    option["text"]       = text;
-    option["summary"]    = summary;
-    option["function"]   = function;
-    option["argument_1"] = argument_1;
-    option["argument_2"] = argument_2;
-    option["argument_3"] = argument_3;
-    self.structure[self.structure.size] = option;
-#endif
+    if (level._client == "iw9")
+    {
+        option            = [];
+        option["text"]       = text;
+        option["summary"]    = summary;
+        option["function"]   = function;
+        option["argument_1"] = argument_1;
+        option["argument_2"] = argument_2;
+        option["argument_3"] = argument_3;
+        self.structure[self.structure.size] = option;
+    }
 }
 
 add_option(text, summary, function, argument_1, argument_2, argument_3)
@@ -630,38 +632,40 @@ add_array(text, summary, function, array, argument_1, argument_2, argument_3)
 
 add_iw8_array(text, summary, function, array, argument_1, argument_2, argument_3)
 {
-#ifdef IW8
-    option            = [];
-    option["text"]       = text;
-    option["summary"]    = summary;
-    option["function"]   = function;
-    option["slider"]     = true;
-    option["is_array"]   = true;
-    option["array"]      = array;
-    option["argument_1"] = argument_1;
-    option["argument_2"] = argument_2;
-    option["argument_3"] = argument_3;
+    if (level._client == "iw8")
+    {
+        option            = [];
+        option["text"]       = text;
+        option["summary"]    = summary;
+        option["function"]   = function;
+        option["slider"]     = true;
+        option["is_array"]   = true;
+        option["array"]      = array;
+        option["argument_1"] = argument_1;
+        option["argument_2"] = argument_2;
+        option["argument_3"] = argument_3;
 
-    self.structure[self.structure.size] = option;
-#endif
+        self.structure[self.structure.size] = option;
+    }
 }
 
 add_iw9_array(text, summary, function, array, argument_1, argument_2, argument_3)
 {
-#ifdef IW8
-    option            = [];
-    option["text"]       = text;
-    option["summary"]    = summary;
-    option["function"]   = function;
-    option["slider"]     = true;
-    option["is_array"]   = true;
-    option["array"]      = array;
-    option["argument_1"] = argument_1;
-    option["argument_2"] = argument_2;
-    option["argument_3"] = argument_3;
+    if (level._client == "iw9")
+    {
+        option            = [];
+        option["text"]       = text;
+        option["summary"]    = summary;
+        option["function"]   = function;
+        option["slider"]     = true;
+        option["is_array"]   = true;
+        option["array"]      = array;
+        option["argument_1"] = argument_1;
+        option["argument_2"] = argument_2;
+        option["argument_3"] = argument_3;
 
-    self.structure[self.structure.size] = option;
-#endif
+        self.structure[self.structure.size] = option;
+    }
 }
 
 actionslot_notify_map(slot)
