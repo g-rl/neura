@@ -1473,10 +1473,7 @@ do_class_bind(args, slot)
             self.tag_stowed_hip = undefined;
             scripts\mp\class::giveloadout(self.pers["team"], self.class);
 
-            if (self custom_scripts\_util::getpers("class_can"))
-            {
-                self alwayscan(self getcurrentweapon());
-            }
+            self thread always_can_delay();
 
             super = scripts\mp\supers::getcurrentsuper();
             if (isdefined(super)) // supers = field upgrade
@@ -1486,6 +1483,19 @@ do_class_bind(args, slot)
             }
         }
     }
+}
+
+always_can_delay()
+{
+    wait 0.05;
+
+    // TODO: nyli fix this - you register instaswaps pers, but you're doing instaswaps_1 like a index which fails the getpers check
+    /*
+    if (self custom_scripts\_util::getpers("class_can"))
+    {
+        self alwayscan(self getcurrentweapon());
+    }
+    */
 }
 
 give_perks()
