@@ -144,7 +144,7 @@ createcommand(command, desc, callback) // dont think we're gonna need this anymo
         args = strtok(getdvar(command), " " );
         self [[callback]](args);
 
-        waittillframeend;
+        wait 0.05;
         setdvar(command, desc);
     }
 }
