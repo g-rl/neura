@@ -1434,7 +1434,6 @@ toggle_class_bind(bind, i, pers)
     self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
 
-
     if (self.pers[index])
         self thread do_class_bind(1, i);
     else

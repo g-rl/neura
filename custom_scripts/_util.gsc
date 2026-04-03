@@ -17,7 +17,7 @@ setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 
         if (is_true(self getpers(new_pers)))
         {
-            self thread [[func]](bind, pers);
+            self thread [[func]](bind, index);
         }
     }
 }
