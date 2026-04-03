@@ -5,9 +5,9 @@ GSC trickshotting menu for **IW8** (MW:2019), **S4** (Vanguard), and **IW9** (MW
 <div align="center">
   <table>
     <tr>
-      <td align="center"><img src="images/main.png" width="480"/><br/><sub>IW8</sub></td>
-      <td align="center"><img src="images/s4.png" width="480"/><br/><sub>S4</sub></td>
-      <td align="center"><img src="images/main2.png" width="480"/><br/><sub>IW9</sub></td>
+      <td align="center"><img src="images/main.png" width="600"/><br/><sub>MW:2019</sub></td>
+      <td align="center"><img src="images/s4.png" width="600"/><br/><sub>Vanguard</sub></td>
+      <td align="center"><img src="images/main2.png" width="600"/><br/><sub>MWII (2022)</sub></td>
     </tr>
   </table>
 </div>
