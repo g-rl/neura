@@ -89,7 +89,6 @@ on_player_spawned()
 setup_dvars()
 {
     setdvarifuninitialized("scr_killcam_time", 5);
-    setdvarifuninitialized("rainbow", 1);
 
     // only tested these on iw8 so not too sure if they're the same on others -et
     setdvar("MSOOMPMPQS", true); // unlimited sprint
@@ -119,6 +118,10 @@ watch_memory()
     camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"]; // unused for now, camos menu & setcamo stuff tho? -et
     camo = camos[randomint(camos.size)];
 
+    setdvarifuninitialized("rainbow", 1);
+    setdvarifuninitialized("instashoots", 1);
+    setdvarifuninitialized("alwayscanswap", 1);
+    
     self setpers("lives", 99);
     self setpers_if_uninitialized("camo", camo);
     self setpers_if_uninitialized("unstuck", self.origin);
