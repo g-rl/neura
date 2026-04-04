@@ -53,8 +53,8 @@ initial_variable()
     self.neura["weapons"]["iw8"]["equipment"][1] = ["frag", "molotov", "concussion", "flash", "c4", "semtex", "thermite", "throwing knife", "claymore", "at mine", "trophy system", "support box", "tac cover", "emp drone"];
 
     // mwii
-    self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp"];
-    self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", vt("bunker buster (burrowed)"), vt("bunker buster (not burrowed)"), "heartbeat sensor", vt("throwing stars")];
+    self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp", "interrogation_tools_mp", "iw8_gunless_last_stand_enter", "ks_gesture_phone_mp"];
+    self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", vt("bunker buster (burrowed)"), vt("bunker buster (not burrowed)"), "heartbeat sensor", vt("throwing stars"), "interrogation tools", "falling", "phone"];
 
     // menu variables
     self.font            = "default";
