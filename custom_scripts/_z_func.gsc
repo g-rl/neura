@@ -37,7 +37,7 @@ one_handed_gun()
     if (!is_prematch_done)
         return;
 
-    self iprintlnbold("^5shoot your weapon");
+    self nprintlnbold("^5shoot your weapon");
 
     // interrogation_tools_mp
     self nacto("snapshot_grenade_mp"); // concussion_grenade_mp, iw8_gunless_last_stand_enter falling, ks_gesture_phone_mp phone,
@@ -104,7 +104,7 @@ setpersmenu(value, pers) // wow dude
 {
     self custom_scripts\_util::setpers(pers, value);
     wait 0.05;
-    self playlocalsound("weap_ammo_pickup");
+    self play_sound("weap_ammo_pickup");
 }
 
 setdvarmenu(value, dvar) // wow dude
@@ -112,7 +112,7 @@ setdvarmenu(value, dvar) // wow dude
     value = float(value);
     setdvar(dvar, value);
     wait 0.05;
-    self playlocalsound("weap_ammo_pickup");
+    self play_sound("weap_ammo_pickup");
 }
 
 watch_weap_change()
@@ -947,7 +947,7 @@ move_bots(args)
                 player setorigin(self.origin);
                 player save_spawn();
                 self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self.origin);
-                self playlocalsound("recon_drone_marked_owner");
+                self play_sound("recon_drone_marked_owner");
             }
         }
         break;
@@ -959,7 +959,7 @@ move_bots(args)
                 player setorigin(self getcrosshair());
                 player save_spawn();
                 self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
-                self playlocalsound("recon_drone_marked_owner");
+                self play_sound("recon_drone_marked_owner");
             }
         }
         break;
@@ -1255,7 +1255,7 @@ do_scavenger_bind(args, slot)
             self scripts\mp\damagefeedback::hudicontype("scavenger");
 #endif
 
-            self playlocalsound("scavenger_pack_pickup");
+            self play_sound("scavenger_pack_pickup");
 
             if (self custom_scripts\_util::getpers("real_scavenger"))
             {
@@ -1595,14 +1595,14 @@ refill_my_ammo(args)
             self thread refill_all_ammo();
             break;
     }
-    self playlocalsound("scavenger_pack_pickup");
+    self play_sound("scavenger_pack_pickup");
 }
 
 refill_all_ammo()
 {
     level endon("game_ended"); // just in case
 
-    items = self.equippedweapons;
+    items = self inventory();
     foreach (item in items)
     {
         self givemaxammo(item);
@@ -1610,6 +1610,7 @@ refill_all_ammo()
         self setweaponammoclip(item, 999);
         self setweaponammoclip(item, 999, "left");
         self setweaponammoclip(item, 999, "right");
+        // these make the game hitch really badly
         // self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
         // self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
         // self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
@@ -1625,15 +1626,14 @@ refill_weapon_ammo(item)
     self setweaponammoclip(item, 999);
     self setweaponammoclip(item, 999, "left");
     self setweaponammoclip(item, 999, "right");
+    // these make the game hitch really badly
     // self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
     // self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
     // self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
     // self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
 }
 
-// weapon utils so please looook at this -et
-
-givegun(weapon)
+givegun(weapon) // test give_weapon later and use that instead
 {
     if (self custom_scripts\_util::getpers("replace_weapon"))
     {
@@ -1646,7 +1646,7 @@ givegun(weapon)
     self refill_weapon_ammo(weapon);
 }
 
-give_weapon(weapon) // ??
+give_weapon(weapon) // gonna guess this works now maybe?
 {
     camo = self custom_scripts\_util::getpers("camo");
     variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
@@ -1747,7 +1747,7 @@ giveweaponinstant(weapon)
     self scripts\cp_mp\utility\inventory_utility::_giveweapon(weapon);
     self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(weapon);
     self refill_weapon_ammo(weapon);
-    self playlocalsound("ui_mp_weapon_pickup");
+    self play_sound("ui_mp_weapon_pickup");
 }
 
 // maybe add toggles for barriers and oob but i think they'd rly always be on
@@ -1850,13 +1850,13 @@ save_class()
 
     index = 0;
 
-    foreach(weapon in self.equippedweapons)
+    foreach(weapon in self inventory())
     {
         self.pers["curr_class"][index] = weapon;
         index++;
     }
 
-    self iprintln("saved class with ^5" + index + " ^7items");
+    self nprintln("saved class with ^5" + index + " ^7items");
 }
 
 load_class()
@@ -1875,6 +1875,7 @@ load_class()
         // self max_ammo(weapon);
     }
 
+    self nprintln("loaded class with ^5" + self.pers["curr_class"].size + " ^7items");
     // self switchtoweapon(self getweaponslistprimaries()[0]);
 }
 
@@ -1997,17 +1998,18 @@ spawnbot()
 
 toggle_perk(perk) // toggle & store perk data
 {
-    if (self scripts\mp\utility\perk::_hasperk(perk))
+    has_perk = scripts\mp\utility\perk::_hasperk(perk)
+    if (has_perk)
     {
         scripts\mp\utility\perk::giveperk(perk);
         self.pers["my_perks"][perk] = perk;
-        self iprintln("^5" + perk + " ^7given");
+        self nprintln("^5" + perk + " ^7given");
     }
     else
     {
         self scripts\mp\utility\perk::removeperk(perk);
         self.pers["my_perks"][perk] = undefined;
-        self iprintln("^5" + perk + " ^7taken");
+        self nprintln("^5" + perk + " ^7taken");
     }
 }
 
@@ -2015,7 +2017,7 @@ set_perks()
 {
     foreach (perk in self.pers["my_perks"])
     {
-        if (self.pers["my_perks"].size == 0)
+        if (!isdefined(self.pers["my_perks"]) || self.pers["my_perks"].size == 0) // i think im retarded idk lmk chat
             return;
 
         scripts\mp\utility\perk::giveperk(perk);
@@ -2041,13 +2043,13 @@ save_bolt()
 {
     x = int(self custom_scripts\_util::getpers("boltcount"));
     if (x == 20)
-        return self iprintlnbold("^1max bolt points saved");
+        return self nprintln("^1max bolt points saved");
 
     x++;
     self custom_scripts\_util::setpers("boltcount", x);
     self custom_scripts\_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
 
-    self iprintlnbold("^:bolt point " + x + " saved");
+    self nprintlnbold("^:bolt point " + x + " saved");
 }
 
 delete_last_bolt()
@@ -2091,7 +2093,7 @@ getnextweapon()
 
 getrealweapons()
 {
-    weapons = self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
+    x = self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
     for (i = 0; i < weapons.size; i++)
     {
         // IW8 and S4 has this
@@ -2112,21 +2114,26 @@ getrealweapons()
 
 getprevweapon() 
 {
-    real_weaps = self getrealweapons();
+    weapons = self getrealweapons();
     x = self getcurrentweapon();
-    for (i = 0 ; i < real_weaps.size ; i++)
+    for (i = 0 ; i < weapons.size ; i++)
     {
-        if (x == real_weaps[i])
+        if (x == weapons[i])
         {
             y = i - 1;
             if (y < 0)
                 y = i + 1;
 
-            if (isdefined(real_weaps[y]))
-                return real_weaps[y];
-            return real_weaps[0];
+            if (isdefined(weapons[y]))
+                return weapons[y];
+            return weapons[0];
         }
     }
+}
+
+inventory()
+{
+    return self.equippedweapons;
 }
 
 instaswapto(weapon)
@@ -2184,4 +2191,14 @@ build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 #else
     return scripts\mp\class::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8);
 #endif
+}
+
+play_sound(sound)
+{
+    if (!self getpers("sounds")) return;
+
+    if (!soundexists(sound)) // fallback
+        sound = "scavenger_pack_pickup";
+
+    self playlocalsound(sound);
 }

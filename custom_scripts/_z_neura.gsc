@@ -17,21 +17,18 @@ init()
 #else
     level._client = "iw8"; // this is for 1.20, this will be updated later to use the macro later properly maybe?
 #endif
-    level.is_setup = false;
-    level.is_debug = true;
-    
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
 
-    //level.callbackPlayerDamage_og = level.callbackPlayerDamage;
-    //level.callbackPlayerDamage = ::callbackplayerdamage_stub;
+    // damage debugging stuff don't uncomment
+    // level.callbackPlayerDamage_og = level.callbackPlayerDamage;
+    // level.callbackPlayerDamage = ::callbackplayerdamage_stub;
 }
 
 on_player_connect()
 {
     level endon("game_ended");
-
     for (;;)
     {
         level waittill("connected", player);
@@ -53,12 +50,7 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-
-        //self setpers_if_uninitialized("saveposx", 0);
-        //self setpers_if_uninitialized("saveposy", 0);
-        //self setpers_if_uninitialized("saveposz", 0);
-
-        // give this stuff every spawn
+        // self thread watch_weap_change(); - get full weapon names
         self thread reload_position();
         self thread give_perks();
 
@@ -70,8 +62,8 @@ on_player_spawned()
         
         self thread watch_memory();
         self thread watch_freeze_controls();
-        self thread allow_oob(); // out of bounds
-        self thread remove_barriers();
+        self thread allow_oob();
+        self thread remove_barriers(); // actual barrier removal would be cool
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -84,13 +76,13 @@ on_player_spawned()
             self.menu_init = true;
         }
 
+        // look into this and find a solution to remove timer thats not janky asf -et
         self thread pause_timer_cooldown_bypass();
         self thread post_prematch_start();
 
         // other funcs
         self thread monitor_class();
         self thread round_manager();
-        // self thread watch_weap_change();
     }
 }
 
@@ -118,9 +110,6 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-        self custom_scripts\_util::setpers_if_uninitialized("saveposx", 0); // have to set positions before reloading or the game dies
-        self custom_scripts\_util::setpers_if_uninitialized("saveposy", 0);
-        self custom_scripts\_util::setpers_if_uninitialized("saveposz", 0);
         self thread reload_position();
     }
 }
@@ -159,6 +148,7 @@ watch_memory()
     self setpers_if_uninitialized("autoprone_mode", "air");
     self setpers_if_uninitialized("frozen_bots", true);
     self setpers_if_uninitialized("messages", true);
+    self setpers_if_uninitialized("sounds", true);
     self setpers_if_uninitialized("invincible", true);
     self setpers_if_uninitialized("autoreload", false);
     self setpers_if_uninitialized("autoprone", false);

@@ -140,7 +140,7 @@ structure()
     case "class manager":
         self.bind_index = false;
         self add_menu(menu);
-        // self add_array("perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]);
+        self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]);
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load")); // load class bind would be cool probably idk -et
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
@@ -237,16 +237,15 @@ structure()
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages");
+        self add_pers_toggle("sounds", undefined, ::togglepers, "sounds");
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         break;
     case "dvars":
         self.bind_index = false;
         self add_menu(menu);
-        // add_toggle(text, summary, function, toggle, array, argument_1, argument_2, argument_3)
         self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
         self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
         self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
-        // self add_increment("pad packets", increment_controls, ::setdvarmenu, getdvarfloat("NTNRLNTMRR"), 50, 20000, 50, "NTNRLNTMRR");
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS");
         self add_increment("knockback", increment_controls, ::setdvarmenu, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM");
         break;
@@ -256,16 +255,15 @@ structure()
         players = level.players;
         foreach (player in players)
         {
-            // party icon for self :3
             if (player ishost())
-                player_text = "ߵ " + player get_name();
+                player_text = "ߵ " + player get_name(); // party icon for self :3
             else
                 player_text = player get_name();
 
             self add_option(player_text, undefined, ::new_menu, "player option");
         }
         break;
-    default: // shitty bind menu solution (but works :3)
+    default: // shitty bind menu solution (but works :3) edit: we really need a slider solution -et
         if (is_true(self.bind_index))
             self bind_index(menu, increment_controls);
         else 
@@ -305,7 +303,7 @@ player_index(menu, player, slider_controls)
     }
 }
 
-bind_index(menu, increment_controls) 
+bind_index(menu, increment_controls) // ew
 {
     if (!isdefined(menu))
         menu = "unassigned";
@@ -362,20 +360,6 @@ bind_index(menu, increment_controls)
             self add_menu("error");
             self add_option("unable to load " + menu);
             break;
-    }
-}
-
-rainbow_menu()
-{
-    if (getdvarint("rainbow") == 1)
-    {
-        setdvar("rainbow", 0);
-        self notify("end_flicker");
-    }
-    else
-    {
-        setdvar("rainbow", 1);
-        self thread flicker_shaders();
     }
 }
 
@@ -1538,5 +1522,20 @@ update_menu(menu, cursor, force)
     {
         if (isdefined(self) && self custom_scripts\_util::in_menu())
             self create_option();
+    }
+}
+
+// other stuff
+rainbow_menu()
+{
+    if (getdvarint("rainbow") == 1)
+    {
+        setdvar("rainbow", 0);
+        self notify("end_flicker");
+    }
+    else
+    {
+        setdvar("rainbow", 1);
+        self thread flicker_shaders();
     }
 }
