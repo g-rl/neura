@@ -248,23 +248,6 @@ button_monitor(button)
     }
 }
 
-actionslot_to_func(actionslot)
-{
-    switch(actionslot)
-    {
-    case "[{+actionslot 1}]":
-        return "-actionslot 1";
-    case "[{+actionslot 2}]":
-        return "-actionslot 2";
-    case "[{+actionslot 3}]":
-        return "-actionslot 3";
-    case "[{+actionslot 4}]":
-        return "-actionslot 4";
-    default:
-        break;
-    }
-}
-
 vt(var, serverity) // adds caution symbol next to text
 {
     // ߺ : red
