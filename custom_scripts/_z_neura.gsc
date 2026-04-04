@@ -96,9 +96,14 @@ on_player_spawned()
 
 setup_dvars()
 {
-    //setdvarifuninitialized("scr_killcam_time", 5);
-    setdvar("MSOOMPMPQS", true); // unlimited sprint (iw8 only i think?)
+    setdvarifuninitialized("scr_killcam_time", 5);
+    setdvarifuninitialized("rainbow", 1);
+
+    // only tested these on iw8 so not too sure if they're the same on others -et
+    setdvar("MSOOMPMPQS", true); // unlimited sprint
     setdvar("LNOKTQPLKO", false); // jump slowdown
+
+    // these still don't stop bots from being auto kicked due to team balance
     level.bots_disable_team_switching = 1;
     level notify("bot_connect_monitor");
     level.pausing_bot_connect_monitor = 1;
@@ -113,25 +118,17 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-
-        // self setpers_if_uninitialized("bot_weapon", "iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50");
-        self custom_scripts\_util::setpers_if_uninitialized("saveposx", 0);
+        self custom_scripts\_util::setpers_if_uninitialized("saveposx", 0); // have to set positions before reloading or the game dies
         self custom_scripts\_util::setpers_if_uninitialized("saveposy", 0);
         self custom_scripts\_util::setpers_if_uninitialized("saveposz", 0);
-        // self setpers_if_uninitialized("replace_weapon", true);
         self thread reload_position();
-        // weapon = self getpers("bot_weapon");
-        // self giveweapon(weapon);
-        // self setspawnweapon(weapon);
     }
 }
 
 watch_memory()
 {
-    camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"];
+    camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"]; // unused for now, camos menu & setcamo stuff tho? -et
     camo = camos[randomint(camos.size)];
-
-    setdvarifuninitialized("rainbow", 1);
 
     self setpers("lives", 99);
     self setpers_if_uninitialized("camo", camo);
@@ -176,7 +173,7 @@ watch_memory()
     self setpers_if_uninitialized("headbounces", false);
     self setpers_if_uninitialized("stuck_weapon", "semtex");
 
-    for (i=1;i<8;i++)
+    for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("boltpos" + i, "0");
         wait 0.05;
@@ -185,7 +182,6 @@ watch_memory()
     self setpers_if_uninitialized("bouncecount", "0");
     for (i = 1; i < 8; i++)
     {
-
         self setpers_if_uninitialized("bouncepos" + i, "0");
         wait 0.05;
     }
@@ -197,7 +193,7 @@ watch_memory()
         self iprintln("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
     }
 
-    // reload persistence
+    // reload persistence & binds
     self loadpers("autoprone", ::do_auto_prone);
     self loadpers("autoreload", ::do_auto_reload);
     self loadpers("instaswaps", ::do_instaswaps);

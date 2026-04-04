@@ -1,9 +1,6 @@
 // this is a utility file and never has includes
 
-void()
-{
-    
-}
+void() {}
 
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
@@ -27,7 +24,7 @@ get_current_client() // check if s4 or iw8
     return level._client; 
 }
 
-getorigin_() // so self.origin on iw8 glitches out bounces etc so
+getorigin_() // so self.origin on iw8 glitches out bounces etc 
 { 
 #ifdef S4
     return self.origin;
