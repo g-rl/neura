@@ -532,6 +532,50 @@ add_game_array(client, text, summary, function, array, argument_1, argument_2, a
     self.structure[self.structure.size] = option;
 }
 
+add_game_toggle(client, text, summary, function, toggle, array, argument_1, argument_2, argument_3)
+{
+    current = level._client;
+    if (client != current) return;
+    option          = [];
+    option["text"]     = text;
+    option["summary"]  = summary;
+    option["function"] = function;
+    option["toggle"]   = is_true(toggle);
+    if (isdefined(array))
+    {
+        option["slider"] = true;
+        option["is_array"] = true;
+        option["array"]  = array;
+    }
+
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+
+    self.structure[self.structure.size] = option;
+}
+
+add_game_increment(client, text, summary, function, start, minimum, maximum, increment, argument_1, argument_2, argument_3)
+{
+    current = level._client;
+    if (client != current) return;
+    option            = [];
+    option["text"]       = text;
+    option["summary"]    = summary;
+    option["function"]   = function;
+    option["slider"]     = true;
+    option["is_increment"] = true;
+    option["start"]      = start;
+    option["minimum"]    = minimum;
+    option["maximum"]    = maximum;
+    option["increment"]  = increment;
+    option["argument_1"] = argument_1;
+    option["argument_2"] = argument_2;
+    option["argument_3"] = argument_3;
+
+    self.structure[self.structure.size] = option;
+}
+
 add_option(text, summary, function, argument_1, argument_2, argument_3)
 {
     option            = [];
@@ -632,23 +676,6 @@ add_array(text, summary, function, array, argument_1, argument_2, argument_3)
     self.structure[self.structure.size] = option;
 }
 
-actionslot_notify_map(slot)
-{
-    switch(slot)
-    {
-    case "[{+actionslot 1}]":
-        return "+actionslot 1";
-    case "[{+actionslot 2}]":
-        return "+actionslot 2";
-    case "[{+actionslot 3}]":
-        return "+actionslot 3";
-    case "[{+actionslot 4}]":
-        return "+actionslot 4";
-    default:
-        break;
-    }
-}
-
 add_increment(text, summary, function, start, minimum, maximum, increment, argument_1, argument_2, argument_3)
 {
     option            = [];
@@ -675,6 +702,23 @@ add_category(text)
     option["category"] = true;
 
     self.structure[self.structure.size] = option;
+}
+
+actionslot_notify_map(slot)
+{
+    switch(slot)
+    {
+    case "[{+actionslot 1}]":
+        return "+actionslot 1";
+    case "[{+actionslot 2}]":
+        return "+actionslot 2";
+    case "[{+actionslot 3}]":
+        return "+actionslot 3";
+    case "[{+actionslot 4}]":
+        return "+actionslot 4";
+    default:
+        break;
+    }
 }
 
 new_menu(menu)
