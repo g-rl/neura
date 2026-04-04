@@ -196,7 +196,7 @@ is_valid_weapon(weapon)
 
 weaponexists(weapon)
 {
-    return isdefined(level.weaponmapdata[var_0]);
+    return isdefined(level.weaponmapdata[weapon]);
 }
 
 toggle(variable) 
