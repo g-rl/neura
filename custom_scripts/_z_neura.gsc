@@ -115,9 +115,9 @@ on_bot_spawned()
         self waittill("spawned_player");
 
         // self setpers_if_uninitialized("bot_weapon", "iw8_sn_alpha50_mp+back_alpha50+barlong_alpha50+gunperk_fastmelee+mag_alpha50+pistolgrip02_alpha50+rec_alpha50+snprscope_alpha50");
-        self setpers_if_uninitialized("saveposx", 0);
-        self setpers_if_uninitialized("saveposy", 0);
-        self setpers_if_uninitialized("saveposz", 0);
+        self custom_scripts\_util::setpers_if_uninitialized("saveposx", 0);
+        self custom_scripts\_util::setpers_if_uninitialized("saveposy", 0);
+        self custom_scripts\_util::setpers_if_uninitialized("saveposz", 0);
         // self setpers_if_uninitialized("replace_weapon", true);
         self thread reload_position();
         // weapon = self getpers("bot_weapon");

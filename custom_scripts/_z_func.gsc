@@ -1,5 +1,3 @@
-#include custom_scripts\_util;
-
 toggle_headbounces()
 {
     self.pers["headbounces"] = !custom_scripts\_util::toggle(self.pers["headbounces"]);
@@ -645,14 +643,10 @@ do_aimbot(args)
                             wait (delay);
                         }
 
-#ifdef S4
-                        // callbackplayerdamage isnt named yet
-                        player thread [[level._id_2F4C]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
-#elifdef IW9
+#ifdef IW9
                         // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
                         player thread [[level.callbackPlayerDamage]]( self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102 );
 #else
-                        // IW8
                         player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
 #endif
                     }
@@ -1189,48 +1183,9 @@ do_stuck_bind(args, slot)
                 continue;
             }
 
-            thread grenadestuckto_stub(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
+            // TODO: not sure if IW9 works for this yet..
+            thread scripts\mp\weapons::grenadestuckto(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
         }
-    }
-}
-
-grenadestuckto_stub( var_0, var_1, var_2 )
-{
-    if ( !isdefined( self ) )
-    {
-        var_0.stuckenemyentity = var_1;
-        var_1.stuckbygrenade = var_0;
-        var_1._id_1254B = var_0.owner;
-    }
-    else if ( level.teambased && isdefined( var_1.team ) && var_1.team == self.team )
-        var_0.isstuck = "friendly";
-    else
-    {
-        var_3 = undefined;
-        var_4 = "incoming_stuck";
-
-        switch ( var_2 )
-        {
-            case "semtex_mp":
-                var_3 = "semtex_stuck";
-                break;
-            case "molotov_mp":
-                var_3 = "molotov_stuck";
-                var_4 = "flavor_surprise";
-                break;
-            case "thermite_mp":
-                var_3 = "thermite_attacker_stuck";
-                var_4 = "flavor_surprise";
-                break;
-        }
-
-        var_0.isstuck = "enemy";
-        var_0.stuckenemyentity = var_1;
-        var_1.stuckbygrenade = var_0;
-        var_1._id_1254B = var_0.owner;
-        self notify( "grenade_stuck_enemy" );
-        level thread scripts\mp\battlechatter_mp::trysaylocalsound( var_1, var_4 );
-        scripts\mp\weapons::grenadestucktosplash( var_3, var_1 );
     }
 }
 
@@ -1294,6 +1249,8 @@ do_scavenger_bind(args, slot)
         {
 #ifdef IW9
             self _id_5762AC2F22202BA2::hudicontype("scavenger");
+#elifdef S4
+            self _id_07C4::_id_7B6B("scavenger");
 #else
             self scripts\mp\damagefeedback::hudicontype("scavenger");
 #endif
@@ -1433,7 +1390,6 @@ toggle_class_bind(bind, i, pers)
     new = int(i) - 1;
     self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
-
 
     if (self.pers[index])
         self thread do_class_bind(1, i);
@@ -1744,7 +1700,7 @@ give_weapon(weapon) // ??
 
         self giveweaponinstant(new_weapon);
 
-#ifndef S4
+#ifndef S4 // not in s4
         scripts\mp\weapons::fixupplayerweapons(self, new_weapon);
 #endif
 
@@ -1804,12 +1760,7 @@ allow_oob()
 
     if (isdefined(self.vehicle) && isdefined(self.vehicle.health) && self.vehicle.health > 0)
     {
-#ifdef S4
-        scripts\mp\outofbounds::_id_3964(self.vehicle, 0);
-#else
         scripts\mp\outofbounds::clearoob(self.vehicle, 0);
-#endif
-
         self setclientomnvar("ui_out_of_bounds_type", 0 );
         self setclientomnvar("ui_out_of_bounds_countdown", 0);
     }
@@ -1973,7 +1924,7 @@ elevators(args)
 
     for (;;)
     {
-        if (self adsbuttonpressed() && self isbuttonpressed("+stance") && (self isonground() && !self isonladder() && !self ismantling()))
+        if (self adsbuttonpressed() && self custom_scripts\_util::isbuttonpressed("+stance") && (self isonground() && !self isonladder() && !self ismantling()))
         {
             self thread elevator_logic();
             wait 0.25;
@@ -1994,7 +1945,7 @@ elevator_logic()
 
     for (;;)
     {
-        if (self isbuttonpressed("+gostand"))
+        if (self custom_scripts\_util::isbuttonpressed("+gostand"))
         {
             self unlink();
             self.elevator delete();
@@ -2039,7 +1990,9 @@ spawnbot()
     // ok so the actual bot code kicks the bot no matter what..? yeah ok
     // scripts\mp\bots\bots::spawn_bots(1, "axis", undefined, undefined, undefined, "regular");
 
+#ifndef S4
     self spawnbotortestclient(); // is this even gonna work ? we dont need the bot to move or anything it could be retarded who cares
+#endif
 }
 
 toggle_perk(perk) // toggle & store perk data
@@ -2129,9 +2082,9 @@ getnextweapon()
         if (x == z[i])
         {
             if (isdefined(z[i + 1]))
-            return z[i + 1];
+                return z[i + 1];
             else
-            return z[0];
+                return z[0];
         }
     }
 }
@@ -2183,7 +2136,7 @@ instaswapto(weapon)
     if (!self hasweapon(weapon))
     self giveweapon(weapon);
     self setspawnweapon(weapon);
-    waitframe();
+    wait 0.05;
     self givegood(x);
 }
 

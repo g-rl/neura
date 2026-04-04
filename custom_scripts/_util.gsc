@@ -17,7 +17,7 @@ setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 
         if (is_true(self getpers(new_pers)))
         {
-            self thread [[func]](bind, pers);
+            self thread [[func]](bind, index);
         }
     }
 }
@@ -144,7 +144,7 @@ createcommand(command, desc, callback) // dont think we're gonna need this anymo
         args = strtok(getdvar(command), " " );
         self [[callback]](args);
 
-        waittillframeend;
+        wait 0.05;
         setdvar(command, desc);
     }
 }
