@@ -2093,7 +2093,7 @@ getnextweapon()
 
 getrealweapons()
 {
-    x = self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
+    weapons = self scripts\cp_mp\utility\inventory_utility::getcurrentprimaryweaponsminusalt();
     for (i = 0; i < weapons.size; i++)
     {
         // IW8 and S4 has this

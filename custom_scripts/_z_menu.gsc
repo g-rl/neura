@@ -140,7 +140,7 @@ structure()
     case "class manager":
         self.bind_index = false;
         self add_menu(menu);
-        self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]);
+        // self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]); // broken broken broken
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load")); // load class bind would be cool probably idk -et
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
