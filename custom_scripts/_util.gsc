@@ -194,6 +194,11 @@ is_valid_weapon(weapon)
     return (weapon.basename == "equip_throwing_knife");
 }
 
+weaponexists(weapon)
+{
+    return isdefined(level.weaponmapdata[var_0]);
+}
+
 toggle(variable) 
 {
     return isdefined(variable) && variable;

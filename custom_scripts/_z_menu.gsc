@@ -151,6 +151,7 @@ structure()
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
         break;
+    // i think this weapons menu solution is the best way to go (for now)
     case "primaries (iw8)":
         self.bind_index = false;
         self add_menu(menu);
