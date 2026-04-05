@@ -18,6 +18,7 @@ open up a issue, or join [the Discord server here](https://discord.gg/eGy76FAVgz
 
 ## credits
 
-- [nyli](https://github.com/g-rl) - most of the GSC
-- [mjkzy](https://github.com/mjkzy) - engine research, GSC stability & little features
-- [hinatyu](https://x.com/hinatyu) - provided GSC dumps + resources to play S4 & IW9 offline
+- [nyli](https://github.com/g-rl) - lots of the GSC written
+- [mjkzy](https://github.com/mjkzy) - engine research, maintaining GSC for errors & multi-game
+- [blue](https://github.com/SadesperRecord) - *a.k.a. Panela*, IW8 PM research for custom-made mechanics
+- [hinatyu](https://x.com/hinatyu) - provided GSC dumps + extremely useful resources for S4 & IW9
