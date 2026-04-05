@@ -62,8 +62,6 @@ on_player_spawned()
         
         self thread watch_memory();
         self thread watch_freeze_controls();
-        self thread allow_oob();
-        self thread remove_barriers(); // actual barrier removal would be cool
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -165,6 +163,9 @@ watch_memory()
     self setpers_if_uninitialized("real_scavenger", true);
     self setpers_if_uninitialized("headbounces", false);
     self setpers_if_uninitialized("stuck_weapon", "semtex");
+    self setpers_if_uninitialized("oob", true);
+    self setpers_if_uninitialized("barriers", true);
+    self setpers_if_uninitialized("ks_auto_use", false);
 
     for (i = 1; i < 8; i++)
     {
@@ -200,7 +201,9 @@ watch_memory()
     self loadpers("elevators", ::elevators);
     self loadpers("alt_swap", ::reload_alt_swap);
     self loadpers("headbounces", ::headbounces);
-
+    self loadpers("oob", ::disable_oob);
+    self loadpers("barriers", ::remove_barriers);
+    
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
     self setup_bind("class", false, ::reload_class_bind);

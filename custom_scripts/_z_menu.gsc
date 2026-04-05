@@ -150,6 +150,7 @@ structure()
         self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
+        self add_game_option("iw8", "streak manager", ::new_menu, "streak manager (iw8)");
         break;
     // i think this weapons menu solution is the best way to go (for now)
     case "primaries (iw8)":
@@ -232,6 +233,20 @@ structure()
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
+    case "streak manager (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "streaks (iw8)");
+        self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use");
+        break;
+    case "streaks (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
+        }
+        break;
     case "game settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -241,6 +256,8 @@ structure()
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages");
         self add_pers_toggle("sounds", undefined, ::togglepers, "sounds");
+        self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
+        self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         break;
     case "dvars":
@@ -407,6 +424,9 @@ initial_variable()
     self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp", "interrogation_tools_mp", "iw8_gunless_last_stand_enter", "ks_gesture_phone_mp", "ks_remote_device_mp", "remotemissile_projectile_mp", "emp_pulse_device_mp", "briefcase_bomb_mp"];
     self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", vt("bunker buster (burrowed)"), vt("bunker buster (not burrowed)"), "heartbeat sensor", vt("throwing stars"), "interrogation tools", "falling", "phone", "remote", "remote missile", "pulse device", "bomb"];
 
+    self.neura["weapons"]["iw8"]["killstreaks"][0] = ["gunship", "chopper_gunner", "death_switch", "pac_sentry", "hover_jet", "juggernaut", "bradley", "manual_turret", "sentry_gun", "toma_strike", "cruise_predator", "nuke", "nuke_select_location", "precision_airstrike", "fuel_airstrike", "directional_uav", "airdrop", "emergency_airdrop", "radar_drone_overwatch", "radar_drone_escort", "scrambler_drone_guard", "uav"];
+    self.neura["weapons"]["iw8"]["killstreaks"][1] = ["gunship", "chopper gunner", "death switch", "pac sentry", "hover jet", "juggernaut", "light tank", "manual turret", "sentry gun", "toma strike", "cruise predator", "nuke", "nuke location selector", "precision airstrike", "fuel airstrike", "directional uav", "airdrop", "emergency airdrop", "radar drone", "radar drone 2", "scrambler drone", "uav"];
+    
     // menu variables
     self.font            = "default";
     self.font_scale      = 0.95;

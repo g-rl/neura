@@ -1,7 +1,6 @@
 toggle_headbounces()
 {
     self.pers["headbounces"] = !custom_scripts\_util::toggle(self.pers["headbounces"]);
-
     if (self custom_scripts\_util::getpers("headbounces"))
     {
         self thread headbounces();
@@ -37,7 +36,7 @@ one_handed_gun()
     if (!is_prematch_done)
         return;
 
-    self nprintlnbold("^5shoot your weapon");
+    self custom_scripts\_util::nprintlnbold("^5shoot your weapon");
 
     // interrogation_tools_mp
     self nacto("snapshot_grenade_mp"); // concussion_grenade_mp, iw8_gunless_last_stand_enter falling, ks_gesture_phone_mp phone,
@@ -94,24 +93,21 @@ change_player_team(player)
 set_to_gunner(player) {}
 set_to_predator(player) {}
 
-togglepers(pers) // wow dude
+togglepers(pers)
 {
     self.pers[pers] = !custom_scripts\_util::toggle(self.pers[pers]);
-    //print(pers + " new value: " + self custom_scripts\_util::getpers(pers));
 }
 
-setpersmenu(value, pers) // wow dude
+setpersmenu(value, pers)
 {
     self custom_scripts\_util::setpers(pers, value);
-    wait 0.05;
     self play_sound("weap_ammo_pickup");
 }
 
-setdvarmenu(value, dvar) // wow dude
+setdvarmenu(value, dvar)
 {
     value = float(value);
     setdvar(dvar, value);
-    wait 0.05;
     self play_sound("weap_ammo_pickup");
 }
 
@@ -571,17 +567,7 @@ do_instaswaps(args)
 
     for (;;)
     {
-        /*
-        self waittill("weapon_pullback", grenade);
-
-        name = grenade.basename;
-        
-        if (name == "ks_remote_nuke_mp" || name == "ac130_105mm_mp" || name == "ac130_40mm_mp" || name == "heli_pilot_turret_mp" || name == "manual_turret_mp" || name == "nuke_mp" || name == "chopper_support_turret_mp" || name == "iw8_gunship_tablet" || name == "iw8_wheelson_tablet" || name == "mp_killstreak_nuke_tablet" || name == "iw8_cruise_missile_tablet" || name == "iw8_chopper_gunner_tablet" || name == "apache_turret_mp" || name == "pac_sentry_turret_mp" || name == "emp_drone_non_player_direct_mp" || name == "emp_drone_non_player_mp" || name == "emp_drone_player_mp" || name == "emp_grenade_mp" || name == "deployable_cover_mp" || name == "support_box_mp" || name == "equip_adrenaline" || name == "airdrop_marker_mp" || name == "deployable_vest_marker_mp" || name == "deployable_weapon_crate_marker_mp")
-        {
-            continue;
-        }
-        */
-        self waittill("button_pressed_+frag");
+        self waittill("button_pressed_+frag"); // add lb instaswaps later too
 
         if (isdefined(self.is_swapping))
         {
@@ -1646,6 +1632,25 @@ givegun(weapon) // test give_weapon later and use that instead
     self refill_weapon_ammo(weapon);
 }
 
+give_streak(streak)
+{
+    struct = scripts\mp\killstreaks\killstreaks::createstreakitemstruct(streak);
+    if (!isdefined(struct))
+    {
+        self iprintlnbold("invalid killstreak: ^1" + streak);
+        return;
+    }
+
+    if (self custom_scripts\_util::getpers("ks_auto_use"))
+    {
+        wait 0.05;
+        self notify("ks_action_4");
+    }
+
+    self play_sound("ui_killstreak_select");
+    scripts\mp\killstreaks\killstreaks::awardkillstreakfromstruct(struct, "other");
+}
+
 give_weapon(weapon) // gonna guess this works now maybe?
 {
     camo = self custom_scripts\_util::getpers("camo");
@@ -1750,8 +1755,33 @@ giveweaponinstant(weapon)
     self play_sound("ui_mp_weapon_pickup");
 }
 
-// maybe add toggles for barriers and oob but i think they'd rly always be on
-allow_oob()
+toggle_barriers()
+{
+    self.pers["barriers"] = !custom_scripts\_util::toggle(self.pers["barriers"]);
+    if (self custom_scripts\_util::getpers("barriers"))
+    {
+        self thread remove_barriers();
+    }
+    else
+    {
+        self thread restore_barriers();
+    }
+}
+
+toggle_oob()
+{
+    self.pers["oob"] = !custom_scripts\_util::toggle(self.pers["oob"]);
+    if (self custom_scripts\_util::getpers("oob"))
+    {
+        self thread disable_oob();
+    }
+    else
+    {
+        self thread enable_oob();
+    }
+}
+
+disable_oob()
 {
     scripts\mp\outofbounds::enableoobimmunity(self);
     
@@ -1764,6 +1794,15 @@ allow_oob()
         self setclientomnvar("ui_out_of_bounds_type", 0 );
         self setclientomnvar("ui_out_of_bounds_countdown", 0);
     }
+}
+
+enable_oob()
+{
+    scripts\mp\outofbounds::disableoobimmunity(self);
+    self.allowedintrigger = 0;
+
+    if (isdefined(self.alreadytouchingtrigger))
+        self.alreadytouchingtrigger = undefined;
 }
 
 remove_barriers()
@@ -1792,6 +1831,33 @@ remove_barriers()
     {
         if (isdefined(singular.entity))
             singular.entity.origin = (999999, 999999, 999999);
+    }
+}
+
+restore_barriers()
+{
+    foreach (var_1 in level.original_barriers.triggers)
+    {
+        if (isdefined(var_1.entity) && isdefined(var_1.origin))
+            var_1.entity.origin = var_1.origin;
+    }
+
+    foreach (var_4 in level.original_barriers.barriers)
+    {
+        if ( isdefined(var_4.entity) && isdefined(var_4.origin))
+            var_4.entity.origin = var_4.origin;
+    }
+
+    foreach (var_7 in level.original_barriers.clips)
+    {
+        if (isdefined(var_7.entity) && isdefined(var_7.origin))
+            var_7.entity.origin = var_7.origin;
+    }
+
+    foreach (var_10 in level.original_barriers.oncetriggers)
+    {
+        if (isdefined(var_10.entity) && isdefined(var_10.origin))
+            var_10.entity.origin = var_10.origin;
     }
 }
 
@@ -1856,7 +1922,7 @@ save_class()
         index++;
     }
 
-    self nprintln("saved class with ^5" + index + " ^7items");
+    self custom_scripts\_util::nprintln("saved class with ^5" + index + " ^7items");
 }
 
 load_class()
@@ -1875,7 +1941,7 @@ load_class()
         // self max_ammo(weapon);
     }
 
-    self nprintln("loaded class with ^5" + self.pers["curr_class"].size + " ^7items");
+    self custom_scripts\_util::nprintln("loaded class with ^5" + self.pers["curr_class"].size + " ^7items");
     // self switchtoweapon(self getweaponslistprimaries()[0]);
 }
 
@@ -1996,6 +2062,7 @@ spawnbot()
 #endif
 }
 
+/* 
 toggle_perk(perk) // toggle & store perk data
 {
     has_perk = scripts\mp\utility\perk::_hasperk(perk)
@@ -2003,15 +2070,16 @@ toggle_perk(perk) // toggle & store perk data
     {
         scripts\mp\utility\perk::giveperk(perk);
         self.pers["my_perks"][perk] = perk;
-        self nprintln("^5" + perk + " ^7given");
+        self custom_scripts\_util::nprintln("^5" + perk + " ^7given");
     }
     else
     {
         self scripts\mp\utility\perk::removeperk(perk);
         self.pers["my_perks"][perk] = undefined;
-        self nprintln("^5" + perk + " ^7taken");
+        self custom_scripts\_util::nprintln("^5" + perk + " ^7taken");
     }
 }
+*/
 
 set_perks()
 {
@@ -2024,32 +2092,17 @@ set_perks()
     }
 }
 
-alwayscan(weapon)
-{
-    if (self custom_scripts\_util::getpers("instaswap"))
-    {
-        if (self custom_scripts\_util::is_valid_weapon(weapon))
-        {
-            return;
-        }
-    }
-
-    self takegood(weapon);
-    self givegood(weapon);
-    self switchtoweapon(weapon);
-}
-
 save_bolt()
 {
     x = int(self custom_scripts\_util::getpers("boltcount"));
     if (x == 20)
-        return self nprintln("^1max bolt points saved");
+        return self custom_scripts\_util::nprintln("^1max bolt points saved");
 
     x++;
     self custom_scripts\_util::setpers("boltcount", x);
     self custom_scripts\_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
 
-    self nprintlnbold("^:bolt point " + x + " saved");
+    self custom_scripts\_util::nprintlnbold("^:bolt point " + x + " saved");
 }
 
 delete_last_bolt()
@@ -2195,10 +2248,154 @@ build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 
 play_sound(sound)
 {
-    if (!self getpers("sounds")) return;
+    if (!self custom_scripts\_util::getpers("sounds")) return;
 
     if (!soundexists(sound)) // fallback
         sound = "scavenger_pack_pickup";
 
+    wait 0.05; // we need a delay here because the game hitches sometimes?
     self playlocalsound(sound);
 }
+
+/*
+spawn_chopper() // 58249.gsc
+{
+    while ( level._id_1288E.size )
+    {
+        foreach ( var_1 in level._id_1288E )
+        {
+            if ( !var_1 agentcanseesentient( level.player ) )
+                var_1 kill();
+        }
+
+        waitframe();
+    }
+
+    level.player thread scripts\mp\utility\dialog::leaderdialogonplayer( level.player.team + "_enemy_chopper_support_inbound" );
+    var_3 = level.player;
+    var_4 = "axis";
+
+    if ( level.player.team == "axis" )
+        var_4 = "allies";
+
+    var_5 = level.player scripts\cp_mp\utility\killstreak_utility::createstreakinfo( "chopper_support", var_3 );
+    var_5.isdeploying = 0;
+    var_5.mpstreaksysteminfo = scripts\mp\killstreaks\killstreaks::createstreakitemstruct( var_5.streakname );
+    var_5.mpstreaksysteminfo.all_end_checkpoints_activated = gettime();
+    var_6 = ( 0, 0, 1750 );
+    var_7 = var_3.origin - anglestoforward( var_3.angles ) * 15000 + var_6;
+    var_8 = var_3.origin + anglestoforward( var_3.angles ) * 2000 + var_6;
+    var_9 = var_3.angles;
+    var_10 = undefined;
+
+    if ( isdefined( level.heli_structs_entrances ) && level.heli_structs_entrances.size > 0 )
+    {
+        var_11 = randomint( level.heli_structs_entrances.size );
+        var_12 = level.heli_structs_entrances[var_11];
+        var_10 = scripts\cp_mp\killstreaks\chopper_support::choppersupport_findtargetstruct( var_12.script_linkto, level.heli_structs_goals );
+        var_13 = var_12.origin * ( 1, 1, 0 ) + var_6;
+        var_14 = var_10.origin * ( 1, 1, 0 ) + var_6;
+        var_15 = vectornormalize( var_14 - var_13 );
+        var_7 = var_14 - var_15 * 15000;
+        var_8 = var_14;
+        var_9 = vectortoangles( var_15 );
+    }
+
+    var_16 = "veh8_mil_air_palfa";
+
+    if ( var_4 == "axis" )
+        var_16 = "veh8_mil_air_palfa_east";
+
+    var_17 = scripts\cp_mp\vehicles\vehicle_tracking::_spawnhelicopter( var_3, var_7, var_9, "veh_chopper_support_mp", var_16 );
+    var_17.speed = 100;
+    var_17.accel = 50;
+    var_17.lifetime = 9999;
+    var_17.team = var_4;
+    var_17.owner = var_3;
+    var_17.angles = var_9;
+    var_17.streakinfo = var_5;
+    var_17.streakname = var_5.streakname;
+    var_17.flaresreservecount = 1;
+    var_17.currentdamagestate = 0;
+    var_17.pathstart = var_7;
+    var_17.pathgoal = var_8;
+    var_17.currentaction = "patrol";
+    var_17.currenttarget = undefined;
+    var_17.currentpatrolstruct = var_10;
+    var_17.heightoffset = var_6;
+    var_17.fast_rope_over_black = var_6[2] - 750;
+    var_17.health = 1200;
+    var_17.maxhealth = 1200;
+    var_17 scripts\mp\sentientpoolmanager::registersentient( "Killstreak_Air", var_3 );
+
+    if ( scripts\cp_mp\utility\script_utility::issharedfuncdefined( "killstreak", "killstreakMakeVehicle" ) )
+        var_17 [[ scripts\cp_mp\utility\script_utility::getsharedfunc( "killstreak", "killstreakMakeVehicle" ) ]]( var_5.streakname, "destroyed_chopper_support", undefined, "timeout_chopper_support", "callout_destroyed_chopper_support" );
+
+    if ( scripts\cp_mp\utility\script_utility::issharedfuncdefined( "killstreak", "killstreakSetPreModDamageCallback" ) )
+        var_17 [[ scripts\cp_mp\utility\script_utility::getsharedfunc( "killstreak", "killstreakSetPreModDamageCallback" ) ]]( var_5.streakname );
+
+    if ( scripts\cp_mp\utility\script_utility::issharedfuncdefined( "killstreak", "killstreakSetPostModDamageCallback" ) )
+        var_17 [[ scripts\cp_mp\utility\script_utility::getsharedfunc( "killstreak", "killstreakSetPostModDamageCallback" ) ]]( var_5.streakname, ::dropbrhealthpack );
+
+    if ( scripts\cp_mp\utility\script_utility::issharedfuncdefined( "killstreak", "killstreakSetDeathCallback" ) )
+        var_17 [[ scripts\cp_mp\utility\script_utility::getsharedfunc( "killstreak", "killstreakSetDeathCallback" ) ]]( var_5.streakname, scripts\cp_mp\killstreaks\chopper_support::choppersupport_handledeathdamage );
+
+    level.vehicles.damagecallbacks.deathcallbacks["chopper_support"] = ::download_paused_watcher;
+    var_17 setmaxpitchroll( 15, 15 );
+    var_17 vehicle_setspeed( var_17.speed, var_17.accel );
+    var_17 sethoverparams( 50, 5, 2.5 );
+    var_17 setturningability( 0.5 );
+    var_17 setyawspeed( 100, 25, 25, 0.1 );
+    var_17 setcandamage( 1 );
+    var_17 setneargoalnotifydist( 768 );
+    var_17 setscriptablepartstate( "blinking_lights", "on", 0 );
+    var_17 setscriptablepartstate( "engine", "on", 0 );
+    var_18 = "veh8_mil_air_ahotel64_turret_wm";
+
+    if ( scripts\cp_mp\utility\player_utility::getplayersuperfaction( var_3 ) )
+        var_18 = "veh8_mil_air_ahotel64_turret_wm_east";
+
+    var_17.frontturret = spawnturret( "misc_turret", var_17 gettagorigin( "tag_turret_front" ), "chopper_support_turret_mp" );
+    var_17.frontturret.name = "front_turret";
+    var_17.rearturret = spawnturret( "misc_turret", var_17 gettagorigin( "tag_turret_rear" ), "chopper_support_turret_mp" );
+    var_17.rearturret.name = "rear_turret";
+    var_19 = [ var_17.frontturret, var_17.rearturret ];
+
+    foreach ( var_21 in var_19 )
+    {
+        var_21 setmodel( var_18 );
+        var_21.owner = var_3;
+        var_21.team = var_4;
+        var_21.angles = var_17.angles;
+        var_21.streakinfo = var_5;
+        var_21.turreton = 1;
+        var_21.attackingtarget = undefined;
+        var_21 linkto( var_17 );
+        var_21 setturretteam( var_4 );
+        var_21 setturretmodechangewait( 0 );
+        var_21 setmode( "manual" );
+        var_21 setdefaultdroppitch( 45 );
+        var_21.groundtargetent = spawn( "script_model", var_17.origin );
+        var_21.groundtargetent setmodel( "tag_origin" );
+        var_21.groundtargetent dontinterpolate();
+    }
+
+    var_17.killcament = spawn( "script_model", var_17 gettagorigin( "tag_ground" ) );
+    var_17.killcament linkto( var_17, "tag_ground", ( -600, 0, 1000 ), ( 0, 0, 0 ) );
+    var_17 setvehgoalpos( var_17.pathgoal, 1 );
+    var_17 playsoundonmovingent( "ks_chopper_support_approach" );
+    var_17.owner = spawn( "script_origin", ( 0, 0, 0 ) );
+    var_17.owner.team = var_4;
+    var_17.owner.name = "FakeChopperOwner";
+    var_17.owner.pers["team"] = var_4;
+    game["dialog"]["chopper_support_light_damage"] = undefined;
+    level.sharedfuncs["dlog"]["killStreakExpired"] = ::hit_by_emp_internal;
+    var_17 thread scripts\cp_mp\killstreaks\chopper_support::choppersupport_neargoalsettings();
+    var_17 thread drone_movement_vector_monitor();
+    var_17 vehicleshowonminimap( 0 );
+    var_17.objid = var_17 scripts\mp\objidpoolmanager::createobjective( "icon_minimap_chopper_support", var_4, undefined, 1, 1 );
+    objective_setminimapiconsize( var_17.objid, "icon_large" );
+    level notify( "stop_airstrikes" );
+    return var_17;
+}
+*/
