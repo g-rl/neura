@@ -139,7 +139,7 @@ watch_memory()
     self setpers_if_uninitialized("eq_putaway", false);
     self setpers_if_uninitialized("ufo_mode", true);
     self setpers_if_uninitialized("timescale", false);
-    self setpers_if_uninitialized("instaswaps_time", 0.19);
+    self setpers_if_uninitialized("instaswaps_time", 0.3);
     self setpers_if_uninitialized("aimbot_range", 1200);
     self setpers_if_uninitialized("aimbot_delay", 0);
     self setpers_if_uninitialized("saveposx", 0);
