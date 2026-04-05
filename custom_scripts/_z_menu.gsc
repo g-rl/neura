@@ -38,7 +38,7 @@ structure()
         // engine toggles
         self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
         self add_dvar_toggle("always canswap", undefined, "pan_alwayscanswap");
-        self add_dvar_toggle(warning("sprint swaps"), "^1warning: ^7can cause lag", "pan_sprintswaps");
+        self add_dvar_toggle("sprint swaps", undefined, "pan_sprintswaps");
         self add_dvar_toggle("freeze anim", undefined, "pan_freezeanim");
         self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
         self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");

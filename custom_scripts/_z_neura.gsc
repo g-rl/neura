@@ -51,8 +51,8 @@ on_player_spawned()
     {
         self waittill("spawned_player");
         // self thread watch_weap_change(); - get full weapon names
+        // self thread give_perks();
         self thread reload_position();
-        self thread give_perks();
 
         if (self.has_spawned)
             continue;
