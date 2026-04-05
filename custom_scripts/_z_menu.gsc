@@ -34,8 +34,15 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
-        self add_dvar_toggle("instashoots", undefined, "instashoots");
-        self add_dvar_toggle("always canswap", undefined, "alwayscanswap");
+
+        // engine toggles
+        self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
+        self add_dvar_toggle("always canswap", undefined, "pan_alwayscanswap");
+        self add_dvar_toggle("sprint swaps", "^1warning: ^7can cause lag", "pan_sprintswaps");
+        self add_dvar_toggle("freeze anim", undefined, "pan_freezeanim");
+        self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
+        self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");
+
         self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
         self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
