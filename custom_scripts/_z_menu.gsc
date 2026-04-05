@@ -410,8 +410,8 @@ initial_variable()
 {
     // [0]: ID
     // [1]: Display Name
-    self.neura["soh_perk_list"] = list("specialty_fastreload,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
-    self.neura["perk_list"] = list("specialty_marathon,specialty_holdbreath,specialty_lightweight");
+    self.neura["soh_perk_list"] = list("specialty_fastreload,specialty_quickdraw");
+    self.neura["perk_list"] = list("specialty_marathon,specialty_holdbreath,specialty_lightweight,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster,specialty_fastoffhand,specialty_quickswap");
     
     self.neura["perks"] = list("specialty_fastreload,specialty_lightweight,specialty_marathon,specialty_holdbreath,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
 
