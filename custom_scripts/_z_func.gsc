@@ -37,7 +37,7 @@ one_handed_gun()
     if (!is_prematch_done)
         return;
 
-    self nprintlnbold("^5shoot your weapon");
+    self custom_scripts\_util::nprintlnbold("^5shoot your weapon");
 
     // interrogation_tools_mp
     self nacto("snapshot_grenade_mp"); // concussion_grenade_mp, iw8_gunless_last_stand_enter falling, ks_gesture_phone_mp phone,
@@ -1856,7 +1856,7 @@ save_class()
         index++;
     }
 
-    self nprintln("saved class with ^5" + index + " ^7items");
+    self custom_scripts\_util::nprintln("saved class with ^5" + index + " ^7items");
 }
 
 load_class()
@@ -1875,7 +1875,7 @@ load_class()
         // self max_ammo(weapon);
     }
 
-    self nprintln("loaded class with ^5" + self.pers["curr_class"].size + " ^7items");
+    self custom_scripts\_util::nprintln("loaded class with ^5" + self.pers["curr_class"].size + " ^7items");
     // self switchtoweapon(self getweaponslistprimaries()[0]);
 }
 
@@ -1998,18 +1998,18 @@ spawnbot()
 
 toggle_perk(perk) // toggle & store perk data
 {
-    has_perk = scripts\mp\utility\perk::_hasperk(perk)
+    has_perk = scripts\mp\utility\perk::_hasperk(perk);
     if (has_perk)
     {
         scripts\mp\utility\perk::giveperk(perk);
         self.pers["my_perks"][perk] = perk;
-        self nprintln("^5" + perk + " ^7given");
+        self custom_scripts\_util::nprintln("^5" + perk + " ^7given");
     }
     else
     {
         self scripts\mp\utility\perk::removeperk(perk);
         self.pers["my_perks"][perk] = undefined;
-        self nprintln("^5" + perk + " ^7taken");
+        self custom_scripts\_util::nprintln("^5" + perk + " ^7taken");
     }
 }
 
@@ -2043,13 +2043,13 @@ save_bolt()
 {
     x = int(self custom_scripts\_util::getpers("boltcount"));
     if (x == 20)
-        return self nprintln("^1max bolt points saved");
+        return self custom_scripts\_util::nprintln("^1max bolt points saved");
 
     x++;
     self custom_scripts\_util::setpers("boltcount", x);
     self custom_scripts\_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
 
-    self nprintlnbold("^:bolt point " + x + " saved");
+    self custom_scripts\_util::nprintlnbold("^:bolt point " + x + " saved");
 }
 
 delete_last_bolt()
@@ -2195,7 +2195,7 @@ build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 
 play_sound(sound)
 {
-    if (!self getpers("sounds")) return;
+    if (!self custom_scripts\_util::getpers("sounds")) return;
 
     if (!soundexists(sound)) // fallback
         sound = "scavenger_pack_pickup";
