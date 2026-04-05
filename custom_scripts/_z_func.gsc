@@ -1781,7 +1781,7 @@ toggle_oob()
     }
 }
 
-disable_oob()
+disable_oob(args)
 {
     scripts\mp\outofbounds::enableoobimmunity(self);
     
@@ -1796,7 +1796,7 @@ disable_oob()
     }
 }
 
-enable_oob()
+enable_oob(args)
 {
     scripts\mp\outofbounds::disableoobimmunity(self);
     self.allowedintrigger = 0;
@@ -1805,7 +1805,7 @@ enable_oob()
         self.alreadytouchingtrigger = undefined;
 }
 
-remove_barriers()
+remove_barriers(args)
 {
     init_original_barriers();
     
@@ -1834,7 +1834,7 @@ remove_barriers()
     }
 }
 
-restore_barriers()
+restore_barriers(args)
 {
     foreach (var_1 in level.original_barriers.triggers)
     {
@@ -1861,7 +1861,7 @@ restore_barriers()
     }
 }
 
-init_original_barriers()
+init_original_barriers(args)
 {
     if (!isdefined(level.original_barriers))
     {
