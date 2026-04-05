@@ -1056,7 +1056,7 @@ monitor_class()
         }
 
         // give fast perks too
-        self thread give_perks();
+        // self thread give_perks();
         wait 0.05;
     }
 }
