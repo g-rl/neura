@@ -117,17 +117,21 @@ watch_memory()
     camo = camos[randomint(camos.size)];
 
     setdvarifuninitialized("rainbow", 1);
-    setdvarifuninitialized("instashoots", 1);
-    setdvarifuninitialized("alwayscanswap", 1);
-    
+
+    // engine dvars
+    setdvarifuninitialized("pan_instashoots", 0);
+    setdvarifuninitialized("pan_alwayscanswap", 0);
+    setdvarifuninitialized("pan_sprintswaps", 0);
+    setdvarifuninitialized("pan_freezeanim", 0);
+    setdvarifuninitialized("pan_alwaysaltswap", 0);
+    setdvarifuninitialized("pan_canzooms", 0);
+
     self setpers("lives", 99);
     self setpers_if_uninitialized("camo", camo);
     self setpers_if_uninitialized("unstuck", self.origin);
     self setpers_if_uninitialized("velx", 250);
     self setpers_if_uninitialized("vely", 250);
     self setpers_if_uninitialized("velz", 250);
-    self setpers_if_uninitialized("boltcount", "0");
-    self setpers_if_uninitialized("boltspeed", "1.2");
     self setpers_if_uninitialized("class_wrap", "5");
     self setpers_if_uninitialized("class_can", true);
     self setpers_if_uninitialized("soh", true);
@@ -167,9 +171,19 @@ watch_memory()
     self setpers_if_uninitialized("barriers", true);
     self setpers_if_uninitialized("ks_auto_use", false);
 
+    self setpers_if_uninitialized("boltcount", "0");
+    self setpers_if_uninitialized("boltspeed", "1.2");
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("boltpos" + i, "0");
+        wait 0.05;
+    }
+
+    self setpers_if_uninitialized("bot_boltcount", "0");
+    self setpers_if_uninitialized("bot_boltspeed", "1.2");
+    for (i = 1; i < 8; i++)
+    {
+        self setpers_if_uninitialized("bot_boltpos" + i, "0");
         wait 0.05;
     }
 
@@ -214,10 +228,12 @@ watch_memory()
     self setup_bind("spectator", false, ::do_spectator_bind);
     self setup_bind("scavenger", false, ::do_scavenger_bind);
     self setup_bind("bolt", false, ::do_bolt_bind);
+    self setup_bind("bot_bolt", false, ::do_bot_bolt_bind);
     self setup_bind("velocity", false, ::do_velocity_bind);
     self setup_bind("canswap", false, ::do_canswap_bind);
     self setup_bind("empty_clip", false, ::do_emptyclip_bind);
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
+    self setup_bind("freeze_anim", false, ::do_freeze_anim_bind);
     // self setup_bind("third_eye", false, ::do_thirdeye_bind); // crashes lmfao dont think the shellshock func is right
 }
 

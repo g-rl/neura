@@ -248,7 +248,7 @@ button_monitor(button)
     }
 }
 
-vt(var, serverity) // adds caution symbol next to text
+warning(var, serverity) // adds caution symbol next to text
 {
     // ߺ : red
     // ߑ : white

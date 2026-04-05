@@ -126,6 +126,37 @@ watch_weap_change()
     }
 }
 
+toggle_freeze_anim_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_freeze_anim_bind(1, i);
+    else
+        self notify("stop_freeze_anim_bind");
+}
+
+do_freeze_anim_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_nac_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            setdvar("pan_freezeanim", !custom_scripts\_util::toggle(getdvarint("pan_freezeanim")));
+            wait 0.05;
+        }
+    }
+}
+
 toggle_nac_bind(bind, i, pers)
 {
     index = pers + "_" + i;
@@ -1283,6 +1314,36 @@ do_bolt_bind(args, slot)
     }
 }
 
+toggle_bot_bolt_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_bot_bolt_bind(1, i);
+    else
+        self notify("stop_bot_bolt_bind");
+}
+
+do_bot_bolt_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_bot_bolt_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self start_bot_bolt();
+        }
+    }
+}
+
 start_bolt()
 {
     x = int (self custom_scripts\_util::getpers("boltcount"));
@@ -1304,6 +1365,86 @@ start_bolt()
 
     self unlink();
     bolt_model delete();
+}
+
+start_bot_bolt()
+{
+    x = int (self custom_scripts\_util::getpers("bot_boltcount"));
+    if (x == 0)
+        return self iprintlnbold("^1set bot bolt points first");
+
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        self iprintlnbold("^5spawn an enemy");
+        return;
+    }
+
+    bolt_model = spawn("script_model", player.origin);
+    bolt_model setmodel("tag_origin");
+    player.current_bolt = bolt_model; // store
+    player playerlinkto(bolt_model);
+
+    for (i=1; i<(x + 1); i++)
+    {
+        keys = strtok(self custom_scripts\_util::getpers("bot_boltpos" + i), ",");
+        position = (float(keys[0]), float(keys[1]), float(keys[2]));
+        bolt_model moveto(position, float(self custom_scripts\_util::getpers("bot_boltspeed")), 0, 0);
+        wait float(self custom_scripts\_util::getpers("bot_boltspeed"));
+    }
+
+    player unlink();
+    bolt_model delete();
+}
+
+save_bolt()
+{
+    x = int(self custom_scripts\_util::getpers("boltcount"));
+    if (x == 20)
+        return self custom_scripts\_util::nprintln("^1max bolt points saved");
+
+    x++;
+    self custom_scripts\_util::setpers("boltcount", x);
+    self custom_scripts\_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+
+    self custom_scripts\_util::nprintlnbold("^:bolt point " + x + " saved");
+}
+
+delete_last_bolt()
+{
+    x = int(self custom_scripts\_util::getpers("boltcount"));
+    if (x == 0)
+        return self iprintlnbold("^1no points to delete");
+
+    self custom_scripts\_util::setpers("boltpos" + x, "0");
+    self iprintlnbold("^+bolt point " + x + " deleted");
+    x--;
+    self custom_scripts\_util::setpers("boltcount", x);
+}
+
+save_bot_bolt()
+{
+    x = int(self custom_scripts\_util::getpers("bot_boltcount"));
+    if (x == 20)
+        return self custom_scripts\_util::nprintln("^1max bot bolt points saved");
+
+    x++;
+    self custom_scripts\_util::setpers("bot_boltcount", x);
+    self custom_scripts\_util::setpers("bot_boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+
+    self custom_scripts\_util::nprintlnbold("^:bot bolt point " + x + " saved");
+}
+
+delete_last_bot_bolt()
+{
+    x = int(self custom_scripts\_util::getpers("bot_boltcount"));
+    if (x == 0)
+        return self iprintlnbold("^1no points to delete");
+
+    self custom_scripts\_util::setpers("bot_boltpos" + x, "0");
+    self iprintlnbold("^+bot bolt point " + x + " deleted");
+    x--;
+    self custom_scripts\_util::setpers("bot_boltcount", x);
 }
 
 toggle_velocity_bind(bind, i, pers)
@@ -1529,7 +1670,7 @@ post_prematch_start()
     self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
         
-    self iprintln("^6neura " + level._client + " ^7by * ^1@nyli2b ^2@mjkzy ^7*");
+    self iprintln("^6neura " + level._client + " ^7by * ^+@nyli2b ^2@mjkzy ^5@machinxry^7*");
 }
 
 look_at_me(player)
@@ -2052,6 +2193,7 @@ toggle_alt_swaps()
     }
 }
 
+/* 
 spawnbot()
 {
     // ok so the actual bot code kicks the bot no matter what..? yeah ok
@@ -2061,6 +2203,7 @@ spawnbot()
     self spawnbotortestclient(); // is this even gonna work ? we dont need the bot to move or anything it could be retarded who cares
 #endif
 }
+*/
 
 /* 
 toggle_perk(perk) // toggle & store perk data
@@ -2090,31 +2233,6 @@ set_perks()
 
         scripts\mp\utility\perk::giveperk(perk);
     }
-}
-
-save_bolt()
-{
-    x = int(self custom_scripts\_util::getpers("boltcount"));
-    if (x == 20)
-        return self custom_scripts\_util::nprintln("^1max bolt points saved");
-
-    x++;
-    self custom_scripts\_util::setpers("boltcount", x);
-    self custom_scripts\_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
-
-    self custom_scripts\_util::nprintlnbold("^:bolt point " + x + " saved");
-}
-
-delete_last_bolt()
-{
-    x = int(self custom_scripts\_util::getpers("boltcount"));
-    if (x == 0)
-        return self iprintlnbold("^1no points to delete");
-
-    self custom_scripts\_util::setpers("boltpos" + x, "0");
-    self iprintlnbold("^+bolt point " + x + " deleted");
-    x--;
-    self custom_scripts\_util::setpers("boltcount", x);
 }
 
 nacto(weapon)
@@ -2255,4 +2373,15 @@ play_sound(sound)
 
     wait 0.05; // we need a delay here because the game hitches sometimes?
     self playlocalsound(sound);
+}
+
+spawnbot(team, amount)
+{
+    if (!isdefined(team))
+        team = "axis";
+    
+    if (!isdefined(amount))
+        amount = 1;
+
+    level thread [[level.bot_funcs["bots_spawn"]]](amount, team);
 }

@@ -9,10 +9,10 @@ structure()
     
     increment_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5no jump^7 needed";
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
-    credits = "made with ^5<3^7 by ^5ethan ^7& ^5mikey";
+    credits = "made with ^5<3^7 by ^5ethan^7, ^5mikey ^7& ^5blue";
     client = get_current_client();
     title = "neura ^5" + client + "^7 - ";
-    bind_list = list("instaswap,nac,change class,eq,damage,illusion,stuck,velocity,bolt,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
@@ -38,7 +38,7 @@ structure()
         // engine toggles
         self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
         self add_dvar_toggle("always canswap", undefined, "pan_alwayscanswap");
-        self add_dvar_toggle("sprint swaps", "^1warning: ^7can cause lag", "pan_sprintswaps");
+        self add_dvar_toggle(warning("sprint swaps"), "^1warning: ^7can cause lag", "pan_sprintswaps");
         self add_dvar_toggle("freeze anim", undefined, "pan_freezeanim");
         self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
         self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");
@@ -102,9 +102,17 @@ structure()
     case "bolt movement":
         self.bind_index = false;
         self add_menu(menu);
+        self add_option("bot bolt movement", credits, ::new_menu, "bot bolt movement");
         self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 0.1, 10, 0.1, "boltspeed");
         self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
         self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
+        break;
+    case "bot bolt movement":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_increment("bot bolt speed", increment_controls, ::setpersmenu, float(self getpers("bot_boltspeed")), 0.1, 10, 0.1, "bot_boltspeed");
+        self add_option("save bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::save_bot_bolt);
+        self add_option("delete last bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::delete_last_bot_bolt);
         break;
     case "edit velocity":
         self.bind_index = false;
@@ -258,7 +266,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("dvars", undefined, ::new_menu, "dvars");
-        // self add_option("spawn bot", undefined, ::spawnbot); // look at this pls someoneeee
+        self add_option("spawn enemy", undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages");
@@ -337,6 +345,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "freeze anim":
+            self add_bind(menu, ::toggle_freeze_anim_bind, "freeze_anim");
+            break;
         case "instaswap":
             self add_bind(menu, ::toggle_instaswap_bind, "instaswap");
             break;
@@ -346,7 +357,7 @@ bind_index(menu, increment_controls) // ew
         case "change class":
             self add_bind(menu, ::toggle_class_bind, "class");
             break;
-        case "eq":
+        case "pullout equipment":
             self add_bind(menu, ::toggle_eq_bind, "eq");
             break;
         case "damage":
@@ -358,8 +369,11 @@ bind_index(menu, increment_controls) // ew
         case "stuck":
             self add_bind(menu, ::toggle_stuck_bind, "stuck");
             break;
-        case "bolt":
+        case "bolt movement":
             self add_bind(menu, ::toggle_bolt_bind, "bolt");
+            break;
+        case "bot bolt movement":
+            self add_bind(menu, ::toggle_bot_bolt_bind, "bot_bolt");
             break;
         case "velocity":
             self add_bind(menu, ::toggle_velocity_bind, "velocity");
@@ -429,7 +443,7 @@ initial_variable()
 
     // mwii
     self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp", "interrogation_tools_mp", "iw8_gunless_last_stand_enter", "ks_gesture_phone_mp", "ks_remote_device_mp", "remotemissile_projectile_mp", "emp_pulse_device_mp", "briefcase_bomb_mp"];
-    self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", vt("bunker buster (burrowed)"), vt("bunker buster (not burrowed)"), "heartbeat sensor", vt("throwing stars"), "interrogation tools", "falling", "phone", "remote", "remote missile", "pulse device", "bomb"];
+    self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", warning("bunker buster (burrowed)"), warning("bunker buster (not burrowed)"), "heartbeat sensor", warning("throwing stars"), "interrogation tools", "falling", "phone", "remote", "remote missile", "pulse device", "bomb"];
 
     self.neura["weapons"]["iw8"]["killstreaks"][0] = ["gunship", "chopper_gunner", "death_switch", "pac_sentry", "hover_jet", "juggernaut", "bradley", "manual_turret", "sentry_gun", "toma_strike", "cruise_predator", "nuke", "nuke_select_location", "precision_airstrike", "fuel_airstrike", "directional_uav", "airdrop", "emergency_airdrop", "radar_drone_overwatch", "radar_drone_escort", "scrambler_drone_guard", "uav"];
     self.neura["weapons"]["iw8"]["killstreaks"][1] = ["gunship", "chopper gunner", "death switch", "pac sentry", "hover jet", "juggernaut", "light tank", "manual turret", "sentry gun", "toma strike", "cruise predator", "nuke", "nuke location selector", "precision airstrike", "fuel airstrike", "directional uav", "airdrop", "emergency airdrop", "radar drone", "radar drone 2", "scrambler drone", "uav"];
