@@ -165,7 +165,7 @@ structure()
         self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
-        // self add_game_option("iw8", "streak manager", ::new_menu, "streaks (iw8)");
+        self add_game_option("iw8", "streak manager", "streaks for ^5iw8", ::new_menu, "streaks (iw8)");
         break;
     // i think this weapons menu solution is the best way to go (for now)
     case "primaries (iw8)":
@@ -248,7 +248,6 @@ structure()
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
-    /* 
     case "streaks (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -263,7 +262,6 @@ structure()
             self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
         }
         break;
-    */
     case "game settings":
         self.bind_index = false;
         self add_menu(menu);
