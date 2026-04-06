@@ -287,7 +287,7 @@ do_thirdeye_bind(args, slot)
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            // self scripts\common\utility::shellshock("explosion", 0.005);
+            self shellshock("explosion", 0.005);
             wait 0.05;
         }
     }

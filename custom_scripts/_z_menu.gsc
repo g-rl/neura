@@ -12,7 +12,7 @@ structure()
     credits = "made with ^5<3^7 by ^5ethan^7, ^5mikey ^7& ^5blue";
     client = get_current_client();
     title = "neura ^5" + client + "^7 - ";
-    bind_list = list("freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("third eye,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
@@ -345,6 +345,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "third eye":
+            self add_bind(menu, ::toggle_thirdeye_bind, "third_eye");
+            break;
         case "freeze anim":
             self add_bind(menu, ::toggle_freeze_anim_bind, "freeze_anim");
             break;

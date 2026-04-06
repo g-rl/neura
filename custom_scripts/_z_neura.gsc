@@ -234,7 +234,7 @@ watch_memory()
     self setup_bind("empty_clip", false, ::do_emptyclip_bind);
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
     self setup_bind("freeze_anim", false, ::do_freeze_anim_bind);
-    // self setup_bind("third_eye", false, ::do_thirdeye_bind); // crashes lmfao dont think the shellshock func is right
+    self setup_bind("third_eye", false, ::do_thirdeye_bind); // crashes lmfao dont think the shellshock func is right
 }
 
 // this was used to debug IW9, and can be used for S4 too

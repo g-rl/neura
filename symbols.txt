@@ -1,4 +1,4 @@
-from iw8-mod cord lul
+from iw8-mod cord - these work universally
 
 ^1 = red
 ^2 = green
