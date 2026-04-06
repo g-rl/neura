@@ -930,7 +930,7 @@ monitor_bounces()
     }
 }
 
-watch_freeze_controls()
+watch_frozen_bots()
 {
     self endon("disconnect");
     self endon("unfreeze_me");

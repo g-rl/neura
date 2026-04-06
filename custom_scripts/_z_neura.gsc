@@ -61,7 +61,7 @@ on_player_spawned()
         self.has_spawned = true;
         
         self thread watch_memory();
-        self thread watch_freeze_controls();
+        self thread watch_frozen_bots();
 
         if (!isdefined(self.menu))
             self.menu = [];
