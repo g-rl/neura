@@ -1613,8 +1613,6 @@ give_perks()
 
 round_manager()
 {
-    level endon("game_ended");
-
     random_round_axis = randomint(4);
     random_round_ally = randomint(4);
     rounds_played = (random_round_axis + random_round_ally);
