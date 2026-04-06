@@ -505,7 +505,7 @@ initial_monitor()
                 if (self isbuttonpressed("+melee_zoom"))
                 {
                     self close_menu();
-                    self playlocalsound("mp_killstreak_tablet_gear");
+                    self custom_scripts\_z_func::play_sound("mp_killstreak_tablet_gear");
                 }
                 else if (self usebuttonpressed()) // back
                 {
