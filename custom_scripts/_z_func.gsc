@@ -1611,13 +1611,11 @@ give_perks()
     }
 }
 
-round_manager()
+random_rounds()
 {
     random_round_axis = randomint(4);
     random_round_ally = randomint(4);
     rounds_played = (random_round_axis + random_round_ally);
-
-    self waittill("killcam_ended");
     game["roundsWon"]["axis"] = random_round_axis;
     game["roundsWon"]["allies"] = random_round_ally;
     game["teamScores"]["allies"] = random_round_ally;

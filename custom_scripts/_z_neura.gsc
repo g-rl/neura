@@ -80,7 +80,6 @@ on_player_spawned()
 
         // other funcs
         self thread monitor_class();
-        self thread round_manager();
     }
 }
 
