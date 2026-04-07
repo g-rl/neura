@@ -12,7 +12,7 @@ structure()
     credits = "made with ^5<3^7 by ^5ethan^7, ^5mikey ^7& ^5blue";
     client = get_current_client();
     title = "neura ^5" + client + "^7 - ";
-    bind_list = list("third eye,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("load class,third eye,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
@@ -160,7 +160,8 @@ structure()
         self add_menu(menu);
         // self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]); // broken broken broken
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
-        self add_array("save & load class", slider_controls, ::class_manager, list("save,load")); // load class bind would be cool probably idk -et
+        self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
+        self add_pers_toggle("load saved class on spawn", undefined, ::togglepers, "load_saved_class", true);
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
         self add_option("take weapon", undefined, ::take_current);
         self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
@@ -355,6 +356,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "load class":
+            self add_bind(menu, ::toggle_load_class_bind, "load_class");
+            break;
         case "third eye":
             self add_bind(menu, ::toggle_thirdeye_bind, "third_eye");
             break;

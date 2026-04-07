@@ -2170,11 +2170,45 @@ save_class()
     self custom_scripts\_util::nprintln("saved class with ^5" + index + " ^7items");
 }
 
-load_class()
+toggle_load_class_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_load_class_bind(1, i);
+    else
+        self notify("stop_load_class_bind");
+}
+
+do_load_class_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_load_class_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self thread load_class();
+            wait 0.05;
+        }
+    }
+}
+
+load_class(args)
 {
     if (!self custom_scripts\_util::getpers("saved_class"))
     {
-        self iprintln("save a class first..");
+        if (!isdefined(args)) // loadpers
+        {
+            self iprintln("save a class first..");
+        }
         return;
     }
 
