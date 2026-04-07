@@ -303,10 +303,18 @@ structure()
     case "debug settings":
         self.bind_index = false;
         self add_menu(menu);
-        self add_option("coordinates", self getorigin() + " | " + self getplayerangles(), ::void);
-        self add_option("current weapon", self getcurrentweapon().basename + " | press to view full name", ::print_weapon);
+        self add_option(warning("bot paths"), undefined, ::new_menu, "bot paths");
+        self add_option("origin", self getorigin(), ::void);
+        self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
         self add_option("try to flash", undefined, ::try_to_flash);
         self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
+        break;
+    case "bot paths":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_option("start path movement", "path count: ^5" + int(self getpers("pathcount")), ::start_path_movement);
+        self add_option("save point", "path count: ^5" + int(self getpers("pathcount")), ::save_path);
+        self add_option("delete last point", "path count: ^5" + int(self getpers("pathcount")), ::delete_last_path);
         break;
     case "manage clients":
         self.bind_index = false;

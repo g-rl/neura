@@ -191,6 +191,7 @@ watch_memory()
     self setpers_if_uninitialized("slomo", 1);
     self setpers_if_uninitialized("slomo_mode", "normal");
 
+    // player bolt
     self setpers_if_uninitialized("boltcount", "0");
     self setpers_if_uninitialized("boltspeed", "1.2");
     for (i = 1; i < 8; i++)
@@ -199,6 +200,7 @@ watch_memory()
         wait 0.05;
     }
 
+    // bot bolt
     self setpers_if_uninitialized("bot_boltcount", "0");
     self setpers_if_uninitialized("bot_boltspeed", "1.2");
     for (i = 1; i < 8; i++)
@@ -206,6 +208,16 @@ watch_memory()
         self setpers_if_uninitialized("bot_boltpos" + i, "0");
         wait 0.05;
     }
+
+    // paths
+    self setpers_if_uninitialized("pathpos", "0");
+    for (i = 1; i < 8; i++)
+    {
+        self setpers_if_uninitialized("pathpos" + i, "0");
+        wait 0.05;
+    }
+    self setpers_if_uninitialized("pathcount", "0");
+
 
     self setpers_if_uninitialized("bouncecount", "0");
     for (i = 1; i < 8; i++)

@@ -754,6 +754,15 @@ game_ended_prone()
     for (i = 1; i < 30; i++)
     {
         self setstance("prone");
+        self freezecontrols(0);
+        self freezelookcontrols(0);
+        scripts\common\utility::allow_movement(1);
+        scripts\common\utility::allow_jump(1);
+        scripts\common\utility::allow_usability(1);
+        scripts\common\utility::allow_melee(1);
+        scripts\common\utility::allow_offhand_weapons(1);
+        scripts\common\utility::allow_weapon_switch(1);
+        scripts\common\utility::allow_sprint(1);
         wait .01;
     }
 }
@@ -960,6 +969,16 @@ watch_frozen_bots()
             if (isai(player) || isbot(player))
             {
                 player freezecontrols(self custom_scripts\_util::getpers("frozen_bots"));
+                /* 
+                player scripts\common\utility::allow_fire(0);
+                player scripts\common\utility::allow_movement(0);
+                player scripts\common\utility::allow_jump(0);
+                player scripts\common\utility::allow_usability(0);
+                player scripts\common\utility::allow_melee(0);
+                player scripts\common\utility::allow_offhand_weapons(0);
+                player scripts\common\utility::allow_weapon_switch(0);
+                player scripts\common\utility::allow_sprint(0);
+                */
             }
             wait 0.05;
         }
@@ -1489,7 +1508,7 @@ delete_last_bolt()
         return self iprintlnbold("^1no points to delete");
 
     self custom_scripts\_util::setpers("boltpos" + x, "0");
-    self iprintlnbold("^+bolt point " + x + " deleted");
+    self custom_scripts\_util::nprintlnbold("^+bolt point " + x + " deleted");
     x--;
     self custom_scripts\_util::setpers("boltcount", x);
 }
@@ -1746,7 +1765,6 @@ clean_killcam(args)
         {
             self setclientomnvar("ui_killcam_killedby_item_type", -1);
             self setclientomnvar("ui_killcam_killedby_item_id", -1);
-            self setclientomnvar("ui_killcam_killedby_id", -1);
             self setclientomnvar("ui_killcam_killedby_loot_variant_id", -1);
             self setclientomnvar("ui_killcam_killedby_weapon_rarity", -1);
         }
@@ -1881,7 +1899,7 @@ give_streak(streak)
     if (!isdefined(streak))
     {
         saved = self custom_scripts\_util::getpers("saved_streak");
-        if (saved != "none")
+        if (isdefined(saved) && saved != "none")
         {
             self thread give_streak(saved);
             return;
@@ -2618,6 +2636,12 @@ palette()
     return option;
 }
 
+pal(text)
+    colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^*"];
+    option = colors[randomint(colors.size)];
+    return option + text;
+}
+
 set_timescale(timescale)
 {
     timescale = float(timescale);
@@ -2660,3 +2684,74 @@ reload_timescale()
     custom_scripts\_util::waittill_prematch_over();
     setslowmotion(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
 }
+
+save_path()
+{
+    x = int(self custom_scripts\_util::getpers("pathcount"));
+    if (x == 5)
+        return self custom_scripts\_util::nprintln("^1max paths saved");
+
+    x++;
+    self custom_scripts\_util::setpers("pathcount", x);
+    self custom_scripts\_util::setpers("pathpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+
+    self custom_scripts\_util::nprintlnbold("^:path " + x + " saved");
+}
+
+delete_last_path()
+{
+    x = int(self custom_scripts\_util::getpers("pathcount"));
+    if (x == 0)
+        return self iprintlnbold("^1no paths to delete");
+
+    self custom_scripts\_util::setpers("pathpos" + x, "0");
+    self custom_scripts\_util::nprintlnbold("^+path " + x + " deleted");
+    x--;
+    self custom_scripts\_util::setpers("pathcount", x);
+}
+
+start_path_movement()
+{
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        self iprintlnbold("^5spawn an enemy");
+        return;
+    }
+
+    player.starting_point = player.origin;
+    x = int(self custom_scripts\_util::getpers("pathcount"));
+    for (i=1; i < (x + 1); i++)
+    {
+        // self botsetscriptgoal( self.origin, 16, "critical" );
+        b = ["objective", "critical", "hunt", "guard"];
+        behavior = b[randomint(b.size)];
+
+        keys = strtok(self custom_scripts\_util::getpers("pathpos" + i), ",");
+        position = (float(keys[0]), float(keys[1]), float(keys[2]));
+        self dprintln("hi we're trying path " + pal(i) + " ^7using " + pal(behavior));
+        self dprintln("position: " + pal(position));
+        player botsetscriptgoal(self.origin, 0, "hunt");
+        var_4 = [ "goal", "bad_path", "no_path", "node_relinquished", "script_goal_changed" ];
+        player scripts\engine\utility::waittill_any_in_array_return(var_4);
+        new_wait = randomint(6);
+        self dprintln("goal reached or failed sum - trying again in " + pal(new_wait) + "s");
+        wait (new_wait);
+    }
+
+    self dprintln("finished stalling");
+    // wait till everything finishes then set back to original point
+    // wait (self custom_scripts\_util::getpers("wait_before_move"));
+    wait (randomintrange(1, 3));
+    player setgoalpos(player.starting_point);
+}
+
+dprintln(text)
+{
+    if (isdefined(self.is_debug) && self.is_debug)
+    {
+        return iprintln("[^)debug^7] " + text);
+    }
+}
+
+// botpressbutton
