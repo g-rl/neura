@@ -66,6 +66,12 @@ on_player_spawned()
         self thread watch_frozen_bots();
         self thread watch_freeze_anim();
 
+        if (float(self getpers("slomo")) != 1)
+        {
+            self thread reload_timescale();
+            self thread watch_round_end();
+        }
+
         if (!isdefined(self.menu))
             self.menu = [];
 
@@ -182,6 +188,8 @@ watch_memory()
     self setpers_if_uninitialized("elem_itemtype", true);
     self setpers_if_uninitialized("elem_victim", true);
     self setpers_if_uninitialized("elem_perks", true);
+    self setpers_if_uninitialized("slomo", 1);
+    self setpers_if_uninitialized("slomo_mode", "normal");
 
     self setpers_if_uninitialized("boltcount", "0");
     self setpers_if_uninitialized("boltspeed", "1.2");

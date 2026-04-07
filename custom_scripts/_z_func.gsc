@@ -704,7 +704,7 @@ do_auto_prone(args)
 {
     self endon("disconnect");
     self endon("stop_auto_prone");
-    self endon("begin_killcam");
+    self endon("showing_final_killcam");
 
     if (self.pers["autoprone_endgame"])
     {
@@ -747,7 +747,7 @@ auto_prone_logic()
 game_ended_prone()
 {
     self endon("stop_auto_prone");
-    self endon("begin_killcam");
+    self endon("showing_final_killcam");
 
     level waittill("game_ended");
 
@@ -2607,13 +2607,56 @@ flashrumbleloop(num)
 
 watch_freeze_anim()
 {
-    self waittill("begin_killcam");
+    self waittill("showing_final_killcam");
     setdvar("pan_freezeanim", 0);
 }
 
 palette()
 {
-    colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^&", "^c", "^*"];
+    colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^*"];
     option = colors[randomint(colors.size)];
     return option;
+}
+
+set_timescale(timescale)
+{
+    timescale = float(timescale);
+    self custom_scripts\_util::setpers("slomo", timescale);
+    setslowmotion(timescale, timescale, 0);
+}
+
+rewatch_round(mode)
+{
+    self custom_scripts\_util::setpers("slomo_mode", mode);
+    self notify("rewatch_round");
+    self thread watch_round_end();
+}
+
+watch_round_end()
+{
+    self endon("rewatch_round");
+
+    if (self custom_scripts\_util::getpers("slomo_mode") == "normal")
+        return;
+
+    if (self custom_scripts\_util::getpers("slomo_mode") == "round end")
+    {
+        level waittill("game_ended");
+        setslowmotion(1, 1, 0);
+    }
+
+    if (self custom_scripts\_util::getpers("slomo_mode") == "start of killcam")
+    {
+        self waittill("showing_final_killcam");
+        setslowmotion(1, 1, 0);
+    }
+}
+
+reload_timescale()
+{
+    // safety endons
+    level endon("game_ended");
+    self endon("disconnect");
+    custom_scripts\_util::waittill_prematch_over();
+    setslowmotion(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
 }

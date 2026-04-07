@@ -295,6 +295,8 @@ structure()
         self add_menu(menu);
         self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
         self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
+        self add_increment("timescale", increment_controls, ::set_timescale, float(self getpers("slomo")), 0.25, 10, 0.25, "slomo"); 
+        self add_array("timescale mode", slider_controls, ::rewatch_round, list("round end,start of killcam,normal"));
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
         self add_increment("knockback", increment_controls, ::setdvarmenu, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
         break;
