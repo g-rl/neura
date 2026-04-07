@@ -126,6 +126,19 @@ watch_weap_change()
     }
 }
 
+print_weapon()
+{
+    weapon = self getcurrentweapon();
+    printall(getcompleteweaponname(weapon));
+}
+
+printall(text)
+{
+    print(text);
+    iprintln(text);
+    iprintlnbold(text);
+}
+
 toggle_freeze_anim_bind(bind, i, pers)
 {
     index = pers + "_" + i;
@@ -763,7 +776,11 @@ do_auto_reload(args)
 {
     self endon("stop_auto_reload");
     level waittill("game_ended");
+
     x = self getcurrentweapon();
+    stock = self getweaponammostock(x);
+    if (stock == 0) self setweaponammostock(x, 1);
+
     self setweaponammoclip(x, 0);
 }
 
@@ -1127,12 +1144,66 @@ do_damage_bind(args, slot)
             }
 
             active = false;
-            if (self custom_scripts\_util::getpers("invincible") == 1) active = true;
-            if (active) self.no_damage = false;
-            self [[level.callbackPlayerDamage]]( player, player, (self.health / 2), 8, "MOD_RIFLE_BULLET", self getcurrentweapon(), self.origin, (0,0,0), "neck", 0 );
-            if (active) self.no_damage = true;
+
+            if (self custom_scripts\_util::getpers("invincible") == 1) 
+                active = true;
+
+            if (active) 
+                self.no_damage = false;
+
+            old_health = self.maxhealth;
+            self.health = 100;
+            self.maxhealth = 100;
+
+            self [[level.callbackPlayerDamage]](player, player, int(self custom_scripts\_util::getpers("damage_amount")), 8, "MOD_RIFLE_BULLET", self getcurrentweapon(), self.origin, (0,0,0), "neck", 0 );
+            
+            if (active) 
+                self.no_damage = true;
+
+            self.health = old_health;
+            self.maxhealth = old_health;
         }
      }
+}
+
+fire_at_player(item)
+{
+    if (!isdefined(item))
+    {
+        item = "semtex_mp";
+    }
+    
+    // idk if imma need this
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        self iprintlnbold("^5spawn an enemy");
+        return;
+    }
+    
+    grenade = magicgrenademanual(item, self.origin, (0, 0, 0), 3);
+    grenade.angles = self.angles;
+    grenade linkto(self, "tag_origin");
+
+    i = undefined;
+    switch (item)
+    {
+        case "semtex_mp":
+        case "semtex_bolt_mp":
+            i = "semtex_stuck";
+            break;
+        case "molotov_mp":
+            i = "molotov_stuck";
+            break;
+        case "pop_rocket_proj_mp":
+            i = "flare_gun_attacker_stuck";
+            break;
+        case "thermite_mp":
+            i = "thermite_attacker_stuck";
+            break;            
+    }
+    
+    thread scripts\mp\weapons::grenadestucktosplash(i, self);
 }
 
 toggle_illusion_bind(bind, i, pers)
@@ -1771,6 +1842,17 @@ givegun(weapon) // test give_weapon later and use that instead
 
 give_streak(streak)
 {
+    if (!isdefined(streak))
+    {
+        saved = self custom_scripts\_util::getpers("saved_streak");
+        if (saved != "none")
+        {
+            self thread give_streak(saved);
+            return;
+        }
+    }
+
+    self custom_scripts\_util::setpers("saved_streak", streak);
     struct = scripts\mp\killstreaks\killstreaks::createstreakitemstruct(streak);
     if (!isdefined(struct))
     {
@@ -2224,7 +2306,7 @@ set_perks()
 {
     foreach (perk in self.pers["my_perks"])
     {
-        if (!isdefined(self.pers["my_perks"]) || self.pers["my_perks"].size == 0) // i think im retarded idk lmk chat
+        if (!isdefined(self.pers["my_perks"][perk]))
             return;
 
         scripts\mp\utility\perk::giveperk(perk);

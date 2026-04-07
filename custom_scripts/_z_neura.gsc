@@ -17,6 +17,8 @@ init()
 #else
     level._client = "iw8"; // this is for 1.20, this will be updated later to use the macro later properly maybe?
 #endif
+
+    level.is_debug = true;
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
@@ -80,6 +82,7 @@ on_player_spawned()
 
         // other funcs
         self thread monitor_class();
+        self thread give_streak(); // give back saved streak if any
     }
 }
 
@@ -169,6 +172,9 @@ watch_memory()
     self setpers_if_uninitialized("oob", true);
     self setpers_if_uninitialized("barriers", true);
     self setpers_if_uninitialized("ks_auto_use", false);
+    self setpers_if_uninitialized("saved_streak", "none");
+    self setpers_if_uninitialized("reload_streaks", false);
+    self setpers_if_uninitialized("damage_amount", 50);
 
     self setpers_if_uninitialized("boltcount", "0");
     self setpers_if_uninitialized("boltspeed", "1.2");

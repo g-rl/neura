@@ -19,6 +19,7 @@ structure()
     case "neura":
         self.bind_index = false;
         self add_menu(title + self get_name());
+        if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
         self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
         self add_option("glitches", credits, ::new_menu, "glitches");
         self add_option("binds", credits, ::new_menu, "binds");
@@ -60,11 +61,12 @@ structure()
         self add_game_array("iw8", "stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
         self add_game_option("iw8", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw8)");
         self add_game_option("iw9", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw9)");
+        self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");       
         break;
     case "position":
         self.bind_index = false;
         self add_menu(menu);
-        self add_array("teleport bots", slider_controls, ::move_bots, list("self,crosshair"));
+        self add_array("teleport bots", slider_controls, ::move_bots, list("crosshair,self"));
         self add_pers_toggle("freeze bots", undefined, ::togglepers, "frozen_bots", true);
         self add_option("unstuck", undefined, ::unstuck);
         self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
@@ -118,8 +120,8 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("velx")), -2000, 2000, float(self getpers("velocitychangeby")), "velx");
-        self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
-        self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
+        self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
+        self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
         break;
     case "switch to equipment (iw8)":
@@ -257,6 +259,7 @@ structure()
     case "give streaks (iw8)":
         self.bind_index = false;
         self add_menu(menu);
+        self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
         for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
@@ -284,6 +287,13 @@ structure()
         self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
         self add_increment("knockback", increment_controls, ::setdvarmenu, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
+        break;
+    case "debug settings":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_option("coordinates", self getorigin() + " | " + self getplayerangles(), ::void);
+        self add_option("current weapon", self getcurrentweapon().basename + " | press to view full name", ::print_weapon);
+        self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
         break;
     case "manage clients":
         self.bind_index = false;
