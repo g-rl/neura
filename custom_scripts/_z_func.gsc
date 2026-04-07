@@ -2637,6 +2637,7 @@ palette()
 }
 
 pal(text)
+{
     colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^*"];
     option = colors[randomint(colors.size)];
     return option + text;
