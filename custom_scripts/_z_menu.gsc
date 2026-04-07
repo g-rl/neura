@@ -31,7 +31,7 @@ structure()
         self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
         self add_option("client settings", credits, ::new_menu, "manage clients");
         break;
-    case "mods & toggles":
+    case "mods & toggles": // eh clean this up later -et
         self.bind_index = false;
         self add_menu(menu);
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
@@ -64,6 +64,7 @@ structure()
         self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
         self add_increment("flash amount (bind)", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
         self add_increment("shellshock amount (bind)", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
+        self add_game_option("iw8", "shellshock type", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "shellshock type (iw8)");
         break;
     case "position":
         self.bind_index = false;
@@ -124,6 +125,14 @@ structure()
         self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
         self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
+        break;
+    case "shellshock type (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "shellshock_type");
+        }
         break;
     case "switch to equipment (iw8)":
         self.bind_index = false;
