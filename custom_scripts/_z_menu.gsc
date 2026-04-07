@@ -71,8 +71,6 @@ structure()
         self add_option("unstuck", undefined, ::unstuck);
         self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
         self add_array("manage position", slider_controls, ::position_manager, list("save,load"));
-        self add_option("save position", undefined, ::save_spawn);
-        self add_option("load position", undefined, ::load_spawn);
         self add_option("reset position", undefined, ::reset_position);
         if (float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
         {
