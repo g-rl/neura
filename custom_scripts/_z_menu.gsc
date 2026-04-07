@@ -70,6 +70,7 @@ structure()
         self add_pers_toggle("freeze bots", undefined, ::togglepers, "frozen_bots", true);
         self add_option("unstuck", undefined, ::unstuck);
         self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
+        self add_array("manage position", slider_controls, ::position_manager, list("save,load"));
         self add_option("save position", undefined, ::save_spawn);
         self add_option("load position", undefined, ::load_spawn);
         self add_option("reset position", undefined, ::reset_position);
@@ -269,7 +270,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("dvars", undefined, ::new_menu, "dvars");
-        self add_option("set random rounds", undefined, ::random_rounds);
+        self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_option("spawn enemy", undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");

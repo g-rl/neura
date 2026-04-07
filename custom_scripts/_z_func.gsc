@@ -881,9 +881,9 @@ unlimited_eq(args)
     }
 }
 
-manage_bounce(mode)
+manage_bounce(args)
 {
-    switch (mode)
+    switch (args)
     {
         case "spawn":
             self thread spawn_bounce();
@@ -971,33 +971,34 @@ move_bots(args)
 {
     level endon("game_ended"); // just in case
 
-    switch(args)
+    switch (args)
     {
         case "self":
-        foreach (player in level.players) 
-        {
-            if (isai(player) || isbot(player)) 
+            foreach (player in level.players) 
             {
-                player setorigin(self.origin);
-                player save_spawn();
-                self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self.origin);
-                self play_sound("recon_drone_marked_owner");
+                if (isai(player) || isbot(player)) 
+                {
+                    player setorigin(self.origin);
+                    player thread save_spawn();
+                    self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self.origin);
+                    self play_sound("recon_drone_marked_owner");
+                }
             }
-        }
         break;
         case "crosshair":
-        foreach (player in level.players) 
-        {
-            if (isai(player) || isbot(player)) 
+            foreach (player in level.players) 
             {
-                player setorigin(self getcrosshair());
-                player save_spawn();
-                self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
-                self play_sound("recon_drone_marked_owner");
+                if (isai(player) || isbot(player)) 
+                {
+                    player setorigin(self getcrosshair());
+                    player thread save_spawn();
+                    self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
+                    self play_sound("recon_drone_marked_owner");
+                }
             }
-        }
-        break;
-
+            break;
+        default:
+            break;
     }
 }
 
@@ -1016,12 +1017,12 @@ teleport_player(from, to, player)
     }
 
     from setorigin(to.origin);
-    player save_spawn();
+    player thread save_spawn();
 }
 
-manage_teleport(mode, player)
+manage_teleport(args, player)
 {
-    switch (mode)
+    switch (args)
     {
         case "me":
             self thread teleport_player(player, self, player);
@@ -1682,6 +1683,21 @@ give_perks()
     }
 }
 
+round_manager(args)
+{
+    switch (args)
+    {
+        case "random":
+            random_rounds();
+            break;
+        case "reset":
+            reset_rounds();
+            break;
+        default:
+            break;
+    }
+}
+
 random_rounds()
 {
     random_round_axis = randomint(4);
@@ -1692,7 +1708,17 @@ random_rounds()
     game["teamScores"]["allies"] = random_round_ally;
     game["teamScores"]["axis"] = random_round_axis;
     game["roundsplayed"] = rounds_played;
-    game["switchedsides"] = 0; // never switch sides
+    game["switchedsides"] = 0;
+}
+
+reset_rounds()
+{
+    game["roundsWon"]["axis"] = 0;
+    game["roundsWon"]["allies"] = 0;
+    game["teamScores"]["allies"] = 0;
+    game["teamScores"]["axis"] = 0;
+    game["roundsplayed"] = 0;
+    game["switchedsides"] = 0;
 }
 
 toggle_clean_kc()
@@ -1771,7 +1797,7 @@ teleport_to_cross(player)
     crosshair = self getcrosshair();
     player setorigin(crosshair);
     self look_at_me(player);
-    player save_spawn();
+    player thread save_spawn();
 }
 
 refill_my_ammo(args)
@@ -2164,6 +2190,22 @@ load_class()
     // self switchtoweapon(self getweaponslistprimaries()[0]);
 }
 
+position_manager(args)
+{
+    switch (args)
+    {
+        case "save":
+            self thread save_spawn();
+            break;
+        case "load":
+            self thread load_spawn();
+            break;
+        default:
+            self thread save_spawn();
+            break;        
+    }
+}
+
 class_manager(args)
 {
     switch (args)
@@ -2179,6 +2221,7 @@ class_manager(args)
             break;
     }
 }
+
 
 reload_class(args)
 {
