@@ -247,6 +247,7 @@ watch_memory()
     self setup_bind("freeze_anim", false, ::do_freeze_anim_bind);
     self setup_bind("shellshock", false, ::do_shellshock_bind); 
     self setup_bind("load_class", false, ::do_load_class_bind); 
+    self setup_bind("flash", false, ::do_flash_bind); 
 }
 
 // this was used to debug IW9, and can be used for S4 too

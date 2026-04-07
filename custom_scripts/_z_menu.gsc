@@ -12,7 +12,7 @@ structure()
     credits = "made with ^5<3^7 by ^5ethan^7, ^5mikey ^7& ^5blue";
     client = get_current_client();
     title = "neura ^5" + client + "^7 - ";
-    bind_list = list("load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
@@ -64,7 +64,7 @@ structure()
         self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
         self add_increment("flash amount (bind)", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
         self add_increment("shellshock amount (bind)", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
-        self add_game_option("iw8", "shellshock type", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "shellshock type (iw8)");
+        self add_game_array("iw8", "shellshock type (bind)", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
         break;
     case "position":
         self.bind_index = false;
@@ -375,6 +375,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "flash":
+            self add_bind(menu, ::toggle_flash_bind, "flash");
+            break;
         case "load class":
             self add_bind(menu, ::toggle_load_class_bind, "load_class");
             break;

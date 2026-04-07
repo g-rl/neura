@@ -157,7 +157,7 @@ toggle_freeze_anim_bind(bind, i, pers)
 do_freeze_anim_bind(args, slot)
 {
     self endon("disconnect");
-    self endon("stop_nac_bind");
+    self endon("stop_freeze_anim_bind");
     level endon("game_ended");
     for (;;)
     {
@@ -2549,6 +2549,37 @@ spawnbot(team, amount)
         amount = 1;
 
     level thread [[level.bot_funcs["bots_spawn"]]](amount, team);
+}
+
+toggle_flash_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_flash_bind(1, i);
+    else
+        self notify("stop_flash_bind");
+}
+
+do_flash_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_flash_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self thread try_to_flash();
+            wait 0.05;
+        }
+    }
 }
 
 try_to_flash()
