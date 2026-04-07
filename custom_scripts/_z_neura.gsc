@@ -64,6 +64,7 @@ on_player_spawned()
         
         self thread watch_memory();
         self thread watch_frozen_bots();
+        self thread watch_freeze_anim();
 
         if (!isdefined(self.menu))
             self.menu = [];

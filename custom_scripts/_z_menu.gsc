@@ -126,14 +126,6 @@ structure()
         self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
         break;
-    case "shellshock type (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "shellshock_type");
-        }
-        break;
     case "switch to equipment (iw8)":
         self.bind_index = false;
         self add_menu(menu);

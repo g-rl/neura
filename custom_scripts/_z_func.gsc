@@ -2604,3 +2604,9 @@ flashrumbleloop(num)
         wait 0.05;
     }
 }
+
+watch_freeze_anim()
+{
+    self waittill("begin_killcam");
+    setdvar("pan_freezeanim", 0);
+}
