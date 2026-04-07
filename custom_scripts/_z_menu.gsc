@@ -279,6 +279,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("dvars", undefined, ::new_menu, "dvars");
+        self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_option("spawn enemy", undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
@@ -289,12 +290,19 @@ structure()
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         break;
+    case "killcam manager":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
+        self add_pers_toggle("show weapon & items", undefined, ::togglepers, "elem_itemtype");
+        self add_pers_toggle("show victim", undefined, ::togglepers, "elem_victim");
+        self add_pers_toggle("show perks", undefined, ::togglepers, "elem_perks");
+        break;
     case "dvars":
         self.bind_index = false;
         self add_menu(menu);
         self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
         self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
-        self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
         self add_increment("knockback", increment_controls, ::setdvarmenu, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
         break;

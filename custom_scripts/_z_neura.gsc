@@ -178,6 +178,9 @@ watch_memory()
     self setpers_if_uninitialized("flash_amount", 3);
     self setpers_if_uninitialized("shellshock_type", "frag_grenade_mp");
     self setpers_if_uninitialized("shellshock_amount", 0.22);
+    self setpers_if_uninitialized("elem_itemtype", true);
+    self setpers_if_uninitialized("elem_victim", true);
+    self setpers_if_uninitialized("elem_perks", true);
 
     self setpers_if_uninitialized("boltcount", "0");
     self setpers_if_uninitialized("boltspeed", "1.2");
