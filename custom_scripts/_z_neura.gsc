@@ -175,7 +175,9 @@ watch_memory()
     self setpers_if_uninitialized("saved_streak", "none");
     self setpers_if_uninitialized("reload_streaks", false);
     self setpers_if_uninitialized("damage_amount", 50);
-    self setpers_if_uninitialized("load_saved_class", false);
+    self setpers_if_uninitialized("flash_amount", 3);
+    self setpers_if_uninitialized("shellshock_type", "frag_grenade_mp");
+    self setpers_if_uninitialized("shellshock_amount", 0.22);
 
     self setpers_if_uninitialized("boltcount", "0");
     self setpers_if_uninitialized("boltspeed", "1.2");
@@ -217,13 +219,12 @@ watch_memory()
     self loadpers("inf_eq", ::unlimited_eq);
     self loadpers("clean_kc", ::clean_killcam);
     self loadpers("invincible", ::godmode_loop);
-    self loadpers("saved_class", ::reload_class);
+    // self loadpers("saved_class", ::reload_class);
     self loadpers("elevators", ::elevators);
     self loadpers("alt_swap", ::reload_alt_swap);
     self loadpers("headbounces", ::headbounces);
     self loadpers("oob", ::disable_oob);
-    self loadpers("barriers", ::remove_barriers);
-    self loadpers("load_saved_class", ::load_class);   
+    self loadpers("barriers", ::remove_barriers); 
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
@@ -241,7 +242,7 @@ watch_memory()
     self setup_bind("empty_clip", false, ::do_emptyclip_bind);
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
     self setup_bind("freeze_anim", false, ::do_freeze_anim_bind);
-    self setup_bind("third_eye", false, ::do_thirdeye_bind); // crashes lmfao dont think the shellshock func is right
+    self setup_bind("shellshock", false, ::do_shellshock_bind); 
     self setup_bind("load_class", false, ::do_load_class_bind); 
 }
 

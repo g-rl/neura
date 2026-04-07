@@ -275,7 +275,7 @@ do_emptyclip()
     self setweaponammoclip(weapon, 0);
 }
 
-toggle_thirdeye_bind(bind, i, pers)
+toggle_shellshock_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
@@ -285,22 +285,22 @@ toggle_thirdeye_bind(bind, i, pers)
     wait 0.05;
 
     if (self.pers[index])
-        self thread do_thirdeye_bind(1, i);
+        self thread do_shellshock_bind(1, i);
     else
-        self notify("stop_thirdeye_bind");
+        self notify("stop_shellshock_bind");
 }
 
-do_thirdeye_bind(args, slot)
+do_shellshock_bind(args, slot)
 {
     self endon("disconnect");
-    self endon("stop_thirdeye_bind");
+    self endon("stop_shellshock_bind");
     level endon("game_ended");
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            self shellshock("explosion", 0.005);
+            self shellshock(self custom_scripts\_util::getpers("shellshock_type"), float(self custom_scripts\_util::getpers("shellshock_amount")));
             wait 0.05;
         }
     }
@@ -2213,15 +2213,15 @@ load_class(args)
     }
 
     self takeallweapons();
-
     foreach(weapon in self.pers["curr_class"])
     {
+        if (weapon.basename == "none")
+            continue;
+
         self giveweapon(weapon);
-        // self max_ammo(weapon);
     }
 
-    self custom_scripts\_util::nprintln("loaded class with ^5" + self.pers["curr_class"].size + " ^7items");
-    // self switchtoweapon(self getweaponslistprimaries()[0]);
+    self switchto(self getweaponslistprimaries()[0]);
 }
 
 position_manager(args)
@@ -2539,4 +2539,27 @@ spawnbot(team, amount)
         amount = 1;
 
     level thread [[level.bot_funcs["bots_spawn"]]](amount, team);
+}
+
+try_to_flash()
+{
+    amount = int(self custom_scripts\_util::getpers("flash_amount"));
+    x = max(3, amount * 0.75);
+    self shellshock("flashbang_mp", x);
+    self.flashendtime = gettime() + x * 1000;
+    self thread flashrumbleloop(0.75);
+}
+
+flashrumbleloop(num)
+{
+    self endon("stop_monitoring_flash");
+    self endon("flash_rumble_loop");
+    self notify("flash_rumble_loop");
+    loop_time = gettime() + num * 1000;
+
+    while (gettime() < loop_time)
+    {
+        self playrumbleonentity("damage_heavy");
+        wait 0.05;
+    }
 }

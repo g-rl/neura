@@ -12,7 +12,7 @@ structure()
     credits = "made with ^5<3^7 by ^5ethan^7, ^5mikey ^7& ^5blue";
     client = get_current_client();
     title = "neura ^5" + client + "^7 - ";
-    bind_list = list("load class,third eye,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
@@ -61,7 +61,9 @@ structure()
         self add_game_array("iw8", "stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
         self add_game_option("iw8", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw8)");
         self add_game_option("iw9", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw9)");
-        self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");       
+        self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
+        self add_increment("flash amount (bind)", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
+        self add_increment("shellshock amount (bind)", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
         break;
     case "position":
         self.bind_index = false;
@@ -161,7 +163,6 @@ structure()
         // self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]); // broken broken broken
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
-        self add_pers_toggle("load saved class on spawn", undefined, ::togglepers, "load_saved_class", true);
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
         self add_option("take weapon", undefined, ::take_current);
         self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
@@ -293,6 +294,7 @@ structure()
         self add_menu(menu);
         self add_option("coordinates", self getorigin() + " | " + self getplayerangles(), ::void);
         self add_option("current weapon", self getcurrentweapon().basename + " | press to view full name", ::print_weapon);
+        self add_option("try to flash", undefined, ::try_to_flash);
         self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
         break;
     case "manage clients":
@@ -359,8 +361,8 @@ bind_index(menu, increment_controls) // ew
         case "load class":
             self add_bind(menu, ::toggle_load_class_bind, "load_class");
             break;
-        case "third eye":
-            self add_bind(menu, ::toggle_thirdeye_bind, "third_eye");
+        case "shellshock":
+            self add_bind(menu, ::toggle_shellshock_bind, "shellshock");
             break;
         case "freeze anim":
             self add_bind(menu, ::toggle_freeze_anim_bind, "freeze_anim");
