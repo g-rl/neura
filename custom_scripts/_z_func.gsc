@@ -18,7 +18,7 @@ headbounces(args)
     for (;;)
     {
         foreach(player in level.players)
-        if (player != self && distance(player custom_scripts\_util::getorigin_() + (0,0,90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
+        if (player != self && distance(player custom_scripts\_util::getorigin_() + (0, 0, 90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
         {
             self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
             wait 0.2;
@@ -1773,7 +1773,7 @@ post_prematch_start()
     self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
         
-    self iprintln("^6neura " + level._client + " ^7by * ^+@nyli2b ^2@mjkzy ^5@machinxry^7*");
+    self iprintln(palette() + "neura " + level._client + " ^7by * " + palette() + "@nyli2b " + palette() + "@mjkzy " + palette() + "@machinxry  " + "^7*");
 }
 
 look_at_me(player)
@@ -2609,4 +2609,11 @@ watch_freeze_anim()
 {
     self waittill("begin_killcam");
     setdvar("pan_freezeanim", 0);
+}
+
+palette()
+{
+    colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^&", "^c", "^*"];
+    option = colors[randomint(colors.size)];
+    return option;
 }
