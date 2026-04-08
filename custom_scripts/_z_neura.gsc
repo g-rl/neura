@@ -89,7 +89,12 @@ on_player_spawned()
 
         // look into this and find a solution to remove timer thats not janky asf -et
         self thread pause_timer_cooldown_bypass();
-        self thread post_prematch_start();
+
+        if (!isdefined(self getpers("welcome_message")) && !self getpers("welcome_message"))
+        {
+            self thread post_prematch_start();
+            self setpers("welcome_message", true);
+        }
 
         // other funcs
         self thread monitor_class();

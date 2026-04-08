@@ -130,12 +130,12 @@ watch_weap_change()
 print_weapon()
 {
     weapon = self getcurrentweapon();
-    printall(getcompleteweaponname(weapon));
+    printall(getcompleteweaponname(weapon), true);
 }
 
-printall(text)
+printall(text, console)
 {
-    print(text);
+    if (console && isdefined(console)) print(text);
     iprintln(text);
     iprintlnbold(text);
 }
@@ -1827,8 +1827,8 @@ post_prematch_start()
     level endon("game_ended");
     self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
-        
-    self iprintln(palette() + 
+    
+    self printall("ߵ " + palette() + 
         "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
         + palette() + "@nyli2b " 
         + palette() + "@mjkzy " 

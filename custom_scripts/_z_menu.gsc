@@ -21,19 +21,19 @@ structure()
         self.bind_index = false;
         self add_menu(title);
         self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
-        self add_option("glitches", credits, ::new_menu, "glitches");
         self add_option("binds", credits, ::new_menu, "binds");
-        self add_option("bind settings", credits, ::new_menu, "bind settings");
         self add_option("position", credits, ::new_menu, "position");
-        self add_option("class manager", credits, ::new_menu, "class manager");
-        self add_option("game settings", credits, ::new_menu, "game settings");
-        self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
-        self add_option("client settings", credits, ::new_menu, "manage clients");
+        self add_option("aimbot", credits, ::new_menu, "aimbot settings");
+        self add_option("manage class", credits, ::new_menu, "class manager");
+        self add_option("manage game", credits, ::new_menu, "game settings");
+        self add_option("all clients", credits, ::new_menu, "manage clients");
         if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
         break;
     case "mods & toggles": // eh clean this up later -et
         self.bind_index = false;
         self add_menu(menu);
+        self add_option("bind settings", credits, ::new_menu, "bind settings");
+        self add_option("glitches", credits, ::new_menu, "glitches");
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
 
         // engine toggles
