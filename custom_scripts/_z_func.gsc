@@ -50,6 +50,7 @@ one_handed_gun()
     self.tag_stowed_hip = undefined;
     scripts\mp\class::giveloadout(self.pers["team"], self.class);
     super = scripts\mp\supers::getcurrentsuper();
+    self.pers["class"] = self.class;
     if (isdefined(super)) // supers = field upgrade
     {
         self thread scripts\mp\supers::givesuperweapon(super);
@@ -1100,6 +1101,7 @@ monitor_class()
         self.tag_stowed_back = undefined;
         self.tag_stowed_hip = undefined;
         scripts\mp\class::giveloadout(self.pers["team"], self.pers["class"]);
+        self.class = self.pers["class"];
 
         // also give the super each class change
         super = scripts\mp\supers::getcurrentsuper();
@@ -1108,6 +1110,7 @@ monitor_class()
             self thread scripts\mp\supers::givesuperweapon(super);
             self thread scripts\mp\supers::givesuperpoints( scripts\mp\supers::getsuperpointsneeded() );
         }
+        
 
         // give fast perks too
         // self thread give_perks();
