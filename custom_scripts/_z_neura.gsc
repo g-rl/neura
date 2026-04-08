@@ -190,6 +190,7 @@ watch_memory()
     self setpers_if_uninitialized("elem_perks", true);
     self setpers_if_uninitialized("slomo", 1);
     self setpers_if_uninitialized("slomo_mode", "normal");
+    self setpers_if_uninitialized("always_nac", false);
 
     // player bolt
     self setpers_if_uninitialized("boltcount", "0");
@@ -249,6 +250,7 @@ watch_memory()
     self loadpers("headbounces", ::headbounces);
     self loadpers("oob", ::disable_oob);
     self loadpers("barriers", ::remove_barriers); 
+    self loadpers("always_nac", ::do_always_nac); 
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
@@ -269,6 +271,7 @@ watch_memory()
     self setup_bind("shellshock", false, ::do_shellshock_bind); 
     self setup_bind("load_class", false, ::do_load_class_bind); 
     self setup_bind("flash", false, ::do_flash_bind); 
+    
 }
 
 // this was used to debug IW9, and can be used for S4 too

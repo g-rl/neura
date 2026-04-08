@@ -627,6 +627,41 @@ do_instaswaps(args)
     }
 }
 
+always_nac()
+{
+    if (!self.pers["always_nac"])
+    {
+        self thread do_always_nac();
+    }
+    else if (self.pers["always_nac"])
+    {
+        self notify("stop_always_nac");
+    }
+
+    self.pers["always_nac"] = !self.pers["always_nac"];
+}
+
+do_always_nac(args)
+{
+    self endon("disconnect");
+    level endon("game_ended");
+    self endon("stop_always_nac");
+
+    for (;;)
+    {
+        self waittill("button_pressed_+weapnext");
+
+        if (isdefined(self.is_swapping_y))
+        {
+            continue;
+        }
+
+        self.is_swapping_y = true;
+        self switchto(self getprevweapon());
+        self.is_swapping_y = undefined;
+    }
+}
+
 aimbot()
 {
     self.pers["aimbot"] = !custom_scripts\_util::toggle(self.pers["aimbot"]);

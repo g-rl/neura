@@ -44,6 +44,7 @@ structure()
         self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
         self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");
 
+        self add_pers_toggle("always nac", "[{+weapnext}] to easily swap", custom_scripts\_z_func::always_nac, "always_nac");
         self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
         self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
