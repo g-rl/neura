@@ -350,10 +350,6 @@ save_pos_bind()
         if (self getstance() == "crouch")
         {
             self thread save_spawn();
-            self custom_scripts\_util::nprintlnbold("ߝ [position] * saved @ ^6" + self.origin);
-            wait 1;
-            self custom_scripts\_util::nprintlnbold(" ");
-            wait 0.05;
         }
     }
 }
@@ -401,7 +397,7 @@ load_spawn()
 
     self setvelocity((0, 0, 0));
     self setorigin((float(self custom_scripts\_util::getpers("saveposx")), float(self custom_scripts\_util::getpers("saveposy")), float(self custom_scripts\_util::getpers("saveposz"))));
-    self setplayerangles((0, float(self custom_scripts\_util::getpers("saveangles2")), 0));
+    self setplayerangles((float(self custom_scripts\_util::getpers("saveangles1")), float(self custom_scripts\_util::getpers("saveangles2")), float(self custom_scripts\_util::getpers("saveangles3"))));
 }
 
 reload_position()
@@ -1667,7 +1663,7 @@ do_class_bind(args, slot)
             self.tag_stowed_hip = undefined;
             scripts\mp\class::giveloadout(self.pers["team"], self.class);
 
-            self thread always_can_delay();
+            self thread check_weapon_options(self getcurrentweapon());
 
             super = scripts\mp\supers::getcurrentsuper();
             if (isdefined(super)) // supers = field upgrade
@@ -1679,14 +1675,37 @@ do_class_bind(args, slot)
     }
 }
 
+check_weapon_options(gun)
+{
+    c = self custom_scripts\_util::getpers("ccb_always_can");
+    x = self custom_scripts\_util::getpers("ccb_one_bullet");
+    y = self custom_scripts\_util::getpers("ccb_one_bullet_left");
+    z = self custom_scripts\_util::getpers("ccb_empty_clip");
+    clip =  self getweaponammoclip(gun);
+    stock = self getweaponammostock(gun);
+
+    if (isdefined(x) && x)
+        self setweaponammoclip(gun, clip - 1);
+
+    if (isdefined(y) && y)
+        self setweaponammoclip(gun, 1);
+
+    if (isdefined(z) && z)
+        self setweaponammoclip(gun, 0);
+
+    if (isdefined(c) && c) 
+        self thread always_can_delay();
+}
+
 always_can_delay()
 {
-    wait 0.05;
-
     // TODO: nyli fix this - you register instaswaps pers, but you're doing instaswaps_1 like a index which fails the getpers check
+    // edit: im so gay 
     if (self custom_scripts\_util::getpers("class_can"))
     {
-        self switchto(self getcurrentweapon());
+        self takegood(self getcurrentweapon());
+        self givegood(self getcurrentweapon());
+        self switchtoweapon(self getcurrentweapon());
     }
 }
 
@@ -1810,7 +1829,7 @@ post_prematch_start()
     custom_scripts\_util::waittill_prematch_over();
         
     self iprintln(palette() + 
-        "neura " + level._client + " ^2(" + level._client_version + ") ^7by * " 
+        "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
         + palette() + "@nyli2b " 
         + palette() + "@mjkzy " 
         + palette() + "@machinxry  " + "^7*");
@@ -2774,6 +2793,23 @@ dprintln(text)
     if (isdefined(self.is_debug) && self.is_debug)
     {
         return iprintln("[^)debug^7] " + text);
+    }
+}
+
+respawn_everyone()
+{
+    foreach (player in level.players)
+    {
+        if (isbot(player) || isai(player))
+        {
+            if (self.team != player.team)
+            {
+                if (player.sessionstate == "spectator")
+                {
+                    [[ level.spawnplayerfunc ]](1);
+                }
+            }
+        }
     }
 }
 

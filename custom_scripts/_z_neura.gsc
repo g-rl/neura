@@ -64,7 +64,8 @@ on_player_spawned()
 
         self.neura = [];
         self.has_spawned = true;
-        
+        self.modifiers["firstblood"] = 0;
+
         self thread watch_memory();
         self thread watch_frozen_bots();
         self thread watch_freeze_anim();
@@ -196,6 +197,9 @@ watch_memory()
     self setpers_if_uninitialized("slomo_mode", "normal");
     self setpers_if_uninitialized("always_nac", false);
     self setpers_if_uninitialized("always_can", true);
+    self setpers_if_uninitialized("ccb_empty_clip", false);
+    self setpers_if_uninitialized("ccb_one_bullet", true);
+    self setpers_if_uninitialized("ccb_one_bullet_left", false);
 
     // player bolt
     self setpers_if_uninitialized("boltcount", "0");

@@ -20,17 +20,16 @@ structure()
     case "neura":
         self.bind_index = false;
         self add_menu(title);
-        if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
         self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
         self add_option("glitches", credits, ::new_menu, "glitches");
         self add_option("binds", credits, ::new_menu, "binds");
+        self add_option("bind settings", credits, ::new_menu, "bind settings");
         self add_option("position", credits, ::new_menu, "position");
-        self add_option("bolt movement", credits, ::new_menu, "bolt movement settings");
-        self add_option("edit velocity", credits, ::new_menu, "edit velocity");
         self add_option("class manager", credits, ::new_menu, "class manager");
         self add_option("game settings", credits, ::new_menu, "game settings");
         self add_option("aimbot settings", credits, ::new_menu, "aimbot settings");
         self add_option("client settings", credits, ::new_menu, "manage clients");
+        if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
         break;
     case "mods & toggles": // eh clean this up later -et
         self.bind_index = false;
@@ -57,16 +56,8 @@ structure()
         self add_pers_toggle("putaway equipment", undefined, ::togglepers, "eq_putaway", true);
         self add_pers_toggle("real scavenger", undefined, ::togglepers, "real_scavenger", true);
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
-        self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 2, 20, 1, "class_wrap");
         self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
-        self add_game_array("iw8", "stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
-        self add_game_option("iw8", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw8)");
-        self add_game_option("iw9", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw9)");
-        self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
-        self add_increment("flash amount (bind)", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
-        self add_increment("shellshock amount (bind)", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
-        self add_game_array("iw8", "shellshock type (bind)", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
         break;
     case "position":
         self.bind_index = false;
@@ -105,6 +96,20 @@ structure()
         foreach (bind in bind_list)
             self add_option(bind, undefined, ::new_menu, bind);
         break;
+    case "bind settings":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_option("bolt movement", undefined, ::new_menu, "bolt movement settings");
+        self add_option("class change", undefined, ::new_menu, "class change settings");
+        self add_option("edit velocity", undefined, ::new_menu, "edit velocity");
+        self add_game_option("iw8", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw8)");
+        self add_game_option("iw9", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw9)");        
+        self add_game_array("iw8", "stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
+        self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
+        self add_increment("flash amount (bind)", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
+        self add_increment("shellshock amount (bind)", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
+        self add_game_array("iw8", "shellshock type (bind)", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
+        break;
     case "bolt movement settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -112,6 +117,15 @@ structure()
         self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 0.1, 10, 0.1, "boltspeed");
         self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
         self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
+        break;
+    case "class change settings":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap");
+        self add_pers_toggle("one bullet out", undefined, ::togglepers, "ccb_one_bullet", true);
+        self add_pers_toggle("one bullet left", undefined, ::togglepers, "ccb_one_bullet_left", true);
+        self add_pers_toggle("empty clip", undefined, ::togglepers, "ccb_empty_clip", true);
+        self add_pers_toggle("canswap", undefined, ::togglepers, "ccb_always_can", true);
         break;
     case "bot bolt movement settings":
         self.bind_index = false;
@@ -276,6 +290,7 @@ structure()
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_option("spawn enemy", undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
+        self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
