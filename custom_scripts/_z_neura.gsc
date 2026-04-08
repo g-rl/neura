@@ -134,6 +134,7 @@ watch_memory()
     setdvarifuninitialized("pan_freezeanim", 0);
     setdvarifuninitialized("pan_alwaysaltswap", 0);
     setdvarifuninitialized("pan_canzooms", 0);
+    setdvar("LPSPNKLRPO", false); // remove all motion blur 
 
     self setpers("lives", 99);
     self setpers_if_uninitialized("camo", camo);
