@@ -878,24 +878,6 @@ drop_util(type)
     }
 }
 
-monitor_dvars()
-{
-    /*
-    level endon("game_ended");
-    self endon("disconnect");
-    custom_scripts\_util::waittill_prematch_over();
-    */
-
-    // TODO
-    //self thread watch_godmode();
-    //self thread watch_night_vision();
-    //self thread watch_oob();
-    //self thread watch_barriers();
-    //self thread watch_killstreaks();
-    //self thread watch_giveweapon();
-    //self thread watch_weapon_camo();
-}
-
 toggle_inf_eq()
 {
     self.pers["inf_eq"] = !custom_scripts\_util::toggle(self.pers["inf_eq"]);
