@@ -12,13 +12,13 @@ init()
 {
 #ifdef S4
     level._client = "s4";
+    level._client_version = "1.0.0"; // TODO
 #elifdef IW9
     level._client = "iw9";
+    level._client_version = "1.0.0"; // TODO
 #else
-    level._client = "iw8"; // this is for 1.20, this will be updated later to use the macro later properly maybe?
-
-    // a
-    level._client_version = getdvar("iw8_build_version");
+    level._client = "iw8";
+    level._client_version = getdvar("build_version"); // build_version_full can be used for more in depth checks
 #endif
 
     level.is_debug = true;
