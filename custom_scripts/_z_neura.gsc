@@ -137,13 +137,14 @@ watch_memory()
     setdvarifuninitialized("rainbow", 1);
 
     // engine dvars
-    setdvarifuninitialized("pan_instashoots", 0);
+    setdvarifuninitialized("pan_instashoots", 1);
     setdvarifuninitialized("pan_alwayscanswap", 0);
     setdvarifuninitialized("pan_sprintswaps", 0);
     setdvarifuninitialized("pan_freezeanim", 0);
     setdvarifuninitialized("pan_alwaysaltswap", 0);
     setdvarifuninitialized("pan_canzooms", 0);
-    setdvar("LPSPNKLRPO", false); // remove all motion blur 
+    setdvar("LPSPNKLRPO", 0); // remove all motion blur
+    setdvar("NOSLRNTRKL", 0); // disable third person just in case
 
     self setpers("lives", 99);
     self setpers_if_uninitialized("camo", camo);
@@ -201,10 +202,11 @@ watch_memory()
     self setpers_if_uninitialized("slomo", 1);
     self setpers_if_uninitialized("slomo_mode", "normal");
     self setpers_if_uninitialized("always_nac", false);
-    self setpers_if_uninitialized("always_can", true);
+    self setpers_if_uninitialized("ccb_always_can", true);
     self setpers_if_uninitialized("ccb_empty_clip", false);
-    self setpers_if_uninitialized("ccb_one_bullet", true);
+    self setpers_if_uninitialized("ccb_one_bullet_out", true);
     self setpers_if_uninitialized("ccb_one_bullet_left", false);
+    self setpers_if_uninitialized("ccb_illusion", false);
 
     // player bolt
     self setpers_if_uninitialized("boltcount", "0");
@@ -222,6 +224,13 @@ watch_memory()
     {
         self setpers_if_uninitialized("bot_boltpos" + i, "0");
         wait 0.05;
+    }
+
+    // record movement
+    self setpers_if_uninitialized("recordmovementcount", "0");
+    for (i=1; i < 20; i++)
+    {
+        self setpers_if_uninitialized("recordmovementpos" + i, "0");
     }
 
     // paths
@@ -285,7 +294,9 @@ watch_memory()
     self setup_bind("shellshock", false, ::do_shellshock_bind); 
     self setup_bind("load_class", false, ::do_load_class_bind); 
     self setup_bind("flash", false, ::do_flash_bind); 
-    
+    self setup_bind("third_person", false, ::do_third_person_bind); 
+    self setup_bind("record_movement", false, ::do_record_movement_bind); 
+
 }
 
 // this was used to debug IW9, and can be used for S4 too

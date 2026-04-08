@@ -13,8 +13,8 @@ structure()
     build = get_current_client();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
-
+    bind_list = list("third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    // getdvar("NKTMKRMSKR") == "dm"
     switch(menu)
     {
     case "neura":
@@ -32,8 +32,9 @@ structure()
     case "mods & toggles": // eh clean this up later -et
         self.bind_index = false;
         self add_menu(menu);
-        self add_option("bind settings", credits, ::new_menu, "bind settings");
-        self add_option("glitches", credits, ::new_menu, "glitches");
+        self add_option("bind settings", undefined, ::new_menu, "bind settings");
+        self add_option("glitches", undefined, ::new_menu, "glitches");
+        if (scripts\mp\utility\game::getgametype() == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
 
         // engine toggles
@@ -99,32 +100,42 @@ structure()
     case "bind settings":
         self.bind_index = false;
         self add_menu(menu);
+        self add_option("record movement", undefined, ::new_menu, "record movement settings");
         self add_option("bolt movement", undefined, ::new_menu, "bolt movement settings");
         self add_option("class change", undefined, ::new_menu, "class change settings");
         self add_option("edit velocity", undefined, ::new_menu, "edit velocity");
-        self add_game_option("iw8", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw8)");
-        self add_game_option("iw9", "choose equipment (bind)", undefined, ::new_menu, "equipment bind (iw9)");        
-        self add_game_array("iw8", "stuck weapon (bind)", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
-        self add_increment("damage amount (bind)", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
-        self add_increment("flash amount (bind)", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
-        self add_increment("shellshock amount (bind)", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
-        self add_game_array("iw8", "shellshock type (bind)", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
+        self add_game_option("iw8", "choose equipment", undefined, ::new_menu, "equipment bind (iw8)");
+        self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
+        self add_game_array("iw8", "stuck weapon", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
+        self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
+        self add_increment("flash amount", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
+        self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
+        self add_game_array("iw8", "shellshock type", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
         break;
     case "bolt movement settings":
         self.bind_index = false;
         self add_menu(menu);
-        self add_option("bot bolt movement", credits, ::new_menu, "bot bolt movement settings");
+        self add_option("bot bolt movement", undefined, ::new_menu, "bot bolt movement settings");
         self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 0.1, 10, 0.1, "boltspeed");
         self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
         self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
+        self add_option("play bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::start_bolt);
+        break;
+    case "record movement settings":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_option("record movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::record_movement);
+        self add_option("delete last point", "movement points: ^5" + int(self getpers("recordmovementcount")), ::delete_last_movement_point);
+        self add_option("play movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::play_movement);
         break;
     case "class change settings":
         self.bind_index = false;
         self add_menu(menu);
         self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap");
-        self add_pers_toggle("one bullet out", undefined, ::togglepers, "ccb_one_bullet", true);
+        self add_pers_toggle("one bullet out", undefined, ::togglepers, "ccb_one_bullet_out", true);
         self add_pers_toggle("one bullet left", undefined, ::togglepers, "ccb_one_bullet_left", true);
         self add_pers_toggle("empty clip", undefined, ::togglepers, "ccb_empty_clip", true);
+        self add_pers_toggle("illusion", undefined, ::togglepers, "ccb_illusion", true);
         self add_pers_toggle("canswap", undefined, ::togglepers, "ccb_always_can", true);
         break;
     case "bot bolt movement settings":
@@ -133,6 +144,7 @@ structure()
         self add_increment("bot bolt speed", increment_controls, ::setpersmenu, float(self getpers("bot_boltspeed")), 0.1, 10, 0.1, "bot_boltspeed");
         self add_option("save bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::save_bot_bolt);
         self add_option("delete last bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::delete_last_bot_bolt);
+        self add_option("play bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::start_bot_bolt);
         break;
     case "edit velocity":
         self.bind_index = false;
@@ -141,6 +153,7 @@ structure()
         self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
         self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
+        self add_option("play velocity", undefined, ::play_velocity);
         break;
     case "switch to equipment (iw8)":
         self.bind_index = false;
@@ -290,7 +303,7 @@ structure()
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_option("spawn enemy", undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
-        self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
+        // self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
@@ -394,6 +407,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "third person":
+            self add_bind(menu, ::toggle_third_person_bind, "third_person");
+            break;
         case "flash":
             self add_bind(menu, ::toggle_flash_bind, "flash");
             break;
@@ -426,6 +442,9 @@ bind_index(menu, increment_controls) // ew
             break;
         case "stuck":
             self add_bind(menu, ::toggle_stuck_bind, "stuck");
+            break;
+        case "record movement":
+            self add_bind(menu, ::toggle_record_movement_bind, "record_movement");
             break;
         case "bolt movement":
             self add_bind(menu, ::toggle_bolt_bind, "bolt");

@@ -1093,7 +1093,7 @@ monitor_class()
         response = response + 1;
         self.class = response;
 
-        scripts\mp\class::setclass( self.pers["class"] );
+        scripts\mp\class::setclass(self.pers["class"]);
         self.tag_stowed_back = undefined;
         self.tag_stowed_hip = undefined;
         scripts\mp\class::giveloadout(self.pers["team"], self.pers["class"]);
@@ -1104,7 +1104,7 @@ monitor_class()
         if (isdefined(super)) // supers = field upgrade
         {
             self thread scripts\mp\supers::givesuperweapon(super);
-            self thread scripts\mp\supers::givesuperpoints( scripts\mp\supers::getsuperpointsneeded() );
+            self thread scripts\mp\supers::givesuperpoints(scripts\mp\supers::getsuperpointsneeded());
         }
         
 
@@ -1554,6 +1554,98 @@ delete_last_bot_bolt()
     self custom_scripts\_util::setpers("bot_boltcount", x);
 }
 
+toggle_record_movement_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_record_movement_bind(1, i);
+    else
+        self notify("stop_bot_bolt_bind");
+}
+
+do_record_movement_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_bot_bolt_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self play_movement();
+        }
+    }
+}
+
+record_movement()
+{ 
+    x = 0;
+    self printall("recording in " + pal("3"));
+    wait 1;
+    self printall("recording in " + pal("2"));
+    wait 1;
+    self printall("recording in " + pal("1"));
+    wait 1;
+    self printall("now recording - [{+melee_zoom}] to stop");
+    
+    origin = self.origin;
+    
+    while (distance(origin, self getorigin()) <= 10)
+        wait 0.05;
+
+    while (!self meleebuttonpressed())
+    {
+        x++;
+        self custom_scripts\_util::setpers("recordmovementcount",x);
+        self custom_scripts\_util::setpers("recordmovementpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+        self iprintlnbold("point " + pal(x) + " ^7recorded");
+        wait 0.1;
+        if(x >= 50)
+            return self iprintlnbold("^1max points reached");
+    }
+}
+
+delete_last_movement_point()
+{
+    x = int(self custom_scripts\_util::getpers("recordmovementcount"));
+    if(x == 0)
+        return self iprintlnbold("^1no points to delete");
+
+    self iprintlnbold("point " + pal(x) + " ^7deleted");
+    self custom_scripts\_util::setpers("recordmovementpos" + x, "0");
+    x--;
+    self custom_scripts\_util::setpers("recordmovementcount", x);
+}
+
+play_movement()
+{
+    x = int(self custom_scripts\_util::getpers("recordmovementcount"));
+    if(x == 0)
+        return self iprintlnbold(pal("save a point first"));
+
+    move_model = spawn("script_model", self.origin);
+    move_model setmodel("tag_origin");
+    self playerlinkto(move_model);
+
+    for(i=1; i < (x + 1); i++)
+    {
+        keys = strtok(self custom_scripts\_util::getpers("recordmovementpos" + i), ",");
+        position = (float(keys[0]), float(keys[1]), float(keys[2]));
+        move_model moveto(position, 0.1, 0, 0);
+        wait 0.1;
+    }
+
+    self Unlink();
+    move_model delete();
+}
+
 toggle_velocity_bind(bind, i, pers)
 {
     index = pers + "_" + i;
@@ -1582,6 +1674,11 @@ do_velocity_bind(args, slot)
             self setvelocity((float(self custom_scripts\_util::getpers("velx")), float(self custom_scripts\_util::getpers("vely")), float(self custom_scripts\_util::getpers("velz"))));
         }
     }
+}
+
+play_velocity()
+{
+    self setvelocity((float(self custom_scripts\_util::getpers("velx")), float(self custom_scripts\_util::getpers("vely")), float(self custom_scripts\_util::getpers("velz"))));
 }
 
 toggle_canswap_bind(bind, i, pers)
@@ -1677,12 +1774,16 @@ do_class_bind(args, slot)
 
 check_weapon_options(gun)
 {
-    c = self custom_scripts\_util::getpers("ccb_always_can");
-    x = self custom_scripts\_util::getpers("ccb_one_bullet");
+    v = self custom_scripts\_util::getpers("ccb_always_can");
+    w = self custom_scripts\_util::getpers("ccb_illusion");
+    x = self custom_scripts\_util::getpers("ccb_one_bullet_out");
     y = self custom_scripts\_util::getpers("ccb_one_bullet_left");
     z = self custom_scripts\_util::getpers("ccb_empty_clip");
     clip =  self getweaponammoclip(gun);
     stock = self getweaponammostock(gun);
+
+    if (isdefined(v) && v) 
+        self thread always_can_delay();
 
     if (isdefined(x) && x)
         self setweaponammoclip(gun, clip - 1);
@@ -1692,15 +1793,16 @@ check_weapon_options(gun)
 
     if (isdefined(z) && z)
         self setweaponammoclip(gun, 0);
-
-    if (isdefined(c) && c) 
-        self thread always_can_delay();
+        
+    if (isdefined(v) && v)
+    {
+        wait 0.05;
+        self setspawnweapon(self getcurrentweapon());
+    }
 }
 
 always_can_delay()
 {
-    // TODO: nyli fix this - you register instaswaps pers, but you're doing instaswaps_1 like a index which fails the getpers check
-    // edit: im so gay 
     if (self custom_scripts\_util::getpers("class_can"))
     {
         self takegood(self getcurrentweapon());
@@ -2811,6 +2913,46 @@ respawn_everyone()
             }
         }
     }
+}
+
+toggle_third_person_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_third_person_bind(1, i);
+    else
+        self notify("stop_third_person_bind");
+}
+
+do_third_person_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_third_person_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            setdvar("NOSLRNTRKL", !custom_scripts\_util::toggle(getdvarint("NOSLRNTRKL")));
+            wait 0.05;
+        }
+    }
+}
+
+fast_last()
+{
+    limit = level.roundscorelimit - 1;
+    self.score = limit;
+    self.pers["score"] = self.score;
+    self.kills = limit;
+    self.pers["kills"] = self.kills;
 }
 
 // botpressbutton
