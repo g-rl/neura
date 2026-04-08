@@ -1812,7 +1812,7 @@ post_prematch_start()
     custom_scripts\_util::waittill_prematch_over();
         
     self iprintln(palette() + 
-        "neura " + level._client + " ^2(" + level._client_version + ") by * " 
+        "neura " + level._client + " ^2(" + level._client_version + ") ^7by * " 
         + palette() + "@nyli2b " 
         + palette() + "@mjkzy " 
         + palette() + "@machinxry  " + "^7*");
