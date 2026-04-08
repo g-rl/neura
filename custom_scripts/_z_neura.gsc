@@ -16,6 +16,9 @@ init()
     level._client = "iw9";
 #else
     level._client = "iw8"; // this is for 1.20, this will be updated later to use the macro later properly maybe?
+
+    // a
+    level._client_version = getdvar("iw8_build_version");
 #endif
 
     level.is_debug = true;

@@ -21,7 +21,7 @@ setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 
 get_current_client() // check if s4, iw8 or iw9
 {
-    return level._client; 
+    return level._client + " (" + level._client_version + ")"; 
 }
 
 getorigin_() // so self.origin on iw8 glitches out bounces etc 

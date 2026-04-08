@@ -11,14 +11,14 @@ structure()
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
     credits = "made with ^5<3^7 by ^5ethan^7, ^5mikey ^7& ^5blue";
     client = get_current_client();
-    title = "neura ^5" + client + "^7 - ";
+    title = "neura ^5" + client;
     bind_list = list("flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
     case "neura":
         self.bind_index = false;
-        self add_menu(title + self get_name());
+        self add_menu(title);
         if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
         self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
         self add_option("glitches", credits, ::new_menu, "glitches");

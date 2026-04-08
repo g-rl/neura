@@ -1811,7 +1811,11 @@ post_prematch_start()
     self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
         
-    self iprintln(palette() + "neura " + level._client + " ^7by * " + palette() + "@nyli2b " + palette() + "@mjkzy " + palette() + "@machinxry  " + "^7*");
+    self iprintln(palette() + 
+        "neura " + level._client + " ^2(" + level._client_version + ") by * " 
+        + palette() + "@nyli2b " 
+        + palette() + "@mjkzy " 
+        + palette() + "@machinxry  " + "^7*");
 }
 
 look_at_me(player)
