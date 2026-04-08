@@ -21,7 +21,7 @@ structure()
         self.bind_index = false;
         self add_menu(title);
         self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
-        self add_option("binds", credits, ::new_menu, "binds");
+        self add_option("binds", credits, ::new_menu, "bind settings");
         self add_option("position", credits, ::new_menu, "position");
         self add_option("aimbot", credits, ::new_menu, "aimbot settings");
         self add_option("manage class", credits, ::new_menu, "class manager");
@@ -32,7 +32,6 @@ structure()
     case "mods & toggles": // eh clean this up later -et
         self.bind_index = false;
         self add_menu(menu);
-        self add_option("bind settings", undefined, ::new_menu, "bind settings");
         self add_option("glitches", undefined, ::new_menu, "glitches");
         if (scripts\mp\utility\game::getgametype() == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
@@ -100,9 +99,10 @@ structure()
     case "bind settings":
         self.bind_index = false;
         self add_menu(menu);
-        self add_option("record movement", undefined, ::new_menu, "record movement settings");
-        self add_option("bolt movement", undefined, ::new_menu, "bolt movement settings");
-        self add_option("class change", undefined, ::new_menu, "class change settings");
+        self add_option("choose bind", undefined, ::new_menu, "binds");   
+        self add_option("edit record movement", undefined, ::new_menu, "record movement settings");
+        self add_option("edit bolt movement", undefined, ::new_menu, "bolt movement settings");
+        self add_option("edit class change", undefined, ::new_menu, "class change settings");
         self add_option("edit velocity", undefined, ::new_menu, "edit velocity");
         self add_game_option("iw8", "choose equipment", undefined, ::new_menu, "equipment bind (iw8)");
         self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
