@@ -1684,12 +1684,10 @@ always_can_delay()
     wait 0.05;
 
     // TODO: nyli fix this - you register instaswaps pers, but you're doing instaswaps_1 like a index which fails the getpers check
-    /*
     if (self custom_scripts\_util::getpers("class_can"))
     {
-        self alwayscan(self getcurrentweapon());
+        self switchto(self getcurrentweapon());
     }
-    */
 }
 
 give_perks()

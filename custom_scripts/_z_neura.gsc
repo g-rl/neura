@@ -195,6 +195,7 @@ watch_memory()
     self setpers_if_uninitialized("slomo", 1);
     self setpers_if_uninitialized("slomo_mode", "normal");
     self setpers_if_uninitialized("always_nac", false);
+    self setpers_if_uninitialized("always_can", true);
 
     // player bolt
     self setpers_if_uninitialized("boltcount", "0");
