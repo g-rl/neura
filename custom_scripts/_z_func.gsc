@@ -135,7 +135,8 @@ print_weapon()
 
 printall(text, console)
 {
-    if (console && isdefined(console)) print(text);
+    if (isdefined(console) && console)
+        print(text);
     iprintln(text);
     iprintlnbold(text);
 }
@@ -1248,7 +1249,6 @@ toggle_illusion_bind(bind, i, pers)
     new = int(i) - 1;
     self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
-
 
     if (self.pers[index])
         self thread do_illusion_bind(1, i);
