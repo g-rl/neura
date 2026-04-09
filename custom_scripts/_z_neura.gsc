@@ -210,7 +210,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("ccb_one_bullet_out", true);
     self setpers_if_uninitialized("ccb_one_bullet_left", false);
     self setpers_if_uninitialized("ccb_illusion", false);
-    self setpers_if_uninitialized("camo", "none")
+    self setpers_if_uninitialized("camo", "none");
 
     // player bolt
     self setpers_if_uninitialized("boltcount", "0");
