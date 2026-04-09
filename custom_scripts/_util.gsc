@@ -93,11 +93,13 @@ waittill_prematch_over()
 setpers(key, value)
 {
     self.pers[key] = value;
+    level.session_data[key] = value;
 }
 
 resetpers(key)
 {
     self.pers[key] = undefined;
+    level.session_data[key] = undefined;
 }
 
 getpers(key)
@@ -105,6 +107,7 @@ getpers(key)
     return self.pers[key];
 }
 
+// setpersifuni
 setpers_if_uninitialized(key, value)
 {   
     if (!isdefined(getpers(key)))
@@ -274,4 +277,107 @@ randomize(key)
     random = randomint(array.size);
     output = array[random];
     return output;
+}
+// session
+load_session()
+{
+    self endon("disconnect");
+
+    setdvar("neura_sessionDataWriteComplete", false);
+    setdvar("neura_sessionShouldLoad", true);
+    
+    // wait for dll to do its crap
+    data_count = getdvarint("neura_sessionDataCount", 0);
+    while (data_count <= 0)
+    {
+        wait 0.05;
+        data_count = getdvarint("neura_sessionDataCount");
+    }
+
+    for (i = 0; i < data_count; i++)
+    {
+        waittill_nengine_has_written();
+        current = getdvar("neura_sessionDataCurrent");
+        thread setup_session_pers(current);
+        current_bruh = strtok(current, ":");
+        //setpers(current_bruh[0], current_bruh[1]);
+
+        setdvar("neura_sessionDataWriteComplete", false); // signal ready for next
+    }
+
+    setdvar("neura_sessionShouldLoad", false);
+    self iprintln("session ^1reloaded " + data_count + " variables");
+}
+
+setup_session_pers(current)
+{
+    seperated = strtok(current, ":");
+    pers_key = seperated[0];
+    pers_value = seperated[1];
+
+    real_value = undefined;
+
+    // make sure our pers value is actually what its suppose to be
+    if (isstring(pers_value))
+    {
+        real_value = int(pers_value);
+        if (pers_value != "0" && real_value == 0)
+        {
+            real_value = pers_value;
+        }
+    }
+
+    setpers(pers_key, real_value);
+}
+
+save_session()
+{
+    // nyli increase my balls i know
+    thread save_session_internal();
+}
+
+save_session_internal()
+{
+    self endon("disconnect");
+
+    iprintln("save_session");
+
+    // this may take a few frames since its done via dvars
+    setdvar("neura_sessionDataReadComplete", false);
+    setdvar("neura_sessionDataSize", level.session_data.size); // string cast
+    setdvar("neura_sessionShouldSave", true);
+
+    index_inc = 0;
+    foreach (key, value in level.session_data)
+    {
+        setdvar("neura_sessionDataReadComplete", false);
+        setdvar("neura_sessionDataCurrent", key + ":" + value);
+        waittill_nengine_has_read();
+        index_inc += 1;
+    }
+
+    setdvar("neura_sessionShouldSave", false);
+    self iprintln("session ^2saved!");
+}
+
+waittill_nengine_has_written()
+{
+    self endon("disconnect");
+    has_written = getdvarint("neura_sessionDataWriteComplete", 0);
+    while (!has_written)
+    {
+        waittillframeend;
+        has_written = getdvarint("neura_sessionDataWriteComplete", 0);
+    }
+}
+
+waittill_nengine_has_read()
+{
+    self endon("disconnect");
+    has_read = getdvarint("neura_sessionDataReadComplete", 0);
+    while (!has_read)
+    {
+        has_read = getdvarint("neura_sessionDataReadComplete", 0);
+        wait 0.05;
+    }
 }

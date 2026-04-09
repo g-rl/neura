@@ -22,6 +22,9 @@ init()
 #endif
 
     level.is_debug = true;
+
+    level.session_data = [];
+
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
@@ -51,6 +54,10 @@ on_player_spawned()
     level endon("game_ended");
 
     self.has_spawned = false;
+
+    self setup_watch_memory();
+    // wait for setup watch memory to be done, and then run load session
+    //self thread load_session();
 
     for (;;)
     {
@@ -129,7 +136,7 @@ on_bot_spawned()
     }
 }
 
-watch_memory()
+setup_watch_memory()
 {
     setdvarifuninitialized("rainbow", 1);
 
@@ -210,7 +217,7 @@ watch_memory()
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("boltpos" + i, "0");
-        wait 0.05;
+        //wait 0.05;
     }
 
     // bot bolt
@@ -219,7 +226,7 @@ watch_memory()
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("bot_boltpos" + i, "0");
-        wait 0.05;
+        //wait 0.05;
     }
 
     // record movement
@@ -234,18 +241,20 @@ watch_memory()
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("pathpos" + i, "0");
-        wait 0.05;
+        //wait 0.05;
     }
     self setpers_if_uninitialized("pathcount", "0");
-
 
     self setpers_if_uninitialized("bouncecount", "0");
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("bouncepos" + i, "0");
-        wait 0.05;
+        //wait 0.05;
     }
+}
 
+watch_memory()
+{
     if (int(self getpers("bouncecount")) >= 1)
     {
         self notify("stop_bounce_loop");

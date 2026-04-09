@@ -59,6 +59,14 @@ structure()
         self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
         break;
+
+    case "session settings":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_option("^1load ^7session", "load previous map session if exists", ::load_session);
+        self add_option("^2save ^7session", "save current map session", ::save_session);
+        break;
+
     case "position":
         self.bind_index = false;
         self add_menu(menu);
