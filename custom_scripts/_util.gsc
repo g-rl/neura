@@ -267,3 +267,11 @@ in_menu()
 {
     return is_true(self.in_menu);
 }
+
+randomize(key)
+{
+    array = strtok(key, ", ");
+    random = randomint(array.size);
+    output = array[random];
+    return output;
+}

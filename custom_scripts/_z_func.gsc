@@ -2955,4 +2955,28 @@ fast_last()
     self.pers["kills"] = self.kills;
 }
 
+addcamotocurrentweapon(camo)
+{
+    current = self getcurrentweapon();
+
+    if (!isdefined(current) || current.basename == "none")
+        return;
+
+    variant = isdefined(current.variantid) ? current.variantid : -1;
+    built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname( current ), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+
+    if (!isdefined(built_weapon))
+    {
+        self iprintln("^7failed to apply camo: " + pal(camo));
+        return;
+    }
+
+    self scripts\cp_mp\utility\inventory_utility::_takeweapon(current);
+    wait 0.05;
+    self scripts\cp_mp\utility\inventory_utility::_giveweapon(built_weapon);
+    self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(built_weapon);
+    self refill_weapon_ammo(built_weapon);
+    self custom_scripts\_util::nprintln("applied camo: ^7" + (pal(camo + variant)) >= 0 ? " ^7(^5variant " + variant + " preserved^7)" : "");
+}
+
 // botpressbutton

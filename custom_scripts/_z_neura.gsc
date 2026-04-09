@@ -131,9 +131,6 @@ on_bot_spawned()
 
 watch_memory()
 {
-    camos = ["camo_11c", "camo_11d", "camo_11a", "camo_11b"]; // unused for now, camos menu & setcamo stuff tho? -et
-    camo = camos[randomint(camos.size)];
-
     setdvarifuninitialized("rainbow", 1);
 
     // engine dvars
@@ -147,7 +144,6 @@ watch_memory()
     setdvar("NOSLRNTRKL", 0); // disable third person just in case
 
     self setpers("lives", 99);
-    self setpers_if_uninitialized("camo", camo);
     self setpers_if_uninitialized("unstuck", self.origin);
     self setpers_if_uninitialized("velx", 250);
     self setpers_if_uninitialized("vely", 250);
