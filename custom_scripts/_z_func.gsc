@@ -39,7 +39,7 @@ one_handed_gun()
     self custom_scripts\_util::nprintlnbold("^5shoot your weapon");
 
     // interrogation_tools_mp
-    self nacto("snapshot_grenade_mp"); // concussion_grenade_mp, iw8_gunless_last_stand_enter falling, ks_gesture_phone_mp phone,
+    self nacto("snapshot_grenade_mp", true); // concussion_grenade_mp, iw8_gunless_last_stand_enter falling, ks_gesture_phone_mp phone,
 
     wait 2;
     self notify("luinotifyserver", "class_select", self.class);
@@ -197,8 +197,7 @@ do_nac_bind(args, slot)
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            self nacto(self getnextweapon());
-            wait 0.05;
+            self nacto(self getnextweapon(), true);
         }
     }
 }
@@ -620,7 +619,6 @@ do_instaswaps(args)
 
         wait (float(self custom_scripts\_util::getpers(("instaswaps_time"))));
         self switchto(self getprevweapon());
-
         self.is_swapping = undefined;
     }
 }
@@ -648,15 +646,7 @@ do_always_nac(args)
     for (;;)
     {
         self waittill("button_pressed_+weapnext");
-
-        if (isdefined(self.is_swapping_y))
-        {
-            continue;
-        }
-
-        self.is_swapping_y = true;
-        self switchto(self getprevweapon());
-        self.is_swapping_y = undefined;
+        self nacto(self getprevweapon());
     }
 }
 
@@ -1140,7 +1130,7 @@ do_eq_bind(args, slot)
         if (!self custom_scripts\_util::in_menu())
         {
             x = self getcurrentweapon();
-            self nacto(self custom_scripts\_util::getpers("eq_weapon"));
+            self nacto(self custom_scripts\_util::getpers("eq_weapon"), true);
 
             if (self custom_scripts\_util::getpers("eq_putaway"))
             {
@@ -2561,14 +2551,14 @@ set_perks()
     }
 }
 
-nacto(weapon)
+nacto(weapon, do_wait)
 {
     x = self getcurrentweapon();
     self takegood(x);
     if (!self hasweapon(weapon))
     self giveweapon(weapon);
     self switchtoweapon(weapon);
-    wait 0.05;
+    if (isdefined(do_wait) && do_wait) wait 0.05;
     self givegood(x);
 }
 
@@ -2963,7 +2953,7 @@ addcamotocurrentweapon(camo)
         return;
 
     variant = isdefined(current.variantid) ? current.variantid : -1;
-    built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname( current ), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+    built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
     if (!isdefined(built_weapon))
     {
@@ -2972,11 +2962,11 @@ addcamotocurrentweapon(camo)
     }
 
     self scripts\cp_mp\utility\inventory_utility::_takeweapon(current);
-    wait 0.05;
     self scripts\cp_mp\utility\inventory_utility::_giveweapon(built_weapon);
     self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(built_weapon);
     self refill_weapon_ammo(built_weapon);
-    self custom_scripts\_util::nprintln("applied camo: ^7" + (pal(camo + variant)) >= 0 ? " ^7(^5variant " + variant + " preserved^7)" : "");
+    self custom_scripts\_util::nprintln("applied camo: ^7" + (pal(camo)) >= 0 ? " ^7(^5variant " + variant + " preserved^7)" : "");
+    self custom_scripts\_util::setpers("camo", camo);
 }
 
 // botpressbutton
