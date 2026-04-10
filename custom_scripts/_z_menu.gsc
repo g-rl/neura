@@ -71,13 +71,10 @@ structure()
 
     case "cinematics":
         self.bind_index = false;
-        start_type = self custom_scripts\_util::getpers("camera_get_start_type");
         self add_menu(menu);
         self add_option("start camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::start_camera_path);
-        self add_increment("set camera rotation", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_rotation")), 1, 360, 1, "camera_rotation");
-        self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
-        if (start_type == "speed") self add_increment("set bezier speed", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_bezier_speed")), 1, 20, 1, "camera_bezier_speed");
-        if (start_type == "time") self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
+        self add_increment("set camera rotation", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_rotation")), 1, 360, 1, "camera_rotation");        if (self custom_scripts\_util::getpers("camera_get_start_type") == "speed") self add_increment("set bezier speed", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_bezier_speed")), 1, 20, 1, "camera_bezier_speed");
+        if (self custom_scripts\_util::getpers("camera_get_start_type") == "time") self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
         self add_array("set camera mode", slider_controls, ::set_the_mode, list("bezier,linear"));
         self add_option("save node", "camera nodes: ^5" + int(self getpers("nodecount")), ::save_camera_node);
         self add_option("delete last node", "camera nodes: ^5" + int(self getpers("nodecount")), ::delete_last_node);
