@@ -115,6 +115,16 @@ on_player_spawned()
             self thread give_streak(saved);
             return;
         }
+
+        // meme prematch solution
+        while (isdefined(level.matchcountdowntime)) 
+        {
+            wait 1;
+            self setclientomnvar("ui_match_start_countdown", 0);
+            self setclientomnvar("ui_match_in_progress", 1);
+            scripts\mp\playerlogic::clearprematchlook(self);
+            level.matchcountdowntime = undefined;
+        }
     }
 }
 
