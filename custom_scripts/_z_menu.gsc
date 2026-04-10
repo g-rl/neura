@@ -13,7 +13,7 @@ structure()
     build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     switch(menu)
     {
@@ -466,6 +466,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "kill bot":
+            self add_bind(menu, ::toggle_kill_bot_bind, "kill_bot");
+            break;
         case "reverse ele":
             self add_bind(menu, ::toggle_reverse_ele_bind, "reverse_ele");
             break;

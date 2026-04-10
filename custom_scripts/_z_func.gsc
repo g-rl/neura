@@ -3276,8 +3276,11 @@ kill_selected_player()
 {
     ent = self.pers["selected_bot"];
 
-    if (ent == "none")
+    if (ent == "none" || !isdefined(ent) || !isalive(ent))
+    {
+        self iprintlnbold("select a bot in the players menu");
         return;
+    }
 
     ent thread [[level.callbackPlayerDamage]](self, self, 250, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0);
 }
@@ -3319,6 +3322,37 @@ do_reverse_ele_bind(args, slot)
     }
 }
 
+toggle_kill_bot_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_kill_bot_bind(1, i);
+    else
+        self notify("stop_kill_bot_bind");
+}
+
+do_kill_bot_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_kill_bot_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self thread kill_selected_player();
+            wait 1;
+        }
+    }
+}
+
 do_reverse_ele() 
 {
     if (!isdefined(self.changle))
@@ -3332,7 +3366,7 @@ do_reverse_ele()
             self.down_ele = self.elevate.origin;
             wait 0.005;
             self.elevate.origin = self.down_ele + (0, 0, -3);
-            if (self jumpbuttonpressed()) 
+            if (self custom_scripts\_util::isbuttonpressed("+gostand")) 
             {
                 self thread stop_elevator();
                 self unlink();

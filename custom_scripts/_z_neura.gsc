@@ -334,6 +334,7 @@ watch_memory()
     self setup_bind("third_person", false, ::do_third_person_bind); 
     self setup_bind("record_movement", false, ::do_record_movement_bind); 
     self setup_bind("reverse_ele", false, ::do_reverse_ele_bind); 
+    self setup_bind("kill_bot", false, ::do_kill_bot_bind); 
 }
 
 // this was used to debug IW9, and can be used for S4 too
