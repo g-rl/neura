@@ -304,7 +304,7 @@ structure()
         self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks (iw8)");
         self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use", true);
         break;
-`    case "vehicles (iw8)":
+    case "vehicles (iw8)":
         self.bind_index = false;
         self add_menu(menu);
         self add_dvar_toggle("allow vehicles", undefined, "scr_allow_vehicles");

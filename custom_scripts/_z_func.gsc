@@ -1926,14 +1926,18 @@ clean_killcam(args)
 // wait till prematch is over for prints because the game does some weird third person cinematic
 post_prematch_start()
 {
-    custom_scripts\_util::waittill_prematch_over();
-    
-    self printall("ߵ " + palette() + 
-        "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
-        + palette() + "@nyli2b " 
-        + palette() + "@mjkzy " 
-        + palette() + "@machinxry  " + "^7*");
-    self iprintln("ߵ " + " [{+gostand}] to ^2skip^7 final killcam");
+    if (!self custom_scripts\_util::getpers("welcome_message"))
+    {
+        custom_scripts\_util::waittill_prematch_over();
+
+        self printall("ߵ " + palette() + 
+            "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
+            + palette() + "@nyli2b " 
+            + palette() + "@mjkzys " 
+            + palette() + "@machinxry  " + "^7*");
+        self iprintln("ߵ " + " [{+gostand}] to ^2skip^7 final killcam");
+        self custom_scripts\_util::setpers("welcome_message", true);
+    }
 }
 
 look_at_me(player)
@@ -3191,6 +3195,14 @@ monitor_vehicle(whip)
         }
         wait 0.5;
     }
+}
+
+clear_prematch_look()
+{
+    self setclientomnvar("ui_match_start_countdown", 0);
+    self setclientomnvar("ui_match_in_progress", 1);
+    scripts\mp\playerlogic::clearprematchlook(self);
+    level.matchcountdowntime = undefined;
 }
 
 // botpressbutton

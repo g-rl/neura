@@ -97,9 +97,6 @@ on_player_spawned()
 
         // look into this and find a solution to remove timer thats not janky asf -et
         // self thread pause_timer_cooldown_bypass();
-        self setpers_if_uninitialized("welcome_message", false);
-        if (!self getpers("welcome_message"))
-            self thread post_prematch_start();
 
         // other funcs
         // self thread check_event("show_final_killcam");
@@ -108,15 +105,17 @@ on_player_spawned()
         self thread monitor_recon_drone();
         self thread skip_final_killcam();
         self thread monitor_class();
+        self thread post_prematch_start();
 
         // meme prematch solution
         while (isdefined(level.matchcountdowntime)) 
         {
-            wait 1;
-            self setclientomnvar("ui_match_start_countdown", 0);
-            self setclientomnvar("ui_match_in_progress", 1);
-            scripts\mp\playerlogic::clearprematchlook(self);
-            level.matchcountdowntime = undefined;
+            wait 0.05;
+            if (!isdefined(self.prematch_look))
+            {
+                self clear_prematch_look();
+                self.prematch_look = true;
+            }
         }
         
         // return any streaks to player (if saved)
@@ -131,10 +130,6 @@ on_player_spawned()
 setup_dvars()
 {
     setdvarifuninitialized("scr_killcam_time", 5);
-
-    // only tested these on iw8 so not too sure if they're the same on others -et
-    setdvar("MSOOMPMPQS", true); // unlimited sprint
-    setdvar("LNOKTQPLKO", false); // jump slowdown
 
     // these still don't stop bots from being auto kicked due to team balance
     level.bots_disable_team_switching = 1;
@@ -166,8 +161,12 @@ setup_watch_memory()
     setdvarifuninitialized("pan_freezeanim", 0);
     setdvarifuninitialized("pan_alwaysaltswap", 0);
     setdvarifuninitialized("pan_canzooms", 0);
+
+    // only tested these on iw8 so not too sure if they're the same on others -et
     setdvar("LPSPNKLRPO", 0); // remove all motion blur
     setdvar("NOSLRNTRKL", 0); // disable third person just in case
+    setdvar("MSOOMPMPQS", 1); // unlimited sprint
+    setdvar("LNOKTQPLKO", 0); // jump slowdown
 
     self setpers("lives", 99);
     self setpers_if_uninitialized("unstuck", self.origin);
@@ -235,8 +234,9 @@ setup_watch_memory()
     self setpers_if_uninitialized("vehicle_invincible", false);
     self setpers_if_uninitialized("vehicle_offset", 300);
     self setpers_if_uninitialized("vehiclechangeby", 100);
+    self setpers_if_uninitialized("welcome_message", false);
 
-    // player bolt
+    // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
     self setpers_if_uninitialized("boltspeed", "1.2");
     for (i = 1; i < 8; i++)
@@ -245,13 +245,12 @@ setup_watch_memory()
         //wait 0.05;
     }
 
-    // bot bolt
+    // bot bolt movement
     self setpers_if_uninitialized("bot_boltcount", "0");
     self setpers_if_uninitialized("bot_boltspeed", "1.2");
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("bot_boltpos" + i, "0");
-        //wait 0.05;
     }
 
     // record movement
@@ -266,15 +265,14 @@ setup_watch_memory()
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("pathpos" + i, "0");
-        //wait 0.05;
     }
     self setpers_if_uninitialized("pathcount", "0");
 
+    // bounces
     self setpers_if_uninitialized("bouncecount", "0");
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("bouncepos" + i, "0");
-        //wait 0.05;
     }
 }
 
