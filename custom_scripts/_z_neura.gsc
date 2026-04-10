@@ -73,6 +73,7 @@ on_player_spawned()
         self.neura = [];
         self.has_spawned = true;
         self.modifiers["firstblood"] = 0;
+        self.round_has_ended = 0;
 
         self thread watch_memory();
         self thread watch_frozen_bots();
@@ -106,6 +107,7 @@ on_player_spawned()
         self thread skip_final_killcam();
         self thread monitor_class();
         self thread post_prematch_start();
+        self thread wait_for_round_end();
 
         // meme prematch solution
         while (isdefined(level.matchcountdowntime)) 

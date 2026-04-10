@@ -646,7 +646,7 @@ do_always_nac(args)
     for (;;)
     {
         self waittill("button_pressed_+weapnext");
-        self nacto(self getprevweapon());
+        self nacto(self getprevweapon(), self.round_has_ended);
     }
 }
 
@@ -3203,6 +3203,12 @@ clear_prematch_look()
     self setclientomnvar("ui_match_in_progress", 1);
     scripts\mp\playerlogic::clearprematchlook(self);
     level.matchcountdowntime = undefined;
+}
+
+wait_for_round_end()
+{
+    level waittill("game_ended");
+    self.round_has_ended = true;   
 }
 
 // botpressbutton
