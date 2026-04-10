@@ -1580,6 +1580,12 @@ do_record_movement_bind(args, slot)
 
 record_movement()
 { 
+    if (isdefined(self.is_recording) && self.is_recording)
+    {
+        self iprintln("^1already recording..");
+        return;
+    }
+
     x = 0;
     self printall("recording in " + pal("3"));
     wait 1;
@@ -1589,6 +1595,7 @@ record_movement()
     wait 1;
     self printall("now recording - [{+melee_zoom}] to stop");
     
+    self.is_recording = true;
     origin = self.origin;
     
     while (distance(origin, self getorigin()) <= 10)
@@ -1604,6 +1611,8 @@ record_movement()
         if(x >= 50)
             return self iprintlnbold("^1max points reached");
     }
+
+    self.is_recording = undefined;
 }
 
 delete_last_movement_point()
