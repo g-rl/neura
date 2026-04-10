@@ -62,6 +62,9 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
+        // dvars = ["dvar1", "dvar2"];
+        // self thread check_dvars(dvars);
+
         self thread reload_position();
 
         if (self.has_spawned)
@@ -93,28 +96,18 @@ on_player_spawned()
         }
 
         // look into this and find a solution to remove timer thats not janky asf -et
-        self thread pause_timer_cooldown_bypass();
-
-        if (!isdefined(self getpers("welcome_message")) && !self getpers("welcome_message"))
-        {
+        // self thread pause_timer_cooldown_bypass();
+        self setpers_if_uninitialized("welcome_message", false);
+        if (!self getpers("welcome_message"))
             self thread post_prematch_start();
-            self setpers("welcome_message", true);
-        }
 
         // other funcs
         // self thread check_event("show_final_killcam");
         // self thread watch_weap_change(); - get full weapon names
         // self thread give_perks();
+        self thread monitor_recon_drone();
         self thread skip_final_killcam();
         self thread monitor_class();
-        
-        // return any streaks to player (if saved)
-        saved = self custom_scripts\_util::getpers("saved_streak");
-        if (isdefined(saved) && saved != "none")
-        {
-            self thread give_streak(saved);
-            return;
-        }
 
         // meme prematch solution
         while (isdefined(level.matchcountdowntime)) 
@@ -124,6 +117,13 @@ on_player_spawned()
             self setclientomnvar("ui_match_in_progress", 1);
             scripts\mp\playerlogic::clearprematchlook(self);
             level.matchcountdowntime = undefined;
+        }
+        
+        // return any streaks to player (if saved)
+        saved = self custom_scripts\_util::getpers("saved_streak");
+        if (isdefined(saved) && saved != "none")
+        {
+            self thread give_streak(saved);
         }
     }
 }

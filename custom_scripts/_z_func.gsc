@@ -1920,8 +1920,6 @@ clean_killcam(args)
 // wait till prematch is over for prints because the game does some weird third person cinematic
 post_prematch_start()
 {
-    level endon("game_ended");
-    self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
     
     self printall("ߵ " + palette() + 
@@ -2772,9 +2770,8 @@ pal(text)
 
 set_timescale(timescale)
 {
-    timescale = float(timescale);
-    self custom_scripts\_util::setpers("slomo", timescale);
-    setslowmotion(timescale, timescale, 0);
+    self custom_scripts\_util::setpers("slomo", float(timescale));
+    setslowmotion(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
 }
 
 rewatch_round(mode)
@@ -3028,4 +3025,40 @@ check_event(event, type)
         }
     }
 }
+
+monitor_recon_drone()
+{
+}
+
+watch_recon_drone_destroy()
+{
+}
+
+watch_recon_drone_spawn()
+{
+}
+
+check_dvars(dvars)
+{
+    self endon("disconnect");
+    level endon("game_ended");
+    for(;;)
+    {
+        foreach (dvar in dvars)
+        {
+            if (float(dvar))
+                value = getdvarfloat(dvar);
+            else if (int(dvar))
+                value = getdvarint(dvar);
+            else
+                value = getdvar(dvar);
+            
+            printall(pal(dvar) + ": " + value, true);
+            wait 1;
+        }
+        wait 0.05;
+    }
+}
+
+
 // botpressbutton

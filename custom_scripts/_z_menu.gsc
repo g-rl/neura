@@ -317,6 +317,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("dvars", undefined, ::new_menu, "dvars");
+        self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_option("spawn enemy", undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
@@ -342,10 +343,24 @@ structure()
         self add_menu(menu);
         self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
         self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
-        self add_increment("timescale", increment_controls, ::set_timescale, float(self getpers("slomo")), 0.25, 10, 0.25, "slomo"); 
+        self add_increment("timescale", increment_controls, ::set_timescale, float(self getpers("slomo")), 0.25, 10, 0.25); 
         self add_array("timescale mode", slider_controls, ::rewatch_round, list("round end,start of killcam,normal"));
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
         self add_increment("knockback", increment_controls, ::setdvarmenu, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
+        break;
+    case "ladders":
+        self.bind_index = false;
+        // LMOLRRPPMP
+        self add_menu(menu);
+        self add_dvar_toggle("ladder strafing", undefined, "LLNQPTKKQP");
+        self add_dvar_toggle("enhanced ladders", undefined, "OMSLTKKKMK");
+        self add_dvar_toggle("enable weapon", undefined, "MMTQQLRRRM");
+        self add_increment("pushback velocity", increment_controls, ::setdvarmenu, getdvarint("LMQTTNORKP"), 50, 3000, 25, "LMQTTNORKP");
+        self add_increment("ladder cresting", increment_controls, ::setdvarmenu, getdvarint("NMNLNOKQTQ"), 1, 2, 1, "NMNLNOKQTQ");
+        self add_increment("jump right scale", increment_controls, ::setdvarmenu, getdvarint("LMOLRRPPMP"), 1, 50, 1, "LMOLRRPPMP");
+        self add_increment("vault offset", increment_controls, ::setdvarmenu, getdvarfloat("PSSNPRQSO"), 0.1, 1, 0.1, "PSSNPRQSO");
+        self add_increment("jump up desire", increment_controls, ::setdvarmenu, getdvarfloat("LQQMPMNLP"), 0.1, 2, 0.1, "LQQMPMNLP");
+        self add_increment("pull in bounds scale", increment_controls, ::setdvarmenu, getdvarfloat("MSRROOLQMS"), 1, 6, 0.2, "MSRROOLQMS");
         break;
     case "debug settings":
         self.bind_index = false;
