@@ -15,6 +15,7 @@ structure()
     title = "neura ^5" + build;
     bind_list = list("kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
+    // do we need to call like custom_scripts\_z_func::function?
     switch(menu)
     {
     case "neura":
@@ -23,6 +24,7 @@ structure()
         self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
         self add_option("binds", credits, ::new_menu, "bind settings");
         self add_option("position", credits, ::new_menu, "position");
+        self add_option("cinematics", credits, ::new_menu, "cinematics");
         self add_option("aimbot", credits, ::new_menu, "aimbot settings");
         self add_option("manage class", credits, ::new_menu, "class manager");
         self add_option("manage game", credits, ::new_menu, "game settings");
@@ -50,14 +52,14 @@ structure()
         self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
         self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
         self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
-        self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
+        if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
         self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
-        self add_pers_toggle("putaway equipment", undefined, ::togglepers, "eq_putaway", true);
-        self add_pers_toggle("real scavenger", undefined, ::togglepers, "real_scavenger", true);
-        self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", ::ufo_mode, "ufo_mode");
-        self add_increment("instaswaps time", increment_controls, ::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
-        self add_array("auto prone mode", slider_controls, ::setpersmenu, list("air,always"), "autoprone_mode");
+        self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
+        self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
+        self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
+        self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
+        self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");
         break;
 
     case "session settings":
@@ -65,6 +67,21 @@ structure()
         self add_menu(menu);
         self add_option("^1load ^7session", "load previous map session if exists", ::load_session);
         self add_option("^2save ^7session", "save current map session", ::save_session);
+        break;
+
+    case "cinematics":
+        self.bind_index = false;
+        start_type = self custom_scripts\_util::getpers("camera_get_start_type");
+        self add_menu(menu);
+        self add_option("start camera path", undefined, ::start_camera_path);
+        self add_increment("set camera rotation", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_rotation")), 1, 360, 1, "camera_rotation");
+        self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
+        if (start_type == "speed") self add_increment("set bezier speed", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_bezier_speed")), 1, 20, 1, "camera_bezier_speed");
+        if (start_type == "time") self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
+        self add_array("set camera mode", slider_controls, ::set_the_mode, list("bezier,linear"));
+        self add_option("save node", "camera nodes: ^5" + int(self getpers("boltcount")), ::save_camera_node);
+        self add_option("delete last node", "camera nodes: ^5" + int(self getpers("boltcount")), ::delete_last_node);
+        self add_option("clone self", undefined, ::clone_myself);
         break;
 
     case "position":
@@ -318,7 +335,7 @@ structure()
     case "give streaks (iw8)":
         self.bind_index = false;
         self add_menu(menu);
-        self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
+        if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
         for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
@@ -338,7 +355,8 @@ structure()
         self add_option("dvars", undefined, ::new_menu, "dvars");
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
-        self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
+        self add_option(warning("session settings"), undefined, ::new_menu, "session settings");
+        if (scripts\mp\utility\game::getgametype() == "sd") self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
         self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
         self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);

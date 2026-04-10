@@ -22,8 +22,13 @@ init()
 #endif
 
     level.is_debug = true;
-
     level.session_data = [];
+    level.camera = [];
+    level.disablespawncamera = 1;
+
+    models = ["axis_guide_createfx", "misc_wm_flarestick", "tag_origin"];
+    foreach (model in models)
+        precachemodel(model);
 
     // functions
     level thread on_player_connect();
@@ -242,6 +247,12 @@ setup_watch_memory()
     self setpers_if_uninitialized("randomize_timer_pause", true);
     self setpers_if_uninitialized("pause_timer_after", 120);
     self setpers_if_uninitialized("selected_bot", "none");
+    self setpers_if_uninitialized("camera_rotation", 5);
+    self setpers_if_uninitialized("camera_mode", "bezier");
+    self setpers_if_uninitialized("camera_get_start_type", "speed");
+    self setpers_if_uninitialized("camera_bezier_speed", 1);
+    self setpers_if_uninitialized("camera_linear_time", 3);
+    self setpers_if_uninitialized("nodecount", "0");
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");

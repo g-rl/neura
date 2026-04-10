@@ -1629,10 +1629,11 @@ delete_last_movement_point()
     if(x == 0)
         return self iprintlnbold("^1no points to delete");
 
-    self iprintlnbold("point " + pal(x) + " ^7deleted");
     self custom_scripts\_util::setpers("recordmovementpos" + x, "0");
     x--;
     self custom_scripts\_util::setpers("recordmovementcount", x);
+
+    self iprintlnbold("point " + pal(x) + " ^7deleted");
 }
 
 play_movement()
@@ -1869,23 +1870,9 @@ round_manager(args)
 
 random_rounds() // can we make this automatically update?
 {
-    self waittill("killcam_ended");
-    random_round_axis = randomint(5);
-    random_round_ally = randomint(4);
-    rounds_played = (random_round_axis + random_round_ally);
-    game["roundsWon"]["axis"] = random_round_axis;
-    game["roundsWon"]["allies"] = random_round_ally;
-    game["teamScores"]["allies"] = random_round_ally;
-    game["teamScores"]["axis"] = random_round_axis;
-    game["roundsplayed"] = rounds_played;
-    game["switchedsides"] = 0;
-}
-
-always_random_rounds(args)
-{
-    self waittill("killcam_ended");
-    if (custom_scripts\_util::getpers("random_rounds"))
+    if (scripts\mp\utility\game::getgametype() == "sd")
     {
+        self waittill("killcam_ended");
         random_round_axis = randomint(5);
         random_round_ally = randomint(4);
         rounds_played = (random_round_axis + random_round_ally);
@@ -1895,6 +1882,26 @@ always_random_rounds(args)
         game["teamScores"]["axis"] = random_round_axis;
         game["roundsplayed"] = rounds_played;
         game["switchedsides"] = 0;
+    }
+}
+
+always_random_rounds(args)
+{
+    if (scripts\mp\utility\game::getgametype() == "sd")
+    {
+        self waittill("killcam_ended");
+        if (custom_scripts\_util::getpers("random_rounds"))
+        {
+            random_round_axis = randomint(5);
+            random_round_ally = randomint(4);
+            rounds_played = (random_round_axis + random_round_ally);
+            game["roundsWon"]["axis"] = random_round_axis;
+            game["roundsWon"]["allies"] = random_round_ally;
+            game["teamScores"]["allies"] = random_round_ally;
+            game["teamScores"]["axis"] = random_round_axis;
+            game["roundsplayed"] = rounds_played;
+            game["switchedsides"] = 0;
+        }
     }
 }
 
@@ -3392,6 +3399,253 @@ stop_elevator()
     self unlink(); 
     self.elevator delete(); 
     self notify("stopelevator"); 
+}
+
+clone_myself()
+{
+    self cloneplayer(1);
+}
+
+save_camera_node()
+{
+    i = int(self custom_scripts\_util::getpers("nodecount"));
+    if (i == 13)
+        return self custom_scripts\_util::nprintln("^1max node points saved");
+    
+    delete_camera_preview();
+    i++;
+    self custom_scripts\_util::setpers("nodecount", i); 
+    level.camera["origin"][i]  = self getorigin();
+    level.camera["orgpath"][i] = self getorigin() + (0,0,58);
+    level.camera["angles"][i]  = self getplayerangles();
+
+    if( isdefined(level.camera["obj"][i]) ) level.camera["obj"][i] delete();
+    level.camera["obj"][i] = spawn( "script_model", level.camera["orgpath"][i] );
+    level.camera["obj"][i] setmodel( "axis_guide_createfx" );
+    level.camera["obj"][i].angles = self getplayerangles();
+    level.camera["obj"][i] hudoutlineenable( "outlinefill_nodepth_green" );
+
+    if( level.camera["count"] <= i || !isdefined( level.camera["count"] ) )
+        level.camera["count"] = i;
+
+    create_camera_preview();
+    self iprintln("camera position ^2" + i + " ^7saved @ ^2" + self.origin );
+}
+
+delete_last_node()
+{
+    x = int(self custom_scripts\_util::getpers("nodecount"));
+    if (x == 0)
+        return self iprintlnbold("^1no nodes to delete");
+
+    self custom_scripts\_util::nprintlnbold("^+node " + x + " deleted");
+    x--;
+    self custom_scripts\_util::setpers("nodecount", x);
+
+    // reset node
+    level.camera["origin"][x]  = undefined;
+    level.camera["orgpath"][x] = undefined;
+    level.camera["angles"][x]  = undefined;
+    level.camera["obj"][x] delete();
+    level.camera["count"] = x;
+}
+
+set_the_mode(args)
+{
+    self custom_scripts\_util::setpers("camera_mode", args);
+    self thread set_camera_mode();
+}
+
+set_camera_mode()
+{
+    level.camera["type"] = self custom_scripts\_util::getpers("camera_mode");
+    delete_camera_preview();
+    if (level.camera["type"] == "bezier" && level.camera["count"] > 13)
+    {
+        self iprintln(pal("13 ^7") + "camera points max");
+    }
+
+    if((level.camera["type"] == "bezier" && level.camera["count"] <= 13 ) || level.camera["type"] == "linear") 
+    {
+        self iprintln(pal(level.camera["type"]) + " ^7mode");
+        create_camera_preview();
+    }
+}
+
+start_camera_path()
+{
+    start_type = self custom_scripts\_util::getpers("camera_get_start_type");
+    speed = 0;
+
+    if (start_type == "speed") // bezier
+        speed = int(self custom_scripts\_util::getpers("camera_bezier_speed"));
+
+    if (start_type == "time") // linear
+        speed = int(self custom_scripts\_util::getpers("camera_linear_time"));
+
+    camera = spawn( "script_model", level.camera["origin"][1] );
+    camera setmodel( "tag_origin" );
+    camera enablelinkto();
+    camera rotateto( level.camera["angles"][1], .05 );
+
+    self setplayerangles( ( self getplayerangles()[0], self getplayerangles()[1], 0 ) ); // In case cam_rot is not 0
+    self playerlinktodelta( camera, "tag_origin", 1, 0, 0, 0, 0, true );
+    self iprintlnbold( "Mode: " + level.camera["type"] + " / Speed: " + speed + " / Nodes: " + level.camera["count"] );
+    prepare_node_distances();
+
+    if( level.camera["type"] != "bezier" && level.camera["type"] != "linear" ) 
+        self iprintln( "[camera] * ^1Invalid path type" );
+    
+    if( level.camera["type"] == "bezier" && level.camera["count"] < 3 ) 
+        self iprintln( "[camera] * ^1Bezier needs atleast 3 nodes" );
+
+    wait 2;
+    hide_camera_preview();
+    setdvar( "cg_drawGun", 0 );
+    setdvar( "cg_drawCrosshair", 0 );
+    self playerhide();
+    self setclientomnvar( "ui_hide_full_hud", 1 );
+
+    if( level.camera["type"] == "linear" )
+    {
+        travel_time = int( speed / int(level.camera["count"]) );
+        for ( i = 2; i < level.camera["count"] + 1; i++ )
+        {
+            camera rotateto( level.camera["angles"][i], travel_time, 0, 0 );
+            camera moveto( level.camera["origin"][i], travel_time, 0, 0 );
+            wait travel_time;
+        }
+    }
+    else if( level.camera["type"] == "bezier" && level.camera["count"] >= 3 )
+    {
+        mult = 0.2; // "sv_fps / 10"
+
+        for( j = 0; j <= ( level.total_distance * 10 * mult / speed ); j++ )
+        {
+            t = ( j * speed / (level.total_distance * 10 * mult) );
+
+            pos[0] = 0; pos[1] = 0; pos[2] = 0;
+            ang[0] = 0; ang[1] = 0; ang[2] = 0;
+
+            for( i = 1; i <= level.camera["count"]; i++ )
+            {
+                for( z = 0; z < 3; z++ )
+                {
+                    pos[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["origin"][i][z] );
+                    ang[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["angles"][i][z] );
+                }
+            }
+            camera moveto( (pos[0] ,pos[1], pos[2]), .1, 0, 0 );
+            camera rotateto( (ang[0], ang[1], ang[2]), .1, 0, 0 );
+            wait 0.05;
+        }
+    }
+
+    show_camera_preview();
+    self setclientomnvar( "ui_hide_full_hud", 0 );
+    setdvar( "cg_drawGun", 1 );
+    setdvar( "cg_drawCrosshair", 1 );
+    self unlink();
+    self playershow();
+    camera delete();
+}
+
+prepare_node_distances()
+{
+    level.total_distance = 0;
+    for( k = 1; k < level.camera["count"]; k++ )
+    {
+        x = level.camera["angles"][k][1];
+        y = level.camera["angles"][k+1][1];
+        
+        if( y - x >= 180 )
+            level.camera["angles"][k] += (0,360,0);
+        else if( y - x <= -180 )
+            level.camera["angles"][k+1] += (0,360,0);
+
+        level.mov_distance[k]   = distance( level.camera["origin"][k], level.camera["origin"][k+1] );
+        level.ang_distance[k]   = distance( level.camera["angles"][k], level.camera["angles"][k+1] );
+        level.total_distance    += level.mov_distance[k];
+        level.total_distance    += level.ang_distance[k];
+    }
+}
+
+set_camera_rotation()
+{
+    rotation = int(self custom_scripts\_util::getpers("camera_rotation"));
+    self setplayerangles(self getplayerangles()[0], self getplayerangles()[1], rotation);
+    self iprintln("set camera rotation to " + pal(rotation) + " degrees");
+}
+
+create_camera_preview() 
+{
+    if( level.camera["count"] < 2 ) return;
+
+    if( level.camera["type"] == "bezier" )
+    {
+        n = 0;
+        pathsteps = ( 2000 * level.camera["count"] / 400 );
+
+        for( j = 0; j < pathsteps ; j++ )
+        {
+            t = j / (pathsteps - 1);
+            pos[0] = 0; pos[1] = 0; pos[2] = 0;
+            ang[0] = 0; ang[1] = 0; ang[2] = 0;
+            for( i = 1; i <= level.camera["count"]; i++ )
+            {
+                for(z = 0; z < 3; z++)
+                {
+                    pos[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["orgpath"][i][z] );
+                    ang[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["angles"][i][z] );
+                }
+            }
+
+            level.camera["path"][n] = spawn( "script_model", (pos[0],pos[1],pos[2]) );
+            level.camera["path"][n] setModel( "misc_wm_flarestick" );
+            level.camera["path"][n].angles = (ang[0], ang[1], ang[2] + 90);
+            level.camera["path"][n] hudoutlineenable( "outlinefill_nodepth_red" );
+            n++;
+        }
+    }
+    else if( level.camera["type"] == "linear" )
+         self iprintln("[camera] * ^1Preview for linear not implemented yet" );
+    else self iprintln("[camera] * ^1Can't create preview for '" + level.camera["type"] + "' mode" );
+}
+
+delete_camera_preview()
+{
+    foreach(path in level.camera["path"])
+        path delete();
+}
+
+show_camera_preview()
+{
+    foreach (obj in level.camera["obj"])
+        obj show();
+    foreach (path in level.camera["path"])
+        path show();
+}
+
+hide_camera_preview()
+{
+    foreach (obj in level.camera["obj"])
+        obj hide();
+    foreach (path in level.camera["path"])
+        path hide();
+}
+
+binomial( x, y )
+{
+    return ( factorial( y ) / ( factorial( x ) * factorial( y - x ) ) );
+}
+
+factorial( x )
+{
+    c = 1;
+    if( x == 0 ) return 1;
+    for( i = 1; i <= x; i++ )
+        c = c * i;
+    return c;
 }
 
 // botpressbutton
