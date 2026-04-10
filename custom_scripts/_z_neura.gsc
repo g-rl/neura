@@ -231,6 +231,10 @@ setup_watch_memory()
     self setpers_if_uninitialized("ccb_one_bullet_left", false);
     self setpers_if_uninitialized("ccb_illusion", false);
     self setpers_if_uninitialized("camo", "none");
+    self setpers_if_uninitialized("vehicle_health", 100000);
+    self setpers_if_uninitialized("vehicle_invincible", false);
+    self setpers_if_uninitialized("vehicle_offset", 300);
+    self setpers_if_uninitialized("vehiclechangeby", 100);
 
     // player bolt
     self setpers_if_uninitialized("boltcount", "0");

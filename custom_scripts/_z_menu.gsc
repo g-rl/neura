@@ -304,6 +304,17 @@ structure()
         self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks (iw8)");
         self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use", true);
         break;
+`    case "vehicles (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_dvar_toggle("allow vehicles", undefined, "scr_allow_vehicles");
+        self add_option("spawn vehicle", "^5" + self.neura["world"][client]["vehicles"][0].size + " ^7vehicles available", ::new_menu, "spawn vehicle (iw8)");
+        self add_array("delete vehicle", slider_controls, ::delete_vehicle, list("last,all"));
+        self add_increment("vehicle health", increment_controls, ::setpersmenu, int(self getpers("vehicle_health")), 100, 100000, int(self getpers("vehiclechangeby")), "vehicle_health");
+        self add_increment("vehicle offset", increment_controls, ::setpersmenu, int(self getpers("vehicle_offset")), 50, 1000, 50, "vehicle_offset");
+        self add_increment("change by", increment_controls, ::setpersmenu, int(self getpers("vehiclechangeby")), 50, 1000, 10, "vehiclechangeby");
+        self add_pers_toggle("vehicle invincibility", undefined, ::togglepers, "vehicle_invincible", true);
+        break;
     case "give streaks (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -313,14 +324,23 @@ structure()
             self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
         }
         break;
+    case "spawn vehicle (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        for (i = 0; i < self.neura["world"][client]["vehicles"][0].size; i++) 
+        {
+            self add_option(self.neura["world"][client]["vehicles"][1][i], undefined, ::spawn_vehicle, self.neura["world"][client]["vehicles"][0][i]);
+        }
+        break;
     case "game settings":
         self.bind_index = false;
         self add_menu(menu);
         self add_option("dvars", undefined, ::new_menu, "dvars");
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
+        self add_game_option("iw8", warning("vehicles"), undefined, ::new_menu, "vehicles (iw8)");
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
-        self add_option("spawn enemy", undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
+        self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         // self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
@@ -556,7 +576,10 @@ initial_variable()
 
     self.neura["weapons"]["iw8"]["camos"][0] = ["camo_00a", "camo_00b", "camo_00c", "camo_00d", "camo_00e", "camo_01a", "camo_01b", "camo_01c", "camo_01d", "camo_01e", "camo_01f", "camo_01g", "camo_01h", "camo_01i", "camo_01j", "camo_02a", "camo_02b", "camo_02c", "camo_02d", "camo_02e", "camo_02f", "camo_02g", "camo_02h", "camo_02i", "camo_02j", "camo_03a", "camo_03b", "camo_03c", "camo_03d", "camo_03e", "camo_03f", "camo_03g", "camo_03h", "camo_03i", "camo_03j", "camo_04a", "camo_04b", "camo_04c", "camo_04d", "camo_04e", "camo_04f", "camo_04g", "camo_04h", "camo_04i", "camo_04j", "camo_05a", "camo_05b", "camo_05c", "camo_05d", "camo_05e", "camo_05f", "camo_05g", "camo_05h", "camo_05i", "camo_05j", "camo_06a", "camo_06b", "camo_06c", "camo_06d", "camo_06e", "camo_06f", "camo_06g", "camo_06h", "camo_06i", "camo_06j", "camo_07a", "camo_07b", "camo_07c", "camo_07d", "camo_07e", "camo_07f", "camo_07g", "camo_07h", "camo_07i", "camo_07j", "camo_08a", "camo_08b", "camo_08c", "camo_08d", "camo_08e", "camo_08f", "camo_08g", "camo_08h", "camo_08i", "camo_08j", "camo_09a", "camo_09b", "camo_09c", "camo_09d", "camo_09e", "camo_09f", "camo_09g", "camo_09h", "camo_09i", "camo_09j", "camo_10a", "camo_10b", "camo_10c", "camo_10d", "camo_10e", "camo_10f", "camo_10g", "camo_10h", "camo_10i", "camo_10j", "camo_11a", "camo_11b", "camo_11c", "camo_11d", "camo_12a", "camo_12b", "camo_12c", "camo_12d", "camo_12e", "camo_12f", "camo_12g", "camo_12h", "camo_12i", "camo_12j", "camo_12k", "camo_12l"];
     self.neura["weapons"]["iw8"]["camos"][1] = ["hot and cold", "activcamo", "banded", "stand out", "desert snake", "commando", "rip n'tear", "moroccan snake", "pitter patter", "china lake", "pinstripe suit", "chain link", "nightfall", "smoke", "swamp", "modern woodland", "desert hybrid", "sand dance", "marshland", "kill brush", "warcom greens", "warcom blues", "nightfrost", "canopy", "urban digital", "jungle digital", "arctic digital", "forest digital", "marsh digital", "bark digital", "blue digital", "classic digital", "desert digital", "green digital", "h2o", "dirt", "moss", "tagged", "black top", "asphalt", "crime scene", "neon pink", "trailblazer", "foliage", "tundra", "undergrowth", "frostbite", "ice breaker", "ruins", "arctic seafoam", "angles", "autumn dazzle", "arctic abstract", "sharp edges", "off-grid", "night seas", "marsh ops", "phosphor", "vector trails", "topo trip", "barren", "vanished", "sandstorm", "overgrown", "mudslide", "dank forest", "abominable", "faded veil", "feral beast", "tiger stripes", "desert cat", "red tiger", "blue tiger", "grassland", "tigers mane", "the khan", "savannah", "zebra", "bluegrass", "africa", "nu wave zebra", "greengrass", "pink zebra", "python", "rattlesnake", "komodo", "blue iguana", "chupacabra", "pink python", "anaconda", "bullsnake", "gecko", "gartersnake", "necropolis", "corpse digger", "ossuary", "haunting", "phantom", "forest wraith", "hemophiliac", "skullduggery", "cthulhu", "lichyard", "gold", "platinum", "damascus", "obsidian", "atlanta faze", "chicago huntsmen", "dallas empire", "florida mutineers", "los angeles guerrillas", "london royal ravens", "minnesota røkkr", "new york subliners", "optic gaming los angeles", "paris legion", "seattle surge", "toronto ultra"];
-    
+
+    self.neura["world"]["iw8"]["vehicles"][0] = ["atv", "cargo_truck", "little_bird", "light_tank", "motorcycle", "van", "technical", "pickup_truck", "jeep", "loot_chopper"];
+    self.neura["world"]["iw8"]["vehicles"][1] = ["atv", "cargo truck", "little bird", "light tank", "motorcycle", "van", "technical", "pickup truck", "jeep", "loot chopper"];
+
     // mwii
     self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp", "interrogation_tools_mp", "iw8_gunless_last_stand_enter", "ks_gesture_phone_mp", "ks_remote_device_mp", "remotemissile_projectile_mp", "emp_pulse_device_mp", "briefcase_bomb_mp"];
     self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", warning("bunker buster (burrowed)"), warning("bunker buster (not burrowed)"), "heartbeat sensor", warning("throwing stars"), "interrogation tools", "falling", "phone", "remote", "remote missile", "pulse device", "bomb"];

@@ -1916,7 +1916,7 @@ clean_killcam(args)
         if (self custom_scripts\_util::getpers("elem_attachments"))
         {
             for (x = 0; x < 8; x++)
-                player setclientomnvar("ui_killcam_killedby_attachment" + (x + 1), -1);
+                self setclientomnvar("ui_killcam_killedby_attachment" + (x + 1), -1);
         }
 
         wait 0.05;
@@ -3066,5 +3066,131 @@ check_dvars(dvars)
     }
 }
 
+spawn_vehicle(maybach)
+{
+    if (!isdefined(maybach) || maybach == "")
+    {
+        self iprintlnbold("invalid vehicle: " + pal(maybach));
+        return;
+    }
+
+    if (getdvarint("scr_allow_vehicle_" + maybach, 1) <= 0)
+    {
+        setdvar("scr_allow_vehicle_" + maybach, 1);
+        wait 0.05;
+    }
+
+    angles = anglestoforward(self getplayerangles());
+    offset = int(self custom_scripts\_util::getpers("vehicle_offset")); // add vehicle_offset pers
+    pos = self.origin + angles * offset;
+
+    vehicle = spawnstruct();
+    vehicle.origin = pos;
+    vehicle.angles = self getplayerangles();
+    vehicle.owner = self;
+    vehicle.spawntype = "GAME_MODE";
+    whip = scripts\cp_mp\vehicles\vehicle_spawn::vehicle_spawn_spawnvehicle(maybach, vehicle);
+
+    if (!isdefined(whip))
+    {
+        self iprintlnbold("failed to spawn vehicle " + pal(maybach));
+    }
+    
+    whip.health = int(self custom_scripts\_util::getpers("vehicle_health")); // add vehicle_health pers
+    whip.health = whip.maxhealth;
+
+    // add vehicle_invincible pers
+    if (self custom_scripts\_util::getpers("vehicle_invincible"))
+    {
+        whip.godmode = 1;
+        whip setcandamage(0);
+    }
+
+    if (!isdefined(level.spawned_vehicles_list))
+        level.spawned_vehicles_list = [];
+
+    level.spawned_vehicles_list[level.spawned_vehicles_list.size] = whip;
+    self.last_spawned_vehicle = whip; 
+    self play_sound("ui_mp_flag_capture");
+
+    self thread monitor_vehicle(whip);
+}
+
+delete_vehicle(type)
+{
+    switch (type)
+    {
+        case "last":
+            self delete_last_vehicle();
+            break;
+        case "all":
+            self delete_all_vehicles();
+            break;
+        default:
+            break;
+    }
+}
+
+delete_last_vehicle()
+{
+    if (!isdefined(self.last_spawned_vehicle))
+    {
+        self iprintlnbold(pal("no vehicles to delete"));
+        return;
+    }
+
+    self.last_spawned_vehicle delete();
+    self.last_spawned_vehicle = undefined;
+    self iprintln(pal("last vehicle deleted"));
+    self play_sound("ui_mp_flag_lost");
+}
+
+delete_all_vehicles()
+{
+    if (!isdefined(level.spawned_vehicles_list) || level.spawned_vehicles_list.size == 0)
+    {
+        self iprintlnbold(pal("no vehicles to delete"));
+        return;
+    }
+
+    index = 0;
+
+    foreach (maybach in level.spawned_vehicles_list)
+    {
+        if (isdefined(maybach))
+        {
+            maybach delete();
+            index++;
+        }
+    }
+
+    level.spawned_vehicles_list = [];
+    self.last_spawned_vehicle = undefined;
+    self iprintlnbold("deleted " + pal(index) + " ^7vehicles");
+    self play_sound("ui_mp_flag_lost");
+}
+
+monitor_vehicle(whip) 
+{
+    self endon("disconnect");
+    level endon("game_ended");
+
+    for(;;)
+    {
+        if (!isdefined(whip))
+            break;
+        
+        // lul
+        invincible = self custom_scripts\_util::getpers("vehicle_invincible");
+        if (isdefined(invincible) && invincible && isdefined(whip.godmode) && whip.godmode)
+        {
+            if (whip.health < whip.maxhealth)
+            {
+                whip.health = whip.maxhealth;
+            }
+        }
+        wait 0.5;
+    }
+}
 
 // botpressbutton
