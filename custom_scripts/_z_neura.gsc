@@ -221,6 +221,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("elem_itemtype", true);
     self setpers_if_uninitialized("elem_victim", true);
     self setpers_if_uninitialized("elem_perks", true);
+    self setpers_if_uninitialized("elem_attachments", true);
     self setpers_if_uninitialized("slomo", 1);
     self setpers_if_uninitialized("slomo_mode", "normal");
     self setpers_if_uninitialized("always_nac", false);

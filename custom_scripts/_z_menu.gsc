@@ -337,6 +337,7 @@ structure()
         self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "elem_itemtype", true);
         self add_pers_toggle("hide victim", undefined, ::togglepers, "elem_victim", true);
         self add_pers_toggle("hide perks", undefined, ::togglepers, "elem_perks", true);
+        self add_pers_toggle("hide attachments", undefined, ::togglepers, "elem_attachments", true);
         break;
     case "dvars":
         self.bind_index = false;

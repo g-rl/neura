@@ -1913,6 +1913,12 @@ clean_killcam(args)
                 self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
         }
 
+        if (self custom_scripts\_util::getpers("elem_attachments"))
+        {
+            for (x = 0; x < 8; x++)
+                player setclientomnvar("ui_killcam_killedby_attachment" + (x + 1), -1);
+        }
+
         wait 0.05;
     }
 }
