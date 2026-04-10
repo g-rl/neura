@@ -62,8 +62,6 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-        // self thread watch_weap_change(); - get full weapon names
-        // self thread give_perks();
         self thread reload_position();
 
         if (self.has_spawned)
@@ -105,9 +103,18 @@ on_player_spawned()
 
         // other funcs
         // self thread check_event("show_final_killcam");
+        // self thread watch_weap_change(); - get full weapon names
+        // self thread give_perks();
         self thread skip_final_killcam();
         self thread monitor_class();
-        self thread give_streak(); // give back saved streak if any
+        
+        // return any streaks to player (if saved)
+        saved = self custom_scripts\_util::getpers("saved_streak");
+        if (isdefined(saved) && saved != "none")
+        {
+            self thread give_streak(saved);
+            return;
+        }
     }
 }
 

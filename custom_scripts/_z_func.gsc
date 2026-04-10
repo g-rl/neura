@@ -2029,17 +2029,6 @@ givegun(weapon) // test give_weapon later and use that instead
 
 give_streak(streak)
 {
-    if (!isdefined(streak))
-    {
-        saved = self custom_scripts\_util::getpers("saved_streak");
-        if (isdefined(saved) && saved != "none")
-        {
-            self thread give_streak(saved);
-            return;
-        }
-    }
-
-    self custom_scripts\_util::setpers("saved_streak", streak);
     struct = scripts\mp\killstreaks\killstreaks::createstreakitemstruct(streak);
     if (!isdefined(struct))
     {
