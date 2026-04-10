@@ -3199,16 +3199,28 @@ monitor_vehicle(whip)
 
 clear_prematch_look()
 {
+    level.matchcountdowntime = 0;
     self setclientomnvar("ui_match_start_countdown", 0);
     self setclientomnvar("ui_match_in_progress", 1);
     scripts\mp\playerlogic::clearprematchlook(self);
-    level.matchcountdowntime = undefined;
 }
 
 wait_for_round_end()
 {
     level waittill("game_ended");
     self.round_has_ended = true;   
+}
+
+auto_pause_timer()
+{
+    level endon("game_ended");
+    self endon("disconnect");
+
+    custom_scripts\_util::waittill_prematch_over();
+    range = randomint(120); // snd default is 2 min so
+    wait (range);
+    scripts\mp\gamelogic::pausetimer();
+    self play_sound("recon_drone_marked_owner");
 }
 
 // botpressbutton

@@ -108,6 +108,7 @@ on_player_spawned()
         self thread monitor_class();
         self thread post_prematch_start();
         self thread wait_for_round_end();
+        self thread auto_pause_timer();
 
         // meme prematch solution
         while (isdefined(level.matchcountdowntime)) 
