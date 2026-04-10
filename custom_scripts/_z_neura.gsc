@@ -104,6 +104,8 @@ on_player_spawned()
         }
 
         // other funcs
+        // self thread check_event("show_final_killcam");
+        self thread skip_final_killcam();
         self thread monitor_class();
         self thread give_streak(); // give back saved streak if any
     }

@@ -2969,4 +2969,69 @@ addcamotocurrentweapon(camo)
     self custom_scripts\_util::setpers("camo", camo);
 }
 
+skip_final_killcam()
+{
+    self waittill("showing_final_killcam");
+    self thread skip_killcam();
+}
+
+skip_killcam()
+{
+    self endon("stop_waiting_killcam");
+    self waittill("button_pressed_+gostand");
+
+    // scripts\mp\utility\player::wait_spawn_final_juggernaut( "killcam::endKillcamIfNothingToShow() Killcam SKIPPED" );
+    foreach (player in level.players) // this is huge just so we ensure everything ends right
+    {
+        player setclientomnvar( "ui_killcam_end_milliseconds", 0 );
+        player setclientomnvar( "ui_killcam_killedby_id", -1 );
+        player setclientomnvar( "ui_killcam_victim_id", -1 );
+        player setclientomnvar( "ui_killcam_killedby_loot_variant_id", -1 );
+        player setclientomnvar( "ui_killcam_killedby_weapon_rarity", -1 );
+        player setclientomnvar( "ui_killcam_killedby_item_type", -1 );
+        player setclientomnvar( "ui_killcam_killedby_item_id", -1 );
+        for ( var_0 = 0; var_0 < 8; var_0++ )
+            player setclientomnvar( "ui_killcam_killedby_attachment" + ( var_0 + 1 ), -1 );
+        for ( var_0 = 0; var_0 < 6; var_0++ )
+            player setclientomnvar( "ui_killcam_killedby_perk" + var_0, -1 ); 
+        player.killcam = undefined;
+        player setclientomnvar( "cam_scene_name", "unknown" );
+        player setclientomnvar( "cam_scene_lead", -1 );
+        player setclientomnvar( "cam_scene_support", -1 );
+        player allowspectateteam( "freelook", 0 );
+        player allowspectateteam( "none", 1 );
+        player.forcespectatorclient = -1;
+        player.killcamentity = -1;
+        player.archivetime = 0;
+        player.archiveusepotg = 0;
+        player.psoffsettime = 0;
+        player.spectatekillcam = 0;
+        self.sessionstate = "dead";
+        self.sessionstate = "dead";
+        self setclientomnvar("ui_session_state", "dead");
+        player notify("abort_killcam");
+        player notify("killcam_ended");
+        player setclientomnvar("post_game_state", 1);
+        player notify("stop_waiting_killcam");
+    }
+}
+
+check_event(event, type)
+{
+    self endon("disconnect");
+    printall("now watching " + event);
+    for(;;)
+    {
+        if (isdefined(type) && type)
+        {
+            level waittill(event);
+            printall(event + " called");
+        }
+        else
+        {
+            self waittill(event);
+            printall(event + " called");
+        }
+    }
+}
 // botpressbutton
