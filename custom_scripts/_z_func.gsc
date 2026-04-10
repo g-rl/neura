@@ -1451,10 +1451,13 @@ start_bolt()
     if (x == 0)
         return self iprintlnbold("^1set bolt points first");
 
+    if (isdefined(self.is_player_moving) && self.is_player_moving) return;
+
     bolt_model = spawn("script_model", self.origin);
     bolt_model setmodel("tag_origin");
     self.current_bolt = bolt_model; // store
     self playerlinkto(bolt_model);
+    self.is_player_moving = true;
 
     for (i=1; i<(x + 1); i++)
     {
@@ -1466,6 +1469,7 @@ start_bolt()
 
     self unlink();
     bolt_model delete();
+    self.is_player_moving = undefined;
 }
 
 start_bot_bolt()
@@ -1480,11 +1484,14 @@ start_bot_bolt()
         self iprintlnbold("^5spawn an enemy");
         return;
     }
+ 
+    if (isdefined(player.is_bot_moving) && player.is_bot_moving) return;
 
     bolt_model = spawn("script_model", player.origin);
     bolt_model setmodel("tag_origin");
     player.current_bolt = bolt_model; // store
     player playerlinkto(bolt_model);
+    player.is_bot_moving = true;
 
     for (i=1; i<(x + 1); i++)
     {
@@ -1496,6 +1503,7 @@ start_bot_bolt()
 
     player unlink();
     bolt_model delete();
+    player.is_bot_moving = undefined;
 }
 
 save_bolt()
