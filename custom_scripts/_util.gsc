@@ -19,7 +19,7 @@ setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
     }
 }
 
-get_current_client() // check if s4, iw8 or iw9
+get_current_build() // check if s4, iw8 or iw9
 {
     return level._client + " ^7(" + custom_scripts\_z_func::pal(level._client_version) + "^7)"; 
 }
