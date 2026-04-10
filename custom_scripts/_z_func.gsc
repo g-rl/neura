@@ -3238,8 +3238,15 @@ auto_pause_timer(args)
 
     custom_scripts\_util::waittill_prematch_over();
 
-    range = randomint(120); // snd default is 2 min so
-    wait (range);
+    if (self custom_scripts\_util::getpers("randomize_timer_pause"))
+    {
+        range = randomint(120); // snd default is 2 min so
+        wait (range);
+    }
+    else
+    {
+        wait (int(self custom_scripts\_util::getpers("pause_timer_after")));
+    }
 
     if (self custom_scripts\_util::getpers("auto_pause_timer"))
     {

@@ -239,6 +239,8 @@ setup_watch_memory()
     self setpers_if_uninitialized("welcome_message", false);
     self setpers_if_uninitialized("random_rounds", true);
     self setpers_if_uninitialized("auto_pause_timer", true);
+    self setpers_if_uninitialized("randomize_timer_pause", true);
+    self setpers_if_uninitialized("pause_timer_after", 120);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");

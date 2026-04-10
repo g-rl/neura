@@ -341,6 +341,8 @@ structure()
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
         self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
+        self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
+        if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
         // self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
