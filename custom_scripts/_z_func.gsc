@@ -2503,7 +2503,7 @@ elevator_logic()
     self endon("disconnect");
 
     self.elevator = spawn("script_origin", self.origin, 1);
-    self playerlinkto(self.elevator, undefined);
+    self playerlinktodelta(self.elevator, undefined);
     self.elevating = true;
 
     for (;;)
@@ -3286,6 +3286,78 @@ set_selected_player(player)
 {
     self.pers["selected_bot"] = player;
     self iprintln("selected bot: " + pal(self.pers["selected_bot"].name));
+}
+
+toggle_reverse_ele_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_reverse_ele_bind(1, i);
+    else
+        self notify("stop_reverse_ele_bind");
+}
+
+do_reverse_ele_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_reverse_ele_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self thread do_reverse_ele();
+            wait 1;
+        }
+    }
+}
+
+do_reverse_ele() 
+{
+    if (!isdefined(self.changle))
+    {
+        self endon("stop_reverse_ele");
+        self.elevate = spawn("script_origin", self.origin, 1);
+        self playerlinktodelta(self.elevate, undefined);
+        self.changle = true;
+        for (;;)
+        {
+            self.down_ele = self.elevate.origin;
+            wait 0.005;
+            self.elevate.origin = self.down_ele + (0, 0, -3);
+            if (self jumpbuttonpressed()) 
+            {
+                self thread stop_elevator();
+                self unlink();
+                self.changle = undefined;
+                self.elevate delete();
+            }
+        }
+        wait 0.005;
+    }
+    else
+    {
+        wait 0.01;
+        self unlink();
+        self.changle = undefined;
+        self.elevate delete();
+        self notify("stop_reverse_ele");
+    }
+}
+
+stop_elevator() 
+{ 
+    wait 0.01; 
+    self unlink(); 
+    self.elevator delete(); 
+    self notify("stopelevator"); 
 }
 
 // botpressbutton
