@@ -3272,4 +3272,20 @@ auto_pause_timer(args)
     }
 }
 
+kill_selected_player()
+{
+    ent = self.pers["selected_bot"];
+
+    if (ent == "none")
+        return;
+
+    ent thread [[level.callbackPlayerDamage]](self, self, 250, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0);
+}
+
+set_selected_player(player)
+{
+    self.pers["selected_bot"] = player;
+    self iprintln("selected bot: " + pal(self.pers["selected_bot"].name));
+}
+
 // botpressbutton

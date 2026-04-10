@@ -241,6 +241,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("auto_pause_timer", true);
     self setpers_if_uninitialized("randomize_timer_pause", true);
     self setpers_if_uninitialized("pause_timer_after", 120);
+    self setpers_if_uninitialized("selected_bot", "none");
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");

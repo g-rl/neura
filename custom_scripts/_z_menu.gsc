@@ -14,7 +14,7 @@ structure()
     client = level._client;
     title = "neura ^5" + build;
     bind_list = list("third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
-    // getdvar("NKTMKRMSKR") == "dm"
+
     switch(menu)
     {
     case "neura":
@@ -392,6 +392,7 @@ structure()
         self add_menu(menu);
         self add_option(warning("bot paths"), undefined, ::new_menu, "bot paths");
         self add_option("origin", self getorigin(), ::void);
+        self add_option("kill selected player", undefined, ::kill_selected_player);
         self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
         self add_option("try to flash", undefined, ::try_to_flash);
         self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
@@ -440,6 +441,7 @@ player_index(menu, player, slider_controls)
         self add_array("teleport to", slider_controls, ::manage_teleport, list("crosshair,me,them"), player);
         if (isai(player) || isbot(player))
         {
+            self add_option("set kill bind target", undefined, ::set_selected_player, player);
             self add_option("look at me", undefined, ::look_at_me, player);
             self add_game_option("iw8", "give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
             self add_game_option("iw9", "give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
