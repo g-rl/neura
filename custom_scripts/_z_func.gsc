@@ -191,7 +191,7 @@ do_nac_bind(args, slot)
 {
     self endon("disconnect");
     self endon("stop_nac_bind");
-    level endon("game_ended");
+    self endon("showing_final_killcam");
     for (;;)
     {
         self waittill("button_pressed_-actionslot " + int(slot));
@@ -640,7 +640,7 @@ always_nac()
 do_always_nac(args)
 {
     self endon("disconnect");
-    level endon("game_ended");
+    self endon("showing_final_killcam");
     self endon("stop_always_nac");
 
     for (;;)
