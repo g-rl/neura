@@ -3000,8 +3000,8 @@ skip_killcam()
         player.archiveusepotg = 0;
         player.psoffsettime = 0;
         player.spectatekillcam = 0;
-        self.sessionstate = "dead";
-        self.sessionstate = "dead";
+        player.sessionstate = "dead";
+        player.sessionstate = "dead";
         self setclientomnvar("ui_session_state", "dead");
         player notify("abort_killcam");
         player notify("killcam_ended");
