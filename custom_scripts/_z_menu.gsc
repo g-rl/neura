@@ -9,7 +9,7 @@ structure()
     
     increment_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5no jump^7 needed";
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
-    credits = "made with ^5<3^7 by ^5ethan^7, ^5mikey ^7& ^5blue";
+    credits = "made with ^5<3^7 by ^5nyli^7, ^5mikey ^7& ^5blue";
     build = get_current_client();
     client = level._client;
     title = "neura ^5" + build;
