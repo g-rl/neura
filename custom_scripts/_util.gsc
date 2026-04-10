@@ -67,15 +67,6 @@ monitor_buttons()
     self setactionslot(4, "");
 }
 
-// pauses timer after 5-8 seconds to let the tactical/equipment delay disable
-pause_timer_cooldown_bypass()
-{
-    level endon("game_ended");
-    waittill_prematch_over();
-    wait 8;
-    scripts\mp\gamelogic::pausetimer();
-}
-
 // this will wait until prematch is confirmed over, and if over, this will just skip through
 waittill_prematch_over()
 {

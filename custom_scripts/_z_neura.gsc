@@ -108,7 +108,6 @@ on_player_spawned()
         self thread monitor_class();
         self thread post_prematch_start();
         self thread wait_for_round_end();
-        self thread auto_pause_timer();
 
         // meme prematch solution
         while (isdefined(level.matchcountdowntime)) 
@@ -239,6 +238,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("vehiclechangeby", 100);
     self setpers_if_uninitialized("welcome_message", false);
     self setpers_if_uninitialized("random_rounds", true);
+    self setpers_if_uninitialized("auto_pause_timer", true);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -307,6 +307,7 @@ watch_memory()
     self loadpers("barriers", ::remove_barriers); 
     self loadpers("always_nac", ::do_always_nac); 
     self loadpers("random_rounds", ::always_random_rounds);
+    self loadpers("auto_pause_timer", ::auto_pause_timer);
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);

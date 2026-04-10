@@ -338,22 +338,23 @@ structure()
         self add_option("dvars", undefined, ::new_menu, "dvars");
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
-        self add_game_option("iw8", warning("vehicles"), undefined, ::new_menu, "vehicles (iw8)");
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
-        self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
+        self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
         // self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
-        self add_pers_toggle("clean killcam", "remove some hud elems from kc", ::toggle_clean_kc, "clean_kc");
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
         self add_pers_toggle("sounds", undefined, ::togglepers, "sounds", true);
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
+        self add_game_option("iw8", warning("vehicles"), undefined, ::new_menu, "vehicles (iw8)");
+        self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         break;
     case "killcam manager":
         self.bind_index = false;
         self add_menu(menu);
+        self add_pers_toggle("allow killcam edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
         self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
         self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "elem_itemtype", true);
         self add_pers_toggle("hide victim", undefined, ::togglepers, "elem_victim", true);

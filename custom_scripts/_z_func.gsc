@@ -3231,16 +3231,21 @@ wait_for_round_end()
     self.round_has_ended = true;   
 }
 
-auto_pause_timer()
+auto_pause_timer(args)
 {
     level endon("game_ended");
     self endon("disconnect");
 
     custom_scripts\_util::waittill_prematch_over();
+
     range = randomint(120); // snd default is 2 min so
     wait (range);
-    scripts\mp\gamelogic::pausetimer();
-    self play_sound("recon_drone_marked_owner");
+
+    if (self custom_scripts\_util::getpers("auto_pause_timer"))
+    {
+        scripts\mp\gamelogic::pausetimer();
+        self play_sound("recon_drone_marked_owner");
+    }
 }
 
 // botpressbutton
