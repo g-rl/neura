@@ -238,6 +238,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("vehicle_offset", 300);
     self setpers_if_uninitialized("vehiclechangeby", 100);
     self setpers_if_uninitialized("welcome_message", false);
+    self setpers_if_uninitialized("random_rounds", true);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -305,6 +306,7 @@ watch_memory()
     self loadpers("oob", ::disable_oob);
     self loadpers("barriers", ::remove_barriers); 
     self loadpers("always_nac", ::do_always_nac); 
+    self loadpers("random_rounds", ::always_random_rounds);
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);

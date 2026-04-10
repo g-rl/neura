@@ -1850,9 +1850,10 @@ round_manager(args)
     }
 }
 
-random_rounds()
+random_rounds() // can we make this automatically update?
 {
-    random_round_axis = randomint(4);
+    self waittill("killcam_ended");
+    random_round_axis = randomint(5);
     random_round_ally = randomint(4);
     rounds_played = (random_round_axis + random_round_ally);
     game["roundsWon"]["axis"] = random_round_axis;
@@ -1861,6 +1862,23 @@ random_rounds()
     game["teamScores"]["axis"] = random_round_axis;
     game["roundsplayed"] = rounds_played;
     game["switchedsides"] = 0;
+}
+
+always_random_rounds(args)
+{
+    self waittill("killcam_ended");
+    if (custom_scripts\_util::getpers("random_rounds"))
+    {
+        random_round_axis = randomint(5);
+        random_round_ally = randomint(4);
+        rounds_played = (random_round_axis + random_round_ally);
+        game["roundsWon"]["axis"] = random_round_axis;
+        game["roundsWon"]["allies"] = random_round_ally;
+        game["teamScores"]["allies"] = random_round_ally;
+        game["teamScores"]["axis"] = random_round_axis;
+        game["roundsplayed"] = rounds_played;
+        game["switchedsides"] = 0;
+    }
 }
 
 reset_rounds()
@@ -1935,6 +1953,8 @@ post_prematch_start()
             + palette() + "@nyli2b " 
             + palette() + "@mjkzys " 
             + palette() + "@machinxry  " + "^7*");
+            
+        wait 1;
         self iprintln("ߵ " + " [{+gostand}] to ^2skip^7 final killcam");
         self custom_scripts\_util::setpers("welcome_message", true);
     }

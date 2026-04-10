@@ -340,6 +340,7 @@ structure()
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_game_option("iw8", warning("vehicles"), undefined, ::new_menu, "vehicles (iw8)");
         self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
+        self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
         self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         // self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
