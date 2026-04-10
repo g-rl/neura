@@ -10,7 +10,7 @@ structure()
     increment_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5no jump^7 needed";
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
     credits = "made with ^5<3^7 by ^5nyli^7, ^5mikey ^7& ^5blue";
-    build = get_current_client();
+    build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
     bind_list = list("third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
