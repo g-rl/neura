@@ -1042,6 +1042,7 @@ teleport_player(from, to, player)
 
     from setorigin(to.origin);
     player thread save_spawn();
+    self play_sound("recon_drone_marked_owner");
 }
 
 manage_teleport(args, player)
@@ -1055,7 +1056,10 @@ manage_teleport(args, player)
             self thread teleport_player(self, player, player);
             break;
         case "crosshair":
-            self thread teleport_to_cross(player);
+            player setorigin(self getcrosshair());
+            player thread save_spawn();
+            self play_sound("recon_drone_marked_owner");
+            break;
         default:
             self thread teleport_player(player, self, player);
             break;        
@@ -1925,6 +1929,7 @@ post_prematch_start()
         + palette() + "@nyli2b " 
         + palette() + "@mjkzy " 
         + palette() + "@machinxry  " + "^7*");
+    self iprintln("ߵ " + " [{+gostand}] to ^2skip^7 final killcam");
 }
 
 look_at_me(player)

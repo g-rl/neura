@@ -397,7 +397,7 @@ player_index(menu, player, slider_controls)
         self add_menu(player.name);
         self add_option("kill player", undefined, ::kill_player, player);
         self add_option("change team", undefined, ::change_player_team, player);
-        self add_array("teleport to", slider_controls, ::manage_teleport, list("me,them"), player);
+        self add_array("teleport to", slider_controls, ::manage_teleport, list("crosshair,me,them"), player);
         if (isai(player) || isbot(player))
         {
             self add_option("look at me", undefined, ::look_at_me, player);
