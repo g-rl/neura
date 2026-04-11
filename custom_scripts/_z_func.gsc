@@ -700,16 +700,12 @@ do_aimbot(args)
                         effect = self custom_scripts\_util::getpers("kill_effect");
                         origin = player getorigin();
                         
-                        // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
-                        if (level._client == "iw9")
-                        {
+                            // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
+#ifdef IW9
                             player thread [[level.callbackPlayerDamage]]( self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102 );
-                        } 
-                        else 
-                        {
+#else
                             player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
-                        }
-
+#endif
                         if (level._client != "s4") // s4 already has these pretty well idk ab mw22 oops
                         {
                             if (self getpers("kill_effects"))
@@ -1372,14 +1368,13 @@ do_scavenger_bind(args, slot)
         if (!self custom_scripts\_util::in_menu())
         {
             // jaja
-            if (level._client == "iw9") 
+#ifdef IW9
                 self _id_5762AC2F22202BA2::hudicontype("scavenger");
-            else if (level._client == "s4") 
+#elifdef S4
                 self _id_07C4::_id_7B6B("scavenger");
-            else if (level._client == "iw8") 
+#else
                 self scripts\mp\damagefeedback::hudicontype("scavenger");
-            else
-                continue;
+#endif 
 
             self play_sound("scavenger_pack_pickup");
 
@@ -2189,10 +2184,11 @@ set_camo(camo) // ??
 
     variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
 
-    if (level._client == "iw9")
+#ifdef IW9
         weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
-    else
+#else
         weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
+#endif 
 
     new_weapon = build_weapon_wrapper(weapon_root_name, weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
@@ -2726,10 +2722,11 @@ getcrosshair()
 build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
 {
     
-    if (level._client == "iw9") // last 2 parameters are new, undefine them
+#ifdef IW9
         return _id_2669878CF5A1B6BC::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, undefined, undefined);
-    else 
+#else
         return scripts\mp\class::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8);
+#endif
 }
 
 play_sound(sound)
@@ -2991,10 +2988,11 @@ addcamotocurrentweapon(camo)
 
     variant = isdefined(current.variantid) ? current.variantid : -1;
 
-    if (level._client == "iw9")
+#ifdef IW9
         built_weapon = _id_2669878CF5A1B6BC::buildweapon(_id_2669878CF5A1B6BC::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
-    else
+#else
         built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+#endif
 
     if (!isdefined(built_weapon))
     {
@@ -3716,8 +3714,7 @@ factorial( x )
 
 play_kill_effect(effect, origin)
 {
-    if (effect != "none" || !isdefined(effect) || !isdefined(origin)) return;
-    playfx(effect, origin);
+    playfx(scripts\engine\utility::getfx(effect), origin);
 }
 
 // botpressbutton

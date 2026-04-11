@@ -26,7 +26,7 @@ structure()
         self add_option("position", credits, ::new_menu, "position");
         self add_option("cinematics", credits, ::new_menu, "cinematics");
         self add_option("aimbot", credits, ::new_menu, "aimbot settings");
-        self add_option("kill effects", credits, ::new_menu, "kill effects");
+        // self add_option("kill effects", credits, ::new_menu, "kill effects");
         self add_option("manage class", credits, ::new_menu, "class manager");
         self add_option("manage game", credits, ::new_menu, "game settings");
         self add_option("all clients", credits, ::new_menu, "manage clients");
