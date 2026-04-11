@@ -3716,7 +3716,7 @@ factorial( x )
 
 play_kill_effect(effect, origin)
 {
-    if (!fxexists(effect) || effect == "none") return;
+    if (effect != "none" || !isdefined(effect) || !isdefined(origin)) return;
     playfx(effect, origin);
 }
 

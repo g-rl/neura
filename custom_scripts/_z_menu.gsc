@@ -26,6 +26,7 @@ structure()
         self add_option("position", credits, ::new_menu, "position");
         self add_option("cinematics", credits, ::new_menu, "cinematics");
         self add_option("aimbot", credits, ::new_menu, "aimbot settings");
+        self add_option("kill effects", credits, ::new_menu, "kill effects");
         self add_option("manage class", credits, ::new_menu, "class manager");
         self add_option("manage game", credits, ::new_menu, "game settings");
         self add_option("all clients", credits, ::new_menu, "manage clients");
@@ -67,6 +68,17 @@ structure()
         self add_menu(menu);
         self add_option("^1load ^7session", "load previous map session if exists", ::load_session);
         self add_option("^2save ^7session", "save current map session", ::save_session);
+        break;
+    case "kill effects":
+        self.bind_index = false;
+        self add_menu(menu);
+        foreach (effect in level._effect)
+        {
+            if (isdefined(effect))
+            {
+                self add_option(level._effect[effect], undefined, ::setpersmenu, level._effect[effect], "kill_effect");
+            }
+        }
         break;
 
     case "cinematics":
