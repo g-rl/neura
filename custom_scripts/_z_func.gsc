@@ -1616,7 +1616,7 @@ record_movement()
         self custom_scripts\_util::setpers("recordmovementpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
         self iprintlnbold("point " + pal(x) + " ^7recorded");
         wait 0.1;
-        if(x >= 50)
+        if (x >= 50)
             return self iprintlnbold("^1max points reached");
     }
 
@@ -1626,7 +1626,7 @@ record_movement()
 delete_last_movement_point()
 {
     x = int(self custom_scripts\_util::getpers("recordmovementcount"));
-    if(x == 0)
+    if (x == 0)
         return self iprintlnbold("^1no points to delete");
 
     self custom_scripts\_util::setpers("recordmovementpos" + x, "0");
@@ -1639,7 +1639,7 @@ delete_last_movement_point()
 play_movement()
 {
     x = int(self custom_scripts\_util::getpers("recordmovementcount"));
-    if(x == 0)
+    if (x == 0)
         return self iprintlnbold(pal("save a point first"));
 
     move_model = spawn("script_model", self.origin);
@@ -3411,15 +3411,17 @@ save_camera_node()
     i = int(self custom_scripts\_util::getpers("nodecount"));
     if (i == 13)
         return self custom_scripts\_util::nprintln("^1max node points saved");
-    
-    delete_camera_preview();
+
+    // only delete preview if there's actually something to delete
+    if (isdefined(level.camera["path"]) || isdefined(level.camera["obj"]))
+        delete_camera_preview();
+
     i++;
-    self custom_scripts\_util::setpers("nodecount", i); 
+    self custom_scripts\_util::setpers("nodecount", i);
     level.camera["origin"][i]  = self getorigin();
     level.camera["orgpath"][i] = self getorigin() + (0,0,58);
     level.camera["angles"][i]  = self getplayerangles();
 
-    // if( isdefined(level.camera["obj"][i]) ) level.camera["obj"][i] delete();
     level.camera["obj"][i] = spawn( "script_model", level.camera["orgpath"][i] );
     level.camera["obj"][i] setmodel( "axis_guide_createfx" );
     level.camera["obj"][i].angles = self getplayerangles();
@@ -3427,7 +3429,7 @@ save_camera_node()
     level.camera["count"] = i;
 
     create_camera_preview();
-    self iprintln("camera position ^2" + i + " ^7saved @ ^2" + self.origin );
+    self iprintln("camera position ^2" + i + " ^7saved @ ^2" + self getorigin());
 }
 
 delete_last_node()
@@ -3437,15 +3439,21 @@ delete_last_node()
         return self iprintlnbold("^1no nodes to delete");
 
     self custom_scripts\_util::nprintlnbold("^+node " + x + " deleted");
-    x--;
-    self custom_scripts\_util::setpers("nodecount", x);
 
-    // reset node
+    if (isdefined(level.camera["obj"][x])) level.camera["obj"][x] delete();
+    level.camera["obj"][x] = undefined;
+
     level.camera["origin"][x]  = undefined;
     level.camera["orgpath"][x] = undefined;
     level.camera["angles"][x]  = undefined;
-    level.camera["obj"][x] delete();
+
+    x--;
+    self custom_scripts\_util::setpers("nodecount", x);
     level.camera["count"] = x;
+
+    // rebuild preview cleanly after node removed
+    delete_camera_preview();
+    create_camera_preview();
 }
 
 set_the_mode(args)
@@ -3469,63 +3477,84 @@ set_camera_mode()
         self iprintln(pal("13 ^7") + "camera points max");
     }
 
-    if((level.camera["type"] == "bezier" && level.camera["count"] <= 13 ) || level.camera["type"] == "linear") 
+    if ((level.camera["type"] == "bezier" && level.camera["count"] <= 13 ) || level.camera["type"] == "linear") 
     {
         self iprintln(pal(level.camera["type"]) + " ^7mode");
         create_camera_preview();
     }
 }
 
-start_camera_path()
+start_camera_path(mode)
 {
+    if (isdefined(level.camera["running"]) && level.camera["running"])
+    {
+        self iprintln("^1camera path already running");
+        return;
+    }
+
     speed = 0;
-
-    if (self custom_scripts\_util::getpers("camera_get_start_type") == "speed") // bezier
-    {
+    if (mode == "speed")
         speed = int(self custom_scripts\_util::getpers("camera_bezier_speed"));
-    }
-
-    if (self custom_scripts\_util::getpers("camera_get_start_type") == "time") // linear
-    {
+    if (mode == "time")
         speed = int(self custom_scripts\_util::getpers("camera_linear_time"));
-    }
 
-    camera = spawn( "script_model", level.camera["origin"][1] );
-    camera setmodel( "tag_origin" );
-    camera enablelinkto();
-    camera rotateto( level.camera["angles"][1], .05 );
+    level.camera["type"] = self custom_scripts\_util::getpers("camera_mode");
 
-    self setplayerangles( ( self getplayerangles()[0], self getplayerangles()[1], 0 ) ); // In case cam_rot is not 0
-    self playerlinktodelta( camera, "tag_origin", 1, 0, 0, 0, 0, true );
-    self iprintlnbold( "Mode: " + level.camera["type"] + " / Speed: " + speed + " / Nodes: " + level.camera["count"] );
+    cam_type  = isdefined(level.camera["type"])  ? level.camera["type"]  : "none";
+    cam_speed = isdefined(speed)                 ? speed                 : 0;
+    cam_count = isdefined(level.camera["count"]) ? level.camera["count"] : 0;
+
+    camera = spawn("script_model", level.camera["origin"][1]);
+    camera setmodel("tag_origin");
+    camera rotateto(level.camera["angles"][1], .05);
+    level.camera["active_cam"] = camera;
+    level.camera["running"] = true;
+
+    self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0));
+    self playerlinktodelta(camera, "tag_origin", 1, 0, 0, 0, 0, true);
+    self iprintlnbold("camera: " + pal(cam_type) + "^7 - speed: " + pal(cam_speed) + "^7 - node count: " + pal(cam_count));
     prepare_node_distances();
 
-    if( level.camera["type"] != "bezier" && level.camera["type"] != "linear" ) 
-        self iprintln( "[camera] * ^1Invalid path type" );
+    if (level.camera["type"] != "bezier" && level.camera["type"] != "linear") 
+    {
+        self iprintln("^1invalid path type");
+        self unlink();
+        camera delete();
+        level.camera["active_cam"] = undefined;
+        level.camera["running"] = false;
+        return;
+    }
     
-    if( level.camera["type"] == "bezier" && level.camera["count"] < 3 ) 
-        self iprintln( "[camera] * ^1Bezier needs atleast 3 nodes" );
+    if (level.camera["type"] == "bezier" && level.camera["count"] < 3) 
+    {
+        self iprintln("^1 3 nodes needed for bezier");
+        self unlink();
+        camera delete();
+        level.camera["active_cam"] = undefined;
+        level.camera["running"] = false;
+        return;
+    }
 
     wait 2;
     hide_camera_preview();
-    setdvar( "cg_drawGun", 0 );
-    setdvar( "cg_drawCrosshair", 0 );
+    setdvar("cg_drawGun", 0);
+    setdvar("cg_drawCrosshair", 0);
     self playerhide();
-    self setclientomnvar( "ui_hide_full_hud", 1 );
+    self setclientomnvar("ui_hide_full_hud", 1);
 
-    if( level.camera["type"] == "linear" )
+    if (level.camera["type"] == "linear")
     {
         travel_time = int( speed / int(level.camera["count"]) );
-        for ( i = 2; i < level.camera["count"] + 1; i++ )
+        for (i = 2; i < level.camera["count"] + 1; i++)
         {
             camera rotateto( level.camera["angles"][i], travel_time, 0, 0 );
             camera moveto( level.camera["origin"][i], travel_time, 0, 0 );
             wait travel_time;
         }
     }
-    else if( level.camera["type"] == "bezier" && level.camera["count"] >= 3 )
+    else if (level.camera["type"] == "bezier" && level.camera["count"] >= 3)
     {
-        mult = 0.2; // "sv_fps / 10"
+        mult = 0.2;
 
         for( j = 0; j <= ( level.total_distance * 10 * mult / speed ); j++ )
         {
@@ -3542,19 +3571,22 @@ start_camera_path()
                     ang[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["angles"][i][z] );
                 }
             }
-            camera moveto( (pos[0] ,pos[1], pos[2]), .1, 0, 0 );
+
+            camera moveto( (pos[0], pos[1], pos[2]), .1, 0, 0 );
             camera rotateto( (ang[0], ang[1], ang[2]), .1, 0, 0 );
             wait 0.05;
         }
     }
 
     show_camera_preview();
-    self setclientomnvar( "ui_hide_full_hud", 0 );
-    setdvar( "cg_drawGun", 1 );
-    setdvar( "cg_drawCrosshair", 1 );
+    self setclientomnvar("ui_hide_full_hud", 0);
+    setdvar("cg_drawGun", 1);
+    setdvar("cg_drawCrosshair", 1);
     self unlink();
     self playershow();
     camera delete();
+    level.camera["active_cam"] = undefined;
+    level.camera["running"] = false;
 }
 
 prepare_node_distances()
@@ -3564,16 +3596,16 @@ prepare_node_distances()
     {
         x = level.camera["angles"][k][1];
         y = level.camera["angles"][k+1][1];
-        
-        if( y - x >= 180 )
-            level.camera["angles"][k] += (0,360,0);
-        else if( y - x <= -180 )
-            level.camera["angles"][k+1] += (0,360,0);
 
-        level.mov_distance[k]   = distance( level.camera["origin"][k], level.camera["origin"][k+1] );
-        level.ang_distance[k]   = distance( level.camera["angles"][k], level.camera["angles"][k+1] );
-        level.total_distance    += level.mov_distance[k];
-        level.total_distance    += level.ang_distance[k];
+        if ( y - x >= 180 )
+            level.camera["angles"][k+1] -= (0, 360, 0);
+        else if ( y - x <= -180 )
+            level.camera["angles"][k+1] += (0, 360, 0);
+
+        level.mov_distance[k] = distance( level.camera["origin"][k], level.camera["origin"][k+1] );
+        level.ang_distance[k] = distance( level.camera["angles"][k], level.camera["angles"][k+1] );
+        level.total_distance += level.mov_distance[k];
+        level.total_distance += level.ang_distance[k];
     }
 }
 
@@ -3586,7 +3618,7 @@ set_camera_rotation()
 
 create_camera_preview() 
 {
-    if(level.camera["count"] < 2) 
+    if (level.camera["count"] < 2) 
     {
         return;
     }
@@ -3618,19 +3650,19 @@ create_camera_preview()
             n++;
         }
     }
-    else if( level.camera["type"] == "linear" )
-         self iprintln("[camera] * ^1Preview for linear not implemented yet" );
-    else self iprintln("[camera] * ^1Can't create preview for '" + level.camera["type"] + "' mode" );
+    else
+    {
+        self iprintln("unable to create preview for '^2" + level.camera["type"] + "^7' mode");
+        return;
+    }
 }
 
 delete_camera_preview()
 {
-    if (isdefined(level.camera["path"]))
+    if (!isdefined(level.camera["path"])) return;
+    foreach(path in level.camera["path"])
     {
-        foreach(path in level.camera["path"])
-        {
-            path delete();
-        }
+        if (isdefined(path)) path delete();
     }
 }
 
@@ -3640,30 +3672,32 @@ show_camera_preview()
     {
         foreach (obj in level.camera["obj"])
         {
-            obj show();
+            if (isdefined(obj)) obj show();
         }
     }
-    
     if (isdefined(level.camera["path"]))
     {
         foreach (path in level.camera["path"])
         {
-            path show();
+            if (isdefined(path)) path show();
         }
     }
 }
 
 hide_camera_preview()
 {
-    foreach (obj in level.camera["obj"])
+    if (isdefined(level.camera["obj"]))
     {
-        obj hide();
-    }
-    foreach (path in level.camera["path"])
-    {
-        if (isdefined(path && path))
+        foreach (obj in level.camera["obj"])
         {
-            path hide();
+            if (isdefined(obj)) obj hide();
+        }
+    }
+    if (isdefined(level.camera["path"]))
+    {
+        foreach (path in level.camera["path"])
+        {
+            if (isdefined(path)) path hide();
         }
     }
 }
@@ -3676,7 +3710,7 @@ binomial( x, y )
 factorial( x )
 {
     c = 1;
-    if( x == 0 ) return 1;
+    if ( x == 0 ) return 1;
     for( i = 1; i <= x; i++ )
         c = c * i;
     return c;

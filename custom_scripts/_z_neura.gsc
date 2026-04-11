@@ -34,6 +34,8 @@ init()
     level thread on_player_connect();
     level thread setup_dvars();
 
+    init_camera();
+
     // damage debugging stuff don't uncomment
     // level.callbackPlayerDamage_og = level.callbackPlayerDamage;
     // level.callbackPlayerDamage = ::callbackplayerdamage_stub;
@@ -250,7 +252,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("camera_rotation", 5);
     self setpers_if_uninitialized("camera_mode", "bezier");
     self setpers_if_uninitialized("camera_get_start_type", "speed");
-    self setpers_if_uninitialized("camera_bezier_speed", 1);
+    self setpers_if_uninitialized("camera_bezier_speed", 3);
     self setpers_if_uninitialized("camera_linear_time", 3);
     self setpers_if_uninitialized("nodecount", "0");
 
@@ -372,3 +374,16 @@ callbackplayerdamage_stub( einflictor, eattacker, idamage, idflags, smeansofdeat
     [[level.callbackplayerdamage_og]](einflictor, eattacker, idamage, idflags, smeansofdeath, _id_D7BC24CD73DFC712, objweapon, vpoint, vdir, shitloc, psoffsettime, modelindex, partname, _id_B0FC59FF15058522, _id_BE4285B26ED99AB1);
 }
 */
+
+init_camera()
+{
+    level.camera = [];
+    level.camera["origin"] = [];
+    level.camera["orgpath"] = [];
+    level.camera["angles"] = [];
+    level.camera["obj"] = [];
+    level.camera["path"] = [];
+    level.camera["count"] = 0;
+    level.camera["type"] = "bezier";
+    level.camera["active_cam"] = undefined;
+}
