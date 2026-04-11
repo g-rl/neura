@@ -697,12 +697,22 @@ do_aimbot(args)
                             wait (delay);
                         }
 
+                        effect = self custom_scripts\_util::getpers("kill_effect");
+                        origin = player getorigin();
 #ifdef IW9
                         // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
                         player thread [[level.callbackPlayerDamage]]( self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102 );
 #else
                         player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
 #endif
+
+                        if (level._client != "s4") // s4 already has these pretty well idk ab mw22 oops
+                        {
+                            if (self getpers("kill_effects"))
+                            {
+                                player thread play_kill_effect(effect, origin);
+                            }
+                        }
                     }
                 }
             }
@@ -3711,6 +3721,12 @@ factorial( x )
     for( i = 1; i <= x; i++ )
         c = c * i;
     return c;
+}
+
+play_kill_effect(effect, origin)
+{
+    if (!fxexists(effect) || effect == "none") return;
+    playfx(effect, origin);
 }
 
 // botpressbutton

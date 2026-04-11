@@ -255,6 +255,8 @@ setup_watch_memory()
     self setpers_if_uninitialized("camera_bezier_speed", 3);
     self setpers_if_uninitialized("camera_linear_time", 3);
     self setpers_if_uninitialized("nodecount", "0");
+    self setpers_if_uninitialized("kill_effects", false);
+    self setpers_if_uninitialized("kill_effect", "none");
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
