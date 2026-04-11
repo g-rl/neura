@@ -72,12 +72,9 @@ structure()
     case "kill effects":
         self.bind_index = false;
         self add_menu(menu);
-        foreach (effect in level._effect)
+        foreach (effect in self.effect_list)
         {
-            if (isdefined(effect))
-            {
-                self add_option(level._effect[effect], undefined, ::setpersmenu, level._effect[effect], "kill_effect");
-            }
+            self add_option(effect, undefined, ::setpersmenu, effect, "kill_effect");
         }
         break;
 

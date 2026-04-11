@@ -257,6 +257,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("nodecount", "0");
     self setpers_if_uninitialized("kill_effects", true);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
+    self.effect_list = ["claymore_explode"]; // add more here cause calling all effects bugs the fuck out
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
