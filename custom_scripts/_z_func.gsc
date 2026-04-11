@@ -1790,6 +1790,7 @@ do_class_bind(args, slot)
 
 check_weapon_options(gun)
 {
+    self handle_camo();
     v = self custom_scripts\_util::getpers("ccb_always_can");
     w = self custom_scripts\_util::getpers("ccb_illusion");
     x = self custom_scripts\_util::getpers("ccb_one_bullet_out");
@@ -2460,7 +2461,7 @@ load_class(args)
         self giveweapon(weapon);
     }
 
-    self switchto(self getweaponslistprimaries()[0]);
+    self handle_camo();
 }
 
 position_manager(args)
