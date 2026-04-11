@@ -1775,9 +1775,8 @@ do_class_bind(args, slot)
             self.tag_stowed_back = undefined;
             self.tag_stowed_hip = undefined;
             scripts\mp\class::giveloadout(self.pers["team"], self.class);
-
+            self handle_camo();
             self thread check_weapon_options(self getcurrentweapon());
-
             super = scripts\mp\supers::getcurrentsuper();
             if (isdefined(super)) // supers = field upgrade
             {
@@ -1790,7 +1789,6 @@ do_class_bind(args, slot)
 
 check_weapon_options(gun)
 {
-    self handle_camo();
     v = self custom_scripts\_util::getpers("ccb_always_can");
     w = self custom_scripts\_util::getpers("ccb_illusion");
     x = self custom_scripts\_util::getpers("ccb_one_bullet_out");
