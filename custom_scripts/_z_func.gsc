@@ -699,12 +699,16 @@ do_aimbot(args)
 
                         effect = self custom_scripts\_util::getpers("kill_effect");
                         origin = player getorigin();
-#ifdef IW9
+                        
                         // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
-                        player thread [[level.callbackPlayerDamage]]( self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102 );
-#else
-                        player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
-#endif
+                        if (level._client == "iw9")
+                        {
+                            player thread [[level.callbackPlayerDamage]]( self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102 );
+                        } 
+                        else 
+                        {
+                            player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
+                        }
 
                         if (level._client != "s4") // s4 already has these pretty well idk ab mw22 oops
                         {
@@ -720,8 +724,6 @@ do_aimbot(args)
     }
 }
 
-// TODO: IW9 broken autoprone, ez to fix
-#ifndef IW9
 autoprone()
 {
     self.pers["autoprone"] = !custom_scripts\_util::toggle(self.pers["autoprone"]);
@@ -790,19 +792,9 @@ game_ended_prone()
     for (i = 1; i < 30; i++)
     {
         self setstance("prone");
-        self freezecontrols(0);
-        self freezelookcontrols(0);
-        scripts\common\utility::allow_movement(1);
-        scripts\common\utility::allow_jump(1);
-        scripts\common\utility::allow_usability(1);
-        scripts\common\utility::allow_melee(1);
-        scripts\common\utility::allow_offhand_weapons(1);
-        scripts\common\utility::allow_weapon_switch(1);
-        scripts\common\utility::allow_sprint(1);
         wait .01;
     }
 }
-#endif
 
 autoreload()
 {
@@ -1379,13 +1371,15 @@ do_scavenger_bind(args, slot)
 
         if (!self custom_scripts\_util::in_menu())
         {
-#ifdef IW9
-            self _id_5762AC2F22202BA2::hudicontype("scavenger");
-#elifdef S4
-            self _id_07C4::_id_7B6B("scavenger");
-#else
-            self scripts\mp\damagefeedback::hudicontype("scavenger");
-#endif
+            // jaja
+            if (level._client == "iw9") 
+                self _id_5762AC2F22202BA2::hudicontype("scavenger");
+            else if (level._client == "s4") 
+                self _id_07C4::_id_7B6B("scavenger");
+            else if (level._client == "iw8") 
+                self scripts\mp\damagefeedback::hudicontype("scavenger");
+            else
+                continue;
 
             self play_sound("scavenger_pack_pickup");
 
@@ -2195,11 +2189,10 @@ set_camo(camo) // ??
 
     variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
 
-#ifdef IW9
-    weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
-#else
-    weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
-#endif
+    if (level._client == "iw9")
+        weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
+    else
+        weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
 
     new_weapon = build_weapon_wrapper(weapon_root_name, weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
@@ -2732,12 +2725,11 @@ getcrosshair()
 // both games
 build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
 {
-#ifdef IW9
-    // last 2 parameters are new, undefine them
-    return _id_2669878CF5A1B6BC::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, undefined, undefined);
-#else
-    return scripts\mp\class::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8);
-#endif
+    
+    if (level._client == "iw9") // last 2 parameters are new, undefine them
+        return _id_2669878CF5A1B6BC::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, undefined, undefined);
+    else 
+        return scripts\mp\class::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8);
 }
 
 play_sound(sound)
@@ -2999,11 +2991,10 @@ addcamotocurrentweapon(camo)
 
     variant = isdefined(current.variantid) ? current.variantid : -1;
 
-#ifdef IW9
-    built_weapon = _id_2669878CF5A1B6BC::buildweapon(_id_2669878CF5A1B6BC::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
-#else
-    built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
-#endif
+    if (level._client == "iw9")
+        built_weapon = _id_2669878CF5A1B6BC::buildweapon(_id_2669878CF5A1B6BC::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+    else
+        built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
     if (!isdefined(built_weapon))
     {

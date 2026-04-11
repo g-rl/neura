@@ -51,13 +51,7 @@ structure()
         self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
         self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
-
-#ifdef IW9
-        self add_option(warning("auto prone"), "currently doesnt work for iw9", ::void);
-#else
         self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
-#endif
-
         if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
         self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");

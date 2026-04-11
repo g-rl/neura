@@ -2,6 +2,7 @@
 
 void() {}
 
+
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
     for (i = 0; i < 4; i++) 
@@ -26,11 +27,10 @@ get_current_build() // check if s4, iw8 or iw9
 
 getorigin_() // so self.origin on iw8 glitches out bounces etc 
 { 
-#ifdef S4
-    return self.origin;
-#else
-    return self getorigin();
-#endif
+    if (level._client == "s4")
+        return self.origin;
+    else 
+        return self getorigin();
 }
 
 nprintln(text)
