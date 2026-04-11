@@ -58,6 +58,7 @@ structure()
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
         self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
         self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
+        self add_pers_toggle("kill effects", undefined, custom_scripts\_z_func::togglepers, "kill_effects", true);
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
         self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");
