@@ -51,7 +51,13 @@ structure()
         self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
         self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
+
+#ifdef IW9
+        self add_option(warning("auto prone"), "currently doesnt work for iw9", ::void);
+#else
         self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
+#endif
+
         if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
         self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
@@ -318,6 +324,17 @@ structure()
         self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks (iw8)");
         self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use", true);
         break;
+    case "give streaks (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
+        for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++) 
+        {
+            self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
+        }
+        break;
+
+#ifndef IW9
     case "vehicles (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -329,15 +346,7 @@ structure()
         self add_increment("change by", increment_controls, ::setpersmenu, int(self getpers("vehiclechangeby")), 50, 1000, 10, "vehiclechangeby");
         self add_pers_toggle("vehicle invincibility", undefined, ::togglepers, "vehicle_invincible", true);
         break;
-    case "give streaks (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
-        for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
-        }
-        break;
+
     case "spawn vehicle (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -346,6 +355,8 @@ structure()
             self add_option(self.neura["world"][client]["vehicles"][1][i], undefined, ::spawn_vehicle, self.neura["world"][client]["vehicles"][0][i]);
         }
         break;
+#endif 
+
     case "game settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -1191,7 +1202,7 @@ add_dvar_toggle(text, summary, dvar, argument_1, argument_2, argument_3)
 toggledvar(dvar)
 {
     setdvar(dvar, !toggle(getdvarint(dvar)));
-    //print(dvar + " new value: " + getdvar(dvar));
+    //print_safe(dvar + " new value: " + getdvar(dvar));
 }
 
 add_toggle(text, summary, function, toggle, array, argument_1, argument_2, argument_3)

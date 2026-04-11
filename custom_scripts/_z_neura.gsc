@@ -306,7 +306,10 @@ watch_memory()
     }
 
     // reload persistence & binds
+#ifndef IW9
     self loadpers("autoprone", ::do_auto_prone);
+#endif
+
     self loadpers("autoreload", ::do_auto_reload);
     self loadpers("instaswaps", ::do_instaswaps);
     self loadpers("aimbot", ::do_aimbot);

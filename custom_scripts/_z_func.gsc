@@ -1,3 +1,5 @@
+#include custom_scripts\_util; // this is okay to do as _util doesnt include anything
+
 toggle_headbounces()
 {
     self.pers["headbounces"] = !custom_scripts\_util::toggle(self.pers["headbounces"]);
@@ -122,7 +124,7 @@ watch_weap_change()
     {
         self waittill("weapon_change", weapon);
         name = weapon.basename;
-        //print(getcompleteweaponname(weapon));
+        //print_safe(getcompleteweaponname(weapon));
         wait 0.05;
     }
 }
@@ -135,8 +137,7 @@ print_weapon()
 
 printall(text, console)
 {
-    if (isdefined(console) && console)
-        print(text);
+    // on every other game, this will go to console no matter what
     iprintln(text);
     iprintlnbold(text);
 }
@@ -709,6 +710,8 @@ do_aimbot(args)
     }
 }
 
+// TODO: IW9 broken autoprone, ez to fix
+#ifndef IW9
 autoprone()
 {
     self.pers["autoprone"] = !custom_scripts\_util::toggle(self.pers["autoprone"]);
@@ -789,6 +792,7 @@ game_ended_prone()
         wait .01;
     }
 }
+#endif
 
 autoreload()
 {
@@ -2808,20 +2812,6 @@ watch_freeze_anim()
     setdvar("pan_freezeanim", 0);
 }
 
-palette()
-{
-    colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^*"];
-    option = colors[randomint(colors.size)];
-    return option;
-}
-
-pal(text)
-{
-    colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^*"];
-    option = colors[randomint(colors.size)];
-    return option + text;
-}
-
 set_timescale(timescale)
 {
     self custom_scripts\_util::setpers("slomo", float(timescale));
@@ -2998,7 +2988,12 @@ addcamotocurrentweapon(camo)
         return;
 
     variant = isdefined(current.variantid) ? current.variantid : -1;
+
+#ifdef IW9
+    built_weapon = _id_2669878CF5A1B6BC::buildweapon(_id_2669878CF5A1B6BC::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+#else
     built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+#endif
 
     if (!isdefined(built_weapon))
     {
@@ -3114,6 +3109,7 @@ check_dvars(dvars)
     }
 }
 
+#ifndef IW9
 spawn_vehicle(maybach)
 {
     if (!isdefined(maybach) || maybach == "")
@@ -3240,6 +3236,7 @@ monitor_vehicle(whip)
         wait 0.5;
     }
 }
+#endif
 
 clear_prematch_look()
 {
