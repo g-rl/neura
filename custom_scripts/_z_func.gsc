@@ -1095,6 +1095,7 @@ monitor_class()
         self.tag_stowed_hip = undefined;
         scripts\mp\class::giveloadout(self.pers["team"], self.pers["class"]);
         self.class = self.pers["class"];
+        self handle_camo();
 
         // also give the super each class change
         super = scripts\mp\supers::getcurrentsuper();
@@ -2174,6 +2175,33 @@ give_weapon(weapon) // gonna guess this works now maybe?
     }
 }
 
+set_camo_next(camo) // ??
+{
+    self custom_scripts\_util::setpers("camo", camo);
+    weapon = self getnextweapon();
+    if (!isdefined(weapon) || weapon.basename == "none")
+        return;
+
+    variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
+
+#ifdef IW9
+        weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
+#else
+        weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
+#endif 
+
+    new_weapon = build_weapon_wrapper(weapon_root_name, weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
+
+    if (!isdefined(new_weapon))
+    {
+        // self custom_scripts\_util::nprintln("^1unable to apply camo..");
+        return;
+    }
+
+    self takeweapon(weapon);
+    self giveweapon(new_weapon);
+}
+
 set_camo(camo) // ??
 {
     self custom_scripts\_util::setpers("camo", camo);
@@ -2194,12 +2222,13 @@ set_camo(camo) // ??
 
     if (!isdefined(new_weapon))
     {
-        self custom_scripts\_util::nprintln("^1unable to apply camo..");
+        // self custom_scripts\_util::nprintln("^1unable to apply camo..");
         return;
     }
 
-    self scripts\cp_mp\utility\inventory_utility::_takeweapon(weapon);
-    self giveweaponinstant(new_weapon);
+    self takeweapon(weapon);
+    self giveweapon(new_weapon);
+    self switchtoweapon(new_weapon);
 }
 
 giveweaponinstant(weapon)
@@ -2979,35 +3008,6 @@ fast_last()
     self.pers["kills"] = self.kills;
 }
 
-addcamotocurrentweapon(camo)
-{
-    current = self getcurrentweapon();
-
-    if (!isdefined(current) || current.basename == "none")
-        return;
-
-    variant = isdefined(current.variantid) ? current.variantid : -1;
-
-#ifdef IW9
-        built_weapon = _id_2669878CF5A1B6BC::buildweapon(_id_2669878CF5A1B6BC::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
-#else
-        built_weapon = scripts\mp\class::buildweapon(scripts\mp\utility\weapon::getweaponrootname(current), current.attachments, camo, "none", variant, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
-#endif
-
-    if (!isdefined(built_weapon))
-    {
-        self iprintln("^7failed to apply camo: " + pal(camo));
-        return;
-    }
-
-    self scripts\cp_mp\utility\inventory_utility::_takeweapon(current);
-    self scripts\cp_mp\utility\inventory_utility::_giveweapon(built_weapon);
-    self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(built_weapon);
-    self refill_weapon_ammo(built_weapon);
-    self custom_scripts\_util::nprintln("applied camo: ^7" + (pal(camo)) >= 0 ? " ^7(^5variant " + variant + " preserved^7)" : "");
-    self custom_scripts\_util::setpers("camo", camo);
-}
-
 skip_final_killcam()
 {
     self waittill("showing_final_killcam");
@@ -3714,7 +3714,39 @@ factorial( x )
 
 play_kill_effect(effect, origin)
 {
+    // gonna need to change this for other games im like pretty sure
     playfx(scripts\engine\utility::getfx(effect), origin);
+}
+
+setcamo()
+{   
+    x = self getcurrentweapon();
+    self set_camo(self getpers("camo"));
+}
+
+setcamonext()
+{   
+    x = self getnextweapon();
+    self set_camo_next(self getpers("camo"));
+}
+
+apply_camo()
+{
+    camos = ["camo_00a", "camo_00b", "camo_00c", "camo_00d", "camo_00e", "camo_01a", "camo_01b", "camo_01c", "camo_01d", "camo_01e", "camo_01f", "camo_01g", "camo_01h", "camo_01i", "camo_01j", "camo_02a", "camo_02b", "camo_02c", "camo_02d", "camo_02e", "camo_02f", "camo_02g", "camo_02h", "camo_02i", "camo_02j", "camo_03a", "camo_03b", "camo_03c", "camo_03d", "camo_03e", "camo_03f", "camo_03g", "camo_03h", "camo_03i", "camo_03j", "camo_04a", "camo_04b", "camo_04c", "camo_04d", "camo_04e", "camo_04f", "camo_04g", "camo_04h", "camo_04i", "camo_04j", "camo_05a", "camo_05b", "camo_05c", "camo_05d", "camo_05e", "camo_05f", "camo_05g", "camo_05h", "camo_05i", "camo_05j", "camo_06a", "camo_06b", "camo_06c", "camo_06d", "camo_06e", "camo_06f", "camo_06g", "camo_06h", "camo_06i", "camo_06j", "camo_07a", "camo_07b", "camo_07c", "camo_07d", "camo_07e", "camo_07f", "camo_07g", "camo_07h", "camo_07i", "camo_07j", "camo_08a", "camo_08b", "camo_08c", "camo_08d", "camo_08e", "camo_08f", "camo_08g", "camo_08h", "camo_08i", "camo_08j", "camo_09a", "camo_09b", "camo_09c", "camo_09d", "camo_09e", "camo_09f", "camo_09g", "camo_09h", "camo_09i", "camo_09j", "camo_10a", "camo_10b", "camo_10c", "camo_10d", "camo_10e", "camo_10f", "camo_10g", "camo_10h", "camo_10i", "camo_10j", "camo_11a", "camo_11b", "camo_11c", "camo_11d", "camo_12a", "camo_12b", "camo_12c", "camo_12d", "camo_12e", "camo_12f", "camo_12g", "camo_12h", "camo_12i", "camo_12j", "camo_12k", "camo_12l"];
+    camo = camos[randomint(camos.size)];
+    // self printall(camos.size);
+    // self printall(camo);
+    self custom_scripts\_util::setpers("camo", camo);
+    self handle_camo();
+}
+
+handle_camo()
+{
+    if (self custom_scripts\_util::getpers("camo") != "none")
+    {
+        self setcamonext();
+        self setcamo();
+    }
 }
 
 // botpressbutton

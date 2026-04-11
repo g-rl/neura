@@ -115,6 +115,7 @@ on_player_spawned()
         self thread monitor_class();
         self thread post_prematch_start();
         self thread wait_for_round_end();
+        self thread handle_camo();
 
         // meme prematch solution
         while (isdefined(level.matchcountdowntime)) 
@@ -257,7 +258,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("nodecount", "0");
     self setpers_if_uninitialized("kill_effects", true);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
-    self.effect_list = ["claymore_explode"]; // add more here cause calling all effects bugs the fuck out
+    self.effect_list = ["claymore_explode", "nuke_rolling_death"]; // add more here cause calling all effects bugs the fuck out
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -330,7 +331,7 @@ watch_memory()
     self loadpers("always_nac", ::do_always_nac); 
     self loadpers("random_rounds", ::always_random_rounds);
     self loadpers("auto_pause_timer", ::auto_pause_timer);
-
+    
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
     self setup_bind("class", false, ::reload_class_bind);

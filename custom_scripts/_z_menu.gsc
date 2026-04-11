@@ -26,12 +26,12 @@ structure()
         self add_option("position", credits, ::new_menu, "position");
         self add_option("cinematics", credits, ::new_menu, "cinematics");
         self add_option("aimbot", credits, ::new_menu, "aimbot settings");
-        // self add_option("kill effects", credits, ::new_menu, "kill effects");
         self add_option("manage class", credits, ::new_menu, "class manager");
         self add_option("manage game", credits, ::new_menu, "game settings");
         self add_option("all clients", credits, ::new_menu, "manage clients");
         if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
         break;
+
     case "mods & toggles": // eh clean this up later -et
         self.bind_index = false;
         self add_menu(menu);
@@ -59,24 +59,16 @@ structure()
         self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
         self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
         self add_pers_toggle("kill effects", undefined, custom_scripts\_z_func::togglepers, "kill_effects", true);
+        if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
         self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
-        self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");
-        break;
+        self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        break;
 
     case "session settings":
         self.bind_index = false;
         self add_menu(menu);
         self add_option("^1load ^7session", "load previous map session if exists", ::load_session);
         self add_option("^2save ^7session", "save current map session", ::save_session);
-        break;
-    case "kill effects":
-        self.bind_index = false;
-        self add_menu(menu);
-        foreach (effect in self.effect_list)
-        {
-            self add_option(effect, undefined, ::setpersmenu, effect, "kill_effect");
-        }
         break;
 
     case "cinematics":
@@ -231,16 +223,7 @@ structure()
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
         self add_game_option("iw8", "streak manager", "streaks for ^5iw8", ::new_menu, "streaks (iw8)");
-        self add_game_option("iw8", "camos", "^5" + self.neura["weapons"][client]["camos"][0].size + " ^7camos available", ::new_menu, "camos (iw8)");
-        break;
-    // i think this weapons menu solution is the best way to go (for now)
-    case "camos (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["camos"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["camos"][1][i], undefined, ::addcamotocurrentweapon, self.neura["weapons"][client]["camos"][0][i]);
-        }
+        self add_game_option("iw8", "set random camo", undefined, ::apply_camo);
         break;
     case "primaries (iw8)":
         self.bind_index = false;
