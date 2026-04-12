@@ -396,7 +396,7 @@ load_spawn()
         return;
     }
 
-    if (self.sessionstate = "spectator") return;
+    if (self.sessionstate == "spectator") return;
 
     self setvelocity((0, 0, 0));
     self setorigin((float(self custom_scripts\_util::getpers("saveposx")), float(self custom_scripts\_util::getpers("saveposy")), float(self custom_scripts\_util::getpers("saveposz"))));
@@ -1006,7 +1006,7 @@ move_bots(args)
             {
                 if (isai(player) || isbot(player)) 
                 {
-                    if (player.sessionstate = "spectator") return;
+                    if (player.sessionstate == "spectator") return;
                     player setorigin(self.origin);
                     player thread save_spawn();
                     self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self.origin);
@@ -1019,7 +1019,7 @@ move_bots(args)
             {
                 if (isai(player) || isbot(player)) 
                 {
-                    if (player.sessionstate = "spectator") return;
+                    if (player.sessionstate == "spectator") return;
                     player setorigin(self getcrosshair());
                     player thread save_spawn();
                     self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
@@ -1046,7 +1046,7 @@ teleport_player(from, to, player)
         return;
     }
 
-    if (from.sessionstate = "spectator") return;
+    if (from.sessionstate == "spectator") return;
     from setorigin(to.origin);
     player thread save_spawn();
     self play_sound("recon_drone_marked_owner");
@@ -1063,7 +1063,7 @@ manage_teleport(args, player)
             self thread teleport_player(self, player, player);
             break;
         case "crosshair":
-            if (player.sessionstate = "spectator") break;
+            if (player.sessionstate == "spectator") break;
             player setorigin(self getcrosshair());
             player thread save_spawn();
             self play_sound("recon_drone_marked_owner");
@@ -3282,11 +3282,11 @@ auto_pause_timer(args)
 
 kill_selected_player()
 {
+    has_selected = self.pers["has_selected_bot"];
     ent = self.pers["selected_bot"];
-
-    if (!ent || !isalive(ent))
+    if (!has_selected || !isalive(ent))
     {
-        self iprintlnbold("select a bot in the players menu or wait for respawn");
+        self custom_scripts\_util::nprintln("select a bot in the ^5players menu^7 or wait for ^5respawn");
         return;
     }
 
@@ -3296,6 +3296,7 @@ kill_selected_player()
 set_selected_player(player)
 {
     self.pers["selected_bot"] = player;
+    self.pers["has_selected_bot"] = true;
     self iprintln("selected bot: " + pal(self.pers["selected_bot"].name));
 }
 
