@@ -2197,37 +2197,15 @@ give_weapon(weapon) // gonna guess this works now maybe?
     }
 }
 
-set_camo_next(camo) // ??
+set_camo(camo, should_switch)
 {
     self custom_scripts\_util::setpers("camo", camo);
-    weapon = self getnextweapon();
-    if (!isdefined(weapon) || weapon.basename == "none")
-        return;
 
-    variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
-
-#ifdef IW9
-        weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
-#else
-        weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
-#endif 
-
-    new_weapon = build_weapon_wrapper(weapon_root_name, weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
-
-    if (!isdefined(new_weapon))
-    {
-        // self custom_scripts\_util::nprintln("^1unable to apply camo..");
-        return;
-    }
-
-    self takeweapon(weapon);
-    self giveweapon(new_weapon);
-}
-
-set_camo(camo) // ??
-{
-    self custom_scripts\_util::setpers("camo", camo);
     weapon = self getcurrentweapon();
+    if (!should_switch) // the weapon we arent switching to is the next
+    {
+        weapon = self getnextweapon();
+    }
 
     if (!isdefined(weapon) || weapon.basename == "none")
         return;
@@ -2250,7 +2228,9 @@ set_camo(camo) // ??
 
     self takeweapon(weapon);
     self giveweapon(new_weapon);
-    self switchtoweapon(new_weapon);
+
+    if (should_switch)
+        self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(new_weapon);
 }
 
 giveweaponinstant(weapon)
@@ -2689,11 +2669,13 @@ getrealweapons()
             weapons[i] = undefined;
         }
 
+#ifdef IW9
         // IW9 seems to have a diveknife & climbfists on the class
         if (issubstr(weapons[i].basename, "diveknife") || issubstr(weapons[i].basename, "climbfists"))
         {
             weapons[i] = undefined;
         }
+#endif
     }
 
     return weapons;
@@ -3822,10 +3804,11 @@ apply_camo()
 
 handle_camo()
 {
-    if (self custom_scripts\_util::getpers("camo") != "none")
+    wait 0.05;
+    if (self getpers("camo") != "none")
     {
-        self set_camo_next(self getpers("camo"));
-        self set_camo(self getpers("camo"));
+        self set_camo(self getpers("camo"), false); // this was set_camo_next before
+        self set_camo(self getpers("camo"), true);
     }
 }
 
