@@ -1803,8 +1803,11 @@ check_weapon_options(gun)
     clip =  self getweaponammoclip(gun);
     stock = self getweaponammostock(gun);
 
-    if (isdefined(v) && v) 
-        self thread always_can_delay();
+    if (self custom_scripts\_util::getpers("camo") == "none") // already canswaps with camos set
+    {
+        if (isdefined(v) && v) 
+            self thread always_can_delay();
+    }
 
     if (isdefined(x) && x)
         self setweaponammoclip(gun, clip - 1);
