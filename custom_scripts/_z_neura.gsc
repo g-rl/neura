@@ -394,4 +394,5 @@ init_camera()
     level.camera["count"] = 0;
     level.camera["type"] = "bezier";
     level.camera["active_cam"] = undefined;
+    level.camera["running"] = false;
 }

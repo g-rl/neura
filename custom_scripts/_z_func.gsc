@@ -3621,7 +3621,13 @@ reset_player_state(camera)
 
 stop_camera_path()
 {
-    if (!isdefined(level.camera["running"]) && !level.camera["running"])
+    if (int(self custom_scripts\_util::getpers("nodecount")) < 3)
+    {
+        self iprintln("at least ^53^7 points must be set");
+        return;
+    }
+
+    if (!level.camera["running"])
     {
         self iprintln("^1camera path isn't running");
         return;
