@@ -3487,6 +3487,8 @@ start_camera_path(mode)
         return;
     }
 
+    level.neura_camera = true;
+
     speed = 0;
     if (mode == "speed")
         speed = int(self custom_scripts\_util::getpers("camera_bezier_speed"));
@@ -3531,6 +3533,7 @@ start_camera_path(mode)
     }
 
     wait 2;
+    self freezecontrols(1);
     hide_camera_preview();
     setdvar("cg_drawGun", 0);
     setdvar("cg_drawCrosshair", 0);
@@ -3567,9 +3570,9 @@ start_camera_path(mode)
                 }
             }
 
-            camera moveto( (pos[0], pos[1], pos[2]), .1, 0, 0 );
-            camera rotateto( (ang[0], ang[1], ang[2]), .1, 0, 0 );
-            wait 0.05;
+            camera moveto( (pos[0], pos[1], pos[2]), 0.05, 0, 0 );
+            camera rotateto( (ang[0], ang[1], ang[2]), 0.05, 0, 0 );
+            waitframe();
         }
     }
 
@@ -3580,6 +3583,28 @@ start_camera_path(mode)
     self unlink();
     self playershow();
     camera delete();
+    level.neura_camera = undefined;
+    level.camera["active_cam"] = undefined;
+    level.camera["running"] = false;
+    self freezecontrols(0);
+}
+
+stop_camera_path()
+{
+    if (!isdefined(level.camera["running"]) && !level.camera["running"])
+    {
+        self iprintln("^1camera path isn't running");
+        return;
+    }
+
+    show_camera_preview();
+    self setclientomnvar("ui_hide_full_hud", 0);
+    setdvar("cg_drawGun", 1);
+    setdvar("cg_drawCrosshair", 1);
+    self unlink();
+    self playershow();
+    level.neura_camera delete();
+    level.neura_camera = undefined;
     level.camera["active_cam"] = undefined;
     level.camera["running"] = false;
 }
@@ -3593,9 +3618,9 @@ prepare_node_distances()
         y = level.camera["angles"][k+1][1];
 
         if ( y - x >= 180 )
-            level.camera["angles"][k+1] -= (0, 360, 0);
+            level.camera["angles"][k] += (0, 360, 0);    // [k], not [k+1]
         else if ( y - x <= -180 )
-            level.camera["angles"][k+1] += (0, 360, 0);
+            level.camera["angles"][k+1] += (0, 360, 0);  // [k+1], add not subtract
 
         level.mov_distance[k] = distance( level.camera["origin"][k], level.camera["origin"][k+1] );
         level.ang_distance[k] = distance( level.camera["angles"][k], level.camera["angles"][k+1] );
@@ -3745,6 +3770,28 @@ handle_camo()
     {
         self setcamonext();
         self setcamo();
+    }
+}
+
+preset_positions()
+{
+    switch (level.mapname)
+    {
+        case "mp_shipment":
+            break;
+        default:
+            break;
+    }
+}
+
+clear_ents()
+{
+    ents = getentarray("script_model", "classname");
+    for(i = 0 ; i < ents.size ; i++)
+    {
+        ents[i] delete();
+        wait 0.05;
+        self custom_scripts\_util::nprintln("^2an entity was deleted");
     }
 }
 
