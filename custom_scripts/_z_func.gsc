@@ -396,6 +396,8 @@ load_spawn()
         return;
     }
 
+    if (self.sessionstate = "spectator") return;
+
     self setvelocity((0, 0, 0));
     self setorigin((float(self custom_scripts\_util::getpers("saveposx")), float(self custom_scripts\_util::getpers("saveposy")), float(self custom_scripts\_util::getpers("saveposz"))));
     self setplayerangles((float(self custom_scripts\_util::getpers("saveangles1")), float(self custom_scripts\_util::getpers("saveangles2")), float(self custom_scripts\_util::getpers("saveangles3"))));
@@ -1004,6 +1006,7 @@ move_bots(args)
             {
                 if (isai(player) || isbot(player)) 
                 {
+                    if (player.sessionstate = "spectator") return;
                     player setorigin(self.origin);
                     player thread save_spawn();
                     self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self.origin);
@@ -1016,6 +1019,7 @@ move_bots(args)
             {
                 if (isai(player) || isbot(player)) 
                 {
+                    if (player.sessionstate = "spectator") return;
                     player setorigin(self getcrosshair());
                     player thread save_spawn();
                     self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
@@ -1042,6 +1046,7 @@ teleport_player(from, to, player)
         return;
     }
 
+    if (from.sessionstate = "spectator") return;
     from setorigin(to.origin);
     player thread save_spawn();
     self play_sound("recon_drone_marked_owner");
@@ -1058,6 +1063,7 @@ manage_teleport(args, player)
             self thread teleport_player(self, player, player);
             break;
         case "crosshair":
+            if (player.sessionstate = "spectator") break;
             player setorigin(self getcrosshair());
             player thread save_spawn();
             self play_sound("recon_drone_marked_owner");
@@ -3278,9 +3284,9 @@ kill_selected_player()
 {
     ent = self.pers["selected_bot"];
 
-    if (ent == "none" || !isdefined(ent) || !isalive(ent))
+    if (!ent || !isalive(ent))
     {
-        self iprintlnbold("select a bot in the players menu");
+        self iprintlnbold("select a bot in the players menu or wait for respawn");
         return;
     }
 
@@ -3481,6 +3487,12 @@ set_camera_mode()
 
 start_camera_path(mode)
 {
+    if (int(self custom_scripts\_util::getpers("nodecount")) < 3)
+    {
+        self iprintln("at least ^53^7 points must be set");
+        return;
+    }
+
     if (isdefined(level.camera["running"]) && level.camera["running"])
     {
         self iprintln("^1camera path already running");
@@ -3507,7 +3519,7 @@ start_camera_path(mode)
     level.camera["active_cam"] = camera;
     level.camera["running"] = true;
 
-    self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0));
+    self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], int(self custom_scripts\_util::getpers("camera_rotation"))));
     self playerlinktodelta(camera, "tag_origin", 1, 0, 0, 0, 0, true);
     self iprintlnbold("camera: " + pal(cam_type) + "^7 - speed: " + pal(cam_speed) + "^7 - node count: " + pal(cam_count));
     prepare_node_distances();
@@ -3522,6 +3534,7 @@ start_camera_path(mode)
         return;
     }
     
+    /*
     if (level.camera["type"] == "bezier" && level.camera["count"] < 3) 
     {
         self iprintln("^1 3 nodes needed for bezier");
@@ -3531,14 +3544,10 @@ start_camera_path(mode)
         level.camera["running"] = false;
         return;
     }
+    */
 
     wait 2;
-    self freezecontrols(1);
-    hide_camera_preview();
-    setdvar("cg_drawGun", 0);
-    setdvar("cg_drawCrosshair", 0);
-    self playerhide();
-    self setclientomnvar("ui_hide_full_hud", 1);
+    setup_player_state();
 
     if (level.camera["type"] == "linear")
     {
@@ -3570,12 +3579,28 @@ start_camera_path(mode)
                 }
             }
 
+            // bobbing stuff
             camera moveto( (pos[0], pos[1], pos[2]), 0.05, 0, 0 );
             camera rotateto( (ang[0], ang[1], ang[2]), 0.05, 0, 0 );
             waitframe();
         }
     }
 
+    reset_player_state(camera);
+}
+
+setup_player_state()
+{
+    self freezecontrols(1);
+    hide_camera_preview();
+    setdvar("cg_drawGun", 0);
+    setdvar("cg_drawCrosshair", 0);
+    self playerhide();
+    self setclientomnvar("ui_hide_full_hud", 1);
+}
+
+reset_player_state(camera)
+{
     show_camera_preview();
     self setclientomnvar("ui_hide_full_hud", 0);
     setdvar("cg_drawGun", 1);
@@ -3587,6 +3612,7 @@ start_camera_path(mode)
     level.camera["active_cam"] = undefined;
     level.camera["running"] = false;
     self freezecontrols(0);
+    self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0));
 }
 
 stop_camera_path()
@@ -3629,11 +3655,29 @@ prepare_node_distances()
     }
 }
 
-set_camera_rotation()
+set_camera_rotation(rotation)
 {
-    rotation = int(self custom_scripts\_util::getpers("camera_rotation"));
-    self setplayerangles(self getplayerangles()[0], self getplayerangles()[1], rotation);
+    if (rotation == 1)
+    {
+        self custom_scripts\_util::setpers("camera_rotation", rotation);
+        self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0)); 
+        return;
+    }
+
+
+    self custom_scripts\_util::setpers("camera_rotation", rotation);
+    self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], rotation));
     self iprintln("set camera rotation to " + pal(rotation) + " degrees");
+    self notify("wait_rotation");
+    self thread wait_and_reset_angles();
+}
+
+wait_and_reset_angles()
+{
+    self endon("wait_rotation");
+    wait 3;
+    self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0));
+    self iprintln("reset angles back to normal");
 }
 
 create_camera_preview() 

@@ -74,12 +74,9 @@ structure()
     case "cinematics":
         self.bind_index = false;
         self add_menu(menu);
-        if (int(self getpers("nodecount")) >= 3)
-        {
-            self add_option("start camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::start_camera_path, self getpers("camera_get_start_type"));
-            self add_option("stop camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::stop_camera_path);
-        }
-        self add_increment("set camera rotation", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_rotation")), 1, 360, 1, "camera_rotation");        
+        self add_option("start camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::start_camera_path, self getpers("camera_get_start_type"));
+        self add_option("stop camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::stop_camera_path);
+        self add_increment("set camera rotation", increment_controls, custom_scripts\_z_func::set_camera_rotation, int(self getpers("camera_rotation")), 1, 360, 1);        
         if (self custom_scripts\_util::getpers("camera_get_start_type") == "speed") self add_increment("set bezier speed", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_bezier_speed")), 1, 20, 1, "camera_bezier_speed");
         if (self custom_scripts\_util::getpers("camera_get_start_type") == "time") self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
         self add_array("set camera mode", slider_controls, ::set_the_mode, list("bezier,linear"));

@@ -249,12 +249,12 @@ setup_watch_memory()
     self setpers_if_uninitialized("auto_pause_timer", true);
     self setpers_if_uninitialized("randomize_timer_pause", true);
     self setpers_if_uninitialized("pause_timer_after", 120);
-    self setpers_if_uninitialized("selected_bot", "none");
-    self setpers_if_uninitialized("camera_rotation", 5);
+    self setpers_if_uninitialized("selected_bot", false);
+    self setpers_if_uninitialized("camera_rotation", 1);
     self setpers_if_uninitialized("camera_mode", "bezier");
     self setpers_if_uninitialized("camera_get_start_type", "speed");
     self setpers_if_uninitialized("camera_bezier_speed", 3);
-    self setpers_if_uninitialized("camera_linear_time", 3);
+    self setpers_if_uninitialized("camera_linear_time", 10);
     self setpers_if_uninitialized("nodecount", "0");
     self setpers_if_uninitialized("kill_effects", true);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
