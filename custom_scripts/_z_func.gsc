@@ -2564,7 +2564,7 @@ elevator_logic()
     self endon("disconnect");
 
     self.elevator = spawn("script_origin", self.origin, 1);
-    self playerlinktodelta(self.elevator, undefined);
+    self playerlinkto(self.elevator, undefined);
     self.elevating = true;
 
     for (;;)
@@ -3385,7 +3385,7 @@ do_reverse_ele()
     {
         self endon("stop_reverse_ele");
         self.elevate = spawn("script_origin", self.origin, 1);
-        self playerlinktodelta(self.elevate, undefined);
+        self playerlinkto(self.elevate, undefined);
         self.changle = true;
         for (;;)
         {
