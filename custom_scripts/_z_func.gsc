@@ -2633,13 +2633,17 @@ set_perks()
 
 nacto(weapon, do_wait)
 {
+    if (!isdefined(weapon))
+        return;
+
     x = self getcurrentweapon();
+
     self takegood(x);
     if (!self hasweapon(weapon))
-    self giveweapon(weapon);
+        self giveweapon(weapon);
     self switchtoweapon(weapon);
     if (isdefined(do_wait) && do_wait) wait 0.05;
-    self givegood(x);
+        self givegood(x);
 }
 
 getnextweapon()
@@ -2733,6 +2737,9 @@ givegood(gun)
 
 switchto(weapon) 
 {
+    if (!isdefined(weapon))
+        return;
+        
     current = self getcurrentweapon();
     clip = self getweaponammoclip(current);
     stock = self getweaponammostock(current);
