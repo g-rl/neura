@@ -23,12 +23,6 @@ init()
 
     level.is_debug = true;
     level.session_data = [];
-    level.camera = [];
-    level.disablespawncamera = 1;
-
-    models = ["axis_guide_createfx", "misc_wm_flarestick", "tag_origin"];
-    foreach (model in models)
-        precachemodel(model);
 
     // functions
     level thread on_player_connect();
@@ -116,17 +110,7 @@ on_player_spawned()
         self thread post_prematch_start();
         self thread wait_for_round_end();
         self thread handle_camo();
-
-        // meme prematch solution
-        while (isdefined(level.matchcountdowntime)) 
-        {
-            wait 0.05;
-            if (!isdefined(self.prematch_look))
-            {
-                self clear_prematch_look();
-                self.prematch_look = true;
-            }
-        }
+        self clear_prematch_look();
         
         // return any streaks to player (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");
@@ -259,7 +243,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("nodecount", "0");
     self setpers_if_uninitialized("kill_effects", true);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
-    self.effect_list = ["claymore_explode", "nuke_rolling_death"]; // add more here cause calling all effects bugs the fuck out
+    self.effect_list = ["claymore_explode", "nuke_rolling_death", "stimulus_glow_burst", "corpse_pop", "bloody_death", "headshot_explode", "headshot_explode_jugg", "breach_explode", "emp_stun", "equipment_explode_big", "equipment_smoke", "equipment_sparks"]; // add more here cause calling all effects bugs the fuck out
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -385,6 +369,10 @@ callbackplayerdamage_stub( einflictor, eattacker, idamage, idflags, smeansofdeat
 
 init_camera()
 {
+    models = ["axis_guide_createfx", "misc_wm_flarestick", "tag_origin"];
+    foreach (model in models)
+        precachemodel(model);
+
     level.camera = [];
     level.camera["origin"] = [];
     level.camera["orgpath"] = [];
@@ -395,4 +383,14 @@ init_camera()
     level.camera["type"] = "bezier";
     level.camera["active_cam"] = undefined;
     level.camera["running"] = false;
+    level.disablespawncamera = 1;
+}
+
+init_effects()
+{
+    level._effect["breach_explode"] = loadfx("vfx/iw8_mp/breaches/vfx_gen_door_breach_thick.vfx");
+    level._effect["emp_stun"] = loadfx( "vfx/core/mp/equipment/vfx_emp_grenade" );
+    level._effect["equipment_explode_big"] = loadfx( "vfx/core/mp/killstreaks/vfx_ims_explosion" );
+    level._effect["equipment_smoke"] = loadfx( "vfx/core/mp/killstreaks/vfx_sg_damage_blacksmoke" );
+    level._effect["equipment_sparks"] = loadfx( "vfx/core/mp/killstreaks/vfx_sentry_gun_explosion.vfx" );
 }

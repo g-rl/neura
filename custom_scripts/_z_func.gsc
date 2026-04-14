@@ -19,7 +19,7 @@ headbounces(args)
     level endon("game_ended");
     for (;;)
     {
-        foreach(player in level.players)
+        foreach (player in level.players)
         if (player != self && distance(player custom_scripts\_util::getorigin_() + (0, 0, 90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
         {
             self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
@@ -111,6 +111,14 @@ setdvarmenu(value, dvar)
 {
     value = float(value);
     setdvar(dvar, value);
+    self play_sound("weap_ammo_pickup");
+}
+
+set_knockback(value, dvar)
+{
+    value = float(value);
+    setdvar(dvar, value);
+    self setclientdvar(dvar, value);
     self play_sound("weap_ammo_pickup");
 }
 
@@ -1656,7 +1664,7 @@ play_movement()
     move_model setmodel("tag_origin");
     self playerlinkto(move_model);
 
-    for(i=1; i < (x + 1); i++)
+    for (i=1; i < (x + 1); i++)
     {
         keys = strtok(self custom_scripts\_util::getpers("recordmovementpos" + i), ",");
         position = (float(keys[0]), float(keys[1]), float(keys[2]));
@@ -2402,7 +2410,7 @@ save_class()
 
     index = 0;
 
-    foreach(weapon in self inventory())
+    foreach (weapon in self inventory())
     {
         self.pers["curr_class"][index] = weapon;
         index++;
@@ -2454,7 +2462,7 @@ load_class(args)
     }
 
     self takeallweapons();
-    foreach(weapon in self.pers["curr_class"])
+    foreach (weapon in self.pers["curr_class"])
     {
         if (weapon.basename == "none")
             continue;
@@ -2463,6 +2471,8 @@ load_class(args)
     }
 
     self handle_camo();
+    if (self getpers("camo") == "none")
+        self switchtoweaponimmediate(self inventory()[0]);
 }
 
 position_manager(args)
@@ -3070,7 +3080,7 @@ check_event(event, type)
 {
     self endon("disconnect");
     printall("now watching " + event);
-    for(;;)
+    for (;;)
     {
         if (isdefined(type) && type)
         {
@@ -3101,7 +3111,7 @@ check_dvars(dvars)
 {
     self endon("disconnect");
     level endon("game_ended");
-    for(;;)
+    for (;;)
     {
         foreach (dvar in dvars)
         {
@@ -3229,7 +3239,7 @@ monitor_vehicle(whip)
     self endon("disconnect");
     level endon("game_ended");
 
-    for(;;)
+    for (;;)
     {
         if (!isdefined(whip))
             break;
@@ -3250,10 +3260,16 @@ monitor_vehicle(whip)
 
 clear_prematch_look()
 {
+    // pretty sure we don't need to run all these the whole time 
     level.matchcountdowntime = 0;
     self setclientomnvar("ui_match_start_countdown", 0);
     self setclientomnvar("ui_match_in_progress", 1);
     scripts\mp\playerlogic::clearprematchlook(self);
+    
+    while (isdefined(level.matchcountdowntime)) 
+    {
+        wait 0.05;
+    }
 }
 
 wait_for_round_end()
@@ -3506,6 +3522,8 @@ start_camera_path(mode)
         return;
     }
 
+    self prepare_player_state();
+
     level.neura_camera = true;
 
     speed = 0;
@@ -3540,29 +3558,25 @@ start_camera_path(mode)
         level.camera["running"] = false;
         return;
     }
-    
-    /*
-    if (level.camera["type"] == "bezier" && level.camera["count"] < 3) 
-    {
-        self iprintln("^1 3 nodes needed for bezier");
-        self unlink();
-        camera delete();
-        level.camera["active_cam"] = undefined;
-        level.camera["running"] = false;
-        return;
-    }
-    */
 
     wait 2;
     setup_player_state();
+
+    start_time = gettime();
 
     if (level.camera["type"] == "linear")
     {
         travel_time = int( speed / int(level.camera["count"]) );
         for (i = 2; i < level.camera["count"] + 1; i++)
         {
-            camera rotateto( level.camera["angles"][i], travel_time, 0, 0 );
-            camera moveto( level.camera["origin"][i], travel_time, 0, 0 );
+            // bail out immediately if we aren't called
+            if (!isdefined(level.camera["running"]) || !level.camera["running"])
+                return;
+
+            // prevent crazy snapping?
+            ease = travel_time * 0.2;
+            camera moveto( level.camera["origin"][i], travel_time, ease, ease );
+            camera rotateto( level.camera["angles"][i], travel_time, ease, ease );
             wait travel_time;
         }
     }
@@ -3570,30 +3584,47 @@ start_camera_path(mode)
     {
         mult = 0.2;
 
-        for( j = 0; j <= ( level.total_distance * 10 * mult / speed ); j++ )
+        for ( j = 0; j <= ( level.total_distance * 10 * mult / speed ); j++ )
         {
+            // bail out immediately if we aren't called
+            if (!isdefined(level.camera["running"]) || !level.camera["running"])
+                return;
+
             t = ( j * speed / (level.total_distance * 10 * mult) );
 
             pos[0] = 0; pos[1] = 0; pos[2] = 0;
             ang[0] = 0; ang[1] = 0; ang[2] = 0;
 
-            for( i = 1; i <= level.camera["count"]; i++ )
+            for ( i = 1; i <= level.camera["count"]; i++ )
             {
-                for( z = 0; z < 3; z++ )
+                for ( z = 0; z < 3; z++ )
                 {
                     pos[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["origin"][i][z] );
                     ang[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["angles"][i][z] );
                 }
             }
 
-            // bobbing stuff
             camera moveto( (pos[0], pos[1], pos[2]), 0.05, 0, 0 );
             camera rotateto( (ang[0], ang[1], ang[2]), 0.05, 0, 0 );
             waitframe();
         }
     }
 
+    elapsed = (gettime() - start_time) / 1000;
     reset_player_state(camera);
+    self nprintlnbold("cinematic played for ^5" + elapsed + "^7 seconds");
+}
+
+prepare_player_state()
+{
+    index = 0;
+    self.pers["previous_loadout"] = [];
+    foreach (weapon in self inventory())
+    {
+        self.pers["previous_loadout"][index] = weapon;
+        index++;
+    }
+    self takeallweapons();
 }
 
 setup_player_state()
@@ -3620,38 +3651,41 @@ reset_player_state(camera)
     level.camera["running"] = false;
     self freezecontrols(0);
     self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0));
+
+    foreach (weapon in self.pers["previous_loadout"])
+    {
+        if (weapon.basename == "none")
+            continue;
+
+        self giveweapon(weapon);
+    }
+
+    self handle_camo();
+    if (self getpers("camo") == "none")
+        self switchtoweaponimmediate(self inventory()[0]);
 }
 
 stop_camera_path()
 {
-    if (int(self custom_scripts\_util::getpers("nodecount")) < 3)
-    {
-        self iprintln("at least ^53^7 points must be set");
-        return;
-    }
-
-    if (!level.camera["running"])
+    if (!isdefined(level.camera["running"]) || !level.camera["running"])
     {
         self iprintln("^1camera path isn't running");
         return;
     }
 
-    show_camera_preview();
-    self setclientomnvar("ui_hide_full_hud", 0);
-    setdvar("cg_drawGun", 1);
-    setdvar("cg_drawCrosshair", 1);
-    self unlink();
-    self playershow();
-    level.neura_camera delete();
-    level.neura_camera = undefined;
-    level.camera["active_cam"] = undefined;
-    level.camera["running"] = false;
+    if (!isdefined(level.camera["active_cam"]))
+    {
+        self iprintln("^1no active camera to stop");
+        return;
+    }
+
+    reset_player_state(level.camera["active_cam"]);
 }
 
 prepare_node_distances()
 {
     level.total_distance = 0;
-    for( k = 1; k < level.camera["count"]; k++ )
+    for ( k = 1; k < level.camera["count"]; k++ )
     {
         x = level.camera["angles"][k][1];
         y = level.camera["angles"][k+1][1];
@@ -3706,14 +3740,14 @@ create_camera_preview()
         n = 0;
         pathsteps = ( 2000 * level.camera["count"] / 400 );
 
-        for( j = 0; j < pathsteps ; j++ )
+        for ( j = 0; j < pathsteps ; j++ )
         {
             t = j / (pathsteps - 1);
             pos[0] = 0; pos[1] = 0; pos[2] = 0;
             ang[0] = 0; ang[1] = 0; ang[2] = 0;
-            for( i = 1; i <= level.camera["count"]; i++ )
+            for ( i = 1; i <= level.camera["count"]; i++ )
             {
-                for(z = 0; z < 3; z++)
+                for (z = 0; z < 3; z++)
                 {
                     pos[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["orgpath"][i][z] );
                     ang[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["angles"][i][z] );
@@ -3737,7 +3771,7 @@ create_camera_preview()
 delete_camera_preview()
 {
     if (!isdefined(level.camera["path"])) return;
-    foreach(path in level.camera["path"])
+    foreach (path in level.camera["path"])
     {
         if (isdefined(path)) path delete();
     }
@@ -3788,7 +3822,7 @@ factorial( x )
 {
     c = 1;
     if ( x == 0 ) return 1;
-    for( i = 1; i <= x; i++ )
+    for ( i = 1; i <= x; i++ )
         c = c * i;
     return c;
 }
@@ -3833,7 +3867,7 @@ preset_positions()
 clear_ents()
 {
     ents = getentarray("script_model", "classname");
-    for(i = 0 ; i < ents.size ; i++)
+    for (i = 0 ; i < ents.size ; i++)
     {
         ents[i] delete();
         wait 0.05;

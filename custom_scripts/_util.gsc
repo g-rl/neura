@@ -2,7 +2,6 @@
 
 void() {}
 
-
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
     for (i = 0; i < 4; i++) 
