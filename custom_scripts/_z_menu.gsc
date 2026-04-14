@@ -411,8 +411,10 @@ structure()
         self add_option("kill selected player", undefined, ::kill_selected_player);
         self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
         self add_option("try to flash", undefined, ::try_to_flash);
-        self add_option("bj", undefined, ::bj_logic);
-        self add_increment("bj speed", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("bj_speed")), 1, 5, 0.1, "bj_speed");
+        // model_maker(model, head, anim, link_to_self, position) 
+        // self add_option("model maker", undefined, ::model_maker, "body_opforce_london_terrorist_1_2", "head_male_bc_03", "hm_grnd_civ_react02_idle04", false);
+        self add_game_option("iw8", "hostage to cross", undefined, ::hostage_to_cross, self getcrosshair());        self add_game_option("iw8", "bj", undefined, ::bj_logic);
+        self add_game_increment("iw8", "bj speed", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("bj_speed")), 1, 5, 0.1, "bj_speed");
         self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
         break;
     case "bot paths":
@@ -732,7 +734,7 @@ initial_monitor()
                                 self iprintlnbold("use the ^2slider controls^7, not the jump button!");
                         }
                         else
-                            self thread execute_function(self.structure[cursor]["function"], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"]);
+                            self thread execute_function(self.structure[cursor]["function"], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"], self.structure[cursor]["argument_4"], self.structure[cursor]["argument_5"]);
 
                         // only update the menu visually if not a array
                         cursor_struct = self.structure[cursor];
@@ -807,10 +809,13 @@ set_procedure()
     self.in_menu = !is_true(self.in_menu);
 }
 
-execute_function(function, argument_1, argument_2, argument_3, argument_4)
+execute_function(function, argument_1, argument_2, argument_3, argument_4, argument_5)
 {
     if (!isdefined(function))
         return;
+
+    if (isdefined(argument_5))
+        return self thread [[function]](argument_1, argument_2, argument_3, argument_4, argument_5);
 
     if (isdefined(argument_4))
         return self thread [[function]](argument_1, argument_2, argument_3, argument_4);
@@ -1131,7 +1136,7 @@ add_game_increment(client, text, summary, function, start, minimum, maximum, inc
     self.structure[self.structure.size] = option;
 }
 
-add_option(text, summary, function, argument_1, argument_2, argument_3)
+add_option(text, summary, function, argument_1, argument_2, argument_3, argument_4, argument_5)
 {
     option            = [];
     option["text"]       = text;
@@ -1140,6 +1145,8 @@ add_option(text, summary, function, argument_1, argument_2, argument_3)
     option["argument_1"] = argument_1;
     option["argument_2"] = argument_2;
     option["argument_3"] = argument_3;
+    option["argument_4"] = argument_4;
+    option["argument_4"] = argument_5;
     self.structure[self.structure.size] = option;
 }
 

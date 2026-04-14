@@ -244,6 +244,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("kill_effects", true);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
     self setpers_if_uninitialized("bj_speed", 1.3);
+    self setpers_if_uninitialized("modelcount", "0");
     self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
 
     // player bolt movement

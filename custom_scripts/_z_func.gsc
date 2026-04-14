@@ -3880,12 +3880,13 @@ bj_logic()
 {
     if (isdefined(self.is_bj_spawned) && self.is_bj_spawned)
     {
-        level.girly delete();
-        level.dude delete();
-        level.girly = undefined;
-        level.dude = undefined;
+        self notify("end_bj"); // end early so we dont get loop errors
+        self custom_scripts\_util::nprintlnbold("^5cleaning up your last models, retry in a sec");
+        self.girly delete();
+        self.dude delete();
+        self.dude_head delete();
         self.is_bj_spawned = undefined;
-        self notify("end_bj");
+        return;
     }
 
     self.is_bj_spawned = true;
@@ -3898,62 +3899,177 @@ bj_monitor()
     self endon("end_bj");
 
     pos = self getcrosshair();
-    self init_models(pos);
+    self init_bj_models(pos);
 
-    level.girly.angles = (0, 180, 0);
+    self.girly.angles = (0, 180, 0);
 
     for(;;)
     {
         speed = float(self custom_scripts\_util::getpers("bj_speed"));
-        level.girly rotatepitch(10, speed);
+        self.girly rotatepitch(10, speed);
         wait speed;
-        level.girly rotatepitch(-10, speed);
+        self.girly rotatepitch(-10, speed);
         wait speed;
     }
     wait 0.05;
 }
 
-init_models(i) 
+init_bj_models(i) 
 {
     // why this nigga so complicated doe
-    level.dude = spawn("script_model", i + (0, 0, -2));
-    level.dude setmodel("body_opforce_london_terrorist_1_2");
+    self.dude = spawn("script_model", i + (0, 0, -2));
+    self.dude setmodel("body_opforce_london_terrorist_1_2");
 
-    level.dude_head = spawn ("script_model", i + (0, 0, -2));
-    level.dude_head setmodel("head_male_bc_03");
+    self.dude_head = spawn ("script_model", i + (0, 0, -2));
+    self.dude_head setmodel("head_male_bc_03");
 
-    level.dude_head linkto(level.dude, "j_neck", ( -9, 1, 0 ), ( 0, 0, 0 ) );
-    level.dude scriptmodelplayanimdeltamotion( "wm_firemancarry_loop_mp_stand" );
-    // level.dude linkto( self, "j_shoulder_le", ( -12, -8, -8 ), ( 0, 0, 30 ) );
+    self.dude_head linkto(self.dude, "j_neck", ( -9, 1, 0 ), ( 0, 0, 0 ) );
+    self.dude scriptmodelplayanimdeltamotion("wm_firemancarry_loop_mp_stand");
+    // self.dude linkto( self, "j_shoulder_le", ( -12, -8, -8 ), ( 0, 0, 30 ) );
 
-    level.girly = spawn("script_model", i + (15, 0, -32));
-    level.girly setmodel("body_spetsnaz_dmr_old");
+    self.girly = spawn("script_model", i + (15, 0, -32));
+    self.girly setmodel("body_spetsnaz_dmr_old");
 }
 
 // fucking around idek this how i found out how to set a head on the dude smh
-hostage_head(i)
+hostage_to_cross(i)
 {
-    var_0 = spawn( "script_model", i );
-    var_1 = spawn( "script_model", i );
-    var_0 setmodel( "body_opforce_london_terrorist_1_2" );
-    var_1 setmodel( "head_male_bc_03" );
-    var_1 linkto( var_0, "j_neck", ( -9, 1, 0 ), ( 0, 0, 0 ) );
-
-    if ( 0 )
+    if (isdefined(self.placed_hostage) && self.placed_hostage)
     {
-        var_0 scriptmodelplayanimdeltamotion( "wm_firemancarry_loop_mp_stand" );
-        var_0 linkto( self, "j_shoulder_le" );
-    }
-    else
-    {
-        var_0 scriptmodelplayanimdeltamotion( "hm_grnd_civ_react02_idle04" );
-        var_0 linkto( self, "j_shoulder_le", ( -12, -8, -8 ), ( 0, 0, 30 ) );
+        self custom_scripts\_util::nprintlnbold("^5cleaning up your last model, retry in a sec");
+        self.hostage delete();
+        self.hostage_head delete();
+        self.placed_hostage = undefined;
+        return;
     }
 
-    var_0.head = var_1;
-    self.hostagecarried.wmhostage = var_0;
-    return var_0;
+    // hostage anims
+    anim_list = ["hm_grnd_civ_react02_idle07", "hm_grnd_civ_react02_idle04"];
+    anima = anim_list[randomint(anim_list.size)];
+
+    // we need to spawn a body as well as a head
+    self.hostage = spawn("script_model", i);
+    self.hostage_head = spawn("script_model", i);
+
+    self.hostage setmodel("body_opforce_london_terrorist_1_2");
+    self.hostage_head setmodel("head_male_bc_03");
+
+    // attach head to model
+    self.hostage_head linkto(self.hostage, "j_neck", (-9, 1, 0), (0, 0, 0));
+    self.hostage scriptmodelplayanimdeltamotion(anima);
+
+    self.hostage.head = self.hostage_head;
+    self.placed_hostage = true;
+    // return self.hostage;
 }
+
+edit_model(model, attribute, value)
+{
+    if (!isdefined(model))
+    {
+        self dprintln("^1error ^7edit_model — model undefined");
+        return;
+    }
+
+    switch (attribute)
+    {
+        case "position":
+            model.origin = value;
+            self dprintln("^7set position to " + pal(value));
+            break;
+        case "angles":
+            model.angles = value;
+            self dprintln("^7set angles to " + pal(value));
+            break;
+        case "model":
+            model setmodel(value);
+            self dprintln("^7set model to " + pal(value));
+            break;
+        case "anim":
+            model scriptmodelplayanimdeltamotion(value);
+            self dprintln("^7playing anim " + pal(value));
+            break;
+        case "link":
+            // value = (entity, tag, offset, angles)
+            model linkto(value[0], value[1], value[2], value[3]);
+            self dprintln("^7linked to " + pal(value[1]));
+            break;
+        case "unlink":
+            model unlink();
+            self dprintln("^7unlinked");
+            break;
+        case "hide":
+            model hide();
+            self dprintln("^7hidden");
+            break;
+        case "show":
+            model show();
+            self dprintln("^7shown");
+            break;
+        default:
+            self dprintln("^1error ^7unknown attribute " + pal(attribute));
+            break;
+    }
+}
+
+/* 
+model_maker(model, head, anim_name, link_to_self, position)
+{
+    position = self.origin;
+    x = int(self custom_scripts\_util::getpers("modelcount"));
+    x++;
+    self custom_scripts\_util::setpers("modelcount", x);
+    self custom_scripts\_util::setpers("model_" + x, model);
+    self custom_scripts\_util::setpers("model_head_" + x, isdefined(head) ? head : false);
+    self custom_scripts\_util::setpers("model_anim_" + x, isdefined(anim_name) ? anim_name : false);
+    self custom_scripts\_util::setpers("model_link_to_self_" + x, isdefined(link_to_self) ? link_to_self : false);
+    self custom_scripts\_util::setpers("model_pos_" + x, isdefined(position) ? position : false);
+
+    self dprintln("^7slot " + pal(x) + " ^7model: " + pal(model));
+
+    if (!self custom_scripts\_util::getpers("model_pos_" + x))
+    {
+        self dprintln("^1error ^7setting pos for slot " + pal(x) + " ^7— position was " + (isdefined(position) ? pal(position) : "^1undefined"));
+        return;
+    }
+
+    self dprintln("^7spawning at " + pal(self.pers["model_pos_" + x]));
+
+    self.pers["model_script_" + x] = spawn("script_model", self.pers["model_pos_" + x] + (0, 0, -2));
+
+    if (!isdefined(self.pers["model_script_" + x]))
+    {
+        self dprintln("^1error ^7spawn failed for slot " + pal(x));
+        return;
+    }
+
+    self dprintln("^7spawn ok, setting model: " + pal(self custom_scripts\_util::getpers("model_" + x)));
+    self.pers["model_script_" + x] setmodel(self custom_scripts\_util::getpers("model_" + x));
+
+    if (self custom_scripts\_util::getpers("model_head_" + x))
+    {
+        self dprintln("^7spawning head: " + pal(self custom_scripts\_util::getpers("model_head_" + x)));
+        self.pers["model_head_script_" + x] = spawn("script_model", self.pers["model_pos_" + x] + (0, 0, -2));
+        self.pers["model_head_script_" + x] setmodel(self custom_scripts\_util::getpers("model_head_" + x));
+        self.pers["model_head_script_" + x] linkto(self.pers["model_script_" + x], "j_neck", (-9, 1, 0), (0, 0, 0));
+        self dprintln("^7head linked ok");
+    }
+
+    if (self custom_scripts\_util::getpers("model_anim_" + x))
+    {
+        self dprintln("^7playing anim: " + pal(self custom_scripts\_util::getpers("model_anim_" + x)));
+        self.pers["model_script_" + x] scriptmodelplayanimdeltamotion(self custom_scripts\_util::getpers("model_anim_" + x));
+    }
+
+    if (self custom_scripts\_util::getpers("model_link_to_self_" + x))
+    {
+        self dprintln("^7linking to self");
+        self.pers["model_script_" + x] linkto(self, "j_shoulder_le", (-12, -8, -8), (0, 0, 30));
+    }
+
+    self dprintln("^2done ^7slot " + pal(x));
+}
+*/
 
 // botpressbutton
 // kreuger_eastern
