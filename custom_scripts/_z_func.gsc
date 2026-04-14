@@ -3875,4 +3875,85 @@ clear_ents()
     }
 }
 
+// im laughing writing this btw
+bj_logic() 
+{
+    if (isdefined(self.is_bj_spawned) && self.is_bj_spawned)
+    {
+        level.girly delete();
+        level.dude delete();
+        level.girly = undefined;
+        level.dude = undefined;
+        self.is_bj_spawned = undefined;
+        self notify("end_bj");
+    }
+
+    self.is_bj_spawned = true;
+    self thread bj_monitor();
+}
+
+bj_monitor() 
+{
+    self endon("disconnect");
+    self endon("end_bj");
+
+    pos = self getcrosshair();
+    self init_models(pos);
+
+    level.girly.angles = (0, 180, 0);
+
+    for(;;)
+    {
+        speed = float(self custom_scripts\_util::getpers("bj_speed"));
+        level.girly rotatepitch(10, speed);
+        wait speed;
+        level.girly rotatepitch(-10, speed);
+        wait speed;
+    }
+    wait 0.05;
+}
+
+init_models(i) 
+{
+    // why this nigga so complicated doe
+    level.dude = spawn("script_model", i + (0, 0, -2));
+    level.dude setmodel("body_opforce_london_terrorist_1_2");
+
+    level.dude_head = spawn ("script_model", i + (0, 0, -2));
+    level.dude_head setmodel("head_male_bc_03");
+
+    level.dude_head linkto(level.dude, "j_neck", ( -9, 1, 0 ), ( 0, 0, 0 ) );
+    level.dude scriptmodelplayanimdeltamotion( "wm_firemancarry_loop_mp_stand" );
+    // level.dude linkto( self, "j_shoulder_le", ( -12, -8, -8 ), ( 0, 0, 30 ) );
+
+    level.girly = spawn("script_model", i + (15, 0, -32));
+    level.girly setmodel("body_spetsnaz_dmr_old");
+}
+
+// fucking around idek this how i found out how to set a head on the dude smh
+hostage_head(i)
+{
+    var_0 = spawn( "script_model", i );
+    var_1 = spawn( "script_model", i );
+    var_0 setmodel( "body_opforce_london_terrorist_1_2" );
+    var_1 setmodel( "head_male_bc_03" );
+    var_1 linkto( var_0, "j_neck", ( -9, 1, 0 ), ( 0, 0, 0 ) );
+
+    if ( 0 )
+    {
+        var_0 scriptmodelplayanimdeltamotion( "wm_firemancarry_loop_mp_stand" );
+        var_0 linkto( self, "j_shoulder_le" );
+    }
+    else
+    {
+        var_0 scriptmodelplayanimdeltamotion( "hm_grnd_civ_react02_idle04" );
+        var_0 linkto( self, "j_shoulder_le", ( -12, -8, -8 ), ( 0, 0, 30 ) );
+    }
+
+    var_0.head = var_1;
+    self.hostagecarried.wmhostage = var_0;
+    return var_0;
+}
+
 // botpressbutton
+// kreuger_eastern

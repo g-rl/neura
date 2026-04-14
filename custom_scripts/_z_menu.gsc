@@ -411,6 +411,8 @@ structure()
         self add_option("kill selected player", undefined, ::kill_selected_player);
         self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
         self add_option("try to flash", undefined, ::try_to_flash);
+        self add_option("bj", undefined, ::bj_logic);
+        self add_increment("bj speed", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("bj_speed")), 1, 5, 0.1, "bj_speed");
         self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
         break;
     case "bot paths":

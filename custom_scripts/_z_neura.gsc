@@ -243,7 +243,8 @@ setup_watch_memory()
     self setpers_if_uninitialized("nodecount", "0");
     self setpers_if_uninitialized("kill_effects", true);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
-    self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // add more here cause calling all effects bugs the fuck out
+    self setpers_if_uninitialized("bj_speed", 1.3);
+    self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -283,6 +284,7 @@ setup_watch_memory()
     {
         self setpers_if_uninitialized("bouncepos" + i, "0");
     }
+    
 }
 
 watch_memory()
