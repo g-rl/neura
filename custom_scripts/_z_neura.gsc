@@ -243,7 +243,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("nodecount", "0");
     self setpers_if_uninitialized("kill_effects", true);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
-    self.effect_list = ["claymore_explode", "nuke_rolling_death", "stimulus_glow_burst", "corpse_pop", "bloody_death", "headshot_explode", "headshot_explode_jugg", "breach_explode", "emp_stun", "equipment_explode_big", "equipment_smoke", "equipment_sparks"]; // add more here cause calling all effects bugs the fuck out
+    self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // add more here cause calling all effects bugs the fuck out
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");

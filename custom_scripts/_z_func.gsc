@@ -1200,16 +1200,16 @@ do_damage_bind(args, slot)
                 self.no_damage = false;
 
             old_health = self.maxhealth;
-            self.health = 100;
             self.maxhealth = 100;
+            self.health = 100;
 
             self [[level.callbackPlayerDamage]](player, player, int(self custom_scripts\_util::getpers("damage_amount")), 8, "MOD_RIFLE_BULLET", self getcurrentweapon(), self.origin, (0,0,0), "neck", 0 );
             
             if (active) 
                 self.no_damage = true;
 
-            self.health = old_health;
             self.maxhealth = old_health;
+            self.health = old_health;
         }
      }
 }
