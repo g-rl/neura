@@ -61,8 +61,6 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-        // dvars = ["dvar1", "dvar2"];
-        // self thread check_dvars(dvars);
 
         self thread reload_position();
 
@@ -95,13 +93,11 @@ on_player_spawned()
             self.menu_init = true;
         }
 
-        // look into this and find a solution to remove timer thats not janky asf -et
-        // self thread pause_timer_cooldown_bypass();
-
         // other funcs
         // self thread check_event("show_final_killcam");
         // self thread watch_weap_change(); - get full weapon names
-        // self thread give_perks();
+        // self thread give_perks(); - add this back later
+
         self thread monitor_recon_drone();
         self thread skip_final_killcam();
         self thread monitor_class();
@@ -145,6 +141,7 @@ on_bot_spawned()
 
 setup_watch_memory()
 {
+    self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
     setdvarifuninitialized("rainbow", 1);
 
     // engine dvars
@@ -247,8 +244,6 @@ setup_watch_memory()
     self setpers_if_uninitialized("platform_origin", false);
     self setpers_if_uninitialized("platform_clip", false);
     self setpers_if_uninitialized("repeater_illusion", false);
-      
-    self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -301,10 +296,7 @@ watch_memory()
     }
 
     // reload persistence & binds
-#ifndef IW9
     self loadpers("autoprone", ::do_auto_prone);
-#endif
-
     self loadpers("autoreload", ::do_auto_reload);
     self loadpers("instaswaps", ::do_instaswaps);
     self loadpers("aimbot", ::do_aimbot);

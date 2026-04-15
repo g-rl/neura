@@ -1214,7 +1214,7 @@ do_spectate_damage_repeater_bind(args, slot)
             self.health = old_health;
             
             wait 0.05;
-            if (self.sessionstate == "playing") // maybe this will actually show the repeater? LOL
+            if (self.sessionstate == "playing")
             {
                 self scripts\mp\utility\player::updatesessionstate("spectator");
                 wait 0.1;
@@ -1251,7 +1251,7 @@ do_spectate_repeater_bind(args, slot)
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            if (self.sessionstate == "playing") // maybe this will actually show the repeater? LOL
+            if (self.sessionstate == "playing")
             {
                 self scripts\mp\utility\player::updatesessionstate("spectator");
                 wait 0.1;
