@@ -58,8 +58,6 @@ structure()
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
         self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
         self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
-        self add_pers_toggle("kill effects", undefined, custom_scripts\_z_func::togglepers, "kill_effects", true);
-        if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
         self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        break;
@@ -71,7 +69,7 @@ structure()
         self add_option("^2save ^7session", "save current map session", ::save_session);
         break;
 
-    case "cinematics":
+    case "cinematics": // add scenes later ?
         self.bind_index = false;
         self add_menu(menu);
         self add_option("start camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::start_camera_path, self getpers("camera_get_start_type"));
@@ -109,6 +107,8 @@ structure()
         self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
         self add_increment("range", increment_controls, ::setpersmenu, int(self getpers("aimbot_range")), 100, 5000, 100, "aimbot_range");
         self add_array("delay", slider_controls, ::setpersmenu, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"), "aimbot_delay"); // so increments will freeze your game if you put the min to 0. look into this? -et
+        self add_pers_toggle("kill effects", undefined, custom_scripts\_z_func::togglepers, "kill_effects", true);
+        if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
         break;
     case "glitches":
         self.bind_index = false;
@@ -372,7 +372,7 @@ structure()
     case "killcam manager":
         self.bind_index = false;
         self add_menu(menu);
-        self add_pers_toggle("allow killcam edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
+        self add_pers_toggle("allow hud edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
         self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
         self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "elem_itemtype", true);
         self add_pers_toggle("hide victim", undefined, ::togglepers, "elem_victim", true);
@@ -406,14 +406,15 @@ structure()
     case "debug settings":
         self.bind_index = false;
         self add_menu(menu);
-        self add_option(warning("bot paths"), undefined, ::new_menu, "bot paths");
+        self add_option(warning("bot paths"), "trying to get this to work", ::new_menu, "bot paths");
         self add_option("origin", self getorigin(), ::void);
         self add_option("kill selected player", undefined, ::kill_selected_player);
         self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
         self add_option("try to flash", undefined, ::try_to_flash);
         // model_maker(model, head, anim, link_to_self, position) 
         // self add_option("model maker", undefined, ::model_maker, "body_opforce_london_terrorist_1_2", "head_male_bc_03", "hm_grnd_civ_react02_idle04", false);
-        self add_game_option("iw8", "hostage to cross", undefined, ::hostage_to_cross, self getcrosshair());        self add_game_option("iw8", "bj", undefined, ::bj_logic);
+        self add_game_option("iw8", "hostage to cross", undefined, ::hostage_to_cross, self getcrosshair()); 
+        self add_game_option("iw8", "bj", undefined, ::bj_logic);
         self add_game_increment("iw8", "bj speed", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("bj_speed")), 1, 5, 0.1, "bj_speed");
         self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
         break;

@@ -720,7 +720,7 @@ do_aimbot(args)
                         {
                             if (self getpers("kill_effects"))
                             {
-                                player thread play_kill_effect(effect, origin);
+                                player thread play_effect(effect, origin);
                             }
                         }
                     }
@@ -3827,9 +3827,8 @@ factorial( x )
     return c;
 }
 
-play_kill_effect(effect, origin)
+play_effect(effect, origin)
 {
-    // gonna need to change this for other games im like pretty sure
     playfx(scripts\engine\utility::getfx(effect), origin);
 }
 
@@ -3869,9 +3868,12 @@ clear_ents()
     ents = getentarray("script_model", "classname");
     for (i = 0 ; i < ents.size ; i++)
     {
-        ents[i] delete();
-        wait 0.05;
-        self custom_scripts\_util::nprintln("^2an entity was deleted");
+        if (isdefined(ents[i])) // idk
+        {
+            ents[i] delete();
+            wait 0.05;
+            self custom_scripts\_util::nprintln("^2an entity was deleted");
+        }
     }
 }
 
@@ -3963,7 +3965,7 @@ hostage_to_cross(i)
     // return self.hostage;
 }
 
-modelspawner(mod, position)
+modelspawner(mod, position) // idk im bored
 {
     if (!isdefined(mod))
     {
