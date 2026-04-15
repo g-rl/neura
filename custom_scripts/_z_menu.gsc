@@ -53,7 +53,7 @@ structure()
         self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
         self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
         self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
-        if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
+        if (gametype == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
         self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");        self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        break;
 
@@ -316,7 +316,7 @@ structure()
     case "give streaks (iw8)":
         self.bind_index = false;
         self add_menu(menu);
-        if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
+        if (gametype == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
         for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++) 
         {
             self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
@@ -353,7 +353,7 @@ structure()
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_option(warning("session settings"), undefined, ::new_menu, "session settings");
-        if (scripts\mp\utility\game::getgametype() == "sd") self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
+        if (gametype == "sd") self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
         self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
         self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
         self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
@@ -364,12 +364,12 @@ structure()
         self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_headbounces, "no_hud");
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
-        self add_pers_toggle("sounds", undefined, ::togglepers, "sounds", true);
+        self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         self add_option(warning("spawn invis platform"), "works for the most part", ::invis_platform, "clip32x32x32");
-        self add_game_option("iw8", warning("vehicles"), undefined, ::new_menu, "vehicles (iw8)");
+        self add_game_option("iw8", warning("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
         self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         break;
     case "killcam manager":
