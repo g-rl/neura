@@ -360,7 +360,7 @@ structure()
         // self add_option("respawn everyone", undefined, ::respawn_everyone);
         self add_option(warning("lock menu"), undefined, ::lock_menu);
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
-        self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_headbounces, "no_hud");
+        self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_hud, "no_hud");
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
         self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
