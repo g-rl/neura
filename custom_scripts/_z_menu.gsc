@@ -358,7 +358,7 @@ structure()
         self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
         if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
         // self add_option("respawn everyone", undefined, ::respawn_everyone);
-        self add_option("lock menu", undefined, ::lock_menu);
+        self add_option(warning("lock menu"), undefined, ::lock_menu);
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
         self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_headbounces, "no_hud");
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
