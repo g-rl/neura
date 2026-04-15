@@ -1,5 +1,3 @@
-// gsclsp-disable semicolon
-
 /*
         neura menu for IW8 (MW2019), S4 (Vanguard), and IW9 (MW2022) 
         by ethan (@nyli2b) & mikey (@mjkzys)
@@ -45,7 +43,7 @@ on_player_connect()
         if (isai(player) || isbot(player))
             player thread on_bot_spawned();
         else
-        player thread on_player_spawned();
+            player thread on_player_spawned();
     }
 }
 
