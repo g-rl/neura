@@ -1,32 +1,21 @@
 #include custom_scripts\_util; // this is okay to do as _util doesnt include anything
 
-toggle_headbounces()
+togglepers(pers)
 {
-    self.pers["headbounces"] = !custom_scripts\_util::toggle(self.pers["headbounces"]);
-    if (self custom_scripts\_util::getpers("headbounces"))
-    {
-        self thread headbounces();
-    }
-    else
-    {
-        self notify("stop_headbounces");
-    }
+    self.pers[pers] = !custom_scripts\_util::toggle(self.pers[pers]);
 }
 
-headbounces(args)
+setpersmenu(value, pers)
 {
-    self endon("stop_headbounces");
-    level endon("game_ended");
-    for (;;)
-    {
-        foreach (player in level.players)
-        if (player != self && distance(player custom_scripts\_util::getorigin_() + (0, 0, 90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
-        {
-            self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
-            wait 0.2;
-        }
-        wait 0.05;
-    }
+    self custom_scripts\_util::setpers(pers, value);
+    self play_sound("weap_ammo_pickup");
+}
+
+setdvarmenu(value, dvar)
+{
+    value = float(value);
+    setdvar(dvar, value);
+    self play_sound("weap_ammo_pickup");
 }
 
 one_handed_gun()
@@ -96,24 +85,6 @@ change_player_team(player)
 set_to_gunner(player) {}
 set_to_predator(player) {}
 
-togglepers(pers)
-{
-    self.pers[pers] = !custom_scripts\_util::toggle(self.pers[pers]);
-}
-
-setpersmenu(value, pers)
-{
-    self custom_scripts\_util::setpers(pers, value);
-    self play_sound("weap_ammo_pickup");
-}
-
-setdvarmenu(value, dvar)
-{
-    value = float(value);
-    setdvar(dvar, value);
-    self play_sound("weap_ammo_pickup");
-}
-
 set_knockback(value, dvar)
 {
     value = float(value);
@@ -148,6 +119,35 @@ printall(text, console)
     // on every other game, this will go to console no matter what
     iprintln(text);
     iprintlnbold(text);
+}
+
+toggle_headbounces()
+{
+    self.pers["headbounces"] = !custom_scripts\_util::toggle(self.pers["headbounces"]);
+    if (self custom_scripts\_util::getpers("headbounces"))
+    {
+        self thread headbounces();
+    }
+    else
+    {
+        self notify("stop_headbounces");
+    }
+}
+
+headbounces(args)
+{
+    self endon("stop_headbounces");
+    level endon("game_ended");
+    for (;;)
+    {
+        foreach (player in level.players)
+        if (player != self && distance(player custom_scripts\_util::getorigin_() + (0, 0, 90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
+        {
+            self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
+            wait 0.2;
+        }
+        wait 0.05;
+    }
 }
 
 toggle_freeze_anim_bind(bind, i, pers)
@@ -1161,6 +1161,70 @@ do_eq_bind(args, slot)
     }
 }
 
+toggle_damage_repeater_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_damage_repeater_bind(1, i);
+    else
+        self notify("stop_damage_repeater_bind");
+}
+
+do_damage_repeater_bind(args, slot)
+{
+    self endon("stop_damage_repeater_bind");
+    self endon("disconnect");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            player = self custom_scripts\_util::getenemyplayer();
+            if (player == self)
+            {
+                self iprintlnbold("^5spawn an enemy");
+                continue;
+            }
+
+            active = false;
+
+            if (self custom_scripts\_util::getpers("invincible") == 1) 
+                active = true;
+
+            if (active) 
+                self.no_damage = false;
+
+            old_health = self.maxhealth;
+            self.maxhealth = 100;
+            self.health = 100;
+
+            self [[level.callbackPlayerDamage]](player, player, int(self custom_scripts\_util::getpers("damage_amount")), 8, "MOD_RIFLE_BULLET", self getcurrentweapon(), self.origin, (0,0,0), "neck", 0 );
+
+            if (active) 
+                self.no_damage = true;
+
+            self.maxhealth = old_health;
+            self.health = old_health;
+
+            x = self getcurrentweapon();
+            clip = self getweaponammoclip(x);
+            stock = self getweaponammostock(x);
+            wait 0.05;
+            self takeweapon(x);
+            self giveweapon(x);
+            self setweaponammostock(x, stock);
+            self setweaponammoclip(x, clip);
+            wait 0.05;
+            self setspawnweapon(x);  
+        }
+     }
+}
+
 toggle_damage_bind(bind, i, pers)
 {
     index = pers + "_" + i;
@@ -1676,7 +1740,7 @@ play_movement()
     move_model delete();
 }
 
-toggle_velocity_bind(bind, i, pers)
+toggle_bounce_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
@@ -1684,9 +1748,27 @@ toggle_velocity_bind(bind, i, pers)
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
-        self thread do_velocity_bind(1, i);
+        self thread do_bounce_bind(1, i);
     else
-        self notify("stop_velocity_bind");
+        self notify("stop_bounce_bind");
+}
+
+do_bounce_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_bounce_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
+            wait 0.2;
+        }
+    }
 }
 
 do_velocity_bind(args, slot)
