@@ -251,6 +251,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("repeater_illusion", false);
     self setpers_if_uninitialized("no_hud", false);
     self setpers_if_uninitialized("menu_lock", false);
+    self setpers_if_uninitialized("spectate_time", 0.1);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");

@@ -1249,12 +1249,12 @@ do_spectate_damage_repeater_bind(args, slot)
             if (self.sessionstate == "playing")
             {
                 self scripts\mp\utility\player::updatesessionstate("spectator");
-                wait 0.1;
+                wait (float(self custom_scripts\_util::getpers("spectate_time")));
+                self scripts\mp\utility\player::updatesessionstate("playing");
                 if (self custom_scripts\_util::getpers("repeater_illusion"))
                 {
                     self setspawnweapon(self getcurrentweapon());
                 }
-                self scripts\mp\utility\player::updatesessionstate("playing");
             }
         }
      }
@@ -1286,12 +1286,12 @@ do_spectate_repeater_bind(args, slot)
             if (self.sessionstate == "playing")
             {
                 self scripts\mp\utility\player::updatesessionstate("spectator");
-                wait 0.1;
+                wait (float(self custom_scripts\_util::getpers("spectate_time")));
+                self scripts\mp\utility\player::updatesessionstate("playing");
                 if (self custom_scripts\_util::getpers("repeater_illusion"))
                 {
                     self setspawnweapon(self getcurrentweapon());
                 }
-                self scripts\mp\utility\player::updatesessionstate("playing");
             }
         }
      }
