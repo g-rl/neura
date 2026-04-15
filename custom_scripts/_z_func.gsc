@@ -4204,6 +4204,23 @@ edit_model(model, attribute, value) // uhhh i gotta look at this later
     }
 }
 
+invis_platform(clip)
+{
+    if (isdefined(self.platform))
+    {
+        self.platform.origin = self.origin;
+        self iprintlnbold("[" + pal(clip) + "^7] " + "platform updated & moved to " + pal(self.origin));
+        return;
+    }
+
+    self.platform = spawn("script_model", self.origin);
+    self.platform setmodel(clip);
+    ent = getent(clip, "targetname");
+    self.platform clonebrushmodeltoscriptmodel(ent);
+    self thread play_effect("claymore_explode", self.platform.origin);
+    self iprintlnbold("[" + pal(clip) + "^7] " + "platform spawned @ " + pal(self.origin));
+}
+
 /* 
 model_maker(model, head, anim_name, link_to_self, position) // doesn't work at all bro like no errors nun jus doesn't work
 {

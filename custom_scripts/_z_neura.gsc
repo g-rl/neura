@@ -375,7 +375,7 @@ callbackplayerdamage_stub( einflictor, eattacker, idamage, idflags, smeansofdeat
 
 init_camera()
 {
-    models = ["axis_guide_createfx", "misc_wm_flarestick", "tag_origin"];
+    models = ["axis_guide_createfx", "misc_wm_flarestick", "tag_origin", "clip32x32x32"];
     foreach (model in models)
         precachemodel(model);
 
