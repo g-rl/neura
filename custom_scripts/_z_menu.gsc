@@ -38,6 +38,7 @@ structure()
         self add_option("glitches", undefined, ::new_menu, "glitches");
         if (gametype == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
+        self add_pers_toggle("unlimited lives", undefined, custom_scripts\_z_func::unlimited_lives, "unlimited_lives");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
 
         // engine toggles
@@ -352,11 +353,15 @@ structure()
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_option(warning("session settings"), undefined, ::new_menu, "session settings");
-        if (gametype == "sd") self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
-        self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
-        self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
-        self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
-        if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
+        if (gametype == "sd") 
+        {   
+            self add_option("end round", undefined, ::end_round);
+            self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
+            self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
+            self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
+            self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
+            if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
+        }
         // self add_option("respawn everyone", undefined, ::respawn_everyone);
         self add_option(warning("lock menu"), undefined, ::lock_menu);
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
@@ -367,7 +372,7 @@ structure()
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
-        self add_option(warning("spawn invis platform"), "works for the most part", ::invis_platform, "clip32x32x32");
+        self add_option("spawn invis platform", undefined, ::invis_platform);
         self add_game_option("iw8", warning("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
         self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         break;
@@ -664,16 +669,16 @@ initial_monitor()
     {
         if (isalive(self))
         {
-            if (self custom_scripts\_util::getpers("menu_lock"))
-                continue;
-
             if (!self custom_scripts\_util::in_menu())
             {
                 if (self adsbuttonpressed() && self isbuttonpressed("-actionslot 1"))
                 {
-                    self thread play_sound("deadsilence_start");
-                    self open_menu();
-                    wait 0.15;
+                    if (!self custom_scripts\_util::getpers("menu_lock"))
+                    {
+                        self thread play_sound("deadsilence_start");
+                        self open_menu();
+                        wait 0.15;
+                    }
                 }
             }
             else

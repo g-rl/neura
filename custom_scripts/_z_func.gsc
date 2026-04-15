@@ -150,6 +150,21 @@ headbounces(args)
     }
 }
 
+unlimited_lives() //     self setpers("lives", 99);
+{
+    self.pers["unlimited_lives"] = !custom_scripts\_util::toggle(self.pers["unlimited_lives"]);
+
+    if (self custom_scripts\_util::getpers("unlimited_lives"))
+        self setpers("lives", 99);
+    else
+        self setpers("lives", 1);
+}
+
+set_lives(args)
+{
+    self setpers("lives", 99);
+}
+
 toggle_hud()
 {
     self.pers["no_hud"] = !custom_scripts\_util::toggle(self.pers["no_hud"]);
@@ -490,6 +505,8 @@ toggle_invincibility()
         setdvar("NKTQRKRMTS", self.fall_height);
         self.fall_height = undefined;
         self.no_damage = undefined;
+        self.maxhealth = 100;
+        self.health = self.maxhealth;
     }
 }
 
@@ -4304,56 +4321,54 @@ edit_model(model, attribute, value) // uhhh i gotta look at this later
     }
 }
 
-invis_platform(clip)
+invis_platform()
 {
-    if (isdefined(self.platform))
+    if (isdefined(self._platform))
     {
-        self.platform.origin = self.origin;
-        self custom_scripts\_util::setpers("platform_origin", self.platform.origin);
-        self iprintlnbold("[" + pal(clip) + "^7] " + "platform updated & moved to " + pal(self.origin));
+        self._platform.origin = self.origin;
+        self custom_scripts\_util::setpers("platform_origin", self._platform.origin);
+        self iprintlnbold("[" + pal(self custom_scripts\_util::getpers("platform_clip")) + "^7] " + "platform updated & moved to " + pal(self.origin));
         return;
     }
-    
-    ent = getent(clip, "targetname");
 
-    self.platform = spawn("script_model", self.origin);
-    self.platform setmodel(clip);
-    self.platform clonebrushmodeltoscriptmodel(ent);
+    clip = self custom_scripts\_util::getpers("platform_clip");
 
-    self custom_scripts\_util::setpers("platform_clip", clip);
-    self custom_scripts\_util::setpers("platform_origin", self.platform.origin);
+    self custom_scripts\_util::setpers("platform_origin", self.origin);
+    self._platform = spawn("script_model", self.origin);
 
-    self thread play_effect("claymore_explode", self.platform.origin);
+    clip_ent = getent(clip, "targetname");
+    if (isdefined(clip_ent))
+    {
+        self._platform clonebrushmodeltoscriptmodel(clip_ent);
+        self._platform setmodel(clip);
+    }
+
+    self thread play_effect("claymore_explode", self._platform.origin);
     self iprintlnbold("[" + pal(clip) + "^7] " + "platform spawned @ " + pal(self.origin));
 }
 
-reload_platform()
+reload_platform(args)
 {
-    origin = self custom_scripts\_util::getpers("platform_origin");
-    if (!isdefined(origin) || origin == "none")
-        return;
-
     clip = self custom_scripts\_util::getpers("platform_clip");
-    if (!isdefined(clip) || clip == "none")
-        return;
+    origin = self custom_scripts\_util::getpers("platform_origin");
 
-    ent = getent(clip, "targetname");
+    self._platform = spawn("script_model", origin);
+    self._platform setmodel(clip);
 
-    self.platform = spawn("script_model", origin);
-    self.platform setmodel(clip);
-    self.platform clonebrushmodeltoscriptmodel(ent);
+    clip_ent = getent(clip, "targetname");
+    if (isdefined(clip_ent))
+        self._platform clonebrushmodeltoscriptmodel(clip_ent);
+    else
+        self iprintlnbold("^1unable to create collision");
 
-    // set again just in case?
+    self thread play_effect("claymore_explode", self._platform.origin);
+    self iprintlnbold("[" + pal(clip) + "^7] " + "platform reloaded @ " + pal(self._platform.origin));
     self custom_scripts\_util::setpers("platform_clip", clip);
-    self custom_scripts\_util::setpers("platform_origin", self.platform.origin);
-
-    self thread play_effect("claymore_explode", self.platform.origin);
-    self iprintln("[" + pal(clip) + "^7] " + "platform reloaded @ " + pal(self.platform.origin));
+    self custom_scripts\_util::setpers("platform_origin", self._platform.origin);
 }
 
 lock_menu() 
 {
-    self custom_scripts\_z_menu::close_menu();
     self custom_scripts\_util::setpers("menu_lock", true);
 
     self thread play_effect("claymore_explode", self.origin);
@@ -4361,6 +4376,7 @@ lock_menu()
 
     self iprintlnbold("[{+melee_zoom}] ^5&^7 [{+speed_throw}] while prone to unlock");
     self thread play_sound("javelin_clu_lock");
+    self custom_scripts\_z_menu::close_menu();
 }
 
 watch_for_unlock() 
@@ -4380,6 +4396,11 @@ watch_for_unlock()
             self notify("unlocked_menu");
         }
     }
+}
+
+end_round()
+{
+    level thread scripts\mp\gametypes\sd::sd_endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
 }
 
 /* 

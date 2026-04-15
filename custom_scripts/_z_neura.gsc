@@ -82,6 +82,12 @@ on_player_spawned()
             self thread watch_round_end();
         }
 
+        origin = self getpers("platform_origin");
+        if (isdefined(origin) && isvector(origin))
+        {
+            self thread reload_platform();
+        }
+
         if (!isdefined(self.menu))
             self.menu = [];
 
@@ -104,7 +110,6 @@ on_player_spawned()
         self thread post_prematch_start();
         self thread wait_for_round_end();
         self thread handle_camo();
-        self thread reload_platform();
         self thread clear_prematch_look();
 
         // return any streaks to player (if saved)
@@ -158,7 +163,7 @@ setup_watch_memory()
     setdvar("MSOOMPMPQS", 1); // unlimited sprint
     setdvar("LNOKTQPLKO", 0); // jump slowdown
 
-    self setpers("lives", 99);
+    self setpers_if_uninitialized("unlimited_lives", true);
     self setpers_if_uninitialized("unstuck", self.origin);
     self setpers_if_uninitialized("velx", 250);
     self setpers_if_uninitialized("vely", 250);
@@ -241,8 +246,8 @@ setup_watch_memory()
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
     self setpers_if_uninitialized("bj_speed", 1.3);
     self setpers_if_uninitialized("modelcount", "0");
-    self setpers_if_uninitialized("platform_origin", "none");
-    self setpers_if_uninitialized("platform_clip", "none");
+    self setpers_if_uninitialized("platform_origin", false);
+    self setpers_if_uninitialized("platform_clip", "clip32x32x32");
     self setpers_if_uninitialized("repeater_illusion", false);
     self setpers_if_uninitialized("no_hud", false);
     self setpers_if_uninitialized("menu_lock", false);
@@ -317,6 +322,7 @@ watch_memory()
     self loadpers("random_rounds", ::always_random_rounds);
     self loadpers("auto_pause_timer", ::auto_pause_timer);
     self loadpers("no_hud", ::watch_hud);
+    self loadpers("unlimited_lives", ::set_lives);
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
@@ -375,7 +381,7 @@ callbackplayerdamage_stub( einflictor, eattacker, idamage, idflags, smeansofdeat
 
 init_camera()
 {
-    models = ["axis_guide_createfx", "misc_wm_flarestick", "tag_origin", "clip32x32x32"];
+    models = ["axis_guide_createfx", "misc_wm_flarestick", "tag_origin"];
     foreach (model in models)
         precachemodel(model);
 
