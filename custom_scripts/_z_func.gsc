@@ -1771,6 +1771,37 @@ do_bounce_bind(args, slot)
     }
 }
 
+toggle_hitmarker_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_hitmarker_bind(1, i);
+    else
+        self notify("stop_hitmarker_bind");
+}
+
+do_hitmarker_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_hitmarker_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self scripts\mp\damagefeedback::updatedamagefeedback("standard", 0, 0, "standard", 0);
+            wait 0.2;
+        }
+    }
+}
+
 do_velocity_bind(args, slot)
 {
     self endon("disconnect");

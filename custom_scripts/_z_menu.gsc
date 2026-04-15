@@ -13,7 +13,7 @@ structure()
     build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("bounce,damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("hitmarker,bounce,damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     // do we need to call like custom_scripts\_z_func::function?
     switch(menu)
@@ -26,9 +26,9 @@ structure()
         self add_option("position", credits, ::new_menu, "position");
         self add_option("cinematics", credits, ::new_menu, "cinematics");
         self add_option("aimbot", credits, ::new_menu, "aimbot settings");
-        self add_option("manage class", credits, ::new_menu, "class manager");
-        self add_option("manage game", credits, ::new_menu, "game settings");
-        self add_option("all clients", credits, ::new_menu, "manage clients");
+        self add_option("class", credits, ::new_menu, "class manager");
+        self add_option("game", credits, ::new_menu, "game settings");
+        self add_option("clients", credits, ::new_menu, "manage clients");
         if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
         break;
 
@@ -487,6 +487,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "hitmarker":
+            self add_bind(menu, ::toggle_hitmarker_bind, "hitmarker");
+            break;
         case "bounce":
             self add_bind(menu, ::toggle_bounce_bind, "bounce");
             break;
