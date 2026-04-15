@@ -367,7 +367,7 @@ structure()
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
-        self add_option("spawn invis platform", undefined, ::invis_platform, "clip32x32x32");
+        self add_option(warning("spawn invis platform"), "works for the most part", ::invis_platform, "clip32x32x32");
         self add_game_option("iw8", warning("vehicles"), undefined, ::new_menu, "vehicles (iw8)");
         self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         break;
