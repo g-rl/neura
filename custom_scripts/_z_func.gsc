@@ -4209,16 +4209,41 @@ invis_platform(clip)
     if (isdefined(self.platform))
     {
         self.platform.origin = self.origin;
+        self custom_scripts\_util::setpers("platform_origin", self.platform.origin);
         self iprintlnbold("[" + pal(clip) + "^7] " + "platform updated & moved to " + pal(self.origin));
         return;
     }
-
+    
     self.platform = spawn("script_model", self.origin);
     self.platform setmodel(clip);
     ent = getent(clip, "targetname");
     self.platform clonebrushmodeltoscriptmodel(ent);
     self thread play_effect("claymore_explode", self.platform.origin);
+    self custom_scripts\_util::setpers("platform_clip", clip);
+    self custom_scripts\_util::setpers("platform_origin", self.platform.origin);
     self iprintlnbold("[" + pal(clip) + "^7] " + "platform spawned @ " + pal(self.origin));
+}
+
+reload_platform()
+{
+    origin = self custom_scripts\_util::getpers("platform_origin");
+    if (!isdefined(origin))
+        return;
+
+    clip = self custom_scripts\_util::getpers("platform_clip");
+    if (!isdefined(clip) || clip == "none")
+        return;
+
+    self.platform = spawn("script_model", self custom_scripts\_util::getpers("platform_origin"));
+    self.platform setmodel(clip);
+
+    ent = getent(clip, "targetname");
+    if (isdefined(ent))
+        self.platform clonebrushmodeltoscriptmodel(ent);
+
+    self.platform clonebrushmodeltoscriptmodel(ent);
+    self thread play_effect("claymore_explode", self.platform.origin);
+    self iprintln("[" + pal(clip) + "^7] " + "platform reloaded @ " + pal(self.platform.origin));
 }
 
 /* 

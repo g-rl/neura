@@ -110,8 +110,9 @@ on_player_spawned()
         self thread post_prematch_start();
         self thread wait_for_round_end();
         self thread handle_camo();
-        self clear_prematch_look();
-        
+        self thread reload_platform();
+        self thread clear_prematch_look();
+
         // return any streaks to player (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");
         if (isdefined(saved) && saved != "none")
@@ -245,6 +246,9 @@ setup_watch_memory()
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
     self setpers_if_uninitialized("bj_speed", 1.3);
     self setpers_if_uninitialized("modelcount", "0");
+    self setpers_if_uninitialized("platform_origin", false);
+    self setpers_if_uninitialized("platform_clip", "none");
+    
     self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
 
     // player bolt movement
