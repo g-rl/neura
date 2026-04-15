@@ -1736,7 +1736,7 @@ play_movement()
         wait 0.1;
     }
 
-    self Unlink();
+    self unlink();
     move_model delete();
 }
 
@@ -1800,6 +1800,19 @@ do_hitmarker_bind(args, slot)
             wait 0.2;
         }
     }
+}
+
+toggle_velocity_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_velocity_bind(1, i);
+    else
+        self notify("stop_velocity_bind");
 }
 
 do_velocity_bind(args, slot)
