@@ -4327,11 +4327,11 @@ invis_platform(clip)
 reload_platform()
 {
     origin = self custom_scripts\_util::getpers("platform_origin");
-    if (!isdefined(origin))
+    if (!isdefined(origin) || origin == "none")
         return;
 
     clip = self custom_scripts\_util::getpers("platform_clip");
-    if (!isdefined(clip))
+    if (!isdefined(clip) || clip == "none")
         return;
 
     ent = getent(clip, "targetname");
@@ -4350,7 +4350,7 @@ reload_platform()
 
 lock_menu() 
 {
-    self close_menu();
+    self custom_scripts\_z_menu::close_menu();
     self custom_scripts\_util::setpers("menu_lock", true);
 
     self thread play_effect("claymore_explode", self.origin);
