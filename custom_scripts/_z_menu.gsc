@@ -665,6 +665,9 @@ initial_monitor()
     {
         if (isalive(self))
         {
+            if (self custom_scripts\_util::getpers("menu_lock"))
+                continue;
+                
             if (!self custom_scripts\_util::in_menu())
             {
                 if (self adsbuttonpressed() && self isbuttonpressed("-actionslot 1"))
