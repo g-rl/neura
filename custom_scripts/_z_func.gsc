@@ -3635,6 +3635,37 @@ set_camera_mode()
     }
 }
 
+toggle_cinematic_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_cinematic_bind(1, i);
+    else
+        self notify("stop_cinematic_bind");
+}
+
+do_cinematic_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_cinematic_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            self thread start_camera_path(self custom_scripts\_util::getpers("camera_mode"));
+            wait 0.05;
+        }
+    }
+}
+
 start_camera_path(mode)
 {
     if (int(self custom_scripts\_util::getpers("nodecount")) < 3)
