@@ -637,7 +637,6 @@ initial_variable()
     self.option_limit    = 10;
     self.option_spacing  = 16;
     self.option_summary  = true;
-    self.option_interact = true;
     self.x_offset        = -110;
     self.y_offset        = 80;
     self.element_count   = 0;
@@ -667,11 +666,9 @@ initial_monitor()
         {
             if (!self custom_scripts\_util::in_menu())
             {
-                if (self adsButtonPressed() && self isButtonPressed("-actionslot 1"))
+                if (self adsbuttonpressed() && self isbuttonpressed("-actionslot 1"))
                 {
-                    if (is_true(self.option_interact))
-                        self self custom_scripts\_z_func::play_sound("deadsilence_start");
-
+                    self self custom_scripts\_z_func::play_sound("deadsilence_start");
                     self open_menu();
                     wait 0.15;
                 }
@@ -703,15 +700,12 @@ initial_monitor()
 
                     wait 0.15;
                 }
-                else if (self isButtonPressed("-actionslot 2") && !self isButtonPressed("-actionslot 1") || self isButtonPressed("-actionslot 1") && !self isButtonPressed("-actionslot 2")) // up & down
+                else if (self isbuttonpressed("-actionslot 2") && !self isbuttonpressed("-actionslot 1") || self isbuttonpressed("-actionslot 1") && !self isbuttonpressed("-actionslot 2")) // up & down
                 {
                     if (isdefined(self.structure) && self.structure.size >= 2)
                     {
-                        if (is_true(self.option_interact))
-                            // self sfx("zmb_powerup_activate");
-                            self void();
-
-                        scrolling = self isButtonPressed("-actionslot 2") ? 1 : -1;
+                        self custom_scripts\_z_func::play_sound("scavenger_pack_pickup");
+                        scrolling = self isbuttonpressed("-actionslot 2") ? 1 : -1;
                         self set_cursor((cursor + scrolling));
                         
                         res = self update_scrolling(scrolling);
@@ -722,14 +716,12 @@ initial_monitor()
                     }
                     wait 0.07;
                 }
-                else if (self isButtonPressed("-actionslot 4") && !self isButtonPressed("-actionslot 3") || self isButtonPressed("-actionslot 3") && !self isButtonPressed("-actionslot 4"))
+                else if (self isbuttonpressed("-actionslot 4") && !self isbuttonpressed("-actionslot 3") || self isbuttonpressed("-actionslot 3") && !self isbuttonpressed("-actionslot 4"))
                 {
                     if (is_true(self.structure[cursor]["slider"]))
                     {
-                        if (is_true(self.option_interact))
-                            self custom_scripts\_z_func::play_sound("attachment_pickup");
-
-                        scrolling = self isButtonPressed("-actionslot 3") ? 1 : -1;
+                        self custom_scripts\_z_func::play_sound("attachment_pickup");
+                        scrolling = self isbuttonpressed("-actionslot 3") ? 1 : -1;
                         self set_slider(scrolling);
 
                         if (is_true(self.structure[cursor]["is_increment"]))
@@ -740,7 +732,7 @@ initial_monitor()
                     }
                     wait 0.07;
                 }
-                else if (self isButtonPressed("+gostand"))
+                else if (self isbuttonpressed("+gostand"))
                 {
                     if (isdefined(self.structure[cursor]["function"]))
                     {
