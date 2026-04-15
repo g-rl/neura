@@ -3963,7 +3963,70 @@ hostage_to_cross(i)
     // return self.hostage;
 }
 
-edit_model(model, attribute, value)
+modelspawner(mod, position)
+{
+    if (!isdefined(mod))
+    {
+        self iprintlnbold("^1invalid model..");
+    }
+
+    precachemodel(mod); // idk
+
+    if (!isdefined(position))
+        position = self getcrosshair();
+
+    model = spawn("script_model", position);
+    model setmodel(mod);
+
+    if (!isdefined(self.spawned_models))
+        self.spawned_models = [];
+
+    self.spawned_models[self.spawned_models.size] = model;
+    self.last_model = model;
+    self play_sound("ui_mp_flag_capture");
+    self iprintlnbold("now watching " + pal(self.spawned_models.size) + " ^7models");
+}
+
+delete_last_model()
+{
+    if (!isdefined(self.last_model))
+    {
+        self iprintlnbold(pal("no vehicles to delete"));
+        return;
+    }
+
+    self.last_model delete();
+    self.last_model = undefined;
+    self iprintln(pal("last vehicle deleted"));
+    self play_sound("ui_mp_flag_lost");
+}
+
+delete_all_models()
+{
+    if (!isdefined(level.model_list) || level.model_list.size == 0)
+    {
+        self iprintlnbold(pal("no models to delete"));
+        return;
+    }
+
+    index = 0;
+
+    foreach (model in level.model_list)
+    {
+        if (isdefined(model))
+        {
+            model delete();
+            index++;
+        }
+    }
+
+    level.model_list = [];
+    self.last_model = undefined;
+    self iprintlnbold("deleted " + pal(index) + " ^7models");
+    self play_sound("ui_mp_flag_lost");
+}
+
+edit_model(model, attribute, value) // uhhh i gotta look at this later
 {
     if (!isdefined(model))
     {
@@ -4013,7 +4076,7 @@ edit_model(model, attribute, value)
 }
 
 /* 
-model_maker(model, head, anim_name, link_to_self, position)
+model_maker(model, head, anim_name, link_to_self, position) // doesn't work at all bro like no errors nun jus doesn't work
 {
     position = self.origin;
     x = int(self custom_scripts\_util::getpers("modelcount"));
