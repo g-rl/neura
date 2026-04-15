@@ -1797,6 +1797,7 @@ do_hitmarker_bind(args, slot)
         if (!self custom_scripts\_util::in_menu())
         {
             self scripts\mp\damagefeedback::updatedamagefeedback("standard", 0, 0, "standard", 0);
+            self play_sound("gib_fullbody");
             wait 0.2;
         }
     }
