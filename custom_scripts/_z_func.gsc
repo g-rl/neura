@@ -150,6 +150,36 @@ headbounces(args)
     }
 }
 
+toggle_hud()
+{
+    self.pers["no_hud"] = !custom_scripts\_util::toggle(self.pers["no_hud"]);
+    if (self custom_scripts\_util::getpers("no_hud"))
+    {
+        self thread watch_hud();
+    }
+    else
+    {
+        self notify("stop_watching_hud");
+        setdvar("LOPKSRNTTS", 0);
+        self setclientomnvar("ui_hide_full_hud", 0);
+    }
+}
+
+watch_hud(args)
+{
+    self endon("stop_watching_hud");
+    self endon("disconnect");
+    level endon("game_ended");
+
+    setdvar("LOPKSRNTTS", 1);
+
+    for (;;)
+    {
+        self setclientomnvar("ui_hide_full_hud", 1);
+        wait 10;
+    }
+}
+
 toggle_freeze_anim_bind(bind, i, pers)
 {
     index = pers + "_" + i;
@@ -2229,19 +2259,14 @@ refill_all_ammo()
 {
     level endon("game_ended"); // just in case
 
-    items = self inventory();
-    foreach (item in items)
+    inventory = self inventory();
+    foreach (item in inventory)
     {
         self givemaxammo(item);
         self setweaponammostock(item, 999);
         self setweaponammoclip(item, 999);
         self setweaponammoclip(item, 999, "left");
         self setweaponammoclip(item, 999, "right");
-        // these make the game hitch really badly
-        // self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
-        // self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
-        // self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
-        // self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
         wait 0.05;
     }
 }
@@ -2253,12 +2278,13 @@ refill_weapon_ammo(item)
     self setweaponammoclip(item, 999);
     self setweaponammoclip(item, 999, "left");
     self setweaponammoclip(item, 999, "right");
-    // these make the game hitch really badly
-    // self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
-    // self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
-    // self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
-    // self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
 }
+
+// these make the game hitch really badly
+// self setweaponammoclip(item, 999, "_encstr_8253060E2B5FE330");
+// self setweaponammoclip(item, 999, "_encstr_9353062E718710C9");
+// self setweaponammoclip(item, 999, "_encstr_A5AD056A019C63");
+// self setweaponammoclip(item, 999, "_encstr_B1AD05C65666E8");
 
 givegun(weapon) // test give_weapon later and use that instead
 {
@@ -2296,6 +2322,8 @@ give_streak(streak)
         return;
     }
 
+
+    // don't think this works
     if (self custom_scripts\_util::getpers("ks_auto_use"))
     {
         wait 0.05;
@@ -2948,7 +2976,7 @@ build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, va
 #endif
 }
 
-play_sound(sound)
+play_sound(sound, wait_time)
 {
     if (!self custom_scripts\_util::getpers("sounds")) return;
 
@@ -2957,6 +2985,12 @@ play_sound(sound)
 
     wait 0.05; // we need a delay here because the game hitches sometimes?
     self playlocalsound(sound);
+
+    if (wait_time)
+    {
+        wait (wait_time);
+        self stoplocalsound(sound);
+    }
 }
 
 spawnbot(team, amount)

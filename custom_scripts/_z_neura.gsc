@@ -244,6 +244,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("platform_origin", false);
     self setpers_if_uninitialized("platform_clip", false);
     self setpers_if_uninitialized("repeater_illusion", false);
+    self setpers_if_uninitialized("no_hud", false);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -314,7 +315,8 @@ watch_memory()
     self loadpers("always_nac", ::do_always_nac); 
     self loadpers("random_rounds", ::always_random_rounds);
     self loadpers("auto_pause_timer", ::auto_pause_timer);
-    
+    self loadpers("no_hud", ::watch_hud);
+
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
     self setup_bind("class", false, ::reload_class_bind);

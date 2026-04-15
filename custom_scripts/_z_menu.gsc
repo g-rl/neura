@@ -38,6 +38,7 @@ structure()
         self add_option("glitches", undefined, ::new_menu, "glitches");
         if (scripts\mp\utility\game::getgametype() == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
+        self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
 
         // engine toggles
         self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
@@ -50,16 +51,10 @@ structure()
         self add_pers_toggle("always nac", "[{+weapnext}] to easily swap", custom_scripts\_z_func::always_nac, "always_nac");
         self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
         self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
-        self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
         self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
         self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
         if (scripts\mp\utility\game::getgametype() == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
-        self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");
-        self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
-        self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
-        self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
-        self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
-        self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
+        self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");        self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
         self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        break;
 
     case "session settings":
@@ -135,6 +130,8 @@ structure()
         self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
         self add_game_array("iw8", "stuck weapon", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
         self add_pers_toggle("repeater illusions", undefined, custom_scripts\_z_func::togglepers, "repeater_illusion", true);
+        self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
+        self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
         self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
         self add_increment("flash amount", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
         self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
@@ -219,6 +216,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         // self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]); // broken broken broken
+        self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
         self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
         self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
         self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
@@ -361,6 +359,8 @@ structure()
         self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
         if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
         // self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
+        self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
+        self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_headbounces, "no_hud");
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
         self add_pers_toggle("sounds", undefined, ::togglepers, "sounds", true);
@@ -669,11 +669,8 @@ initial_monitor()
             {
                 if (self adsButtonPressed() && self isButtonPressed("-actionslot 1"))
                 {
-                    /*
                     if (is_true(self.option_interact))
-                        // self sfx("entrance_sign_power_on_build");
-                        self void();
-                    */
+                        self self custom_scripts\_z_func::play_sound("deadsilence_start");
 
                     self open_menu();
                     wait 0.15;
@@ -695,9 +692,14 @@ initial_monitor()
                    // self sfx("zmb_powerup_activate");
 
                     if (isdefined(self.previous[(self.previous.size - 1)]))
+                    {
                         self new_menu(self.previous[menu]);
+                    }
                     else
+                    {
                         self close_menu();
+                        self self custom_scripts\_z_func::play_sound("deadsilence_end");
+                    }
 
                     wait 0.15;
                 }
@@ -725,8 +727,7 @@ initial_monitor()
                     if (is_true(self.structure[cursor]["slider"]))
                     {
                         if (is_true(self.option_interact))
-                            // self sfx("zmb_wheel_wpn_acquired");
-                            self void();
+                            self custom_scripts\_z_func::play_sound("attachment_pickup");
 
                         scrolling = self isButtonPressed("-actionslot 3") ? 1 : -1;
                         self set_slider(scrolling);
@@ -743,13 +744,18 @@ initial_monitor()
                 {
                     if (isdefined(self.structure[cursor]["function"]))
                     {
-                       // self sfx("part_pickup");
+                        self custom_scripts\_z_func::play_sound("ui_killstreak_select");
                         if (is_true(self.structure[cursor]["slider"]))
                         {
                             if (is_true(self.structure[cursor]["is_array"]))
+                            {
                                 self thread execute_function(self.structure[cursor]["function"], isdefined(self.structure[cursor]["array"]) ? self.structure[cursor]["array"][self.slider[menu + "_" + cursor]] : self.slider[menu + "_" + cursor], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"]);
+                            }
                             else
+                            {
                                 self iprintlnbold("use the ^2slider controls^7, not the jump button!");
+                                self custom_scripts\_z_func::play_sound("ui_mp_flag_lost");
+                            }
                         }
                         else
                             self thread execute_function(self.structure[cursor]["function"], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"], self.structure[cursor]["argument_4"], self.structure[cursor]["argument_5"]);
