@@ -1216,6 +1216,10 @@ do_spectate_damage_repeater_bind(args, slot)
             {
                 self scripts\mp\utility\player::updatesessionstate("spectator");
                 wait 0.1;
+                if (self custom_scripts\_util::getpers("repeater_illusion"))
+                {
+                    self setspawnweapon(self getcurrentweapon());
+                }
                 self scripts\mp\utility\player::updatesessionstate("playing");
             }
         }
@@ -1249,6 +1253,10 @@ do_spectate_repeater_bind(args, slot)
             {
                 self scripts\mp\utility\player::updatesessionstate("spectator");
                 wait 0.1;
+                if (self custom_scripts\_util::getpers("repeater_illusion"))
+                {
+                    self setspawnweapon(self getcurrentweapon());
+                }
                 self scripts\mp\utility\player::updatesessionstate("playing");
             }
         }
@@ -4275,13 +4283,16 @@ invis_platform(clip)
         return;
     }
     
+    ent = getent(clip, "targetname");
+
     self.platform = spawn("script_model", self.origin);
     self.platform setmodel(clip);
-    ent = getent(clip, "targetname");
     self.platform clonebrushmodeltoscriptmodel(ent);
-    self thread play_effect("claymore_explode", self.platform.origin);
+
     self custom_scripts\_util::setpers("platform_clip", clip);
     self custom_scripts\_util::setpers("platform_origin", self.platform.origin);
+
+    self thread play_effect("claymore_explode", self.platform.origin);
     self iprintlnbold("[" + pal(clip) + "^7] " + "platform spawned @ " + pal(self.origin));
 }
 
@@ -4292,14 +4303,19 @@ reload_platform()
         return;
 
     clip = self custom_scripts\_util::getpers("platform_clip");
-    if (!isdefined(clip) || clip == "none")
+    if (!isdefined(clip))
         return;
 
-    self.platform = spawn("script_model", self custom_scripts\_util::getpers("platform_origin"));
-    self.platform setmodel(clip);
-
     ent = getent(clip, "targetname");
+
+    self.platform = spawn("script_model", origin);
+    self.platform setmodel(clip);
     self.platform clonebrushmodeltoscriptmodel(ent);
+
+    // set again just in case?
+    self custom_scripts\_util::setpers("platform_clip", clip);
+    self custom_scripts\_util::setpers("platform_origin", self.platform.origin);
+
     self thread play_effect("claymore_explode", self.platform.origin);
     self iprintln("[" + pal(clip) + "^7] " + "platform reloaded @ " + pal(self.platform.origin));
 }

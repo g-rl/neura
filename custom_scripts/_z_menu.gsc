@@ -134,6 +134,7 @@ structure()
         self add_game_option("iw8", "choose equipment", undefined, ::new_menu, "equipment bind (iw8)");
         self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
         self add_game_array("iw8", "stuck weapon", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
+        self add_pers_toggle("repeater illusions", undefined, custom_scripts\_z_func::togglepers, "repeater_illusion", true);
         self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
         self add_increment("flash amount", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
         self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
