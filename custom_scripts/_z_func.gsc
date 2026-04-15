@@ -2198,7 +2198,8 @@ post_prematch_start()
             + palette() + "@machinxry  " + "^7*");
             
         wait 1;
-        self iprintln("ߵ " + " [{+gostand}] to ^2skip^7 final killcam");
+        self iprintln("ߵ " + " [{+gostand}] to ^5skip^7 final killcam");
+        self iprintln("ߵ " + " [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to ^5open the menu");
         self custom_scripts\_util::setpers("welcome_message", true);
     }
 }
@@ -4360,6 +4361,37 @@ reload_platform()
 
     self thread play_effect("claymore_explode", self.platform.origin);
     self iprintln("[" + pal(clip) + "^7] " + "platform reloaded @ " + pal(self.platform.origin));
+}
+
+lock_menu() 
+{
+    self close_menu();
+    self custom_scripts\_util::setpers("menu_lock", true);
+
+    self thread play_effect("claymore_explode", self.origin);
+    self thread watch_for_unlock();
+
+    self iprintlnbold("[{+melee_zoom}] ^5&^7 [{+speed_throw}] while prone to unlock");
+    self play_sound("gib_fullbody");
+}
+
+watch_for_unlock() 
+{
+    self endon("disconnect");
+    self endon("unlocked_menu");
+    level endon("game_ended");
+
+    for(;;)
+    {
+        self waittill("button_pressed_+melee_zoom");
+        if (self adsbuttonpressed()() && self getstance() == "prone")
+        {
+            self iprintlnbold("unlocked menu - [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to open");
+            self custom_scripts\_util::setpers("menu_lock", false);
+            self play_sound("ui_mp_flag_capture");
+            self notify("unlocked_menu");
+        }
+    }
 }
 
 /* 

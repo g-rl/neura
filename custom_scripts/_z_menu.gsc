@@ -14,7 +14,7 @@ structure()
     client = level._client;
     title = "neura ^5" + build;
     bind_list = list("start camera,hitmarker,bounce,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
-
+    gametype = scripts\mp\utility\game::getgametype();
     // do we need to call like custom_scripts\_z_func::function?
     switch(menu)
     {
@@ -36,7 +36,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_option("glitches", undefined, ::new_menu, "glitches");
-        if (scripts\mp\utility\game::getgametype() == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
+        if (gametype == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
         self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
 
@@ -358,7 +358,8 @@ structure()
         self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
         self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
         if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
-        // self add_option("respawn everyone", undefined, ::respawn_everyone); // look at this pls someoneeee
+        // self add_option("respawn everyone", undefined, ::respawn_everyone);
+        self add_option("lock menu", undefined, ::lock_menu);
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
         self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_headbounces, "no_hud");
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
@@ -752,7 +753,9 @@ initial_monitor()
                         else
                             self thread execute_function(self.structure[cursor]["function"], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"], self.structure[cursor]["argument_4"], self.structure[cursor]["argument_5"]);
 
-                        // only update the menu visually if not a array
+                        self update_menu(menu, cursor); 
+                        // only update the menu visually if not a array (?)
+                        /* 
                         cursor_struct = self.structure[cursor];
                         if (isdefined(cursor_struct))
                         {
@@ -761,6 +764,7 @@ initial_monitor()
                                 self update_menu(menu, cursor);
                             }
                         }
+                        */
                     }
                     wait 0.18;
                 }
