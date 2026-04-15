@@ -13,7 +13,7 @@ structure()
     build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("start camera,hitmarker,bounce,damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("start camera,hitmarker,bounce,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
 
     // do we need to call like custom_scripts\_z_func::function?
     switch(menu)
@@ -497,8 +497,11 @@ bind_index(menu, increment_controls) // ew
         case "bounce":
             self add_bind(menu, ::toggle_bounce_bind, "bounce");
             break;
-        case "damage repeater":
-            self add_bind(menu, ::toggle_damage_repeater_bind, "damage_repeater");
+        case "spectate repeater":
+            self add_bind(menu, ::toggle_spectate_repeater_bind, "spectate_repeater");
+            break;
+        case "spectate damage repeater":
+            self add_bind(menu, ::toggle_spectate_damage_repeater_bind, "spectate_damage_repeater");
             break;
         case "kill bot":
             self add_bind(menu, ::toggle_kill_bot_bind, "kill_bot");

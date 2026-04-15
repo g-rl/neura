@@ -1161,7 +1161,7 @@ do_eq_bind(args, slot)
     }
 }
 
-toggle_damage_repeater_bind(bind, i, pers)
+toggle_spectate_damage_repeater_bind(bind, i, pers)
 {
     index = pers + "_" + i;
     new = int(i) - 1;
@@ -1169,14 +1169,14 @@ toggle_damage_repeater_bind(bind, i, pers)
     self.pers[pers + "_" + new] = undefined;
 
     if (self.pers[index])
-        self thread do_damage_repeater_bind(1, i);
+        self thread do_spectate_damage_repeater_bind(1, i);
     else
-        self notify("stop_damage_repeater_bind");
+        self notify("stop_spectate_damage_repeater_bind");
 }
 
-do_damage_repeater_bind(args, slot)
+do_spectate_damage_repeater_bind(args, slot)
 {
-    self endon("stop_damage_repeater_bind");
+    self endon("stop_spectate_damage_repeater_bind");
     self endon("disconnect");
     level endon("game_ended");
     for (;;)
@@ -1210,17 +1210,47 @@ do_damage_repeater_bind(args, slot)
 
             self.maxhealth = old_health;
             self.health = old_health;
+            
+            wait 0.05;
+            if (self.sessionstate == "playing") // maybe this will actually show the repeater? LOL
+            {
+                self scripts\mp\utility\player::updatesessionstate("spectator");
+                wait 0.1;
+                self scripts\mp\utility\player::updatesessionstate("playing");
+            }
+        }
+     }
+}
 
-            x = self getcurrentweapon();
-            clip = self getweaponammoclip(x);
-            stock = self getweaponammostock(x);
-            wait 0.05;
-            self takeweapon(x);
-            self giveweapon(x);
-            self setweaponammostock(x, stock);
-            self setweaponammoclip(x, clip);
-            wait 0.05;
-            self setspawnweapon(x);  
+toggle_spectate_repeater_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    if (self.pers[index])
+        self thread do_spectate_repeater_bind(1, i);
+    else
+        self notify("stop_spectate_repeater_bind");
+}
+
+do_spectate_repeater_bind(args, slot)
+{
+    self endon("stop_spectate_repeater_bind");
+    self endon("disconnect");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+        if (!self custom_scripts\_util::in_menu())
+        {
+            if (self.sessionstate == "playing") // maybe this will actually show the repeater? LOL
+            {
+                self scripts\mp\utility\player::updatesessionstate("spectator");
+                wait 0.1;
+                self scripts\mp\utility\player::updatesessionstate("playing");
+            }
         }
      }
 }
@@ -4269,9 +4299,6 @@ reload_platform()
     self.platform setmodel(clip);
 
     ent = getent(clip, "targetname");
-    if (isdefined(ent))
-        self.platform clonebrushmodeltoscriptmodel(ent);
-
     self.platform clonebrushmodeltoscriptmodel(ent);
     self thread play_effect("claymore_explode", self.platform.origin);
     self iprintln("[" + pal(clip) + "^7] " + "platform reloaded @ " + pal(self.platform.origin));

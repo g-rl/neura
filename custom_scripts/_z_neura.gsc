@@ -345,7 +345,8 @@ watch_memory()
     self setup_bind("record_movement", false, ::do_record_movement_bind); 
     self setup_bind("reverse_ele", false, ::do_reverse_ele_bind); 
     self setup_bind("kill_bot", false, ::do_kill_bot_bind); 
-    self setup_bind("damage_repeater", false, ::do_damage_repeater_bind); 
+    self setup_bind("spectate_repeater", false, ::do_spectate_repeater_bind); 
+    self setup_bind("spectate_damage_repeater", false, ::do_spectate_damage_repeater_bind); 
     self setup_bind("bounce", false, ::do_bounce_bind); 
     self setup_bind("hitmarker", false, ::do_hitmarker_bind); 
     self setup_bind("start_camera", false, ::do_cinematic_bind); 
