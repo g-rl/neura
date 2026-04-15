@@ -86,8 +86,7 @@ structure()
         self add_pers_toggle("freeze bots", undefined, ::togglepers, "frozen_bots", true);
         self add_option("unstuck", undefined, ::unstuck);
         self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
-        self add_array("manage position", slider_controls, ::position_manager, list("save,load"));
-        self add_option("reset position", undefined, ::reset_position);
+        self add_array("manage position", slider_controls, ::position_manager, list("save,load,reset"));
         if (float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
         {
             self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("saveposx")), -500000, 5000000, float(self getpers("poschangeby")), "saveposx");
@@ -672,7 +671,7 @@ initial_monitor()
             {
                 if (self adsbuttonpressed() && self isbuttonpressed("-actionslot 1"))
                 {
-                    self thread custom_scripts\_z_func::play_sound("deadsilence_start");
+                    self thread play_sound("deadsilence_start");
                     self open_menu();
                     wait 0.15;
                 }
@@ -685,8 +684,8 @@ initial_monitor()
                 // force close if melee pressed
                 if (self isbuttonpressed("+melee_zoom"))
                 {
+                    self thread play_sound("recondrone_tag");
                     self close_menu();
-                    self thread custom_scripts\_z_func::play_sound("mp_killstreak_tablet_gear");
                 }
                 else if (self usebuttonpressed()) // back
                 {
@@ -698,8 +697,8 @@ initial_monitor()
                     }
                     else
                     {
+                        self thread play_sound("deadsilence_end");
                         self close_menu();
-                        self thread custom_scripts\_z_func::play_sound("deadsilence_end");
                     }
 
                     wait 0.15;
@@ -708,7 +707,7 @@ initial_monitor()
                 {
                     if (isdefined(self.structure) && self.structure.size >= 2)
                     {
-                        // self thread custom_scripts\_z_func::play_sound("attachment_pickup");
+                        // self thread play_sound("attachment_pickup");
                         scrolling = self isbuttonpressed("-actionslot 2") ? 1 : -1;
                         self set_cursor((cursor + scrolling));
                         
@@ -724,13 +723,14 @@ initial_monitor()
                 {
                     if (is_true(self.structure[cursor]["slider"]))
                     {
-                        self thread custom_scripts\_z_func::play_sound("scavenger_pack_pickup");
+                        self thread play_sound("scavenger_pack_pickup");
                         scrolling = self isbuttonpressed("-actionslot 3") ? 1 : -1;
                         self set_slider(scrolling);
 
                         if (is_true(self.structure[cursor]["is_increment"]))
                         {
                             self thread execute_function(self.structure[cursor]["function"], isdefined(self.structure[cursor]["array"]) ? self.structure[cursor]["array"][self.slider[menu + "_" + cursor]] : self.slider[menu + "_" + cursor], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"]);
+                            self thread play_sound("ui_mp_weapon_pickup");
                             self update_menu(menu, cursor);
                         }
                     }
@@ -740,25 +740,25 @@ initial_monitor()
                 {
                     if (isdefined(self.structure[cursor]["function"]))
                     {
-                        self thread custom_scripts\_z_func::play_sound("ui_killstreak_select");
                         if (is_true(self.structure[cursor]["slider"]))
                         {
                             if (is_true(self.structure[cursor]["is_array"]))
                             {
                                 self thread execute_function(self.structure[cursor]["function"], isdefined(self.structure[cursor]["array"]) ? self.structure[cursor]["array"][self.slider[menu + "_" + cursor]] : self.slider[menu + "_" + cursor], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"]);
+                                self thread play_sound("recondrone_tag");
                             }
                             else
                             {
                                 self iprintlnbold("use the ^2slider controls^7, not the jump button!");
-                                self thread custom_scripts\_z_func::play_sound("ui_mp_flag_lost");
+                                self thread play_sound("ammo_crate_use");
                             }
                         }
                         else
                             self thread execute_function(self.structure[cursor]["function"], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"], self.structure[cursor]["argument_4"], self.structure[cursor]["argument_5"]);
 
-                        self update_menu(menu, cursor); 
+                        // self update_menu(menu, cursor); 
                         // only update the menu visually if not a array (?)
-                        /* 
+                        
                         cursor_struct = self.structure[cursor];
                         if (isdefined(cursor_struct))
                         {
@@ -767,7 +767,7 @@ initial_monitor()
                                 self update_menu(menu, cursor);
                             }
                         }
-                        */
+                        
                     }
                     wait 0.18;
                 }

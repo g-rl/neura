@@ -8,14 +8,14 @@ togglepers(pers)
 setpersmenu(value, pers)
 {
     self custom_scripts\_util::setpers(pers, value);
-    self thread play_sound("weap_ammo_pickup");
+    // self thread play_sound("weap_ammo_pickup");
 }
 
 setdvarmenu(value, dvar)
 {
     value = float(value);
     setdvar(dvar, value);
-    self thread play_sound("weap_ammo_pickup");
+    // self thread play_sound("weap_ammo_pickup");
 }
 
 one_handed_gun()
@@ -2668,6 +2668,9 @@ position_manager(args)
         case "load":
             self thread load_spawn();
             break;
+        case "reset":
+            self thread reset_position();
+            break;
         default:
             self thread save_spawn();
             break;        
@@ -4357,7 +4360,7 @@ lock_menu()
     self thread watch_for_unlock();
 
     self iprintlnbold("[{+melee_zoom}] ^5&^7 [{+speed_throw}] while prone to unlock");
-    self thread play_sound("gib_fullbody");
+    self thread play_sound("javelin_clu_lock");
 }
 
 watch_for_unlock() 
@@ -4373,7 +4376,7 @@ watch_for_unlock()
         {
             self iprintlnbold("unlocked menu - [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to open");
             self custom_scripts\_util::setpers("menu_lock", false);
-            self thread play_sound("ui_mp_flag_capture");
+            self thread play_sound("gib_fullbody");
             self notify("unlocked_menu");
         }
     }
