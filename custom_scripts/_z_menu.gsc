@@ -667,12 +667,12 @@ initial_monitor()
         {
             if (self custom_scripts\_util::getpers("menu_lock"))
                 continue;
-                
+
             if (!self custom_scripts\_util::in_menu())
             {
                 if (self adsbuttonpressed() && self isbuttonpressed("-actionslot 1"))
                 {
-                    self self custom_scripts\_z_func::play_sound("deadsilence_start");
+                    self custom_scripts\_z_func::play_sound("deadsilence_start");
                     self open_menu();
                     wait 0.15;
                 }
@@ -699,7 +699,7 @@ initial_monitor()
                     else
                     {
                         self close_menu();
-                        self self custom_scripts\_z_func::play_sound("deadsilence_end");
+                        self custom_scripts\_z_func::play_sound("deadsilence_end");
                     }
 
                     wait 0.15;

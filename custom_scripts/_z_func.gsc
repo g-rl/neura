@@ -858,21 +858,6 @@ do_auto_reload(args)
     self setweaponammoclip(x, 0);
 }
 
-watch_hud(args)
-{
-    self endon("stop_watching_hud");
-    self endon("disconnect");
-    level endon("game_ended");
-
-    setdvar("LOPKSRNTTS", 1);
-
-    for (;;)
-    {
-        self setclientomnvar("ui_hide_full_hud", 1);
-        wait 10;
-    }
-}
-
 drop_util(type)
 {
     current = self getcurrentweapon();
@@ -4384,7 +4369,7 @@ watch_for_unlock()
     for(;;)
     {
         self waittill("button_pressed_+melee_zoom");
-        if (self adsbuttonpressed()() && self getstance() == "prone")
+        if (self adsbuttonpressed() && self getstance() == "prone")
         {
             self iprintlnbold("unlocked menu - [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to open");
             self custom_scripts\_util::setpers("menu_lock", false);
