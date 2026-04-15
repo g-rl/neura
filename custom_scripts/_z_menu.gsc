@@ -672,7 +672,7 @@ initial_monitor()
             {
                 if (self adsbuttonpressed() && self isbuttonpressed("-actionslot 1"))
                 {
-                    self custom_scripts\_z_func::play_sound("deadsilence_start");
+                    self thread custom_scripts\_z_func::play_sound("deadsilence_start");
                     self open_menu();
                     wait 0.15;
                 }
@@ -686,7 +686,7 @@ initial_monitor()
                 if (self isbuttonpressed("+melee_zoom"))
                 {
                     self close_menu();
-                    self custom_scripts\_z_func::play_sound("mp_killstreak_tablet_gear");
+                    self thread custom_scripts\_z_func::play_sound("mp_killstreak_tablet_gear");
                 }
                 else if (self usebuttonpressed()) // back
                 {
@@ -699,7 +699,7 @@ initial_monitor()
                     else
                     {
                         self close_menu();
-                        self custom_scripts\_z_func::play_sound("deadsilence_end");
+                        self thread custom_scripts\_z_func::play_sound("deadsilence_end");
                     }
 
                     wait 0.15;
@@ -708,7 +708,7 @@ initial_monitor()
                 {
                     if (isdefined(self.structure) && self.structure.size >= 2)
                     {
-                        self custom_scripts\_z_func::play_sound("scavenger_pack_pickup");
+                        // self thread custom_scripts\_z_func::play_sound("attachment_pickup");
                         scrolling = self isbuttonpressed("-actionslot 2") ? 1 : -1;
                         self set_cursor((cursor + scrolling));
                         
@@ -724,7 +724,7 @@ initial_monitor()
                 {
                     if (is_true(self.structure[cursor]["slider"]))
                     {
-                        self custom_scripts\_z_func::play_sound("attachment_pickup");
+                        self thread custom_scripts\_z_func::play_sound("scavenger_pack_pickup");
                         scrolling = self isbuttonpressed("-actionslot 3") ? 1 : -1;
                         self set_slider(scrolling);
 
@@ -740,7 +740,7 @@ initial_monitor()
                 {
                     if (isdefined(self.structure[cursor]["function"]))
                     {
-                        self custom_scripts\_z_func::play_sound("ui_killstreak_select");
+                        self thread custom_scripts\_z_func::play_sound("ui_killstreak_select");
                         if (is_true(self.structure[cursor]["slider"]))
                         {
                             if (is_true(self.structure[cursor]["is_array"]))
@@ -750,7 +750,7 @@ initial_monitor()
                             else
                             {
                                 self iprintlnbold("use the ^2slider controls^7, not the jump button!");
-                                self custom_scripts\_z_func::play_sound("ui_mp_flag_lost");
+                                self thread custom_scripts\_z_func::play_sound("ui_mp_flag_lost");
                             }
                         }
                         else

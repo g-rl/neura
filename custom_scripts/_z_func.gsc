@@ -8,14 +8,14 @@ togglepers(pers)
 setpersmenu(value, pers)
 {
     self custom_scripts\_util::setpers(pers, value);
-    self play_sound("weap_ammo_pickup");
+    self thread play_sound("weap_ammo_pickup");
 }
 
 setdvarmenu(value, dvar)
 {
     value = float(value);
     setdvar(dvar, value);
-    self play_sound("weap_ammo_pickup");
+    self thread play_sound("weap_ammo_pickup");
 }
 
 one_handed_gun()
@@ -90,7 +90,7 @@ set_knockback(value, dvar)
     value = float(value);
     setdvar(dvar, value);
     self setclientdvar(dvar, value);
-    self play_sound("weap_ammo_pickup");
+    self thread play_sound("weap_ammo_pickup");
 }
 
 watch_weap_change()
@@ -1033,7 +1033,7 @@ move_bots(args)
                     player setorigin(self.origin);
                     player thread save_spawn();
                     self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self.origin);
-                    self play_sound("recon_drone_marked_owner");
+                    self thread play_sound("recon_drone_marked_owner");
                 }
             }
         break;
@@ -1046,7 +1046,7 @@ move_bots(args)
                     player setorigin(self getcrosshair());
                     player thread save_spawn();
                     self custom_scripts\_util::nprintln("trying to move all bots to ^5" + self getcrosshair());
-                    self play_sound("recon_drone_marked_owner");
+                    self thread play_sound("recon_drone_marked_owner");
                 }
             }
             break;
@@ -1072,7 +1072,7 @@ teleport_player(from, to, player)
     if (from.sessionstate == "spectator") return;
     from setorigin(to.origin);
     player thread save_spawn();
-    self play_sound("recon_drone_marked_owner");
+    self thread play_sound("recon_drone_marked_owner");
 }
 
 manage_teleport(args, player)
@@ -1089,7 +1089,7 @@ manage_teleport(args, player)
             if (player.sessionstate == "spectator") break;
             player setorigin(self getcrosshair());
             player thread save_spawn();
-            self play_sound("recon_drone_marked_owner");
+            self thread play_sound("recon_drone_marked_owner");
             break;
         default:
             self thread teleport_player(player, self, player);
@@ -1512,7 +1512,7 @@ do_scavenger_bind(args, slot)
                 self scripts\mp\damagefeedback::hudicontype("scavenger");
 #endif 
 
-            self play_sound("scavenger_pack_pickup");
+            self thread play_sound("scavenger_pack_pickup");
 
             if (self custom_scripts\_util::getpers("real_scavenger"))
             {
@@ -2238,7 +2238,7 @@ refill_my_ammo(args)
             self thread refill_all_ammo();
             break;
     }
-    self play_sound("scavenger_pack_pickup");
+    self thread play_sound("scavenger_pack_pickup");
 }
 
 refill_all_ammo()
@@ -2316,7 +2316,7 @@ give_streak(streak)
         self notify("ks_action_4");
     }
 
-    self play_sound("ui_killstreak_select");
+    self thread play_sound("ui_killstreak_select");
     scripts\mp\killstreaks\killstreaks::awardkillstreakfromstruct(struct, "other");
 }
 
@@ -2429,7 +2429,7 @@ giveweaponinstant(weapon)
     self scripts\cp_mp\utility\inventory_utility::_giveweapon(weapon);
     self scripts\cp_mp\utility\inventory_utility::_switchtoweaponimmediate(weapon);
     self refill_weapon_ammo(weapon);
-    self play_sound("ui_mp_weapon_pickup");
+    self thread play_sound("ui_mp_weapon_pickup");
 }
 
 toggle_barriers()
@@ -2972,9 +2972,9 @@ play_sound(sound, wait_time)
     wait 0.05; // we need a delay here because the game hitches sometimes?
     self playlocalsound(sound);
 
-    if (wait_time)
+    if (isdefined(wait_time))
     {
-        wait (wait_time);
+        wait (float(wait_time));
         self stoplocalsound(sound);
     }
 }
@@ -3364,7 +3364,7 @@ spawn_vehicle(maybach)
 
     level.spawned_vehicles_list[level.spawned_vehicles_list.size] = whip;
     self.last_spawned_vehicle = whip; 
-    self play_sound("ui_mp_flag_capture");
+    self thread play_sound("ui_mp_flag_capture");
 
     self thread monitor_vehicle(whip);
 }
@@ -3395,7 +3395,7 @@ delete_last_vehicle()
     self.last_spawned_vehicle delete();
     self.last_spawned_vehicle = undefined;
     self iprintln(pal("last vehicle deleted"));
-    self play_sound("ui_mp_flag_lost");
+    self thread play_sound("ui_mp_flag_lost");
 }
 
 delete_all_vehicles()
@@ -3420,7 +3420,7 @@ delete_all_vehicles()
     level.spawned_vehicles_list = [];
     self.last_spawned_vehicle = undefined;
     self iprintlnbold("deleted " + pal(index) + " ^7vehicles");
-    self play_sound("ui_mp_flag_lost");
+    self thread play_sound("ui_mp_flag_lost");
 }
 
 monitor_vehicle(whip) 
@@ -3487,7 +3487,7 @@ auto_pause_timer(args)
     if (self custom_scripts\_util::getpers("auto_pause_timer"))
     {
         scripts\mp\gamelogic::pausetimer();
-        self play_sound("recon_drone_marked_owner");
+        self thread play_sound("recon_drone_marked_owner");
     }
 }
 
@@ -4209,7 +4209,7 @@ modelspawner(mod, position) // idk im bored
 
     self.spawned_models[self.spawned_models.size] = model;
     self.last_model = model;
-    self play_sound("ui_mp_flag_capture");
+    self thread play_sound("ui_mp_flag_capture");
     self iprintlnbold("now watching " + pal(self.spawned_models.size) + " ^7models");
 }
 
@@ -4224,7 +4224,7 @@ delete_last_model()
     self.last_model delete();
     self.last_model = undefined;
     self iprintln(pal("last vehicle deleted"));
-    self play_sound("ui_mp_flag_lost");
+    self thread play_sound("ui_mp_flag_lost");
 }
 
 delete_all_models()
@@ -4249,7 +4249,7 @@ delete_all_models()
     level.model_list = [];
     self.last_model = undefined;
     self iprintlnbold("deleted " + pal(index) + " ^7models");
-    self play_sound("ui_mp_flag_lost");
+    self thread play_sound("ui_mp_flag_lost");
 }
 
 edit_model(model, attribute, value) // uhhh i gotta look at this later
@@ -4357,7 +4357,7 @@ lock_menu()
     self thread watch_for_unlock();
 
     self iprintlnbold("[{+melee_zoom}] ^5&^7 [{+speed_throw}] while prone to unlock");
-    self play_sound("gib_fullbody");
+    self thread play_sound("gib_fullbody");
 }
 
 watch_for_unlock() 
@@ -4373,7 +4373,7 @@ watch_for_unlock()
         {
             self iprintlnbold("unlocked menu - [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to open");
             self custom_scripts\_util::setpers("menu_lock", false);
-            self play_sound("ui_mp_flag_capture");
+            self thread play_sound("ui_mp_flag_capture");
             self notify("unlocked_menu");
         }
     }
