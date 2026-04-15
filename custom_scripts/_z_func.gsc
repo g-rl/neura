@@ -3476,8 +3476,12 @@ kill_selected_player()
         self custom_scripts\_util::nprintln("select a bot in the ^5players menu^7 or wait for ^5respawn");
         return;
     }
-
+                            // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
+#ifdef IW9
+    ent thread [[level.callbackPlayerDamage]](self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102);
+#else
     ent thread [[level.callbackPlayerDamage]](self, self, 250, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0);
+#endif
 }
 
 set_selected_player(player)
