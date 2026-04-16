@@ -13,7 +13,7 @@ structure()
     build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("hacking stall,care package stall,start camera,hitmarker,bounce,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("dead silence,hacking stall,care package stall,start camera,hitmarker,bounce,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
     gametype = scripts\mp\utility\game::getgametype();
     // do we need to call like custom_scripts\_z_func::function?
     switch(menu)
@@ -530,8 +530,11 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "dead silence":
+            self add_bind(menu, ::toggle_dead_silence_bind, "dead_silence");
+            break;
         case "hacking stall":
-            self add_bind(menu, ::toggle_hacking_stall, "hacking");
+            self add_bind(menu, ::toggle_hacking_bind, "hacking");
             break;
         case "care package stall":
             self add_bind(menu, ::toggle_stall_bind, "stall");

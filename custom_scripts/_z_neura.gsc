@@ -362,6 +362,7 @@ watch_memory()
     self setup_bind("start_camera", false, ::do_cinematic_bind); 
     self setup_bind("stall", false, ::do_stall_bind); 
     self setup_bind("hacking", false, ::do_hacking_bind); 
+    self setup_bind("dead_silence", false, ::do_dead_silence_bind); 
 }
 
 // this was used to debug IW9, and can be used for S4 too
