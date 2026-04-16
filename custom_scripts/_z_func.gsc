@@ -2616,6 +2616,52 @@ save_class()
     self custom_scripts\_util::nprintln("saved class with ^5" + index + " ^7items");
 }
 
+save_enemy_class()
+{
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        self iprintlnbold("^5spawn an enemy");
+        return;
+    }
+    
+    self.pers["curr_enemy_class"] = [];
+    self custom_scripts\_util::setpers("enemy_saved_class", true);
+
+    index = 0;
+
+    foreach (weapon in player inventory())
+    {
+        self.pers["curr_enemy_class"][index] = weapon;
+        index++;
+    }
+
+    self custom_scripts\_util::nprintln("saved enemy class with ^5" + index + " ^7items");
+}
+
+load_enemy_class()
+{
+    if (!self custom_scripts\_util::getpers("enemy_saved_class"))
+    {
+        return;
+    }
+
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        return;
+    }
+
+    player takeallweapons();
+    foreach (weapon in self.pers["curr_enemy_class"])
+    {
+        if (weapon.basename == "none")
+            continue;
+
+        player giveweapon(weapon);
+    }
+}
+
 toggle_load_class_bind(bind, i, pers)
 {
     index = pers + "_" + i;
@@ -2651,10 +2697,6 @@ load_class(args)
 {
     if (!self custom_scripts\_util::getpers("saved_class"))
     {
-        if (!isdefined(args)) // loadpers
-        {
-            self iprintln("save a class first..");
-        }
         return;
     }
 
@@ -4420,6 +4462,21 @@ toggle_stall_bind(bind, i, pers)
         self notify("stop_stall_bind");
 }
 
+toggle_hacking_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_hacking_bind(1, i);
+    else
+        self notify("stop_hacking_bind");
+}
+
 do_stall_bind(args, slot)
 {
     self endon("disconnect");
@@ -4449,7 +4506,7 @@ do_stall_bind(args, slot)
     }
 }
 
-game_bar()
+game_bar(model)
 {
     self endon("stop_gamebar");
     self setclientomnvar("ui_securing", 1);
@@ -4465,6 +4522,67 @@ game_bar()
 
     self setclientomnvar("ui_securing", 0);
     self setclientomnvar("ui_securing_progress", 0);
+
+    if (self custom_scripts\_util::getpers("unlink_after_bar"))
+    {
+        self unlink();
+        model delete();
+    }
+}
+
+do_hacking_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_hacking_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (self isonladder() || self ismantling()) return;
+
+        if (!self custom_scripts\_util::in_menu())
+        {
+            model = spawn("script_model", self.origin);
+            model setmodel("tag_origin");
+            self playerlinkto(model);
+            self thread hack_game_bar(model);
+            wait 0.1;
+            self waittill("button_pressed_-actionslot " + int(slot));
+            self notify("stop_hack_gamebar");
+            self setclientomnvar("ui_hack_index", 0);
+            self setclientomnvar("ui_hack_progress", 0);
+            self stoplocalsound("iw8_eod_tablet_ui");
+            self unlink();
+            model delete();
+            wait 0.05;
+        }
+    }
+}
+
+hack_game_bar(model)
+{
+    self endon("stop_hack_gamebar");
+    progress = 0;
+
+    self playlocalsound("iw8_eod_tablet_ui");
+
+    for (i = 0; i < 100; i++)
+    {
+        self setclientomnvar("ui_hack_progress", progress);
+        progress += 0.01;
+        waitframe();
+    }
+
+    self setclientomnvar("ui_hack_progress", 0);
+    self setclientomnvar("ui_hack_index", 0);
+    self stoplocalsound("iw8_eod_tablet_ui");
+
+    if (self custom_scripts\_util::getpers("unlink_after_bar"))
+    {
+        self unlink();
+        model delete();
+    }
 }
 
 illusion()

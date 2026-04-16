@@ -13,7 +13,7 @@ structure()
     build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("care package stall,start camera,hitmarker,bounce,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("hacking stall,care package stall,start camera,hitmarker,bounce,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
     gametype = scripts\mp\utility\game::getgametype();
     // do we need to call like custom_scripts\_z_func::function?
     switch(menu)
@@ -96,6 +96,7 @@ structure()
             self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("poschangeby")), 5, 10000, 5, "poschangeby");
         }
         break;
+
     case "aimbot settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -105,6 +106,7 @@ structure()
         self add_pers_toggle("kill effects", undefined, custom_scripts\_z_func::togglepers, "kill_effects", true);
         if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
         break;
+
     case "glitches":
         self.bind_index = false;
         self add_menu(menu);
@@ -112,12 +114,14 @@ structure()
         self add_game_option("iw8", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw8)");
         self add_game_option("iw9", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw9)");
         break;
+
     case "binds": // bro can we please rework this i mean it works but a slider would be better -et
         self.bind_index = true;
         self add_menu(menu);
         foreach (bind in bind_list)
             self add_option(bind, undefined, ::new_menu, bind);
         break;
+
     case "bind settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -132,12 +136,14 @@ structure()
         self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
         self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
         self add_pers_toggle("repeater illusions", undefined, custom_scripts\_z_func::togglepers, "repeater_illusion", true);
+        self add_pers_toggle("unlink after bar", "for care package & hack stalls", custom_scripts\_z_func::togglepers, "unlink_after_bar", true);
         self add_increment("spectator repeater time", increment_controls, ::setpersmenu, float(self getpers("spectate_time")), 0.1, 2, 0.1, "spectate_time");     
         self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
         self add_increment("flash amount", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
         self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
         self add_game_array("iw8", "shellshock type", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
         break;
+
     case "bolt movement settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -147,6 +153,7 @@ structure()
         self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
         self add_option("play bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::start_bolt);
         break;
+
     case "record movement settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -154,6 +161,7 @@ structure()
         self add_option("delete last point", "movement points: ^5" + int(self getpers("recordmovementcount")), ::delete_last_movement_point);
         self add_option("play movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::play_movement);
         break;
+
     case "class change settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -164,6 +172,7 @@ structure()
         self add_pers_toggle("illusion", undefined, ::togglepers, "ccb_illusion", true);
         self add_pers_toggle("canswap", undefined, ::togglepers, "ccb_always_can", true);
         break;
+
     case "bot bolt movement settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -172,6 +181,7 @@ structure()
         self add_option("delete last bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::delete_last_bot_bolt);
         self add_option("play bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::start_bot_bolt);
         break;
+
     case "edit velocity":
         self.bind_index = false;
         self add_menu(menu);
@@ -181,6 +191,7 @@ structure()
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
         self add_option("play velocity", undefined, ::play_velocity);
         break;
+
     case "switch to equipment (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -189,6 +200,7 @@ structure()
             self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
         }
         break;
+
     case "switch to equipment (iw9)":
         self.bind_index = false;
         self add_menu(menu);
@@ -197,6 +209,7 @@ structure()
             self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
         }
         break;
+
     case "equipment bind (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -205,6 +218,7 @@ structure()
             self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
         }
         break;
+
     case "equipment bind (iw9)":
         self.bind_index = false;
         self add_menu(menu);
@@ -213,6 +227,7 @@ structure()
             self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
         }
         break;
+
     case "class manager":
         self.bind_index = false;
         self add_menu(menu);
@@ -228,6 +243,7 @@ structure()
         self add_game_option("iw8", "streak manager", "streaks for ^5iw8", ::new_menu, "streaks (iw8)");
         self add_game_option("iw8", "set random camo", undefined, ::apply_camo);
         break;
+
     case "primaries (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -237,6 +253,7 @@ structure()
         self add_option("sub machine guns", "^5" + self.neura["weapons"][client]["primary"]["sub machine guns"][0].size + " ^7weapons available", ::new_menu, "sub machine guns");
         self add_option("light machine guns", "^5" + self.neura["weapons"][client]["primary"]["light machine guns"][0].size + " ^7weapons available", ::new_menu, "light machine guns");
         break;
+
     case "secondaries (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -244,6 +261,7 @@ structure()
         self add_option("pistols", "^5" + self.neura["weapons"][client]["secondary"]["pistols"][0].size + " ^7weapons available", ::new_menu, "pistols");
         self add_option("misc", "^5" + self.neura["weapons"][client]["secondary"]["misc"][0].size + " ^7weapons available", ::new_menu, "misc");
         break;
+
     case "launchers":
         self.bind_index = false;
         self add_menu(menu);
@@ -252,6 +270,7 @@ structure()
             self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], "id: ^5" + self.neura["weapons"][client]["secondary"][menu][0][i], ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
         break;
+
     case "pistols":
         self.bind_index = false;
         self add_menu(menu);
@@ -260,6 +279,7 @@ structure()
             self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
         break;
+
     case "misc":
         self.bind_index = false;
         self add_menu(menu);
@@ -268,6 +288,7 @@ structure()
             self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
         }
         break;
+
     case "snipers":
         self.bind_index = false;
         self add_menu(menu);
@@ -276,6 +297,7 @@ structure()
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
+
     case "shotguns":
         self.bind_index = false;
         self add_menu(menu);
@@ -284,6 +306,7 @@ structure()
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
+
     case "assault rifles":
         self.bind_index = false;
         self add_menu(menu);
@@ -292,6 +315,7 @@ structure()
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
+
     case "light machine guns":
         self.bind_index = false;
         self add_menu(menu);
@@ -300,6 +324,7 @@ structure()
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
+
     case "sub machine guns":
         self.bind_index = false;
         self add_menu(menu);
@@ -308,12 +333,14 @@ structure()
             self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
         }
         break;
+
     case "streaks (iw8)":
         self.bind_index = false;
         self add_menu(menu);
         self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks (iw8)");
         self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use", true);
         break;
+
     case "give streaks (iw8)":
         self.bind_index = false;
         self add_menu(menu);
@@ -378,6 +405,7 @@ structure()
         self add_game_option("iw8", warning("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
         self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         break;
+
     case "killcam manager":
         self.bind_index = false;
         self add_menu(menu);
@@ -388,6 +416,7 @@ structure()
         self add_pers_toggle("hide perks", undefined, ::togglepers, "elem_perks", true);
         self add_pers_toggle("hide attachments", undefined, ::togglepers, "elem_attachments", true);
         break;
+
     case "dvars":
         self.bind_index = false;
         self add_menu(menu);
@@ -398,6 +427,7 @@ structure()
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
         // self add_increment("knockback", increment_controls, ::set_knockback, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
         break;
+
     case "ladders":
         self.bind_index = false;
         // LMOLRRPPMP
@@ -412,6 +442,7 @@ structure()
         self add_increment("jump up desire", increment_controls, ::setdvarmenu, getdvarfloat("LQQMPMNLP"), 0.1, 2, 0.1, "LQQMPMNLP");
         self add_increment("pull in bounds scale", increment_controls, ::setdvarmenu, getdvarfloat("MSRROOLQMS"), 1, 6, 0.2, "MSRROOLQMS");
         break;
+
     case "debug settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -427,6 +458,7 @@ structure()
         self add_game_increment("iw8", "bj speed", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("bj_speed")), 1, 5, 0.1, "bj_speed");
         self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
         break;
+
     case "bot paths":
         self.bind_index = false;
         self add_menu(menu);
@@ -434,6 +466,7 @@ structure()
         self add_option("save point", "path count: ^5" + int(self getpers("pathcount")), ::save_path);
         self add_option("delete last point", "path count: ^5" + int(self getpers("pathcount")), ::delete_last_path);
         break;
+
     case "manage clients":
         self.bind_index = false;
         self add_menu(menu);
@@ -474,6 +507,7 @@ player_index(menu, player, slider_controls)
             self add_option("set kill bind target", undefined, ::set_selected_player, player);
             self add_option("look at me", undefined, ::look_at_me, player);
             self add_game_option("iw8", "give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
+            self add_game_option("iw8", "save class", undefined, ::save_enemy_class);
             self add_game_option("iw9", "give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
             self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, player, self getcurrentweapon());
         }
@@ -496,6 +530,9 @@ bind_index(menu, increment_controls) // ew
 
     switch(menu) 
     {
+        case "hacking stall":
+            self add_bind(menu, ::toggle_hacking_stall, "hacking");
+            break;
         case "care package stall":
             self add_bind(menu, ::toggle_stall_bind, "stall");
             break;

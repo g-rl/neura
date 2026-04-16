@@ -140,7 +140,10 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
+        self setpers_if_uninitialized("camo", "none");
         self thread reload_position();
+        self thread apply_camo();
+        self thread handle_camo();
     }
 }
 
@@ -252,6 +255,8 @@ setup_watch_memory()
     self setpers_if_uninitialized("no_hud", false);
     self setpers_if_uninitialized("menu_lock", false);
     self setpers_if_uninitialized("spectate_time", 0.1);
+    self setpers_if_uninitialized("unlink_after_bar", true);
+    self setpers_if_uninitialized("enemy_saved_class", true);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -325,6 +330,7 @@ watch_memory()
     self loadpers("no_hud", ::watch_hud);
     self loadpers("unlimited_lives", ::set_lives);
     self loadpers("menu_lock", ::watch_for_unlock);
+    self loadpers("enemy_saved_class", ::load_enemy_class);
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
@@ -355,6 +361,7 @@ watch_memory()
     self setup_bind("hitmarker", false, ::do_hitmarker_bind); 
     self setup_bind("start_camera", false, ::do_cinematic_bind); 
     self setup_bind("stall", false, ::do_stall_bind); 
+    self setup_bind("hacking", false, ::do_hacking_bind); 
 }
 
 // this was used to debug IW9, and can be used for S4 too
