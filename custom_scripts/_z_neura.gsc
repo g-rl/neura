@@ -324,6 +324,7 @@ watch_memory()
     self loadpers("auto_pause_timer", ::auto_pause_timer);
     self loadpers("no_hud", ::watch_hud);
     self loadpers("unlimited_lives", ::set_lives);
+    self loadpers("menu_lock", ::watch_for_unlock);
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);

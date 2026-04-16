@@ -4376,7 +4376,7 @@ lock_menu()
     self custom_scripts\_z_menu::close_menu();
 }
 
-watch_for_unlock() 
+watch_for_unlock(args) 
 {
     self endon("disconnect");
     self endon("unlocked_menu");
@@ -4398,6 +4398,11 @@ watch_for_unlock()
 end_round()
 {
     level thread scripts\mp\gametypes\sd::sd_endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
+}
+
+fast_restart()
+{
+    map_restart(1);
 }
 
 toggle_stall_bind(bind, i, pers)

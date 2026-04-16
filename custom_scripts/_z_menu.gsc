@@ -354,6 +354,7 @@ structure()
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_option(warning("session settings"), undefined, ::new_menu, "session settings");
+        self add_option("fast restart", undefined, ::fast_restart);
         if (gametype == "sd") 
         {   
             self add_option("end round", undefined, ::end_round);
