@@ -1253,7 +1253,7 @@ do_spectate_damage_repeater_bind(args, slot)
                 self scripts\mp\utility\player::updatesessionstate("playing");
                 if (self custom_scripts\_util::getpers("repeater_illusion"))
                 {
-                    self setspawnweapon(self getcurrentweapon());
+                    self illusion();
                 }
             }
         }
@@ -1290,7 +1290,7 @@ do_spectate_repeater_bind(args, slot)
                 self scripts\mp\utility\player::updatesessionstate("playing");
                 if (self custom_scripts\_util::getpers("repeater_illusion"))
                 {
-                    self setspawnweapon(self getcurrentweapon());
+                    self illusion();
                 }
             }
         }
@@ -1417,7 +1417,7 @@ do_illusion_bind(args, slot)
 
         if (!self custom_scripts\_util::in_menu())
         {
-            self setspawnweapon(self getcurrentweapon());
+            self illusion();
         }
     }
 }
@@ -1535,7 +1535,7 @@ do_scavenger_bind(args, slot)
             {
                 self setweaponammoclip(self getcurrentweapon(), 0);
                 self setweaponammostock(self getcurrentweapon(), 9999);
-                self setspawnweapon(self getcurrentweapon());
+                self illusion();
             }
         }
     }
@@ -1938,10 +1938,7 @@ do_canswap_bind(args, slot)
 
         if (!self custom_scripts\_util::in_menu())
         {
-            x = self getcurrentweapon();
-            self takegood(x);
-            self givegood(x);
-            self switchtoweapon(x);
+            self canswap();
         }
     }
 }
@@ -2027,10 +2024,10 @@ check_weapon_options(gun)
     if (isdefined(z) && z)
         self setweaponammoclip(gun, 0);
         
-    if (isdefined(v) && v)
+    if (isdefined(w) && w)
     {
         wait 0.05;
-        self setspawnweapon(self getcurrentweapon());
+        self illusion();
     }
 }
 
@@ -4403,6 +4400,80 @@ end_round()
     level thread scripts\mp\gametypes\sd::sd_endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
 }
 
+toggle_stall_bind(bind, i, pers)
+{
+    index = pers + "_" + i;
+    new = int(i) - 1;
+    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
+    self.pers[pers + "_" + new] = undefined;
+
+    wait 0.05;
+
+    if (self.pers[index])
+        self thread do_stall_bind(1, i);
+    else
+        self notify("stop_stall_bind");
+}
+
+do_stall_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_stall_bind");
+    level endon("game_ended");
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (self isonladder() || self ismantling()) return;
+
+        if (!self custom_scripts\_util::in_menu())
+        {
+            model = spawn("script_model", self.origin);
+            model setmodel("tag_origin");
+            self playerlinkto(model);
+            self thread game_bar();
+            wait 0.1;
+            self waittill("button_pressed_-actionslot " + int(slot));
+            self notify("stop_gamebar");
+            self setclientomnvar("ui_securing", 0);
+            self setclientomnvar("ui_securing_progress", 0);
+            self unlink();
+            model delete();
+            wait 0.05;
+        }
+    }
+}
+
+game_bar()
+{
+    self endon("stop_gamebar");
+    self setclientomnvar("ui_securing", 1);
+
+    progress = 0;
+
+    for (i = 0; i < 100; i++)
+    {
+        self setclientomnvar("ui_securing_progress", progress);
+        progress += 0.01;
+        waitframe();
+    }
+
+    self setclientomnvar("ui_securing", 0);
+    self setclientomnvar("ui_securing_progress", 0);
+}
+
+illusion()
+{
+    self setspawnweapon(self getcurrentweapon());
+}
+
+canswap()
+{
+    x = self getcurrentweapon();
+    self takegood(x);
+    self givegood(x);
+    self switchtoweapon(x);
+}
 /* 
 model_maker(model, head, anim_name, link_to_self, position) // doesn't work at all bro like no errors nun jus doesn't work
 {

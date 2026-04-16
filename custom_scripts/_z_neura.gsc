@@ -353,6 +353,7 @@ watch_memory()
     self setup_bind("bounce", false, ::do_bounce_bind); 
     self setup_bind("hitmarker", false, ::do_hitmarker_bind); 
     self setup_bind("start_camera", false, ::do_cinematic_bind); 
+    self setup_bind("stall", false, ::do_stall_bind); 
 }
 
 // this was used to debug IW9, and can be used for S4 too
