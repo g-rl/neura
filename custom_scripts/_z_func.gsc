@@ -3067,10 +3067,19 @@ watch_freeze_anim()
     setdvar("pan_freezeanim", 0);
 }
 
+setslowmotion_wrapper(a1, a2, a3)
+{
+#ifdef S4
+    _func_01F0(a1, a2, a3);
+#else
+    setslowmotion(a1, a2, a3);
+#endif
+}
+
 set_timescale(timescale)
 {
     self custom_scripts\_util::setpers("slomo", float(timescale));
-    setslowmotion(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
+    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
 }
 
 rewatch_round(mode)
@@ -3090,13 +3099,13 @@ watch_round_end()
     if (self custom_scripts\_util::getpers("slomo_mode") == "round end")
     {
         level waittill("game_ended");
-        setslowmotion(1, 1, 0);
+        setslowmotion_wrapper(1, 1, 0);
     }
 
     if (self custom_scripts\_util::getpers("slomo_mode") == "start of killcam")
     {
         self waittill("showing_final_killcam");
-        setslowmotion(1, 1, 0);
+        setslowmotion_wrapper(1, 1, 0);
     }
 }
 
@@ -3106,7 +3115,7 @@ reload_timescale()
     level endon("game_ended");
     self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
-    setslowmotion(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
+    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
 }
 
 save_path()

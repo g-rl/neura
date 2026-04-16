@@ -26,10 +26,11 @@ get_current_build() // check if s4, iw8 or iw9
 
 getorigin_() // so self.origin on iw8 glitches out bounces etc 
 { 
-    if (level._client == "s4")
-        return self.origin;
-    else 
-        return self getorigin();
+#ifdef S4
+    return self.origin;
+#else
+    return self getorigin();
+#endif
 }
 
 nprintln(text)
@@ -216,7 +217,7 @@ get_name()
         if (name[i] == "]")
             break;
 
-    return getsubstr(name, (i + 1));
+    return getsubstr(name, 0, (i + 1));
 }
 
 getbasename(weapon) // might be a func already idc tho -et
