@@ -4563,7 +4563,7 @@ do_hacking_bind(args, slot)
             self setclientomnvar("ui_hack_progress", 0);
             self stoplocalsound("iw8_eod_tablet_ui");
             self unlink();
-            model delete();
+            if (isdefined(model)) model delete();
             wait 0.05;
         }
     }
@@ -4575,7 +4575,7 @@ hack_game_bar(model)
     progress = 0;
 
     self playlocalsound("iw8_eod_tablet_ui");
-
+    self setclientomnvar("ui_hack_index", 1);
     for (i = 0; i < 100; i++)
     {
         self setclientomnvar("ui_hack_progress", progress);
@@ -4590,8 +4590,81 @@ hack_game_bar(model)
     if (self custom_scripts\_util::getpers("unlink_after_bar"))
     {
         self unlink();
-        model delete();
+        if (isdefined(model) && model) model delete();
     }
+}
+
+start_dead_silence()
+{
+    self endon("disconnect");
+    level endon("game_ended");
+
+    if (isdefined(self.in_dead_silence) && self.in_dead_silence)
+    {
+        self.in_dead_silence = undefined;
+        update_ds_ui_state(2);
+        update_ds_ui_state(-1);
+        scripts\mp\utility\perk::removeperk("specialty_quieter");
+        scripts\mp\utility\perk::removeperk("specialty_no_battle_chatter");
+        scripts\mp\utility\perk::removeperk("specialty_lightweight");
+
+        self lerpfovbypreset("default_2seconds");
+        self playlocalsound("deadsilence_end");
+
+        self notify("super_use_finished");
+        return;
+    }
+
+    self.in_dead_silence = true;
+    update_ds_ui_state(0);
+    scripts\mp\utility\perk::giveperk("specialty_quieter");
+    scripts\mp\utility\perk::giveperk("specialty_no_battle_chatter");
+    scripts\mp\utility\perk::giveperk("specialty_lightweight");
+
+    self playlocalsound("deadsilence_start");
+    self lerpfovbypreset("zombiedefault");
+
+    if (self custom_scripts\_util::getpers("dead_silence_auto"))
+    {
+        self thread watch_dead_silence();
+    }
+}
+
+watch_dead_silence()
+{
+    self endon("super_use_finished");
+    self endon("disconnect");
+    level endon("game_ended");
+
+    if (!isdefined(self.in_dead_silence))
+        return;
+
+    time = int(self custom_scripts\_util::getpers("dead_silence_duration"));
+    wait (time);
+    self.in_dead_silence = undefined;
+    update_ds_ui_state(2);
+    update_ds_ui_state(-1);
+    scripts\mp\utility\perk::removeperk("specialty_quieter");
+    scripts\mp\utility\perk::removeperk("specialty_no_battle_chatter");
+    scripts\mp\utility\perk::removeperk("specialty_lightweight");
+
+    self lerpfovbypreset("default_2seconds");
+    self playlocalsound("deadsilence_end");
+    
+    self notify("super_use_finished");
+}
+
+
+/*
+    self waittill("super_use_finished");
+    self lerpfovbypreset("default_2seconds");
+    self playlocalsound("deadsilence_end");
+     */
+
+update_ds_ui_state( var_0 )
+{
+    self.deadsilenceuistate = var_0;
+    self setclientomnvar("ui_deadsilence_overlay", var_0);
 }
 
 illusion()
@@ -4632,108 +4705,10 @@ do_dead_silence_bind(args, slot)
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            self thread superdeadsilence_beginsuper();
             wait 0.05;
+            self thread start_dead_silence();
         }
     }
-}
-
-superdeadsilence_beginsuper()
-{
-    scripts\mp\utility\perk::giveperk( "specialty_quieter" );
-    scripts\mp\utility\perk::giveperk( "specialty_no_battle_chatter" );
-    scripts\mp\utility\perk::giveperk( "specialty_lightweight" );
-    self.deadsilencekills = 0;
-    self playlocalsound("deadsilence_start");
-    superdeadsilence_updateuistate(0);
-    thread applyfovpresentation();
-    thread _id_1397E();
-    return 1;
-}
-
-superdeadsilence_endsuper( var_0 )
-{
-    scripts\mp\utility\perk::removeperk( "specialty_quieter" );
-    scripts\mp\utility\perk::removeperk( "specialty_no_battle_chatter" );
-    scripts\mp\utility\perk::removeperk( "specialty_lightweight" );
-
-    thread superdeadsilence_endhudsequence();
-    return 0;
-}
-
-superdeadsilence_onkill()
-{
-    if ( scripts\mp\utility\game::getgametype() != "infect" )
-    {
-        scripts\mp\utility\stats::incpersstat( "deadSilenceKills", 1 );
-        scripts\mp\supers::combatrecordsuperkill( "super_deadsilence" );
-        self.deadsilencekills++;
-        var_0 = scripts\mp\supers::relic_fastbleedout_returnfunc( "super_deadsilence" );
-
-        if ( self.deadsilencekills > var_0 )
-        {
-            var_1 = self.deadsilencekills - var_0;
-            scripts\mp\supers::hide_plunderboxes( "super_deadsilence", var_1 );
-        }
-    }
-
-    var_2 = scripts\mp\utility\game::unset_relic_grounded();
-    var_3 = 1;
-
-    if ( var_2 )
-    {
-        var_4 = scripts\mp\supers::getcurrentsuper();
-
-        if ( istrue( var_4.shouldcrossbowhitmarker ) )
-            var_3 = 0;
-        else
-            var_4.shouldcrossbowhitmarker = 1;
-    }
-
-    if ( var_3 )
-    {
-        self playlocalsound( "deadsilence_start" );
-        superdeadsilence_updateuistate( 1 );
-        scripts\mp\supers::resetsuperusepercent();
-        thread applyfovpresentation();
-    }
-}
-
-superdeadsilence_endhudsequence()
-{
-    self endon( "disconnect" );
-    superdeadsilence_updateuistate( 2 );
-    wait 1;
-    superdeadsilence_updateuistate( -1 );
-}
-
-superdeadsilence_updateuistate( var_0 )
-{
-    self.deadsilenceuistate = var_0;
-    self setclientomnvar( "ui_deadsilence_overlay", var_0 );
-}
-
-applyfovpresentation()
-{
-    self endon( "death_or_disconnect" );
-    self notify( "applyFOVPresentation" );
-    self endon( "applyFOVPresentation" );
-    self lerpfovbypreset( "zombiedefault" );
-    var_0 = self.super.staticdata.usetime;
-    var_1 = var_0 - 2;
-    scripts\engine\utility::_id_143BF( var_1, "super_use_finished" );
-    self lerpfovbypreset( "default_2seconds" );
-    self playlocalsound( "deadsilence_end" );
-}
-
-_id_1397E()
-{
-    self endon( "death_or_disconnect" );
-    self endon( "super_use_finished" );
-    self notify( "superDeadsilence_watchForGameEnded" );
-    self endon( "superDeadsilence_watchForGameEnded" );
-    level scripts\engine\utility::_id_143A5( "game_ended", "prematch_cleanup" );
-    thread scripts\mp\supers::superusefinished();
 }
 
 /* 

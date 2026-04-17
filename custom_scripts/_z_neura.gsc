@@ -256,7 +256,9 @@ setup_watch_memory()
     self setpers_if_uninitialized("menu_lock", false);
     self setpers_if_uninitialized("spectate_time", 0.1);
     self setpers_if_uninitialized("unlink_after_bar", true);
-    self setpers_if_uninitialized("enemy_saved_class", true);
+    self setpers_if_uninitialized("enemy_saved_class", false);
+    self setpers_if_uninitialized("dead_silence_auto", true);
+    self setpers_if_uninitialized("dead_silence_duration", 5);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
