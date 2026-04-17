@@ -470,15 +470,14 @@ reload_position()
     if (!isdefined(posx))
     {
         // preset bot positions - setting preset for self is being weird
-        if (isdefined(level.bot_pos[0]) && isvector(level.bot_pos[0]))
+        /*
+        if (isdefined(level.bot_pos) && isvector(level.bot_pos[0]))
         {
-            if (!isai(self) || !isbot(self))
-                return;
-
             self setorigin(level.bot_pos[0]);
             self setplayerangles(level.bot_pos[1]);
             return;
         }
+        */
         return;
     }
 
