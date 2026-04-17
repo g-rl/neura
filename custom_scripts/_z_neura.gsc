@@ -363,7 +363,6 @@ watch_memory()
     self setup_bind("hitmarker", false, ::do_hitmarker_bind); 
     self setup_bind("start_camera", false, ::do_cinematic_bind); 
     self setup_bind("stall", false, ::do_stall_bind); 
-    self setup_bind("hacking", false, ::do_hacking_bind); 
     self setup_bind("dead_silence", false, ::do_dead_silence_bind); 
 }
 

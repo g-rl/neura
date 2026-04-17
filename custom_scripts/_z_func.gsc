@@ -4471,21 +4471,6 @@ toggle_stall_bind(bind, i, pers)
         self notify("stop_stall_bind");
 }
 
-toggle_hacking_bind(bind, i, pers)
-{
-    index = pers + "_" + i;
-    new = int(i) - 1;
-    self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
-    self.pers[pers + "_" + new] = undefined;
-
-    wait 0.05;
-
-    if (self.pers[index])
-        self thread do_hacking_bind(1, i);
-    else
-        self notify("stop_hacking_bind");
-}
-
 do_stall_bind(args, slot)
 {
     self endon("disconnect");
@@ -4536,61 +4521,6 @@ game_bar(model)
     {
         self unlink();
         model delete();
-    }
-}
-
-do_hacking_bind(args, slot)
-{
-    self endon("disconnect");
-    self endon("stop_hacking_bind");
-    level endon("game_ended");
-    for (;;)
-    {
-        self waittill("button_pressed_-actionslot " + int(slot));
-
-        if (self isonladder() || self ismantling()) return;
-
-        if (!self custom_scripts\_util::in_menu())
-        {
-            model = spawn("script_model", self.origin);
-            model setmodel("tag_origin");
-            self playerlinkto(model);
-            self thread hack_game_bar(model);
-            wait 0.1;
-            self waittill("button_pressed_-actionslot " + int(slot));
-            self notify("stop_hack_gamebar");
-            self setclientomnvar("ui_hack_index", 0);
-            self setclientomnvar("ui_hack_progress", 0);
-            self stoplocalsound("iw8_eod_tablet_ui");
-            self unlink();
-            if (isdefined(model)) model delete();
-            wait 0.05;
-        }
-    }
-}
-
-hack_game_bar(model)
-{
-    self endon("stop_hack_gamebar");
-    progress = 0;
-
-    self playlocalsound("iw8_eod_tablet_ui");
-    self setclientomnvar("ui_hack_index", 1);
-    for (i = 0; i < 100; i++)
-    {
-        self setclientomnvar("ui_hack_progress", progress);
-        progress += 0.01;
-        waitframe();
-    }
-
-    self setclientomnvar("ui_hack_progress", 0);
-    self setclientomnvar("ui_hack_index", 0);
-    self stoplocalsound("iw8_eod_tablet_ui");
-
-    if (self custom_scripts\_util::getpers("unlink_after_bar"))
-    {
-        self unlink();
-        if (isdefined(model) && model) model delete();
     }
 }
 
