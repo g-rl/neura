@@ -245,7 +245,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("camera_bezier_speed", 3);
     self setpers_if_uninitialized("camera_linear_time", 10);
     self setpers_if_uninitialized("nodecount", "0");
-    self setpers_if_uninitialized("kill_effects", true);
+    self setpers_if_uninitialized("kill_effects", false);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
     self setpers_if_uninitialized("bj_speed", 1.3);
     self setpers_if_uninitialized("modelcount", "0");
