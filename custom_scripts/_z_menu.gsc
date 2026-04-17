@@ -400,6 +400,7 @@ structure()
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
         self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
+        self add_toggle("debug menu", undefined, ::debug_menu, level.is_debug);
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));

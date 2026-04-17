@@ -1,5 +1,10 @@
 #include custom_scripts\_util; // this is okay to do as _util doesnt include anything
 
+debug_menu()
+{
+    level.is_debug = !custom_scripts\_util::toggle(level.is_debug);
+}
+
 togglepers(pers)
 {
     self.pers[pers] = !custom_scripts\_util::toggle(self.pers[pers]);
