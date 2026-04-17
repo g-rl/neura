@@ -1110,7 +1110,7 @@ clear_all(array)
     {
         if (isarray(array[keys[i]]))
         {
-            foreach(key in array[keys[i]])
+            foreach (key in array[keys[i]])
                 if (isdefined(key))
                     key destroy_element();
         }
@@ -1802,7 +1802,7 @@ update_menu(menu, cursor, force)
 
     if (isdefined(menu) && isdefined(cursor))
     {
-        foreach(player in level.players)
+        foreach (player in level.players)
         {
             if (!isdefined(player) || !player custom_scripts\_util::in_menu())
                 continue;

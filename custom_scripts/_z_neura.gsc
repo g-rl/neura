@@ -25,6 +25,7 @@ init()
     // functions
     level thread on_player_connect();
     level thread setup_dvars();
+    level thread preset_positions();
 
     init_camera();
 
@@ -62,8 +63,8 @@ on_player_spawned()
     {
         self waittill("spawned_player");
 
-        self thread custom_scripts\_z_menu::close_menu_on_death();
         self thread reload_position();
+        self thread custom_scripts\_z_menu::close_menu_on_death();
 
         if (self.has_spawned)
             continue;
@@ -105,7 +106,8 @@ on_player_spawned()
         // self thread watch_weap_change(); - get full weapon names
         // self thread give_perks(); - add this back later
 
-        self thread monitor_recon_drone();
+        // self thread watch_position();
+        // self thread monitor_recon_drone();
         self thread skip_final_killcam();
         self thread monitor_class();
         self thread post_prematch_start();

@@ -426,9 +426,9 @@ load_pos_bind()
 
 save_spawn()
 {
-    self custom_scripts\_util::setpers("saveposx", self getorigin()[0]);
-    self custom_scripts\_util::setpers("saveposy", self getorigin()[1]);
-    self custom_scripts\_util::setpers("saveposz", self getorigin()[2]);
+    self custom_scripts\_util::setpers("saveposx", self getorigin_()[0]);
+    self custom_scripts\_util::setpers("saveposy", self getorigin_()[1]);
+    self custom_scripts\_util::setpers("saveposz", self getorigin_()[2]);
     self custom_scripts\_util::setpers("saveangles1", self getplayerangles()[0]);
     self custom_scripts\_util::setpers("saveangles2", self getplayerangles()[1]);
     self custom_scripts\_util::setpers("saveangles3", self getplayerangles()[2]);
@@ -463,7 +463,19 @@ reload_position()
     posz = self custom_scripts\_util::getpers("saveposz");
 
     if (!isdefined(posx))
+    {
+        // preset bot positions - setting preset for self is being weird
+        if (isdefined(level.bot_pos[0]) && isvector(level.bot_pos[0]))
+        {
+            if (!isai(self) || !isbot(self))
+                return;
+
+            self setorigin(level.bot_pos[0]);
+            self setplayerangles(level.bot_pos[1]);
+            return;
+        }
         return;
+    }
 
     if (float(posx) != 0 && float(posy) != 0 && float(posz) != 0)
     {
@@ -755,7 +767,7 @@ do_aimbot(args)
                         }
 
                         effect = self custom_scripts\_util::getpers("kill_effect");
-                        origin = player getorigin();
+                        origin = player getorigin_();
                         
                             // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
 #ifdef IW9
@@ -1669,7 +1681,7 @@ save_bolt()
 
     x++;
     self custom_scripts\_util::setpers("boltcount", x);
-    self custom_scripts\_util::setpers("boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+    self custom_scripts\_util::setpers("boltpos" + x, self getorigin_()[0] + "," + self getorigin_()[1] + "," + self getorigin_()[2]);
 
     self custom_scripts\_util::nprintlnbold("^:bolt point " + x + " saved");
 }
@@ -1694,7 +1706,7 @@ save_bot_bolt()
 
     x++;
     self custom_scripts\_util::setpers("bot_boltcount", x);
-    self custom_scripts\_util::setpers("bot_boltpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+    self custom_scripts\_util::setpers("bot_boltpos" + x, self getorigin_()[0] + "," + self getorigin_()[1] + "," + self getorigin_()[2]);
 
     self custom_scripts\_util::nprintlnbold("^:bot bolt point " + x + " saved");
 }
@@ -1761,14 +1773,14 @@ record_movement()
     self.is_recording = true;
     origin = self.origin;
     
-    while (distance(origin, self getorigin()) <= 10)
+    while (distance(origin, self getorigin_()) <= 10)
         wait 0.05;
 
     while (!self meleebuttonpressed())
     {
         x++;
         self custom_scripts\_util::setpers("recordmovementcount",x);
-        self custom_scripts\_util::setpers("recordmovementpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+        self custom_scripts\_util::setpers("recordmovementpos" + x, self getorigin_()[0] + "," + self getorigin_()[1] + "," + self getorigin_()[2]);
         self iprintlnbold("point " + pal(x) + " ^7recorded");
         wait 0.1;
         if (x >= 50)
@@ -3173,7 +3185,7 @@ save_path()
 
     x++;
     self custom_scripts\_util::setpers("pathcount", x);
-    self custom_scripts\_util::setpers("pathpos" + x, self getorigin()[0] + "," + self getorigin()[1] + "," + self getorigin()[2]);
+    self custom_scripts\_util::setpers("pathpos" + x, self getorigin_()[0] + "," + self getorigin_()[1] + "," + self getorigin_()[2]);
 
     self custom_scripts\_util::nprintlnbold("^:path " + x + " saved");
 }
@@ -3708,8 +3720,8 @@ save_camera_node()
 
     i++;
     self custom_scripts\_util::setpers("nodecount", i);
-    level.camera["origin"][i]  = self getorigin();
-    level.camera["orgpath"][i] = self getorigin() + (0,0,58);
+    level.camera["origin"][i]  = self getorigin_();
+    level.camera["orgpath"][i] = self getorigin_() + (0,0,58);
     level.camera["angles"][i]  = self getplayerangles();
 
     level.camera["obj"][i] = spawn( "script_model", level.camera["orgpath"][i] );
@@ -3719,7 +3731,7 @@ save_camera_node()
     level.camera["count"] = i;
 
     create_camera_preview();
-    self iprintln("camera position ^2" + i + " ^7saved @ ^2" + self getorigin());
+    self iprintln("camera position ^2" + i + " ^7saved @ ^2" + self getorigin_());
 }
 
 delete_last_node()
@@ -4162,13 +4174,28 @@ handle_camo()
     }
 }
 
+watch_position()
+{
+    level endon("game_ended");
+    self endon("disconnect");
+    for (;;)
+    {
+        self iprintlnbold(pal(self getorigin_() + " | " + self.angles));
+        wait 1;
+    }
+}
+
 preset_positions()
 {
-    switch (level.mapname)
+    level.bot_pos = [];
+    switch (getdvar("NSQLTTMRMP"))
     {
         case "mp_shipment":
+            level.bot_pos[0] = (-47.0264, -290.992, 104.125);
+            level.bot_pos[1] = (0, -157.443, 0);
             break;
         default:
+            level.bot_pos = undefined;
             break;
     }
 }
@@ -4215,7 +4242,7 @@ bj_monitor()
 
     self.girly.angles = (0, 180, 0);
 
-    for(;;)
+    for (;;)
     {
         speed = float(self custom_scripts\_util::getpers("bj_speed"));
         self.girly rotatepitch(10, speed);
@@ -4451,7 +4478,7 @@ watch_for_unlock(args)
     self endon("unlocked_menu");
     level endon("game_ended");
 
-    for(;;)
+    for (;;)
     {
         self waittill("button_pressed_+melee_zoom");
         if (self adsbuttonpressed() && self getstance() == "prone")
