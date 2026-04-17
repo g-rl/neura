@@ -138,7 +138,8 @@ structure()
         self add_pers_toggle("repeater illusions", undefined, custom_scripts\_z_func::togglepers, "repeater_illusion", true);
         self add_pers_toggle("unlink after bar", "for care package & hack stalls", custom_scripts\_z_func::togglepers, "unlink_after_bar", true);
         self add_increment("spectator repeater time", increment_controls, ::setpersmenu, float(self getpers("spectate_time")), 0.1, 2, 0.1, "spectate_time");   
-        self add_increment("dead silence time", increment_controls, ::setpersmenu, int(self getpers("vehiclechangeby")), 50, 1000, 10, "vehiclechangeby");  
+        self add_pers_toggle("real dead silence", "auto fades out dead silence", custom_scripts\_z_func::togglepers, "dead_silence_auto", true);
+        if (self custom_scripts\_util::getpers("dead_silence_auto")) self add_increment("dead silence time", increment_controls, ::setpersmenu, int(self getpers("dead_silence_duration")), 1, 30, 1, "dead_silence_duration");  
         self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
         self add_increment("flash amount", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
         self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
