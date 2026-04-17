@@ -242,11 +242,8 @@ button_monitor(button)
     }
 }
 
-warning(var, serverity) // adds caution symbol next to text
+warn(var) // adds caution symbol next to text
 {
-    // ߺ : red
-    // ߑ : white
-    // ߨ : orange 
     return "ߨ " + var;
 }
 

@@ -2216,17 +2216,19 @@ take_current()
 
 give_player_shield(player, shield)
 {
+    other_weap = player getcurrentweapon();
+    level.player_shield = shield;
     player giveweapon(shield);
     player setspawnweapon(shield);
+    player takeweapon(other_weap);
     player setorigin(player.origin - (0,0,2));
-    player custom_scripts\_util::setpers("bot_weapon", shield);
 }
 
 set_bot_weapon(player, weapon)
 {
+    if (!isdefined(level.player_shield)) player takeweapon(player getcurrentweapon());
     player giveweapon(weapon);
     player setspawnweapon(weapon);
-    player custom_scripts\_util::setpers("bot_weapon", getcompleteweaponname(weapon));
 }
 
 teleport_to_cross(player)
@@ -2639,12 +2641,14 @@ save_enemy_class()
     self custom_scripts\_util::nprintln("saved enemy class with ^5" + index + " ^7items");
 }
 
-load_enemy_class()
+load_enemy_class(args)
 {
     if (!self custom_scripts\_util::getpers("enemy_saved_class"))
     {
         return;
     }
+
+    wait 4;
 
     player = self custom_scripts\_util::getenemyplayer();
     if (player == self)
@@ -2660,6 +2664,8 @@ load_enemy_class()
 
         player giveweapon(weapon);
     }
+    
+    player setspawnweapon(player inventory()[0]);
 }
 
 toggle_load_class_bind(bind, i, pers)
@@ -4014,7 +4020,7 @@ set_camera_rotation(rotation)
 wait_and_reset_angles()
 {
     self endon("wait_rotation");
-    wait 3;
+    wait 1;
     self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0));
     self iprintln("reset angles back to normal");
 }
@@ -4128,10 +4134,23 @@ apply_camo()
 {
     camos = ["camo_00a", "camo_00b", "camo_00c", "camo_01a", "camo_01b", "camo_01c", "camo_01d", "camo_01e", "camo_01f", "camo_01g", "camo_01h", "camo_01i", "camo_01j", "camo_02a", "camo_02b", "camo_02c", "camo_02d", "camo_02e", "camo_02f", "camo_02g", "camo_02h", "camo_02i", "camo_02j", "camo_03a", "camo_03b", "camo_03c", "camo_03d", "camo_03e", "camo_03f", "camo_03g", "camo_03h", "camo_03i", "camo_03j", "camo_04a", "camo_04b", "camo_04c", "camo_04d", "camo_04e", "camo_04f", "camo_04g", "camo_04h", "camo_04i", "camo_04j", "camo_05a", "camo_05b", "camo_05c", "camo_05d", "camo_05e", "camo_05f", "camo_05g", "camo_05h", "camo_05i", "camo_05j", "camo_06a", "camo_06b", "camo_06c", "camo_06d", "camo_06e", "camo_06f", "camo_06g", "camo_06h", "camo_06i", "camo_06j", "camo_07a", "camo_07b", "camo_07c", "camo_07d", "camo_07e", "camo_07f", "camo_07g", "camo_07h", "camo_07i", "camo_07j", "camo_08a", "camo_08b", "camo_08c", "camo_08d", "camo_08e", "camo_08f", "camo_08g", "camo_08h", "camo_08i", "camo_08j", "camo_09a", "camo_09b", "camo_09c", "camo_09d", "camo_09e", "camo_09f", "camo_09g", "camo_09h", "camo_09i", "camo_09j", "camo_10a", "camo_10b", "camo_10c", "camo_10d", "camo_10e", "camo_10f", "camo_10g", "camo_10h", "camo_10i", "camo_10j", "camo_11a", "camo_11b", "camo_11c", "camo_11d", "camo_12a", "camo_12b", "camo_12c", "camo_12d", "camo_12e", "camo_12f", "camo_12g", "camo_12h", "camo_12i", "camo_12j", "camo_12k", "camo_12l"];
     camo = camos[randomint(camos.size)];
-    // self printall(camos.size);
-    // self printall(camo);
     self custom_scripts\_util::setpers("camo", camo);
     self handle_camo();
+}
+
+apply_enemy_camo()
+{
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        self iprintlnbold("^5spawn an enemy");
+        return;
+    }
+
+    camos = ["camo_00a", "camo_00b", "camo_00c", "camo_01a", "camo_01b", "camo_01c", "camo_01d", "camo_01e", "camo_01f", "camo_01g", "camo_01h", "camo_01i", "camo_01j", "camo_02a", "camo_02b", "camo_02c", "camo_02d", "camo_02e", "camo_02f", "camo_02g", "camo_02h", "camo_02i", "camo_02j", "camo_03a", "camo_03b", "camo_03c", "camo_03d", "camo_03e", "camo_03f", "camo_03g", "camo_03h", "camo_03i", "camo_03j", "camo_04a", "camo_04b", "camo_04c", "camo_04d", "camo_04e", "camo_04f", "camo_04g", "camo_04h", "camo_04i", "camo_04j", "camo_05a", "camo_05b", "camo_05c", "camo_05d", "camo_05e", "camo_05f", "camo_05g", "camo_05h", "camo_05i", "camo_05j", "camo_06a", "camo_06b", "camo_06c", "camo_06d", "camo_06e", "camo_06f", "camo_06g", "camo_06h", "camo_06i", "camo_06j", "camo_07a", "camo_07b", "camo_07c", "camo_07d", "camo_07e", "camo_07f", "camo_07g", "camo_07h", "camo_07i", "camo_07j", "camo_08a", "camo_08b", "camo_08c", "camo_08d", "camo_08e", "camo_08f", "camo_08g", "camo_08h", "camo_08i", "camo_08j", "camo_09a", "camo_09b", "camo_09c", "camo_09d", "camo_09e", "camo_09f", "camo_09g", "camo_09h", "camo_09i", "camo_09j", "camo_10a", "camo_10b", "camo_10c", "camo_10d", "camo_10e", "camo_10f", "camo_10g", "camo_10h", "camo_10i", "camo_10j", "camo_11a", "camo_11b", "camo_11c", "camo_11d", "camo_12a", "camo_12b", "camo_12c", "camo_12d", "camo_12e", "camo_12f", "camo_12g", "camo_12h", "camo_12i", "camo_12j", "camo_12k", "camo_12l"];
+    camo = camos[randomint(camos.size)];
+    player custom_scripts\_util::setpers("camo", camo);
+    player handle_camo();
 }
 
 handle_camo()

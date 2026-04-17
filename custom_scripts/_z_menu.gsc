@@ -77,7 +77,7 @@ structure()
         self add_option("save node", "camera nodes: ^5" + int(self getpers("nodecount")), ::save_camera_node);
         self add_option("delete last node", "camera nodes: ^5" + int(self getpers("nodecount")), ::delete_last_node);
         self add_option("clone self", undefined, ::clone_myself);
-        self add_option(warning("clear all ents"), "i don't recommend doing this", ::clear_ents);
+        self add_option(warn("clear all ents"), "i don't recommend doing this", ::clear_ents);
         break;
 
     case "position":
@@ -243,7 +243,7 @@ structure()
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
         self add_game_option("iw8", "streak manager", "streaks for ^5iw8", ::new_menu, "streaks (iw8)");
-        self add_game_option("iw8", "set random camo", undefined, ::apply_camo);
+        self add_game_option("iw8", "apply random camo", "saves through classes & binds", ::apply_camo);
         break;
 
     case "primaries (iw8)":
@@ -382,7 +382,7 @@ structure()
         self add_option("dvars", undefined, ::new_menu, "dvars");
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
-        self add_option(warning("session settings"), undefined, ::new_menu, "session settings");
+        self add_option(warn("session settings"), undefined, ::new_menu, "session settings");
         self add_option("fast restart", undefined, ::fast_restart);
         if (gametype == "sd") 
         {   
@@ -403,9 +403,9 @@ structure()
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
-        self add_option("spawn invis platform", undefined, ::invis_platform);
-        self add_game_option("iw8", warning("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
-        self add_option(warning("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
+        self add_option(warn("spawn invis platform"), "doesn't like to spawn sometimes", ::invis_platform);
+        self add_game_option("iw8", warn("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
+        self add_option(warn("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         break;
 
     case "killcam manager":
@@ -448,7 +448,7 @@ structure()
     case "debug settings":
         self.bind_index = false;
         self add_menu(menu);
-        self add_option(warning("bot paths"), "trying to get this to work", ::new_menu, "bot paths");
+        self add_option(warn("bot paths"), "trying to get this to work", ::new_menu, "bot paths");
         self add_option("origin", self getorigin(), ::void);
         self add_option("kill selected player", undefined, ::kill_selected_player);
         self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
@@ -510,6 +510,7 @@ player_index(menu, player, slider_controls)
             self add_option("look at me", undefined, ::look_at_me, player);
             self add_game_option("iw8", "give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
             self add_game_option("iw8", "save class", undefined, ::save_enemy_class);
+            self add_game_option("iw8", "apply random camo", undefined, ::apply_enemy_camo);
             self add_game_option("iw9", "give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
             self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, player, self getcurrentweapon());
         }
@@ -678,7 +679,7 @@ initial_variable()
 
     // mwii
     self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp", "interrogation_tools_mp", "iw8_gunless_last_stand_enter", "ks_gesture_phone_mp", "ks_remote_device_mp", "remotemissile_projectile_mp", "emp_pulse_device_mp", "briefcase_bomb_mp"];
-    self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", warning("bunker buster (burrowed)"), warning("bunker buster (not burrowed)"), "heartbeat sensor", warning("throwing stars"), "interrogation tools", "falling", "phone", "remote", "remote missile", "pulse device", "bomb"];
+    self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", warn("bunker buster (burrowed)"), warn("bunker buster (not burrowed)"), "heartbeat sensor", warn("throwing stars"), "interrogation tools", "falling", "phone", "remote", "remote missile", "pulse device", "bomb"];
     
     // menu variables
     self.font            = "default";
