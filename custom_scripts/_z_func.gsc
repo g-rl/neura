@@ -1075,7 +1075,6 @@ move_bots(args)
 kill_player(player)
 {
     player suicide();
-    self custom_scripts\_util::nprintln("killed ^1" + player.name);
 }
 
 teleport_player(from, to, player)

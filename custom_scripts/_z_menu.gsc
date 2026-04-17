@@ -1533,6 +1533,13 @@ close_menu_game_over()
     self thread close_menu_if_open();
 }
 
+close_menu_on_death()
+{
+    self endon("disconnect");
+    self waittill("death");
+    self thread close_menu_if_open();
+}
+
 create_title(title)
 {
     title_ = isdefined(title) ? title : self get_title();
