@@ -102,8 +102,12 @@ on_player_spawned()
         self thread press_to_restart_round();
         self thread wait_for_round_end();
         self thread post_prematch_start();
-        self thread clear_prematch_look();
+        self thread handle_camo();
         self thread monitor_class();
+
+#ifndef S4
+        self thread clear_prematch_look();
+#endif
 
         // return any streaks to player last (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");

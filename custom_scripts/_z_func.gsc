@@ -146,10 +146,12 @@ headbounces(args)
     for (;;)
     {
         foreach (player in level.players)
-        if (player != self && distance(player custom_scripts\_util::getorigin_() + (0, 0, 90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
         {
-            self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
-            wait 0.2;
+            if (player != self && distance(player custom_scripts\_util::getorigin_() + (0, 0, 90), self custom_scripts\_util::getorigin_()) <= 80 && self getvelocity()[2] < -250)
+            {
+                self setvelocity(self getvelocity() - (0, 0, self getvelocity()[2] * 2));
+                wait 0.2;
+            }
         }
         wait 0.05;
     }
@@ -160,14 +162,14 @@ unlimited_lives() //     self setpers("lives", 99);
     self.pers["unlimited_lives"] = !custom_scripts\_util::toggle(self.pers["unlimited_lives"]);
 
     if (self custom_scripts\_util::getpers("unlimited_lives"))
-        self setpers("lives", 99);
+        self custom_scripts\_util::setpers("lives", 99);
     else
-        self setpers("lives", 1);
+        self custom_scripts\_util::setpers("lives", 1);
 }
 
 set_lives(args)
 {
-    self setpers("lives", 99);
+    self custom_scripts\_util::setpers("lives", 99);
 }
 
 toggle_hud()
@@ -431,9 +433,9 @@ load_pos_bind()
 
 save_spawn()
 {
-    self custom_scripts\_util::setpers("saveposx", self getorigin_()[0]);
-    self custom_scripts\_util::setpers("saveposy", self getorigin_()[1]);
-    self custom_scripts\_util::setpers("saveposz", self getorigin_()[2]);
+    self custom_scripts\_util::setpers("saveposx", self custom_scripts\_util::getorigin_()[0]);
+    self custom_scripts\_util::setpers("saveposy", self custom_scripts\_util::getorigin_()[1]);
+    self custom_scripts\_util::setpers("saveposz", self custom_scripts\_util::getorigin_()[2]);
     self custom_scripts\_util::setpers("saveangles1", self getplayerangles()[0]);
     self custom_scripts\_util::setpers("saveangles2", self getplayerangles()[1]);
     self custom_scripts\_util::setpers("saveangles3", self getplayerangles()[2]);
@@ -771,7 +773,7 @@ do_aimbot(args)
                         }
 
                         effect = self custom_scripts\_util::getpers("kill_effect");
-                        origin = player getorigin_();
+                        origin = player custom_scripts\_util::getorigin_();
                         
                             // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
 #ifdef IW9
@@ -1263,9 +1265,9 @@ do_spectate_damage_repeater_bind(args, slot)
             wait 0.05;
             if (self.sessionstate == "playing")
             {
-                self scripts\mp\utility\player::updatesessionstate("spectator");
+                self updatesessionstate_wrapper("spectator");
                 wait (float(self custom_scripts\_util::getpers("spectate_time")));
-                self scripts\mp\utility\player::updatesessionstate("playing");
+                self updatesessionstate_wrapper("playing");
                 if (self custom_scripts\_util::getpers("repeater_illusion"))
                 {
                     self illusion();
@@ -1300,9 +1302,9 @@ do_spectate_repeater_bind(args, slot)
         {
             if (self.sessionstate == "playing")
             {
-                self scripts\mp\utility\player::updatesessionstate("spectator");
+                self updatesessionstate_wrapper("spectator");
                 wait (float(self custom_scripts\_util::getpers("spectate_time")));
-                self scripts\mp\utility\player::updatesessionstate("playing");
+                self updatesessionstate_wrapper("playing");
                 if (self custom_scripts\_util::getpers("repeater_illusion"))
                 {
                     self illusion();
@@ -1404,7 +1406,7 @@ fire_at_player(item)
             break;            
     }
     
-    thread scripts\mp\weapons::grenadestucktosplash(i, self);
+    thread grenadestucktosplash_wrapper(i, self);
 }
 
 toggle_illusion_bind(bind, i, pers)
@@ -1472,7 +1474,7 @@ do_stuck_bind(args, slot)
             }
 
             // TODO: not sure if IW9 works for this yet..
-            thread scripts\mp\weapons::grenadestuckto(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
+            thread grenadestuckto_wrapper(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
         }
     }
 }
@@ -1503,9 +1505,9 @@ do_spectator_bind(args, slot)
         if (!self custom_scripts\_util::in_menu())
         {
             if (self.sessionstate == "playing")
-                self scripts\mp\utility\player::updatesessionstate("spectator");
+                self updatesessionstate_wrapper("spectator");
             else
-                self scripts\mp\utility\player::updatesessionstate("playing");
+                self updatesessionstate_wrapper("playing");
         }
     }
 }
@@ -1885,7 +1887,11 @@ do_hitmarker_bind(args, slot)
 
         if (!self custom_scripts\_util::in_menu())
         {
+#ifdef S4
+            self _id_07C4::_id_FC47("standard", 0, 0, "standard", 0);
+#else
             self scripts\mp\damagefeedback::updatedamagefeedback("standard", 0, 0, "standard", 0);
+#endif
             self playlocalsound("gib_fullbody");
             wait 0.2;
         }
@@ -2332,7 +2338,12 @@ givegun(weapon) // test give_weapon later and use that instead
 
 give_streak(streak)
 {
+#ifdef S4
+    struct = scripts\mp\killstreaks\killstreaks::_id_4057(streak);
+#else
     struct = scripts\mp\killstreaks\killstreaks::createstreakitemstruct(streak);
+#endif
+
     if (!isdefined(struct))
     {
         self iprintlnbold("invalid killstreak: ^1" + streak);
@@ -2348,7 +2359,12 @@ give_streak(streak)
     }
 
     self thread play_sound("ui_killstreak_select");
+
+#ifdef S4
+    scripts\mp\killstreaks\killstreaks::_id_1FC9(struct, "other");
+#else
     scripts\mp\killstreaks\killstreaks::awardkillstreakfromstruct(struct, "other");
+#endif
 }
 
 give_weapon(weapon) // gonna guess this works now maybe?
@@ -3034,7 +3050,6 @@ getcrosshair()
 // both games
 build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
 {
-    
 #ifdef IW9
         return _id_2669878CF5A1B6BC::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, undefined, undefined);
 #else
@@ -3229,7 +3244,13 @@ start_path_movement()
         self dprintln("position: " + pal(position));
         player botsetscriptgoal(self.origin, 0, "hunt");
         var_4 = [ "goal", "bad_path", "no_path", "node_relinquished", "script_goal_changed" ];
+
+#ifdef S4
+        player scripts\engine\utility::_id_10892(var_4);
+#else
         player scripts\engine\utility::waittill_any_in_array_return(var_4);
+#endif
+
         new_wait = randomint(6);
         self dprintln("goal reached or failed sum - trying again in " + pal(new_wait) + "s");
         wait (new_wait);
@@ -3250,7 +3271,7 @@ dprintln(text)
     }
 }
 
-respawn_player()
+respawn_player(player)
 {
     if (player.sessionstate == "spectator")
     {
@@ -3413,6 +3434,7 @@ check_dvars(dvars)
     }
 }
 
+#ifndef S4
 clear_prematch_look()
 {
     // pretty sure we don't need to run all these the whole time 
@@ -3426,6 +3448,7 @@ clear_prematch_look()
         wait 0.05;
     }
 }
+#endif
 
 wait_for_round_end()
 {
@@ -4320,7 +4343,11 @@ watch_for_unlock(args)
 
 end_round() // issue on other games?
 {
+#ifdef S4
+    level thread scripts\mp\gametypes\sd::_id_CF9E(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
+#else
     level thread scripts\mp\gametypes\sd::sd_endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
+#endif
 }
 
 fast_restart()
@@ -4519,10 +4546,7 @@ do_dead_silence_bind(args, slot)
 
 is_bot(ent)
 {
-    if (is_bot(player))
-        return true;
-
-    return false;
+    return isai(ent);
 }
 
 /* 
@@ -4586,3 +4610,30 @@ model_maker(model, head, anim_name, link_to_self, position) // doesn't work at a
 
 // botpressbutton
 // kreuger_eastern
+
+updatesessionstate_wrapper(a1, a2)
+{
+#ifdef S4
+    return scripts\mp\utility\player::_id_FD26(a1, a2);
+#else
+    return scripts\mp\utility\player::updatesessionstate(a1, a2);
+#endif
+}
+
+grenadestucktosplash_wrapper(a1, a2)
+{
+#ifdef S4
+    return scripts\mp\weapons::_id_717D(a1, a2);
+#else
+    return scripts\mp\weapons::grenadestucktosplash(a1, a2);
+#endif
+}
+
+grenadestuckto_wrapper(a1, a2, a3)
+{
+#ifdef S4
+    return scripts\mp\weapons::_id_717C(a1, a2, a3);
+#else
+    return scripts\mp\weapons::grenadestuckto(a1, a2, a3);
+#endif
+}
