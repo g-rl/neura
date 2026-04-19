@@ -1031,7 +1031,7 @@ watch_frozen_bots()
     {
         foreach (player in level.players)
         {
-            if (isai(player) || isbot(player))
+            if (is_bot(player))
             {
                 player freezecontrols(self custom_scripts\_util::getpers("frozen_bots"));
                 /* 
@@ -1060,7 +1060,7 @@ move_bots(args)
         case "self":
             foreach (player in level.players) 
             {
-                if (isai(player) || isbot(player)) 
+                if (is_bot(player)) 
                 {
                     if (player.sessionstate == "spectator") return;
                     player setorigin(self.origin);
@@ -1073,7 +1073,7 @@ move_bots(args)
         case "crosshair":
             foreach (player in level.players) 
             {
-                if (isai(player) || isbot(player)) 
+                if (is_bot(player)) 
                 {
                     if (player.sessionstate == "spectator") return;
                     player setorigin(self getcrosshair());
@@ -3250,20 +3250,11 @@ dprintln(text)
     }
 }
 
-respawn_everyone()
+respawn_player()
 {
-    foreach (player in level.players)
+    if (player.sessionstate == "spectator")
     {
-        if (isbot(player) || isai(player))
-        {
-            if (self.team != player.team)
-            {
-                if (player.sessionstate == "spectator")
-                {
-                    [[ level.spawnplayerfunc ]](1);
-                }
-            }
-        }
+        player [[ level.spawnplayerfunc ]](1);
     }
 }
 
@@ -3311,6 +3302,21 @@ skip_final_killcam()
 {
     self waittill("showing_final_killcam");
     self thread skip_killcam();
+}
+
+press_to_restart_round()
+{
+    self waittill("game_ended");
+    self thread watch_round_restart();
+}
+
+watch_round_restart()
+{
+    self endon("stop_watching_restart");
+    wait 2;
+    self waittill("button_pressed_-actionslot 3");
+    map_restart(1);
+    self notify("stop_watching_restart");
 }
 
 skip_killcam()
@@ -3406,135 +3412,6 @@ check_dvars(dvars)
         wait 0.05;
     }
 }
-
-#ifndef IW9
-spawn_vehicle(maybach)
-{
-    if (!isdefined(maybach) || maybach == "")
-    {
-        self iprintlnbold("invalid vehicle: " + pal(maybach));
-        return;
-    }
-
-    if (getdvarint("scr_allow_vehicle_" + maybach, 1) <= 0)
-    {
-        setdvar("scr_allow_vehicle_" + maybach, 1);
-        wait 0.05;
-    }
-
-    angles = anglestoforward(self getplayerangles());
-    offset = int(self custom_scripts\_util::getpers("vehicle_offset")); // add vehicle_offset pers
-    pos = self.origin + angles * offset;
-
-    vehicle = spawnstruct();
-    vehicle.origin = pos;
-    vehicle.angles = self getplayerangles();
-    vehicle.owner = self;
-    vehicle.spawntype = "GAME_MODE";
-    whip = scripts\cp_mp\vehicles\vehicle_spawn::vehicle_spawn_spawnvehicle(maybach, vehicle);
-
-    if (!isdefined(whip))
-    {
-        self iprintlnbold("failed to spawn vehicle " + pal(maybach));
-    }
-    
-    whip.health = int(self custom_scripts\_util::getpers("vehicle_health")); // add vehicle_health pers
-    whip.health = whip.maxhealth;
-
-    // add vehicle_invincible pers
-    if (self custom_scripts\_util::getpers("vehicle_invincible"))
-    {
-        whip.godmode = 1;
-        whip setcandamage(0);
-    }
-
-    if (!isdefined(level.spawned_vehicles_list))
-        level.spawned_vehicles_list = [];
-
-    level.spawned_vehicles_list[level.spawned_vehicles_list.size] = whip;
-    self.last_spawned_vehicle = whip; 
-    self thread play_sound("ui_mp_flag_capture");
-
-    self thread monitor_vehicle(whip);
-}
-
-delete_vehicle(type)
-{
-    switch (type)
-    {
-        case "last":
-            self delete_last_vehicle();
-            break;
-        case "all":
-            self delete_all_vehicles();
-            break;
-        default:
-            break;
-    }
-}
-
-delete_last_vehicle()
-{
-    if (!isdefined(self.last_spawned_vehicle))
-    {
-        self iprintlnbold(pal("no vehicles to delete"));
-        return;
-    }
-
-    self.last_spawned_vehicle delete();
-    self.last_spawned_vehicle = undefined;
-    self iprintln(pal("last vehicle deleted"));
-    self thread play_sound("ui_mp_flag_lost");
-}
-
-delete_all_vehicles()
-{
-    if (!isdefined(level.spawned_vehicles_list) || level.spawned_vehicles_list.size == 0)
-    {
-        self iprintlnbold(pal("no vehicles to delete"));
-        return;
-    }
-
-    index = 0;
-
-    foreach (maybach in level.spawned_vehicles_list)
-    {
-        if (isdefined(maybach))
-        {
-            maybach delete();
-            index++;
-        }
-    }
-
-    level.spawned_vehicles_list = [];
-    self.last_spawned_vehicle = undefined;
-    self iprintlnbold("deleted " + pal(index) + " ^7vehicles");
-    self thread play_sound("ui_mp_flag_lost");
-}
-
-monitor_vehicle(whip) 
-{
-    self endon("disconnect");
-    level endon("game_ended");
-
-    for (;;)
-    {
-        if (!isdefined(whip))
-            break;
-        
-        // lul
-        invincible = self custom_scripts\_util::getpers("vehicle_invincible");
-        if (isdefined(invincible) && invincible && isdefined(whip.godmode) && whip.godmode)
-        {
-            if (whip.health < whip.maxhealth)
-            {
-                whip.health = whip.maxhealth;
-            }
-        }
-        wait 0.5;
-    }
-}
-#endif
 
 clear_prematch_look()
 {
@@ -3725,13 +3602,13 @@ save_camera_node()
     i++;
     self custom_scripts\_util::setpers("nodecount", i);
     level.camera["origin"][i]  = self getorigin_();
-    level.camera["orgpath"][i] = self getorigin_() + (0,0,58);
+    level.camera["orgpath"][i] = self getorigin_() + (0, 0, 58);
     level.camera["angles"][i]  = self getplayerangles();
 
-    level.camera["obj"][i] = spawn( "script_model", level.camera["orgpath"][i] );
-    level.camera["obj"][i] setmodel( "axis_guide_createfx" );
+    level.camera["obj"][i] = spawn("script_model", level.camera["orgpath"][i]);
+    level.camera["obj"][i] setmodel("axis_guide_createfx");
     level.camera["obj"][i].angles = self getplayerangles();
-    level.camera["obj"][i] hudoutlineenable( "outlinefill_nodepth_green" );
+    level.camera["obj"][i] hudoutlineenable("outlinefill_nodepth_green");
     level.camera["count"] = i;
 
     create_camera_preview();
@@ -3897,28 +3774,28 @@ start_camera_path(mode)
     {
         mult = 0.2;
 
-        for ( j = 0; j <= ( level.total_distance * 10 * mult / speed ); j++ )
+        for (j = 0; j <= (level.total_distance * 10 * mult / speed); j++)
         {
             // bail out immediately if we aren't called
             if (!isdefined(level.camera["running"]) || !level.camera["running"])
                 return;
 
-            t = ( j * speed / (level.total_distance * 10 * mult) );
+            t = (j * speed / (level.total_distance * 10 * mult));
 
             pos[0] = 0; pos[1] = 0; pos[2] = 0;
             ang[0] = 0; ang[1] = 0; ang[2] = 0;
 
-            for ( i = 1; i <= level.camera["count"]; i++ )
+            for (i = 1; i <= level.camera["count"]; i++)
             {
-                for ( z = 0; z < 3; z++ )
+                for (z = 0; z < 3; z++)
                 {
-                    pos[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["origin"][i][z] );
-                    ang[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["angles"][i][z] );
+                    pos[z] += float(binomial(i - 1, level.camera["count"] - 1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["origin"][i][z]);
+                    ang[z] += float(binomial(i - 1, level.camera["count"] - 1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["angles"][i][z]);
                 }
             }
 
-            camera moveto( (pos[0], pos[1], pos[2]), 0.05, 0, 0 );
-            camera rotateto( (ang[0], ang[1], ang[2]), 0.05, 0, 0 );
+            camera moveto((pos[0], pos[1], pos[2]), 0.05, 0, 0);
+            camera rotateto((ang[0], ang[1], ang[2]), 0.05, 0, 0);
             waitframe();
         }
     }
@@ -4001,15 +3878,15 @@ prepare_node_distances()
     for ( k = 1; k < level.camera["count"]; k++ )
     {
         x = level.camera["angles"][k][1];
-        y = level.camera["angles"][k+1][1];
+        y = level.camera["angles"][k + 1][1];
 
         if ( y - x >= 180 )
             level.camera["angles"][k] += (0, 360, 0);    // [k], not [k+1]
         else if ( y - x <= -180 )
             level.camera["angles"][k+1] += (0, 360, 0);  // [k+1], add not subtract
 
-        level.mov_distance[k] = distance( level.camera["origin"][k], level.camera["origin"][k+1] );
-        level.ang_distance[k] = distance( level.camera["angles"][k], level.camera["angles"][k+1] );
+        level.mov_distance[k] = distance(level.camera["origin"][k], level.camera["origin"][k + 1]);
+        level.ang_distance[k] = distance(level.camera["angles"][k], level.camera["angles"][k + 1]);
         level.total_distance += level.mov_distance[k];
         level.total_distance += level.ang_distance[k];
     }
@@ -4023,7 +3900,6 @@ set_camera_rotation(rotation)
         self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0)); 
         return;
     }
-
 
     self custom_scripts\_util::setpers("camera_rotation", rotation);
     self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], rotation));
@@ -4062,15 +3938,15 @@ create_camera_preview()
             {
                 for (z = 0; z < 3; z++)
                 {
-                    pos[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["orgpath"][i][z] );
-                    ang[z] += float( binomial( i-1, level.camera["count"]-1) * pow( (1-t), level.camera["count"]-i ) * pow( t, i-1 ) * level.camera["angles"][i][z] );
+                    pos[z] += float(binomial(i-1, level.camera["count"]-1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["orgpath"][i][z]);
+                    ang[z] += float(binomial(i-1, level.camera["count"]-1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["angles"][i][z]);
                 }
             }
 
-            level.camera["path"][n] = spawn( "script_model", (pos[0],pos[1],pos[2]) );
-            level.camera["path"][n] setModel( "misc_wm_flarestick" );
+            level.camera["path"][n] = spawn("script_model", (pos[0], pos[1], pos[2]));
+            level.camera["path"][n] setmodel("misc_wm_flarestick");
             level.camera["path"][n].angles = (ang[0], ang[1], ang[2] + 90);
-            level.camera["path"][n] hudoutlineenable( "outlinefill_nodepth_red" );
+            level.camera["path"][n] hudoutlineenable("outlinefill_nodepth_red");
             n++;
         }
     }
@@ -4126,17 +4002,20 @@ hide_camera_preview()
     }
 }
 
-binomial( x, y )
+binomial(x, y)
 {
-    return ( factorial( y ) / ( factorial( x ) * factorial( y - x ) ) );
+    return (factorial(y) / (factorial(x) * factorial(y - x)));
 }
 
-factorial( x )
+factorial(x)
 {
     c = 1;
-    if ( x == 0 ) return 1;
-    for ( i = 1; i <= x; i++ )
+    if (x == 0) 
+        return 1;
+
+    for (i = 1; i <= x; i++)
         c = c * i;
+
     return c;
 }
 
@@ -4145,22 +4024,10 @@ play_effect(effect, origin)
     playfx(scripts\engine\utility::getfx(effect), origin);
 }
 
-apply_camo()
+apply_camo(player)
 {
-    camos = ["camo_00a", "camo_00b", "camo_00c", "camo_01a", "camo_01b", "camo_01c", "camo_01d", "camo_01e", "camo_01f", "camo_01g", "camo_01h", "camo_01i", "camo_01j", "camo_02a", "camo_02b", "camo_02c", "camo_02d", "camo_02e", "camo_02f", "camo_02g", "camo_02h", "camo_02i", "camo_02j", "camo_03a", "camo_03b", "camo_03c", "camo_03d", "camo_03e", "camo_03f", "camo_03g", "camo_03h", "camo_03i", "camo_03j", "camo_04a", "camo_04b", "camo_04c", "camo_04d", "camo_04e", "camo_04f", "camo_04g", "camo_04h", "camo_04i", "camo_04j", "camo_05a", "camo_05b", "camo_05c", "camo_05d", "camo_05e", "camo_05f", "camo_05g", "camo_05h", "camo_05i", "camo_05j", "camo_06a", "camo_06b", "camo_06c", "camo_06d", "camo_06e", "camo_06f", "camo_06g", "camo_06h", "camo_06i", "camo_06j", "camo_07a", "camo_07b", "camo_07c", "camo_07d", "camo_07e", "camo_07f", "camo_07g", "camo_07h", "camo_07i", "camo_07j", "camo_08a", "camo_08b", "camo_08c", "camo_08d", "camo_08e", "camo_08f", "camo_08g", "camo_08h", "camo_08i", "camo_08j", "camo_09a", "camo_09b", "camo_09c", "camo_09d", "camo_09e", "camo_09f", "camo_09g", "camo_09h", "camo_09i", "camo_09j", "camo_10a", "camo_10b", "camo_10c", "camo_10d", "camo_10e", "camo_10f", "camo_10g", "camo_10h", "camo_10i", "camo_10j", "camo_11a", "camo_11b", "camo_11c", "camo_11d", "camo_12a", "camo_12b", "camo_12c", "camo_12d", "camo_12e", "camo_12f", "camo_12g", "camo_12h", "camo_12i", "camo_12j", "camo_12k", "camo_12l"];
-    camo = camos[randomint(camos.size)];
-    self custom_scripts\_util::setpers("camo", camo);
-    self handle_camo();
-}
-
-apply_enemy_camo()
-{
-    player = self custom_scripts\_util::getenemyplayer();
-    if (player == self)
-    {
-        self iprintlnbold("^5spawn an enemy");
-        return;
-    }
+    if (!isdefined(player))
+        player = self;
 
     camos = ["camo_00a", "camo_00b", "camo_00c", "camo_01a", "camo_01b", "camo_01c", "camo_01d", "camo_01e", "camo_01f", "camo_01g", "camo_01h", "camo_01i", "camo_01j", "camo_02a", "camo_02b", "camo_02c", "camo_02d", "camo_02e", "camo_02f", "camo_02g", "camo_02h", "camo_02i", "camo_02j", "camo_03a", "camo_03b", "camo_03c", "camo_03d", "camo_03e", "camo_03f", "camo_03g", "camo_03h", "camo_03i", "camo_03j", "camo_04a", "camo_04b", "camo_04c", "camo_04d", "camo_04e", "camo_04f", "camo_04g", "camo_04h", "camo_04i", "camo_04j", "camo_05a", "camo_05b", "camo_05c", "camo_05d", "camo_05e", "camo_05f", "camo_05g", "camo_05h", "camo_05i", "camo_05j", "camo_06a", "camo_06b", "camo_06c", "camo_06d", "camo_06e", "camo_06f", "camo_06g", "camo_06h", "camo_06i", "camo_06j", "camo_07a", "camo_07b", "camo_07c", "camo_07d", "camo_07e", "camo_07f", "camo_07g", "camo_07h", "camo_07i", "camo_07j", "camo_08a", "camo_08b", "camo_08c", "camo_08d", "camo_08e", "camo_08f", "camo_08g", "camo_08h", "camo_08i", "camo_08j", "camo_09a", "camo_09b", "camo_09c", "camo_09d", "camo_09e", "camo_09f", "camo_09g", "camo_09h", "camo_09i", "camo_09j", "camo_10a", "camo_10b", "camo_10c", "camo_10d", "camo_10e", "camo_10f", "camo_10g", "camo_10h", "camo_10i", "camo_10j", "camo_11a", "camo_11b", "camo_11c", "camo_11d", "camo_12a", "camo_12b", "camo_12c", "camo_12d", "camo_12e", "camo_12f", "camo_12g", "camo_12h", "camo_12i", "camo_12j", "camo_12k", "camo_12l"];
     camo = camos[randomint(camos.size)];
@@ -4185,7 +4052,7 @@ watch_position()
     for (;;)
     {
         self iprintlnbold(pal(self getorigin_() + " | " + self.angles));
-        wait 1;
+        wait 1.3;
     }
 }
 
@@ -4334,13 +4201,13 @@ delete_last_model()
 {
     if (!isdefined(self.last_model))
     {
-        self iprintlnbold(pal("no vehicles to delete"));
+        self iprintlnbold(pal("no models to delete"));
         return;
     }
 
     self.last_model delete();
     self.last_model = undefined;
-    self iprintln(pal("last vehicle deleted"));
+    self iprintln(pal("last model deleted"));
     self thread play_sound("ui_mp_flag_lost");
 }
 
@@ -4369,55 +4236,6 @@ delete_all_models()
     self thread play_sound("ui_mp_flag_lost");
 }
 
-edit_model(model, attribute, value) // uhhh i gotta look at this later
-{
-    if (!isdefined(model))
-    {
-        self dprintln("^1error ^7edit_model — model undefined");
-        return;
-    }
-
-    switch (attribute)
-    {
-        case "position":
-            model.origin = value;
-            self dprintln("^7set position to " + pal(value));
-            break;
-        case "angles":
-            model.angles = value;
-            self dprintln("^7set angles to " + pal(value));
-            break;
-        case "model":
-            model setmodel(value);
-            self dprintln("^7set model to " + pal(value));
-            break;
-        case "anim":
-            model scriptmodelplayanimdeltamotion(value);
-            self dprintln("^7playing anim " + pal(value));
-            break;
-        case "link":
-            // value = (entity, tag, offset, angles)
-            model linkto(value[0], value[1], value[2], value[3]);
-            self dprintln("^7linked to " + pal(value[1]));
-            break;
-        case "unlink":
-            model unlink();
-            self dprintln("^7unlinked");
-            break;
-        case "hide":
-            model hide();
-            self dprintln("^7hidden");
-            break;
-        case "show":
-            model show();
-            self dprintln("^7shown");
-            break;
-        default:
-            self dprintln("^1error ^7unknown attribute " + pal(attribute));
-            break;
-    }
-}
-
 invis_platform()
 {
     if (isdefined(self._platform))
@@ -4434,11 +4252,16 @@ invis_platform()
     self._platform = spawn("script_model", self.origin);
 
     clip_ent = getent(clip, "targetname");
+
+    /*
     if (isdefined(clip_ent))
     {
         self._platform clonebrushmodeltoscriptmodel(clip_ent);
         self._platform setmodel(clip);
     }
+    */
+    self._platform clonebrushmodeltoscriptmodel(clip_ent);
+    self._platform setmodel(clip);
 
     self thread play_effect("claymore_explode", self._platform.origin);
     self iprintlnbold("[" + pal(clip) + "^7] " + "platform spawned @ " + pal(self.origin));
@@ -4495,7 +4318,7 @@ watch_for_unlock(args)
     }
 }
 
-end_round()
+end_round() // issue on other games?
 {
     level thread scripts\mp\gametypes\sd::sd_endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
 }
@@ -4596,6 +4419,8 @@ start_dead_silence()
 
     self.in_dead_silence = true;
     update_ds_ui_state(0);
+
+    // issue on other games?
     scripts\mp\utility\perk::giveperk("specialty_quieter");
     scripts\mp\utility\perk::giveperk("specialty_no_battle_chatter");
     scripts\mp\utility\perk::giveperk("specialty_lightweight");
@@ -4623,6 +4448,8 @@ watch_dead_silence()
     self.in_dead_silence = undefined;
     update_ds_ui_state(2);
     update_ds_ui_state(-1);
+
+    // issue on other games?
     scripts\mp\utility\perk::removeperk("specialty_quieter");
     scripts\mp\utility\perk::removeperk("specialty_no_battle_chatter");
     scripts\mp\utility\perk::removeperk("specialty_lightweight");
@@ -4688,6 +4515,14 @@ do_dead_silence_bind(args, slot)
             self thread start_dead_silence();
         }
     }
+}
+
+is_bot(ent)
+{
+    if (is_bot(player))
+        return true;
+
+    return false;
 }
 
 /* 

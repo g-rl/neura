@@ -41,7 +41,7 @@ on_player_connect()
     {
         level waittill("connected", player);
 
-        if (isai(player) || isbot(player))
+        if (is_bot(player))
             player thread on_bot_spawned();
         else
             player thread on_player_spawned();
@@ -56,8 +56,9 @@ on_player_spawned()
     self.has_spawned = false;
 
     self setup_watch_memory();
+
     // wait for setup watch memory to be done, and then run load session
-    //self thread load_session();
+    // self thread load_session();
 
     for (;;)
     {
@@ -71,24 +72,20 @@ on_player_spawned()
 
         self.neura = [];
         self.has_spawned = true;
-        self.modifiers["firstblood"] = 0;
         self.round_has_ended = 0;
+        origin = self getpers("platform_origin");
 
         self thread watch_memory();
         self thread watch_frozen_bots();
         self thread watch_freeze_anim();
+        self thread watch_round_end();
+        self thread handle_camo();
 
         if (float(self getpers("slomo")) != 1)
-        {
             self thread reload_timescale();
-            self thread watch_round_end();
-        }
 
-        origin = self getpers("platform_origin");
         if (isdefined(origin) && isvector(origin))
-        {
             self thread reload_platform();
-        }
 
         if (!isdefined(self.menu))
             self.menu = [];
@@ -101,26 +98,17 @@ on_player_spawned()
             self.menu_init = true;
         }
 
-        // other funcs
-        // self thread check_event("show_final_killcam");
-        // self thread watch_weap_change(); - get full weapon names
-        // self thread give_perks(); - add this back later
-
-        // self thread watch_position();
-        // self thread monitor_recon_drone();
         self thread skip_final_killcam();
-        self thread monitor_class();
-        self thread post_prematch_start();
+        self thread press_to_restart_round();
         self thread wait_for_round_end();
-        self thread handle_camo();
+        self thread post_prematch_start();
         self thread clear_prematch_look();
+        self thread monitor_class();
 
-        // return any streaks to player (if saved)
+        // return any streaks to player last (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");
         if (isdefined(saved) && saved != "none")
-        {
             self thread give_streak(saved);
-        }
     }
 }
 

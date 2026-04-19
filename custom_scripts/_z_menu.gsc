@@ -243,7 +243,7 @@ structure()
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
         self add_game_option("iw8", "streak manager", "streaks for ^5iw8", ::new_menu, "streaks (iw8)");
-        self add_game_option("iw8", "apply random camo", "saves through classes & binds", ::apply_camo);
+        self add_game_option("iw8", "apply random camo", "saves through classes & binds", ::apply_camo, self);
         break;
 
     case "primaries (iw8)":
@@ -353,29 +353,6 @@ structure()
         }
         break;
 
-#ifndef IW9
-    case "vehicles (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_dvar_toggle("allow vehicles", undefined, "scr_allow_vehicles");
-        self add_option("spawn vehicle", "^5" + self.neura["world"][client]["vehicles"][0].size + " ^7vehicles available", ::new_menu, "spawn vehicle (iw8)");
-        self add_array("delete vehicle", slider_controls, ::delete_vehicle, list("last,all"));
-        self add_increment("vehicle health", increment_controls, ::setpersmenu, int(self getpers("vehicle_health")), 100, 100000, int(self getpers("vehiclechangeby")), "vehicle_health");
-        self add_increment("vehicle offset", increment_controls, ::setpersmenu, int(self getpers("vehicle_offset")), 50, 1000, 50, "vehicle_offset");
-        self add_increment("change by", increment_controls, ::setpersmenu, int(self getpers("vehiclechangeby")), 50, 1000, 10, "vehiclechangeby");
-        self add_pers_toggle("vehicle invincibility", undefined, ::togglepers, "vehicle_invincible", true);
-        break;
-
-    case "spawn vehicle (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["world"][client]["vehicles"][0].size; i++) 
-        {
-            self add_option(self.neura["world"][client]["vehicles"][1][i], undefined, ::spawn_vehicle, self.neura["world"][client]["vehicles"][0][i]);
-        }
-        break;
-#endif 
-
     case "game settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -405,7 +382,6 @@ structure()
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
         self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         self add_option(warn("spawn invis platform"), "doesn't like to spawn sometimes", ::invis_platform);
-        self add_game_option("iw8", warn("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
         self add_option(warn("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
         break;
 
@@ -503,16 +479,17 @@ player_index(menu, player, slider_controls)
     case "player option":
         self add_menu(player.name);
         self add_option("kill player", undefined, ::kill_player, player);
+        self add_option("respawn player", undefined, ::respawn_player, player);
         self add_option("change team", undefined, ::change_player_team, player);
         self add_array("teleport to", slider_controls, ::manage_teleport, list("crosshair,me,them"), player);
-        if (isai(player) || isbot(player))
+        if (is_bot(player))
         {
             self add_option("set kill bind target", undefined, ::set_selected_player, player);
-            self add_option("look at me", undefined, ::look_at_me, player);
             self add_game_option("iw8", "give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
             self add_game_option("iw8", "save class", undefined, ::save_enemy_class);
-            self add_game_option("iw8", "apply random camo", undefined, ::apply_enemy_camo);
+            self add_game_option("iw8", "apply random camo", undefined, ::apply_camo, player);
             self add_game_option("iw9", "give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
+            self add_option("look at me", undefined, ::look_at_me, player);
             self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, player, self getcurrentweapon());
         }
         break;

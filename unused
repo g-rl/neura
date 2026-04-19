@@ -1,0 +1,160 @@
+self add_game_option("iw8", warn("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
+
+#ifndef IW9
+spawn_vehicle(maybach)
+{
+    if (!isdefined(maybach) || maybach == "")
+    {
+        self iprintlnbold("invalid vehicle: " + pal(maybach));
+        return;
+    }
+
+    if (getdvarint("scr_allow_vehicle_" + maybach, 1) <= 0)
+    {
+        setdvar("scr_allow_vehicle_" + maybach, 1);
+        wait 0.05;
+    }
+
+    angles = anglestoforward(self getplayerangles());
+    offset = int(self custom_scripts\_util::getpers("vehicle_offset")); // add vehicle_offset pers
+    pos = self.origin + angles * offset;
+
+    vehicle = spawnstruct();
+    vehicle.origin = pos;
+    vehicle.angles = self getplayerangles();
+    vehicle.owner = self;
+    vehicle.spawntype = "GAME_MODE";
+    whip = scripts\cp_mp\vehicles\vehicle_spawn::vehicle_spawn_spawnvehicle(maybach, vehicle);
+
+    if (!isdefined(whip))
+    {
+        self iprintlnbold("failed to spawn vehicle " + pal(maybach));
+    }
+    
+    whip.health = int(self custom_scripts\_util::getpers("vehicle_health")); // add vehicle_health pers
+    whip.health = whip.maxhealth;
+
+    // add vehicle_invincible pers
+    if (self custom_scripts\_util::getpers("vehicle_invincible"))
+    {
+        whip.godmode = 1;
+        whip setcandamage(0);
+    }
+
+    if (!isdefined(level.spawned_vehicles_list))
+        level.spawned_vehicles_list = [];
+
+    level.spawned_vehicles_list[level.spawned_vehicles_list.size] = whip;
+    self.last_spawned_vehicle = whip; 
+    self thread play_sound("ui_mp_flag_capture");
+
+    self thread monitor_vehicle(whip);
+}
+
+delete_vehicle(type)
+{
+    switch (type)
+    {
+        case "last":
+            self delete_last_vehicle();
+            break;
+        case "all":
+            self delete_all_vehicles();
+            break;
+        default:
+            break;
+    }
+}
+
+delete_last_vehicle()
+{
+    if (!isdefined(self.last_spawned_vehicle))
+    {
+        self iprintlnbold(pal("no vehicles to delete"));
+        return;
+    }
+
+    self.last_spawned_vehicle delete();
+    self.last_spawned_vehicle = undefined;
+    self iprintln(pal("last vehicle deleted"));
+    self thread play_sound("ui_mp_flag_lost");
+}
+
+delete_all_vehicles()
+{
+    if (!isdefined(level.spawned_vehicles_list) || level.spawned_vehicles_list.size == 0)
+    {
+        self iprintlnbold(pal("no vehicles to delete"));
+        return;
+    }
+
+    index = 0;
+
+    foreach (maybach in level.spawned_vehicles_list)
+    {
+        if (isdefined(maybach))
+        {
+            maybach delete();
+            index++;
+        }
+    }
+
+    level.spawned_vehicles_list = [];
+    self.last_spawned_vehicle = undefined;
+    self iprintlnbold("deleted " + pal(index) + " ^7vehicles");
+    self thread play_sound("ui_mp_flag_lost");
+}
+
+monitor_vehicle(whip) 
+{
+    self endon("disconnect");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        if (!isdefined(whip))
+            break;
+        
+        // lul
+        invincible = self custom_scripts\_util::getpers("vehicle_invincible");
+        if (isdefined(invincible) && invincible && isdefined(whip.godmode) && whip.godmode)
+        {
+            if (whip.health < whip.maxhealth)
+            {
+                whip.health = whip.maxhealth;
+            }
+        }
+        wait 0.5;
+    }
+}
+#endif
+
+#ifndef IW9
+    case "vehicles (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_dvar_toggle("allow vehicles", undefined, "scr_allow_vehicles");
+        self add_option("spawn vehicle", "^5" + self.neura["world"][client]["vehicles"][0].size + " ^7vehicles available", ::new_menu, "spawn vehicle (iw8)");
+        self add_array("delete vehicle", slider_controls, ::delete_vehicle, list("last,all"));
+        self add_increment("vehicle health", increment_controls, ::setpersmenu, int(self getpers("vehicle_health")), 100, 100000, int(self getpers("vehiclechangeby")), "vehicle_health");
+        self add_increment("vehicle offset", increment_controls, ::setpersmenu, int(self getpers("vehicle_offset")), 50, 1000, 50, "vehicle_offset");
+        self add_increment("change by", increment_controls, ::setpersmenu, int(self getpers("vehiclechangeby")), 50, 1000, 10, "vehiclechangeby");
+        self add_pers_toggle("vehicle invincibility", undefined, ::togglepers, "vehicle_invincible", true);
+        break;
+
+    case "spawn vehicle (iw8)":
+        self.bind_index = false;
+        self add_menu(menu);
+        for (i = 0; i < self.neura["world"][client]["vehicles"][0].size; i++) 
+        {
+            self add_option(self.neura["world"][client]["vehicles"][1][i], undefined, ::spawn_vehicle, self.neura["world"][client]["vehicles"][0][i]);
+        }
+        break;
+#endif 
+
+other funcs
+self thread check_event("show_final_killcam");
+self thread watch_weap_change(); - get full weapon names
+self thread give_perks(); - add this back later
+self thread watch_position();
+self thread monitor_recon_drone();
