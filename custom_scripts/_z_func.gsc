@@ -3625,8 +3625,6 @@ clone_myself()
 save_camera_node()
 {
     i = int(self custom_scripts\_util::getpers("nodecount"));
-    if (i == 13)
-        return self custom_scripts\_util::nprintln("^1max node points saved");
 
     // only delete preview if there's actually something to delete
     if (isdefined(level.camera["path"]) || isdefined(level.camera["obj"]))
@@ -3688,12 +3686,8 @@ set_camera_mode()
 {
     level.camera["type"] = self custom_scripts\_util::getpers("camera_mode");
     delete_camera_preview();
-    if (level.camera["type"] == "bezier" && level.camera["count"] > 13)
-    {
-        self iprintln(pal("13 ^7") + "camera points max");
-    }
 
-    if ((level.camera["type"] == "bezier" && level.camera["count"] <= 13 ) || level.camera["type"] == "linear") 
+    if (level.camera["type"] == "bezier" || level.camera["type"] == "linear") 
     {
         self iprintln(pal(level.camera["type"]) + " ^7mode");
         create_camera_preview();
