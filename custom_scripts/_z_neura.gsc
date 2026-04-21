@@ -161,6 +161,10 @@ setup_watch_memory()
     setdvar("NOSLRNTRKL", 0); // disable third person just in case
     setdvar("MSOOMPMPQS", 1); // unlimited sprint
     setdvar("LNOKTQPLKO", 0); // jump slowdown
+    
+    // reset this dvar because its on by default but returns 0?
+    setdvar("lfx_showDebugOverlay", 1);
+    setdvar("lfx_showDebugOverlay", 0);
 
     self setpers_if_uninitialized("unstuck", self.origin);
     

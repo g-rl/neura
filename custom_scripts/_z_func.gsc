@@ -3880,6 +3880,10 @@ reset_player_state(camera)
     self handle_camo();
     if (self getpers("camo") == "none")
         self switchtoweaponimmediate(self inventory()[0]);
+
+    // weird crouch glitch thing happening if in a barrier
+    wait 0.5;
+    self setstance("stand");
 }
 
 stop_camera_path()
