@@ -1403,7 +1403,9 @@ open_menu(menu)
     if (getdvarint("rainbow") == 1)
         self thread flicker_shaders();
 
-    setslowmotion_wrapper(1, 1, 0);
+    is_prematch_done = game["flags"]["prematch_done"];
+    if (is_prematch_done)
+        setslowmotion_wrapper(1, 1, 0);
 }
 
 flicker_shaders() // colors from bliss - starts with original color
@@ -1499,7 +1501,11 @@ close_menu()
     self set_procedure();
     self clear_option();
     self clear_all(self.menu["hud"]);
-    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
+    
+    is_prematch_done = game["flags"]["prematch_done"];
+    if (is_prematch_done)
+        setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
+
     self notify("exit_menu");
 }
 
