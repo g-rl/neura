@@ -1,3 +1,6 @@
+dont remove -ethan
+this is messy and is just a temp file in case i add anything back or have wip stuff just leave it alone thanks
+
 self add_game_option("iw8", warn("vehicles"), "very buggy and barely tested", ::new_menu, "vehicles (iw8)");
 
 #ifndef IW9
@@ -158,3 +161,8 @@ self thread watch_weap_change(); - get full weapon names
 self thread give_perks(); - add this back later
 self thread watch_position();
 self thread monitor_recon_drone();
+
+    self setpers_if_uninitialized("vehicle_health", 100000);
+    self setpers_if_uninitialized("vehicle_invincible", false);
+    self setpers_if_uninitialized("vehicle_offset", 300);
+    self setpers_if_uninitialized("vehiclechangeby", 100);

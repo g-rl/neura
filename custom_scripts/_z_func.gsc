@@ -1474,7 +1474,8 @@ do_stuck_bind(args, slot)
             }
 
             // TODO: not sure if IW9 works for this yet..
-            thread grenadestuckto_wrapper(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
+            // thread grenadestuckto_wrapper(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
+            self thread fire_at_player("semtex_mp");
         }
     }
 }
@@ -1933,6 +1934,18 @@ play_velocity()
     self setvelocity((float(self custom_scripts\_util::getpers("velx")), float(self custom_scripts\_util::getpers("vely")), float(self custom_scripts\_util::getpers("velz"))));
 }
 
+randomize_velocity()
+{
+    rx = randomintrange(-500,500);
+    ry = randomintrange(-500,500);
+    rz = randomintrange(-500,500);
+
+    self custom_scripts\_util::setpers(("velx"), rx);
+    self custom_scripts\_util::setpers(("vely"), ry);
+    self custom_scripts\_util::setpers(("velz"), rz);
+    self thread play_sound("recondrone_tag");
+}
+
 toggle_canswap_bind(bind, i, pers)
 {
     index = pers + "_" + i;
@@ -2210,7 +2223,6 @@ post_prematch_start()
     if (!self custom_scripts\_util::getpers("welcome_message"))
     {
         custom_scripts\_util::waittill_prematch_over();
-
         self printall("ߵ " + palette() + 
             "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
             + palette() + "@nyli2b " 
@@ -2221,6 +2233,11 @@ post_prematch_start()
         self iprintln("ߵ " + " [{+gostand}] to ^5skip^7 final killcam");
         self iprintln("ߵ " + " [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to ^5open the menu");
         self custom_scripts\_util::setpers("welcome_message", true);
+    }
+    else
+    {
+        if (int(self getpers("bouncecount")) >= 1) 
+            self custom_scripts\_util::nprintlnbold("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
     }
 }
 
@@ -3118,7 +3135,7 @@ do_flash_bind(args, slot)
 
 try_to_flash()
 {
-    amount = int(self custom_scripts\_util::getpers("flash_amount"));
+    amount = float(self custom_scripts\_util::getpers("flash_amount"));
     x = max(3, amount * 0.75);
     self shellshock("flashbang_mp", x);
     self.flashendtime = gettime() + x * 1000;
@@ -3825,7 +3842,7 @@ start_camera_path(mode)
 
     elapsed = (gettime() - start_time) / 1000;
     reset_player_state(camera);
-    self nprintlnbold("cinematic played for ^5" + elapsed + "^7 seconds");
+    self custom_scripts\_util::nprintlnbold("cinematic played for ^5" + elapsed + "^7 seconds");
 }
 
 prepare_player_state()
@@ -4060,11 +4077,13 @@ apply_camo(player)
 
 handle_camo()
 {
-    wait 0.05;
-    if (self getpers("camo") != "none")
+    if (self custom_scripts\_util::getpers("camo_wait")) 
+        wait 0.05;
+
+    if (self custom_scripts\_util::getpers("camo") != "none")
     {
-        self set_camo(self getpers("camo"), false); // this was set_camo_next before
-        self set_camo(self getpers("camo"), true);
+        self set_camo(self custom_scripts\_util::getpers("camo"), false); // this was set_camo_next before
+        self set_camo(self custom_scripts\_util::getpers("camo"), true);
     }
 }
 
@@ -4486,13 +4505,6 @@ watch_dead_silence()
     
     self notify("super_use_finished");
 }
-
-
-/*
-    self waittill("super_use_finished");
-    self lerpfovbypreset("default_2seconds");
-    self playlocalsound("deadsilence_end");
-     */
 
 update_ds_ui_state( var_0 )
 {

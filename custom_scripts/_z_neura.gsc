@@ -19,7 +19,7 @@ init()
     level._client_version = getdvar("build_version"); // build_version_full can be used for more in depth checks
 #endif
 
-    level.is_debug = true;
+    level.is_debug = false;
     level.session_data = [];
 
     // functions
@@ -172,7 +172,6 @@ setup_watch_memory()
     self setpers_if_uninitialized("eq_weapon", "c4_mp_p");
     self setpers_if_uninitialized("eq_putaway", false);
     self setpers_if_uninitialized("ufo_mode", true);
-    self setpers_if_uninitialized("timescale", false);
     self setpers_if_uninitialized("instaswaps_time", 0.3);
     self setpers_if_uninitialized("aimbot_range", 1200);
     self setpers_if_uninitialized("aimbot_delay", 0);
@@ -180,7 +179,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("saveposy", 0);
     self setpers_if_uninitialized("saveposz", 0);
     self setpers_if_uninitialized("poschangeby", 10);
-    self setpers_if_uninitialized("inf_eq", false);
+    self setpers_if_uninitialized("inf_eq", true);
     self setpers_if_uninitialized("clean_kc", true);
     self setpers_if_uninitialized("snl", true);
     self setpers_if_uninitialized("autoprone_endgame", true);
@@ -192,7 +191,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("autoreload", false);
     self setpers_if_uninitialized("autoprone", false);
     self setpers_if_uninitialized("instaswaps", false);
-    self setpers_if_uninitialized("aimbot", false);
+    self setpers_if_uninitialized("aimbot", true);
     self setpers_if_uninitialized("elevators", false);
     self setpers_if_uninitialized("alt_swap", false);
     self setpers_if_uninitialized("replace_weapon", true);
@@ -203,11 +202,11 @@ setup_watch_memory()
     self setpers_if_uninitialized("stuck_weapon", "semtex");
     self setpers_if_uninitialized("oob", true);
     self setpers_if_uninitialized("barriers", true);
-    self setpers_if_uninitialized("ks_auto_use", false);
+    self setpers_if_uninitialized("ks_auto_use", false); // look into
     self setpers_if_uninitialized("saved_streak", "none");
     self setpers_if_uninitialized("reload_streaks", false);
     self setpers_if_uninitialized("damage_amount", 50);
-    self setpers_if_uninitialized("flash_amount", 3);
+    self setpers_if_uninitialized("flash_amount", 0.25);
     self setpers_if_uninitialized("shellshock_type", "frag_grenade_mp");
     self setpers_if_uninitialized("shellshock_amount", 0.22);
     self setpers_if_uninitialized("elem_itemtype", true);
@@ -223,10 +222,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("ccb_one_bullet_left", false);
     self setpers_if_uninitialized("ccb_illusion", false);
     self setpers_if_uninitialized("camo", "none");
-    self setpers_if_uninitialized("vehicle_health", 100000);
-    self setpers_if_uninitialized("vehicle_invincible", false);
-    self setpers_if_uninitialized("vehicle_offset", 300);
-    self setpers_if_uninitialized("vehiclechangeby", 100);
+    self setpers_if_uninitialized("last_camo", "none");
     self setpers_if_uninitialized("welcome_message", false);
     self setpers_if_uninitialized("random_rounds", true);
     self setpers_if_uninitialized("auto_pause_timer", true);
@@ -254,6 +250,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("enemy_saved_class", false);
     self setpers_if_uninitialized("dead_silence_auto", true);
     self setpers_if_uninitialized("dead_silence_duration", 5);
+    self setpers_if_uninitialized("camo_wait", true);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -298,11 +295,10 @@ setup_watch_memory()
 
 watch_memory()
 {
-    if (int(self getpers("bouncecount")) >= 1)
+    if (int(self getpers("bouncecount")) >= 1) 
     {
         self notify("stop_bounce_loop");
         self thread monitor_bounces();
-        self iprintln("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
     }
 
     // reload persistence & binds
@@ -403,13 +399,4 @@ init_camera()
     level.camera["active_cam"] = undefined;
     level.camera["running"] = false;
     level.disablespawncamera = 1;
-}
-
-init_effects()
-{
-    level._effect["breach_explode"] = loadfx("vfx/iw8_mp/breaches/vfx_gen_door_breach_thick.vfx");
-    level._effect["emp_stun"] = loadfx( "vfx/core/mp/equipment/vfx_emp_grenade" );
-    level._effect["equipment_explode_big"] = loadfx( "vfx/core/mp/killstreaks/vfx_ims_explosion" );
-    level._effect["equipment_smoke"] = loadfx( "vfx/core/mp/killstreaks/vfx_sg_damage_blacksmoke" );
-    level._effect["equipment_sparks"] = loadfx( "vfx/core/mp/killstreaks/vfx_sentry_gun_explosion.vfx" );
 }

@@ -370,11 +370,9 @@ waittill_nengine_has_read()
     }
 }
 
-palette()
+palette() // ^: has been readded so rewrite everything using palette to just that eventually
 {
-    colors = ["^1", "^2", "^3", "^4", "^5", "^6", "^7", "^:", "^+", "^(", "^)", "^.", "^,", "^;", "^*"];
-    option = colors[randomint(colors.size)];
-    return option;
+    return "^:";
 }
 
 pal(text)

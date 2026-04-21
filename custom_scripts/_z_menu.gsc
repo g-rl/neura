@@ -13,7 +13,7 @@ structure()
     build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("dead silence,care package stall,start camera,hitmarker,bounce,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,freeze anim,instaswap,nac,change class,pullout equipment,damage,illusion,stuck,velocity,record movement,bolt movement,bot bolt movement,canswap,spectator,scavenger,empty clip,one bullet");
+    bind_list = list("nac,change class,pullout equipment,freeze anim,illusion,velocity,bounce,record movement,bolt movement,bot bolt movement,canswap,dead silence,care package stall,hitmarker,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,instaswap,damage,stuck,spectator,scavenger,empty clip,one bullet,start camera");
     gametype = scripts\mp\utility\game::getgametype();
     // do we need to call like custom_scripts\_z_func::function?
     switch(menu)
@@ -141,7 +141,7 @@ structure()
         self add_pers_toggle("real dead silence", "auto fades out dead silence", custom_scripts\_z_func::togglepers, "dead_silence_auto", true);
         if (self custom_scripts\_util::getpers("dead_silence_auto")) self add_increment("dead silence time", increment_controls, ::setpersmenu, int(self getpers("dead_silence_duration")), 1, 30, 1, "dead_silence_duration");  
         self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
-        self add_increment("flash amount", increment_controls, ::setpersmenu, int(self getpers("flash_amount")), 1, 5, 1, "flash_amount");
+        self add_increment("flash amount", increment_controls, ::setpersmenu, float(self getpers("flash_amount")), 1, 5, 0.25, "flash_amount");
         self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
         self add_game_array("iw8", "shellshock type", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
         break;
@@ -191,7 +191,8 @@ structure()
         self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
         self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
-        self add_option("play velocity", undefined, ::play_velocity);
+        self add_option("randomize values", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::randomize_velocity);
+        self add_option("play velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::play_velocity);
         break;
 
     case "switch to equipment (iw8)":
@@ -243,7 +244,7 @@ structure()
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
         self add_game_option("iw8", "streak manager", "streaks for ^5iw8", ::new_menu, "streaks (iw8)");
-        self add_game_option("iw8", "apply random camo", "saves through classes & binds", ::apply_camo, self);
+        self add_game_option("iw8", "apply random camo", "currently set: ^5" + self custom_scripts\_util::getpers("camo"), ::apply_camo, self);
         break;
 
     case "primaries (iw8)":
@@ -376,6 +377,8 @@ structure()
         self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_hud, "no_hud");
         self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
+        // i have a wait for our handle_camo toggle because on my end its iffy with a delay so just keep this -ethan
+        self add_pers_toggle(warn("wait for handle camo"), "only disable if issue with swapping", ::togglepers, "camo_wait", true);
         self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
         self add_toggle("debug menu", undefined, ::debug_menu, level.is_debug);
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
@@ -487,7 +490,7 @@ player_index(menu, player, slider_controls)
             self add_option("set kill bind target", undefined, ::set_selected_player, player);
             self add_game_option("iw8", "give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
             self add_game_option("iw8", "save class", undefined, ::save_enemy_class);
-            self add_game_option("iw8", "apply random camo", undefined, ::apply_camo, player);
+            self add_game_option("iw8", "apply random camo", "currently set: ^5" + player custom_scripts\_util::getpers("camo"), ::apply_camo, player);
             self add_game_option("iw9", "give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
             self add_option("look at me", undefined, ::look_at_me, player);
             self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, player, self getcurrentweapon());
@@ -1400,6 +1403,7 @@ open_menu(menu)
     if (getdvarint("rainbow") == 1)
         self thread flicker_shaders();
 
+    setslowmotion_wrapper(1, 1, 0);
 }
 
 flicker_shaders() // colors from bliss - starts with original color
@@ -1495,6 +1499,7 @@ close_menu()
     self set_procedure();
     self clear_option();
     self clear_all(self.menu["hud"]);
+    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
     self notify("exit_menu");
 }
 
