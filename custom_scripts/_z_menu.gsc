@@ -133,7 +133,8 @@ structure()
         self add_game_option("iw8", "choose equipment", undefined, ::new_menu, "equipment bind (iw8)");
         self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
         self add_game_array("iw8", "stuck weapon", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
-        self add_pers_toggle("putaway equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
+        self add_pers_toggle("put away equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
+        if (self custom_scripts\_util::getpers("eq_putaway")) self add_increment("put away time", increment_controls, ::setpersmenu, int(self getpers("eq_putaway_time")), 0.05, 30, 0.05, "eq_putaway_time");  
         self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
         self add_pers_toggle("repeater illusions", undefined, custom_scripts\_z_func::togglepers, "repeater_illusion", true);
         self add_pers_toggle("unlink after bar", "for care package & hack stalls", custom_scripts\_z_func::togglepers, "unlink_after_bar", true);

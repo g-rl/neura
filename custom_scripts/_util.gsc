@@ -2,6 +2,14 @@
 
 void() {}
 
+neura_bots() // moving this here in case i want to do more things with bots
+{
+    self setpers_if_uninitialized("camo", "none");
+    self thread reload_position();
+    self thread apply_camo();
+    self thread handle_camo();
+}
+
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
     for (i = 0; i < 4; i++) 

@@ -105,6 +105,7 @@ on_player_spawned()
         self thread handle_camo();
         self thread monitor_class();
 
+// are you sure this doesn't work on s4 or just trying
 #ifndef S4
         self thread clear_prematch_look();
 #endif
@@ -121,13 +122,15 @@ setup_dvars()
     setdvarifuninitialized("scr_killcam_time", 5);
 
     // these still don't stop bots from being auto kicked due to team balance
+    // edit: please look at this do we need a bot patch or something?? -ethan
+
     level.bots_disable_team_switching = 1;
     level notify("bot_connect_monitor");
     level.pausing_bot_connect_monitor = 1;
     level notify("bot_monitor_team_limits");
 }
 
-on_bot_spawned()
+on_bot_spawned() // we setup bot loadouts, positions etc here
 {
     self endon("disconnect");
     level endon("game_ended");
@@ -135,15 +138,13 @@ on_bot_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-        self setpers_if_uninitialized("camo", "none");
-        self thread reload_position();
-        self thread apply_camo();
-        self thread handle_camo();
+        self thread custom_scripts\_util::neura_bots(); // calling direcly to be safe
     }
 }
 
 setup_watch_memory()
 {
+    // look into more effects
     self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
     setdvarifuninitialized("rainbow", 1);
 
@@ -171,6 +172,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("soh", true);
     self setpers_if_uninitialized("eq_weapon", "c4_mp_p");
     self setpers_if_uninitialized("eq_putaway", false);
+    self setpers_if_uninitialized("eq_putaway_time", 0.05);
     self setpers_if_uninitialized("ufo_mode", true);
     self setpers_if_uninitialized("instaswaps_time", 0.3);
     self setpers_if_uninitialized("aimbot_range", 1200);

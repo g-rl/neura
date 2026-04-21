@@ -1204,6 +1204,7 @@ do_eq_bind(args, slot)
 
             if (self custom_scripts\_util::getpers("eq_putaway"))
             {
+                wait (self custom_scripts\_util::getpers("eq_putaway_time"));
                 self switchtoweapon(x);
             }
         }
