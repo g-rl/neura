@@ -81,7 +81,7 @@ on_player_spawned()
         self thread watch_round_end();
         self thread handle_camo();
 
-        if (float(self getpers("slomo")) != 1)
+        if (float(self getpers("slow_motion")) != 1)
             self thread reload_timescale();
 
         if (isdefined(origin) && isvector(origin))
@@ -162,97 +162,114 @@ setup_watch_memory()
     setdvar("MSOOMPMPQS", 1); // unlimited sprint
     setdvar("LNOKTQPLKO", 0); // jump slowdown
 
-    self setpers_if_uninitialized("unlimited_lives", true);
     self setpers_if_uninitialized("unstuck", self.origin);
-    self setpers_if_uninitialized("velx", 250);
-    self setpers_if_uninitialized("vely", 250);
-    self setpers_if_uninitialized("velz", 250);
-    self setpers_if_uninitialized("class_wrap", "5");
-    self setpers_if_uninitialized("class_can", true);
-    self setpers_if_uninitialized("soh", true);
-    self setpers_if_uninitialized("eq_weapon", "c4_mp_p");
-    self setpers_if_uninitialized("eq_putaway", false);
-    self setpers_if_uninitialized("eq_putaway_time", 0.05);
-    self setpers_if_uninitialized("ufo_mode", true);
-    self setpers_if_uninitialized("instaswaps_time", 0.3);
-    self setpers_if_uninitialized("aimbot_range", 1200);
-    self setpers_if_uninitialized("aimbot_delay", 0);
+    
+    // add change save & load binds
+    self setpers_if_uninitialized("snl", true);
     self setpers_if_uninitialized("saveposx", 0);
     self setpers_if_uninitialized("saveposy", 0);
     self setpers_if_uninitialized("saveposz", 0);
     self setpers_if_uninitialized("poschangeby", 10);
-    self setpers_if_uninitialized("inf_eq", true);
-    self setpers_if_uninitialized("clean_kc", true);
-    self setpers_if_uninitialized("snl", true);
-    self setpers_if_uninitialized("autoprone_endgame", true);
-    self setpers_if_uninitialized("autoprone_mode", "air");
-    self setpers_if_uninitialized("frozen_bots", true);
-    self setpers_if_uninitialized("messages", true);
-    self setpers_if_uninitialized("sounds", true);
-    self setpers_if_uninitialized("invincible", true);
-    self setpers_if_uninitialized("autoreload", false);
-    self setpers_if_uninitialized("autoprone", false);
-    self setpers_if_uninitialized("instaswaps", false);
-    self setpers_if_uninitialized("aimbot", true);
-    self setpers_if_uninitialized("elevators", false);
-    self setpers_if_uninitialized("alt_swap", false);
-    self setpers_if_uninitialized("replace_weapon", true);
-    self setpers_if_uninitialized("saved_class", false);
+
     self setpers_if_uninitialized("velocitychangeby", 50);
-    self setpers_if_uninitialized("real_scavenger", true);
-    self setpers_if_uninitialized("headbounces", false);
-    self setpers_if_uninitialized("stuck_weapon", "semtex");
-    self setpers_if_uninitialized("oob", true);
-    self setpers_if_uninitialized("barriers", true);
-    self setpers_if_uninitialized("ks_auto_use", false); // look into
-    self setpers_if_uninitialized("saved_streak", "none");
-    self setpers_if_uninitialized("reload_streaks", false);
-    self setpers_if_uninitialized("damage_amount", 50);
-    self setpers_if_uninitialized("flash_amount", 0.25);
-    self setpers_if_uninitialized("shellshock_type", "frag_grenade_mp");
-    self setpers_if_uninitialized("shellshock_amount", 0.22);
-    self setpers_if_uninitialized("hide_itemtype", true);
-    self setpers_if_uninitialized("hide_victim", false);
-    self setpers_if_uninitialized("hide_perks", true);
-    self setpers_if_uninitialized("hide_attachments", true);
-    self setpers_if_uninitialized("slomo", 1);
-    self setpers_if_uninitialized("slomo_mode", "normal");
-    self setpers_if_uninitialized("always_nac", false);
+    self setpers_if_uninitialized("velx", 250);
+    self setpers_if_uninitialized("vely", 250);
+    self setpers_if_uninitialized("velz", 250);
+
+    self setpers_if_uninitialized("class_wrap", "5");
+    self setpers_if_uninitialized("class_can", true);
     self setpers_if_uninitialized("ccb_always_can", true);
     self setpers_if_uninitialized("ccb_empty_clip", false);
     self setpers_if_uninitialized("ccb_one_bullet_out", true);
     self setpers_if_uninitialized("ccb_one_bullet_left", false);
     self setpers_if_uninitialized("ccb_illusion", false);
-    self setpers_if_uninitialized("camo", "none");
-    self setpers_if_uninitialized("last_camo", "none");
+
+    self setpers_if_uninitialized("eq_weapon", "c4_mp_p");
+    self setpers_if_uninitialized("eq_putaway", false);
+    self setpers_if_uninitialized("eq_putaway_time", 0.05);
+
+    self setpers_if_uninitialized("aimbot", true);
+    self setpers_if_uninitialized("aimbot_range", 1200);
+    self setpers_if_uninitialized("aimbot_delay", 0);
+    self setpers_if_uninitialized("kill_effects", false);
+    self setpers_if_uninitialized("kill_effect", "claymore_explode");
+
+    self setpers_if_uninitialized("soh", true);
+    self setpers_if_uninitialized("ufo_mode", true);
+    self setpers_if_uninitialized("invincible", true);
+    self setpers_if_uninitialized("unlimited_lives", true);
+    self setpers_if_uninitialized("instaswaps", false);
+    self setpers_if_uninitialized("instaswaps_time", 0.3);
+    self setpers_if_uninitialized("autoreload", false);
+    self setpers_if_uninitialized("autoprone", false);
+    self setpers_if_uninitialized("autoprone_endgame", true);
+    self setpers_if_uninitialized("autoprone_mode", "air");
+    self setpers_if_uninitialized("elevators", false);
+    self setpers_if_uninitialized("alt_swap", false);
+    self setpers_if_uninitialized("headbounces", false);
+    self setpers_if_uninitialized("always_nac", false);
+
+    // todo: hide field upgrades
+    self setpers_if_uninitialized("clean_kc", true);
+    self setpers_if_uninitialized("hide_itemtype", true);
+    self setpers_if_uninitialized("hide_victim", false);
+    self setpers_if_uninitialized("hide_perks", true);
+    self setpers_if_uninitialized("hide_attachments", true);
+
+    // game
     self setpers_if_uninitialized("welcome_message", false);
     self setpers_if_uninitialized("random_rounds", true);
     self setpers_if_uninitialized("auto_pause_timer", true);
     self setpers_if_uninitialized("randomize_timer_pause", true);
     self setpers_if_uninitialized("pause_timer_after", 120);
-    self setpers_if_uninitialized("has_selected_bot", false);
-    self setpers_if_uninitialized("selected_bot", false);
+    self setpers_if_uninitialized("slow_motion", 1);
+    self setpers_if_uninitialized("slow_motion_mode", "normal");
+    self setpers_if_uninitialized("oob", true);
+    self setpers_if_uninitialized("barriers", true);
+    self setpers_if_uninitialized("messages", true);
+    self setpers_if_uninitialized("sounds", true);
+    self setpers_if_uninitialized("no_hud", false);
+    self setpers_if_uninitialized("menu_lock", false);
+
     self setpers_if_uninitialized("camera_rotation", 1);
     self setpers_if_uninitialized("camera_mode", "bezier");
     self setpers_if_uninitialized("camera_get_start_type", "speed");
     self setpers_if_uninitialized("camera_bezier_speed", 3);
     self setpers_if_uninitialized("camera_linear_time", 10);
     self setpers_if_uninitialized("nodecount", "0");
-    self setpers_if_uninitialized("kill_effects", false);
-    self setpers_if_uninitialized("kill_effect", "claymore_explode");
-    self setpers_if_uninitialized("bj_speed", 1.3);
+
+    self setpers_if_uninitialized("dead_silence_auto", true);
+    self setpers_if_uninitialized("repeater_illusion", false);
+    self setpers_if_uninitialized("unlink_after_bar", true);
+    self setpers_if_uninitialized("real_scavenger", true);
+    self setpers_if_uninitialized("damage_amount", 50);
+    self setpers_if_uninitialized("flash_amount", 0.25);
+    self setpers_if_uninitialized("shellshock_amount", 0.22);
+    self setpers_if_uninitialized("spectate_time", 0.1);
+    self setpers_if_uninitialized("dead_silence_time", 5);
+    self setpers_if_uninitialized("stuck_weapon", "semtex");
+    self setpers_if_uninitialized("shellshock_type", "frag_grenade_mp");
+
+    self setpers_if_uninitialized("reload_streaks", false);
+    self setpers_if_uninitialized("saved_streak", "none");
+
+    self setpers_if_uninitialized("replace_weapon", true);
+    self setpers_if_uninitialized("saved_class", false);
+    self setpers_if_uninitialized("enemy_saved_class", false);
+    self setpers_if_uninitialized("camo", "none");
+    self setpers_if_uninitialized("last_camo", "none");
+    self setpers_if_uninitialized("camo_wait", true);
+    self setpers_if_uninitialized("inf_eq", true);
+
+    self setpers_if_uninitialized("has_selected_bot", false);
+    self setpers_if_uninitialized("selected_bot", false);
+    self setpers_if_uninitialized("frozen_bots", true);
+
     self setpers_if_uninitialized("modelcount", "0");
+    self setpers_if_uninitialized("bj_speed", 1.3);
+
     self setpers_if_uninitialized("platform_origin", false);
     self setpers_if_uninitialized("platform_clip", "clip32x32x32");
-    self setpers_if_uninitialized("repeater_illusion", false);
-    self setpers_if_uninitialized("no_hud", false);
-    self setpers_if_uninitialized("menu_lock", false);
-    self setpers_if_uninitialized("spectate_time", 0.1);
-    self setpers_if_uninitialized("unlink_after_bar", true);
-    self setpers_if_uninitialized("enemy_saved_class", false);
-    self setpers_if_uninitialized("dead_silence_auto", true);
-    self setpers_if_uninitialized("dead_silence_duration", 5);
-    self setpers_if_uninitialized("camo_wait", true);
 
     // player bolt movement
     self setpers_if_uninitialized("boltcount", "0");
@@ -260,7 +277,6 @@ setup_watch_memory()
     for (i = 1; i < 8; i++)
     {
         self setpers_if_uninitialized("boltpos" + i, "0");
-        //wait 0.05;
     }
 
     // bot bolt movement

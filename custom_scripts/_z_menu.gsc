@@ -140,7 +140,7 @@ structure()
         self add_pers_toggle("unlink after bar", "for care package & hack stalls", custom_scripts\_z_func::togglepers, "unlink_after_bar", true);
         self add_increment("spectator repeater time", increment_controls, ::setpersmenu, float(self getpers("spectate_time")), 0.1, 2, 0.1, "spectate_time");   
         self add_pers_toggle("real dead silence", "auto fades out dead silence", custom_scripts\_z_func::togglepers, "dead_silence_auto", true);
-        if (self custom_scripts\_util::getpers("dead_silence_auto")) self add_increment("dead silence time", increment_controls, ::setpersmenu, int(self getpers("dead_silence_duration")), 1, 30, 1, "dead_silence_duration");  
+        if (self custom_scripts\_util::getpers("dead_silence_auto")) self add_increment("dead silence time", increment_controls, ::setpersmenu, int(self getpers("dead_silence_time")), 1, 30, 1, "dead_silence_time");  
         self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
         self add_increment("flash amount", increment_controls, ::setpersmenu, float(self getpers("flash_amount")), 1, 5, 0.25, "flash_amount");
         self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
@@ -405,7 +405,7 @@ structure()
         self add_menu(menu);
         self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
         self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
-        self add_increment("timescale", increment_controls, ::set_timescale, float(self getpers("slomo")), 0.25, 10, 0.25); 
+        self add_increment("timescale", increment_controls, ::set_timescale, float(self getpers("slow_motion")), 0.25, 10, 0.25); 
         self add_array("timescale mode", slider_controls, ::rewatch_round, list("round end,start of killcam,normal"));
         self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
         // self add_increment("knockback", increment_controls, ::set_knockback, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
@@ -1505,7 +1505,7 @@ close_menu()
     
     is_prematch_done = game["flags"]["prematch_done"];
     if (is_prematch_done)
-        setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
+        setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slow_motion")), float(self custom_scripts\_util::getpers("slow_motion")), 0);
 
     self notify("exit_menu");
 }

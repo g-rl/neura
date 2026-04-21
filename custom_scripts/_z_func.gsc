@@ -1894,7 +1894,7 @@ do_hitmarker_bind(args, slot)
 #else
             self scripts\mp\damagefeedback::updatedamagefeedback("standard", 0, 0, "standard", 0);
 #endif
-            self playlocalsound("gib_fullbody");
+            self play_sound("gib_fullbody");
             wait 0.2;
         }
     }
@@ -2366,14 +2366,6 @@ give_streak(streak)
     {
         self iprintlnbold("invalid killstreak: ^1" + streak);
         return;
-    }
-
-
-    // don't think this works
-    if (self custom_scripts\_util::getpers("ks_auto_use"))
-    {
-        wait 0.05;
-        self notify("ks_action_4");
     }
 
     self thread play_sound("ui_killstreak_select");
@@ -3174,13 +3166,13 @@ setslowmotion_wrapper(a1, a2, a3)
 
 set_timescale(timescale)
 {
-    self custom_scripts\_util::setpers("slomo", float(timescale));
-    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
+    self custom_scripts\_util::setpers("slow_motion", float(timescale));
+    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slow_motion")), float(self custom_scripts\_util::getpers("slow_motion")), 0);
 }
 
 rewatch_round(mode)
 {
-    self custom_scripts\_util::setpers("slomo_mode", mode);
+    self custom_scripts\_util::setpers("slow_motion_mode", mode);
     self notify("rewatch_round");
     self thread watch_round_end();
 }
@@ -3189,16 +3181,16 @@ watch_round_end()
 {
     self endon("rewatch_round");
 
-    if (self custom_scripts\_util::getpers("slomo_mode") == "normal")
+    if (self custom_scripts\_util::getpers("slow_motion_mode") == "normal")
         return;
 
-    if (self custom_scripts\_util::getpers("slomo_mode") == "round end")
+    if (self custom_scripts\_util::getpers("slow_motion_mode") == "round end")
     {
         level waittill("game_ended");
         setslowmotion_wrapper(1, 1, 0);
     }
 
-    if (self custom_scripts\_util::getpers("slomo_mode") == "start of killcam")
+    if (self custom_scripts\_util::getpers("slow_motion_mode") == "start of killcam")
     {
         self waittill("showing_final_killcam");
         setslowmotion_wrapper(1, 1, 0);
@@ -3211,7 +3203,7 @@ reload_timescale()
     level endon("game_ended");
     self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
-    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slomo")), float(self custom_scripts\_util::getpers("slomo")), 0);
+    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slow_motion")), float(self custom_scripts\_util::getpers("slow_motion")), 0);
 }
 
 save_path()
@@ -4458,7 +4450,7 @@ start_dead_silence()
         scripts\mp\utility\perk::removeperk("specialty_lightweight");
 
         self lerpfovbypreset("default_2seconds");
-        self playlocalsound("deadsilence_end");
+        self play_sound("deadsilence_end");
 
         self notify("super_use_finished");
         return;
@@ -4472,7 +4464,7 @@ start_dead_silence()
     scripts\mp\utility\perk::giveperk("specialty_no_battle_chatter");
     scripts\mp\utility\perk::giveperk("specialty_lightweight");
 
-    self playlocalsound("deadsilence_start");
+    self play_sound("deadsilence_start");
     self lerpfovbypreset("zombiedefault");
 
     if (self custom_scripts\_util::getpers("dead_silence_auto"))
@@ -4490,7 +4482,7 @@ watch_dead_silence()
     if (!isdefined(self.in_dead_silence))
         return;
 
-    time = int(self custom_scripts\_util::getpers("dead_silence_duration"));
+    time = int(self custom_scripts\_util::getpers("dead_silence_time"));
     wait (time);
     self.in_dead_silence = undefined;
     update_ds_ui_state(2);
@@ -4502,7 +4494,7 @@ watch_dead_silence()
     scripts\mp\utility\perk::removeperk("specialty_lightweight");
 
     self lerpfovbypreset("default_2seconds");
-    self playlocalsound("deadsilence_end");
+    self play_sound("deadsilence_end");
     
     self notify("super_use_finished");
 }
