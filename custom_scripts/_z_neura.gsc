@@ -211,10 +211,10 @@ setup_watch_memory()
     self setpers_if_uninitialized("flash_amount", 0.25);
     self setpers_if_uninitialized("shellshock_type", "frag_grenade_mp");
     self setpers_if_uninitialized("shellshock_amount", 0.22);
-    self setpers_if_uninitialized("elem_itemtype", true);
-    self setpers_if_uninitialized("elem_victim", true);
-    self setpers_if_uninitialized("elem_perks", true);
-    self setpers_if_uninitialized("elem_attachments", true);
+    self setpers_if_uninitialized("hide_itemtype", true);
+    self setpers_if_uninitialized("hide_victim", false);
+    self setpers_if_uninitialized("hide_perks", true);
+    self setpers_if_uninitialized("hide_attachments", true);
     self setpers_if_uninitialized("slomo", 1);
     self setpers_if_uninitialized("slomo_mode", "normal");
     self setpers_if_uninitialized("always_nac", false);

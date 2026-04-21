@@ -394,10 +394,10 @@ structure()
         self add_menu(menu);
         self add_pers_toggle("allow hud edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
         self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
-        self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "elem_itemtype", true);
-        self add_pers_toggle("hide victim", undefined, ::togglepers, "elem_victim", true);
-        self add_pers_toggle("hide perks", undefined, ::togglepers, "elem_perks", true);
-        self add_pers_toggle("hide attachments", undefined, ::togglepers, "elem_attachments", true);
+        self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "hide_itemtype", true);
+        self add_pers_toggle("hide victim", undefined, ::togglepers, "hide_victim", true);
+        self add_pers_toggle("hide perks", undefined, ::togglepers, "hide_perks", true);
+        self add_pers_toggle("hide attachments", undefined, ::togglepers, "hide_attachments", true);
         break;
 
     case "dvars":

@@ -2189,7 +2189,7 @@ clean_killcam(args)
 
     for (;;)
     {
-        if (self custom_scripts\_util::getpers("elem_itemtype"))
+        if (self custom_scripts\_util::getpers("hide_itemtype"))
         {
             self setclientomnvar("ui_killcam_killedby_item_type", -1);
             self setclientomnvar("ui_killcam_killedby_item_id", -1);
@@ -2197,18 +2197,18 @@ clean_killcam(args)
             self setclientomnvar("ui_killcam_killedby_weapon_rarity", -1);
         }
 
-        if (self custom_scripts\_util::getpers("elem_victim"))
+        if (self custom_scripts\_util::getpers("hide_victim"))
         {
             self setclientomnvar("ui_killcam_victim_id", -1);
         }
 
-        if (self custom_scripts\_util::getpers("elem_perks"))
+        if (self custom_scripts\_util::getpers("hide_perks"))
         {
             for (x = 0; x < 6; x++)
                 self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
         }
 
-        if (self custom_scripts\_util::getpers("elem_attachments"))
+        if (self custom_scripts\_util::getpers("hide_attachments"))
         {
             for (x = 0; x < 8; x++)
                 self setclientomnvar("ui_killcam_killedby_attachment" + (x + 1), -1);
