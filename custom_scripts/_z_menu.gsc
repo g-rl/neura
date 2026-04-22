@@ -712,7 +712,7 @@ initial_monitor()
     level endon("game_ended");
     self endon("disconnect");
 
-    thread monitor_menu_close();
+    self thread monitor_menu_close();
 
     for(;;)
     {

@@ -479,15 +479,6 @@ reload_position()
 
     if (!isdefined(posx))
     {
-        // preset bot positions - setting preset for self is being weird
-        /*
-        if (isdefined(level.bot_pos) && isvector(level.bot_pos[0]))
-        {
-            self setorigin(level.bot_pos[0]);
-            self setplayerangles(level.bot_pos[1]);
-            return;
-        }
-        */
         return;
     }
 
@@ -3454,21 +3445,21 @@ check_dvars(dvars)
     }
 }
 
-#ifndef S4
 clear_prematch_look()
 {
     // pretty sure we don't need to run all these the whole time 
     level.matchcountdowntime = 0;
+    self.prematchlook = undefined;
+
     self setclientomnvar("ui_match_start_countdown", 0);
     self setclientomnvar("ui_match_in_progress", 1);
-    scripts\mp\playerlogic::clearprematchlook(self);
+    self freezecontrols(0);
     
     while (isdefined(level.matchcountdowntime)) 
     {
         wait 0.05;
     }
 }
-#endif
 
 wait_for_round_end()
 {
@@ -3892,8 +3883,8 @@ reset_player_state(camera)
         self switchtoweaponimmediate(self inventory()[0]);
 
     // weird crouch glitch thing happening if in a barrier
-    wait 0.5;
-    self setstance("stand");
+    // wait 0.5;
+    // self setstance("stand");
 }
 
 stop_camera_path()

@@ -104,11 +104,7 @@ on_player_spawned()
         self thread post_prematch_start();
         self thread handle_camo();
         self thread monitor_class();
-
-// are you sure this doesn't work on s4 or just trying
-#ifndef S4
         self thread clear_prematch_look();
-#endif
 
         // return any streaks to player last (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");
