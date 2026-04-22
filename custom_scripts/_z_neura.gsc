@@ -138,7 +138,7 @@ on_bot_spawned() // we setup bot loadouts, positions etc here
     for (;;)
     {
         self waittill("spawned_player");
-        self thread custom_scripts\_util::neura_bots(); // calling direcly to be safe
+        self thread custom_scripts\_z_func::neura_bots(); // calling direcly to be safe
     }
 }
 

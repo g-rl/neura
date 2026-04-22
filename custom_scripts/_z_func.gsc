@@ -463,6 +463,14 @@ load_spawn()
     self setplayerangles((float(self custom_scripts\_util::getpers("saveangles1")), float(self custom_scripts\_util::getpers("saveangles2")), float(self custom_scripts\_util::getpers("saveangles3"))));
 }
 
+neura_bots() // moving this here in case i want to do more things with bots
+{
+    self setpers_if_uninitialized("camo", "none");
+    self thread reload_position();
+    self thread apply_camo();
+    self thread handle_camo();
+}
+
 reload_position()
 {
     posx = self custom_scripts\_util::getpers("saveposx");
@@ -1891,6 +1899,8 @@ do_hitmarker_bind(args, slot)
         {
 #ifdef S4
             self _id_07C4::_id_FC47("standard", 0, 0, "standard", 0);
+#elifdef IW9
+            self _id_5762AC2F22202BA2::updatedamagefeedback("standard", 0, 0, "standard", 0);
 #else
             self scripts\mp\damagefeedback::updatedamagefeedback("standard", 0, 0, "standard", 0);
 #endif
@@ -4329,7 +4339,7 @@ lock_menu()
 
     self iprintlnbold("[{+melee_zoom}] ^5&^7 [{+speed_throw}] while prone to unlock");
     self thread play_sound("javelin_clu_lock");
-    self custom_scripts\_z_menu::close_menu();
+    self.force_close_menu = true; // use this instead of _z_menu::closemenu as you cant call it before its loaded
 }
 
 watch_for_unlock(args) 

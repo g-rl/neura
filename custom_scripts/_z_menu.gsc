@@ -687,12 +687,34 @@ initial_variable()
     self set_title(self get_menu());
 }
 
+monitor_menu_close()
+{
+    self endon("disconnect");
+    level endon("game_ended");
+
+    self.force_close_menu = false;
+
+    for(;;)
+    {
+        if (self.force_close_menu)
+        {
+            self close_menu_if_open();
+            self.force_close_menu = false;
+        }
+
+        wait 0.05;
+    }
+}
+
 // add sfx for each game -et
 initial_monitor()
 {
     level endon("game_ended");
     self endon("disconnect");
-    for (;;)
+
+    thread monitor_menu_close();
+
+    for(;;)
     {
         if (isalive(self))
         {
