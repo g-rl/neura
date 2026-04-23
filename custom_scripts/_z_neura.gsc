@@ -111,7 +111,6 @@ on_player_spawned()
         self thread clear_prematch_look();
 
         // return any streaks to player last (if saved)
-        
         saved = self custom_scripts\_util::getpers("saved_streak");
         if (isdefined(saved) && saved != "none")
             self thread give_streak(saved);
