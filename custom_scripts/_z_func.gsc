@@ -3360,21 +3360,6 @@ skip_final_killcam()
     self thread skip_killcam();
 }
 
-press_to_restart_round()
-{
-    self waittill("game_ended");
-    self thread watch_round_restart();
-}
-
-watch_round_restart()
-{
-    self endon("showing_final_killcam");
-    self endon("stop_watching_restart");
-    self waittill("button_pressed_+gostand");
-    map_restart(1);
-    self notify("stop_watching_restart");
-}
-
 skip_killcam()
 {
     self endon("stop_waiting_killcam");

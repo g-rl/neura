@@ -104,7 +104,6 @@ on_player_spawned()
         }
 
         self thread skip_final_killcam();
-        self thread press_to_restart_round();
         self thread wait_for_round_end();
         self thread post_prematch_start();
         self thread handle_camo();
