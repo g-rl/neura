@@ -42,12 +42,12 @@ structure()
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
 
         // engine toggles
-        self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
-        self add_dvar_toggle("always canswap", undefined, "pan_alwayscanswap");
-        self add_dvar_toggle("sprint swaps", undefined, "pan_sprintswaps");
-        self add_dvar_toggle("freeze anim", undefined, "pan_freezeanim");
-        self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
-        self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");
+        self add_dvar_toggle("instashoots", undefined, get_dvar_name("pan_instashoots"));
+        self add_dvar_toggle("always canswap", undefined, get_dvar_name("pan_alwayscanswap"));
+        self add_dvar_toggle("sprint swaps", undefined, get_dvar_name("pan_sprintswaps"));
+        self add_dvar_toggle("freeze anim", undefined, get_dvar_name("pan_freezeanim"));
+        self add_dvar_toggle("canzooms", undefined, get_dvar_name("pan_canzooms"));
+        self add_dvar_toggle("always altswap", undefined, get_dvar_name("pan_alwaysaltswap"));
 
         self add_pers_toggle("always nac", "[{+weapnext}] to easily swap", custom_scripts\_z_func::always_nac, "always_nac");
         self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");

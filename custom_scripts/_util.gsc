@@ -400,3 +400,31 @@ allow_jump(1)
         allow_weapon_switch(1);
         allow_sprint(1);
 */
+
+// this is... funny
+register_dvar_hash_alias(dvar, hash)
+{
+    if (!isdefined(level.dvar_hash_map))
+        level.dvar_hash_map = [];
+    level.dvar_hash_map[dvar] = hash;
+}
+
+get_dvar_even_if_hashed(dvar)
+{
+#ifdef IW9
+    iprintln("yo");
+    bruh = getdvar(  level.dvar_hash_map[dvar] );
+    iprintln("result is", bruh);
+#endif
+
+    return getdvar(dvar);
+}
+
+get_dvar_name(dvar)
+{
+#ifdef IW9
+    return level.dvar_hash_map[dvar];
+#else
+    return dvar;
+#endif
+}

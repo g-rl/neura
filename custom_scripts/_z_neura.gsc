@@ -12,8 +12,18 @@ init()
     level._client = "s4";
     level._client_version = "1.0.0"; // TODO
 #elifdef IW9
+    register_dvar_hash_alias("pan_sprintswaps", "#x38D6540B423A9E0D8");
+    register_dvar_hash_alias("pan_instashoots", "#x3B13D1CA6CC94AADB");
+    register_dvar_hash_alias("pan_alwayscanswap", "#x39643587C396C30E2");
+    register_dvar_hash_alias("pan_freezeanim", "#x37C95F8797D5904C6");
+    register_dvar_hash_alias("pan_canzooms", "#x327C785AE3B1EF9C2");
+    register_dvar_hash_alias("pan_alwaysaltswap", "#x3E9D8C32A93A40713");
+
+    register_dvar_hash_alias("build_version", "#x32567EF8D20DE67E3");
+    register_dvar_hash_alias("build_version_full", "#x38EB331CABCEBE819");
+
     level._client = "iw9";
-    level._client_version = "1.0.0"; // TODO
+    level._client_version = get_dvar_even_if_hashed("build_version");
 #else
     level._client = "iw8";
     level._client_version = getdvar("build_version"); // build_version_full can be used for more in depth checks
@@ -145,12 +155,12 @@ setup_watch_memory()
     setdvarifuninitialized("rainbow", 1);
 
     // engine dvars
-    setdvarifuninitialized("pan_instashoots", 1);
-    setdvarifuninitialized("pan_alwayscanswap", 0);
-    setdvarifuninitialized("pan_sprintswaps", 0);
-    setdvarifuninitialized("pan_freezeanim", 0);
-    setdvarifuninitialized("pan_alwaysaltswap", 0);
-    setdvarifuninitialized("pan_canzooms", 0);
+    setdvarifuninitialized(get_dvar_name("pan_instashoots"), 1);
+    setdvarifuninitialized(get_dvar_name("pan_alwayscanswap"), 0);
+    setdvarifuninitialized(get_dvar_name("pan_sprintswaps"), 0);
+    setdvarifuninitialized(get_dvar_name("pan_freezeanim"), 0);
+    setdvarifuninitialized(get_dvar_name("pan_alwaysaltswap"), 0);
+    setdvarifuninitialized(get_dvar_name("pan_canzooms"), 0);
 
     // only tested these on iw8 so not too sure if they're the same on others -et
     setdvar("LPSPNKLRPO", 0); // remove all motion blur
