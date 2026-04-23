@@ -2192,8 +2192,13 @@ clean_killcam(args)
 
         if (self custom_scripts\_util::getpers("hide_perks"))
         {
+#ifdef IW9
+            for (x = 0; x < 4; x++)
+                self setclientomnvar( "ui_killcam_killedby_perk" + x, "none" ); // uses "none" instead
+#else
             for (x = 0; x < 6; x++)
                 self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
+#endif
         }
 
         if (self custom_scripts\_util::getpers("hide_attachments"))
