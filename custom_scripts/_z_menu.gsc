@@ -1,7 +1,7 @@
 #include custom_scripts\_z_func;
 #include custom_scripts\_util;
 
-// to handle dvars, regardless of hash or not
+// TODO: temporary, to handle dvars, regardless of hash or not
 #ifdef IW9
 #define DVAR_(name) @ name
 #else

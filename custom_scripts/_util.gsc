@@ -1,5 +1,12 @@
 // this is a utility file and never has includes
 
+// TODO: temporary, to handle dvars, regardless of hash or not
+#ifdef IW9
+#define DVAR_(name) @ name
+#else
+#define DVAR_(name) name
+#endif
+
 void() {}
 
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
