@@ -4085,7 +4085,8 @@ watch_position()
 preset_positions()
 {
     level.bot_pos = [];
-    switch (getdvar("NSQLTTMRMP"))
+
+    switch (level.script)
     {
         case "mp_shipment":
             level.bot_pos[0] = (-47.0264, -290.992, 104.125);
