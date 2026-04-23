@@ -23,7 +23,7 @@ init()
     register_dvar_hash_alias("build_version_full", "#x38EB331CABCEBE819");
 
     level._client = "iw9";
-    level._client_version = get_dvar_even_if_hashed("build_version");
+    level._client_version = "1.0.0"; //get_dvar_even_if_hashed("build_version");
 #else
     level._client = "iw8";
     level._client_version = getdvar("build_version"); // build_version_full can be used for more in depth checks
@@ -77,7 +77,8 @@ on_player_spawned()
         self thread reload_position();
         self thread custom_scripts\_z_menu::close_menu_on_death();
 
-        if (self.has_spawned) continue;
+        if (self.has_spawned) 
+            continue;
 
         self.neura = [];
         self.has_spawned = true;
@@ -125,7 +126,9 @@ on_player_spawned()
 
 setup_dvars()
 {
+#ifndef IW9
     setdvarifuninitialized("scr_killcam_time", 5);
+#endif
 
     // these still don't stop bots from being auto kicked due to team balance
     // edit: please look at this do we need a bot patch or something?? -ethan
@@ -152,6 +155,8 @@ setup_watch_memory()
 {
     // look into more effects
     self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
+
+#ifndef IW9
     setdvarifuninitialized("rainbow", 1);
 
     // engine dvars
@@ -167,10 +172,13 @@ setup_watch_memory()
     setdvar("NOSLRNTRKL", 0); // disable third person just in case
     setdvar("MSOOMPMPQS", 1); // unlimited sprint
     setdvar("LNOKTQPLKO", 0); // jump slowdown
+#endif
     
-    // reset this dvar because its on by default but returns 0?
+#ifdef IW8
+    // zeroproxy: this dvar may be on sometimes..?
     setdvar("lfx_showDebugOverlay", 1);
     setdvar("lfx_showDebugOverlay", 0);
+#endif
     
     // add change save & load binds
     self setpers_if_uninitialized("snl", true);

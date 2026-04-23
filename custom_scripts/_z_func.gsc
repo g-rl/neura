@@ -477,12 +477,11 @@ reload_position()
     posy = self custom_scripts\_util::getpers("saveposy");
     posz = self custom_scripts\_util::getpers("saveposz");
 
-    if (!isdefined(posx)) return;
+    if (!isdefined(posx)) 
+        return;
 
     if (float(posx) != 0 && float(posy) != 0 && float(posz) != 0)
-    {
         self load_spawn();
-    }
 }
 
 toggle_snl()
