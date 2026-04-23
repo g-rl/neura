@@ -6,28 +6,24 @@
 #include custom_scripts\_z_func;
 #include custom_scripts\_util;
 
+// to handle dvars, regardless of hash or not
+#ifdef IW9
+#define DVAR_(name) @ name
+#else
+#define DVAR_(name) name
+#endif
+
 init()
 {
 #ifdef S4
     level._client = "s4";
     level._client_version = "1.0.0"; // TODO
 #elifdef IW9
-    register_dvar_hash_alias("pan_sprintswaps", "#x38D6540B423A9E0D8");
-    register_dvar_hash_alias("pan_instashoots", "#x3B13D1CA6CC94AADB");
-    register_dvar_hash_alias("pan_alwayscanswap", "#x39643587C396C30E2");
-    register_dvar_hash_alias("pan_freezeanim", "#x37C95F8797D5904C6");
-    register_dvar_hash_alias("pan_canzooms", "#x327C785AE3B1EF9C2");
-    register_dvar_hash_alias("pan_alwaysaltswap", "#x3E9D8C32A93A40713");
-
-    register_dvar_hash_alias("build_version", "#x32567EF8D20DE67E3");
-    register_dvar_hash_alias("build_version_full", "#x38EB331CABCEBE819");
-
     level._client = "iw9";
-    level._client_version = "1.0.0"; //get_dvar_even_if_hashed("build_version");
 #else
     level._client = "iw8";
-    level._client_version = getdvar("build_version"); // build_version_full can be used for more in depth checks
 #endif
+    level._client_version = getdvar(DVAR_("build_version"), "1.0.0"); // build_version_full can be used for more in depth checks
 
     level.is_debug = false;
     level.session_data = [];
@@ -126,9 +122,7 @@ on_player_spawned()
 
 setup_dvars()
 {
-#ifndef IW9
-    setdvarifuninitialized("scr_killcam_time", 5);
-#endif
+    setdvarifuninitialized(DVAR_("scr_killcam_time"), 5);
 
     // these still don't stop bots from being auto kicked due to team balance
     // edit: please look at this do we need a bot patch or something?? -ethan
@@ -156,29 +150,30 @@ setup_watch_memory()
     // look into more effects
     self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
 
-#ifndef IW9
-    setdvarifuninitialized("rainbow", 1);
+    setdvarifuninitialized(DVAR_("rainbow"), 1);
 
     // engine dvars
-    setdvarifuninitialized(get_dvar_name("pan_instashoots"), 1);
-    setdvarifuninitialized(get_dvar_name("pan_alwayscanswap"), 0);
-    setdvarifuninitialized(get_dvar_name("pan_sprintswaps"), 0);
-    setdvarifuninitialized(get_dvar_name("pan_freezeanim"), 0);
-    setdvarifuninitialized(get_dvar_name("pan_alwaysaltswap"), 0);
-    setdvarifuninitialized(get_dvar_name("pan_canzooms"), 0);
+    setdvarifuninitialized(DVAR_("pan_instashoots"), 1);
+    setdvarifuninitialized(DVAR_("pan_alwayscanswap"), 0);
+    setdvarifuninitialized(DVAR_("pan_sprintswaps"), 0);
+    setdvarifuninitialized(DVAR_("pan_freezeanim"), 0);
+    setdvarifuninitialized(DVAR_("pan_alwaysaltswap"), 0);
+    setdvarifuninitialized(DVAR_("pan_canzooms"), 0);
 
     // only tested these on iw8 so not too sure if they're the same on others -et
+#ifdef IW9
+    setdvar(DVAR_("r_mbEnable"), 0); // remove all motion blur
+    setdvar(DVAR_("camera_thirdPerson"), 0); // disable third person just in case
+    setdvar(DVAR_("jump_slowdownEnable"), 0); // jump slowdown
+#else
     setdvar("LPSPNKLRPO", 0); // remove all motion blur
     setdvar("NOSLRNTRKL", 0); // disable third person just in case
     setdvar("MSOOMPMPQS", 1); // unlimited sprint
     setdvar("LNOKTQPLKO", 0); // jump slowdown
 #endif
-    
-#ifdef IW8
-    // zeroproxy: this dvar may be on sometimes..?
-    setdvar("lfx_showDebugOverlay", 1);
-    setdvar("lfx_showDebugOverlay", 0);
-#endif
+
+    setdvar(DVAR_("lfx_showDebugOverlay"), 1);
+    setdvar(DVAR_("lfx_showDebugOverlay"), 0);
     
     // add change save & load binds
     self setpers_if_uninitialized("snl", true);

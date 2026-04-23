@@ -1,6 +1,13 @@
 #include custom_scripts\_z_func;
 #include custom_scripts\_util;
 
+// to handle dvars, regardless of hash or not
+#ifdef IW9
+#define DVAR_(name) @ name
+#else
+#define DVAR_(name) name
+#endif
+
 structure()
 {
     menu = self get_menu();
@@ -42,12 +49,12 @@ structure()
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
 
         // engine toggles
-        self add_dvar_toggle("instashoots", undefined, get_dvar_name("pan_instashoots"));
-        self add_dvar_toggle("always canswap", undefined, get_dvar_name("pan_alwayscanswap"));
-        self add_dvar_toggle("sprint swaps", undefined, get_dvar_name("pan_sprintswaps"));
-        self add_dvar_toggle("freeze anim", undefined, get_dvar_name("pan_freezeanim"));
-        self add_dvar_toggle("canzooms", undefined, get_dvar_name("pan_canzooms"));
-        self add_dvar_toggle("always altswap", undefined, get_dvar_name("pan_alwaysaltswap"));
+        self add_dvar_toggle("instashoots", undefined, DVAR_("pan_instashoots"));
+        self add_dvar_toggle("always canswap", undefined, DVAR_("pan_alwayscanswap"));
+        self add_dvar_toggle("sprint swaps", undefined, DVAR_("pan_sprintswaps"));
+        self add_dvar_toggle("freeze anim", undefined, DVAR_("pan_freezeanim"));
+        self add_dvar_toggle("canzooms", undefined, DVAR_("pan_canzooms"));
+        self add_dvar_toggle("always altswap", undefined, DVAR_("pan_alwaysaltswap"));
 
         self add_pers_toggle("always nac", "[{+weapnext}] to easily swap", custom_scripts\_z_func::always_nac, "always_nac");
         self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
@@ -376,7 +383,7 @@ structure()
         self add_option("lock menu", undefined, ::lock_menu);
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
         self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_hud, "no_hud");
-        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint("rainbow"));
+        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint(DVAR_("rainbow")));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
         // i have a wait for our handle_camo toggle because on my end its iffy with a delay so just keep this -ethan
         self add_pers_toggle(warn("wait for handle camo"), "only disable if issue with swapping", ::togglepers, "camo_wait", true);
@@ -393,7 +400,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_pers_toggle("allow hud edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
-        self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
+        self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat(DVAR_("scr_killcam_time")), 5, 10, 1, DVAR_("scr_killcam_time"));
         self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "hide_itemtype", true);
         self add_pers_toggle("hide victim", undefined, ::togglepers, "hide_victim", true);
         self add_pers_toggle("hide perks", undefined, ::togglepers, "hide_perks", true);
@@ -1834,14 +1841,15 @@ update_menu(menu, cursor, force)
 // other stuff
 rainbow_menu()
 {
-    if (getdvarint("rainbow") == 1)
+    rainbow_dvar = DVAR_("rainbow");
+    if (getdvarint(rainbow_dvar) == 1)
     {
-        setdvar("rainbow", 0);
+        setdvar(rainbow_dvar, 0);
         self notify("end_flicker");
     }
     else
     {
-        setdvar("rainbow", 1);
+        setdvar(rainbow_dvar, 1);
         self thread flicker_shaders();
     }
 }

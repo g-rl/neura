@@ -1,5 +1,12 @@
 #include custom_scripts\_util; // this is okay to do as _util doesnt include anything
 
+// to handle dvars, regardless of hash or not
+#ifdef IW9
+#define DVAR_(name) @ name
+#else
+#define DVAR_(name) name
+#endif
+
 debug_menu()
 {
     level.is_debug = !custom_scripts\_util::toggle(level.is_debug);
@@ -172,6 +179,17 @@ set_lives(args)
     self custom_scripts\_util::setpers("lives", 99);
 }
 
+show_hud(should_show)
+{
+#ifdef IW9
+    setdvar(DVAR_("cg_drawCrosshair"), should_show);
+#else
+    setdvar("LOPKSRNTTS", should_show);
+#endif
+
+    self setclientomnvar("ui_hide_full_hud", should_show == 0);
+}
+
 toggle_hud()
 {
     self.pers["no_hud"] = !custom_scripts\_util::toggle(self.pers["no_hud"]);
@@ -182,8 +200,7 @@ toggle_hud()
     else
     {
         self notify("stop_watching_hud");
-        setdvar("LOPKSRNTTS", 0);
-        self setclientomnvar("ui_hide_full_hud", 0);
+        self show_hud(1);
     }
 }
 
@@ -193,13 +210,15 @@ watch_hud(args)
     self endon("disconnect");
     level endon("game_ended");
 
-    setdvar("LOPKSRNTTS", 1);
+    self show_hud(0);
 
+    /*
     for (;;)
     {
-        self setclientomnvar("ui_hide_full_hud", 1);
+        self show_hud(0);
         wait 10;
     }
+    */
 }
 
 toggle_freeze_anim_bind(bind, i, pers)
@@ -227,7 +246,8 @@ do_freeze_anim_bind(args, slot)
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            setdvar("pan_freezeanim", !custom_scripts\_util::toggle(getdvarint("pan_freezeanim")));
+            freezeanim_dvar = DVAR_("pan_freezeanim");
+            setdvar(freezeanim_dvar, !custom_scripts\_util::toggle( getdvarint(freezeanim_dvar) ));
             wait 0.05;
         }
     }
@@ -515,12 +535,21 @@ toggle_invincibility()
     else
     {
         self notify("stop_godmode");
-        setdvar("NKTQRKRMTS", self.fall_height);
+        setdvar(get_fall_damage_height_dvar(), self.fall_height);
         self.fall_height = undefined;
         self.no_damage = undefined;
         self.maxhealth = 100;
         self.health = self.maxhealth;
     }
+}
+
+get_fall_damage_height_dvar()
+{
+#ifdef IW9
+    return DVAR_("bg_fallDamageMinHeight");
+#else
+    return "NKTQRKRMTS";
+#endif
 }
 
 godmode_loop(args)
@@ -529,20 +558,22 @@ godmode_loop(args)
     self endon("stop_godmode");
     level endon("game_ended");
 
+    wait 0.05; // let player spawn in and initialize things
+
     if (!isdefined(self.fall_height))
     {
-        self.fall_height = getdvarfloat("NKTQRKRMTS", 200.0);
+        self.fall_height = getdvarfloat(get_fall_damage_height_dvar(), 200.0);
     }
 
-    setdvar("NKTQRKRMTS", 10000.0);
+    setdvar(get_fall_damage_height_dvar(), 10000.0);
+
     self.maxhealth = 999999;
     self.health = 999999;
     self.no_damage = true;
 
     for (;;)
     {
-        self waittill("damage", var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, var_9);
-
+        self waittill( "damage", amount, attacker, _id_97282C14346A7FCF, point );
         if (custom_scripts\_util::is_true(self.no_damage))
         {
             self.health = self.maxhealth;
@@ -2216,6 +2247,7 @@ post_prematch_start()
     if (!self custom_scripts\_util::getpers("welcome_message"))
     {
         custom_scripts\_util::waittill_prematch_over();
+
         self printall("ߵ " + palette() + 
             "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
             + palette() + "@nyli2b " 
@@ -3145,7 +3177,7 @@ flashrumbleloop(num)
 watch_freeze_anim()
 {
     self waittill("showing_final_killcam");
-    setdvar("pan_freezeanim", 0);
+    setdvar(DVAR_("pan_freezeanim"), 0);
 }
 
 setslowmotion_wrapper(a1, a2, a3)
@@ -3840,8 +3872,8 @@ setup_player_state()
 {
     self freezecontrols(1);
     hide_camera_preview();
-    setdvar("cg_drawGun", 0);
-    setdvar("cg_drawCrosshair", 0);
+    setdvar(DVAR_("cg_drawGun"), 0);
+    setdvar(DVAR_("cg_drawCrosshair"), 0);
     self playerhide();
     self setclientomnvar("ui_hide_full_hud", 1);
 }
@@ -3850,8 +3882,8 @@ reset_player_state(camera)
 {
     show_camera_preview();
     self setclientomnvar("ui_hide_full_hud", 0);
-    setdvar("cg_drawGun", 1);
-    setdvar("cg_drawCrosshair", 1);
+    setdvar(DVAR_("cg_drawGun"), 1);
+    setdvar(DVAR_("cg_drawCrosshair"), 1);
     self unlink();
     self playershow();
     camera delete();
