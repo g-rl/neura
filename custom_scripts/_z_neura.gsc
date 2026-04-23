@@ -41,7 +41,7 @@ on_player_connect()
     {
         level waittill("connected", player);
 
-        if (is_bot(player))
+        if (isai(player) || isbot(player))
             player thread on_bot_spawned();
         else
             player thread on_player_spawned();
@@ -63,12 +63,11 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-
+        
         self thread reload_position();
         self thread custom_scripts\_z_menu::close_menu_on_death();
 
-        if (self.has_spawned)
-            continue;
+        if (self.has_spawned) continue;
 
         self.neura = [];
         self.has_spawned = true;
@@ -107,6 +106,7 @@ on_player_spawned()
         self thread clear_prematch_look();
 
         // return any streaks to player last (if saved)
+        
         saved = self custom_scripts\_util::getpers("saved_streak");
         if (isdefined(saved) && saved != "none")
             self thread give_streak(saved);
@@ -161,8 +161,6 @@ setup_watch_memory()
     // reset this dvar because its on by default but returns 0?
     setdvar("lfx_showDebugOverlay", 1);
     setdvar("lfx_showDebugOverlay", 0);
-
-    self setpers_if_uninitialized("unstuck", self.origin);
     
     // add change save & load binds
     self setpers_if_uninitialized("snl", true);

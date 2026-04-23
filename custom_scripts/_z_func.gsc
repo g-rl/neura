@@ -477,10 +477,7 @@ reload_position()
     posy = self custom_scripts\_util::getpers("saveposy");
     posz = self custom_scripts\_util::getpers("saveposz");
 
-    if (!isdefined(posx))
-    {
-        return;
-    }
+    if (!isdefined(posx)) return;
 
     if (float(posx) != 0 && float(posy) != 0 && float(posz) != 0)
     {
@@ -1032,21 +1029,10 @@ watch_frozen_bots()
     {
         foreach (player in level.players)
         {
-            if (is_bot(player))
+            if (isbot(player) || isai(player))
             {
                 player freezecontrols(self custom_scripts\_util::getpers("frozen_bots"));
-                /* 
-                player scripts\common\utility::allow_fire(0);
-                player scripts\common\utility::allow_movement(0);
-                player scripts\common\utility::allow_jump(0);
-                player scripts\common\utility::allow_usability(0);
-                player scripts\common\utility::allow_melee(0);
-                player scripts\common\utility::allow_offhand_weapons(0);
-                player scripts\common\utility::allow_weapon_switch(0);
-                player scripts\common\utility::allow_sprint(0);
-                */
             }
-            wait 0.05;
         }
         wait 0.05;
     }
@@ -1104,6 +1090,7 @@ teleport_player(from, to, player)
 
     if (from.sessionstate == "spectator") return;
     from setorigin(to.origin);
+    // from setplayerangles(to.angles);
     player thread save_spawn();
     self thread play_sound("recon_drone_marked_owner");
 }
@@ -2235,6 +2222,7 @@ post_prematch_start()
         self iprintln("ߵ " + " [{+gostand}] to ^5skip^7 final killcam");
         self iprintln("ߵ " + " [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to ^5open the menu");
         self custom_scripts\_util::setpers("welcome_message", true);
+        self setpers_if_uninitialized("unstuck", self.origin);
     }
     else
     {
@@ -3344,9 +3332,9 @@ press_to_restart_round()
 
 watch_round_restart()
 {
+    self endon("showing_final_killcam");
     self endon("stop_watching_restart");
-    wait 2;
-    self waittill("button_pressed_-actionslot 3");
+    self waittill("button_pressed_+gostand");
     map_restart(1);
     self notify("stop_watching_restart");
 }
@@ -3366,28 +3354,32 @@ skip_killcam()
         player setclientomnvar( "ui_killcam_killedby_weapon_rarity", -1 );
         player setclientomnvar( "ui_killcam_killedby_item_type", -1 );
         player setclientomnvar( "ui_killcam_killedby_item_id", -1 );
-        for ( var_0 = 0; var_0 < 8; var_0++ )
-            player setclientomnvar( "ui_killcam_killedby_attachment" + ( var_0 + 1 ), -1 );
-        for ( var_0 = 0; var_0 < 6; var_0++ )
-            player setclientomnvar( "ui_killcam_killedby_perk" + var_0, -1 ); 
+        for (var_0 = 0; var_0 < 8; var_0++)
+            player setclientomnvar("ui_killcam_killedby_attachment" + ( var_0 + 1 ), -1);
+        for (var_0 = 0; var_0 < 6; var_0++)
+            player setclientomnvar("ui_killcam_killedby_perk" + var_0, -1); 
+
         player.killcam = undefined;
-        player setclientomnvar( "cam_scene_name", "unknown" );
-        player setclientomnvar( "cam_scene_lead", -1 );
-        player setclientomnvar( "cam_scene_support", -1 );
-        player allowspectateteam( "freelook", 0 );
-        player allowspectateteam( "none", 1 );
+        player.sessionstate = "dead";
+        
+        player setclientomnvar("ui_session_state", "dead");
+        player setclientomnvar("cam_scene_name", "unknown");
+        player setclientomnvar("cam_scene_lead", -1);
+        player setclientomnvar("cam_scene_support", -1);
+
+        player allowspectateteam("freelook", 0);
+        player allowspectateteam("none", 1);
+
         player.forcespectatorclient = -1;
         player.killcamentity = -1;
         player.archivetime = 0;
         player.archiveusepotg = 0;
         player.psoffsettime = 0;
         player.spectatekillcam = 0;
-        player.sessionstate = "dead";
-        player.sessionstate = "dead";
-        self setclientomnvar("ui_session_state", "dead");
+
         player notify("abort_killcam");
-        player notify("killcam_ended");
         player setclientomnvar("post_game_state", 1);
+        player notify("killcam_ended");
         player notify("stop_waiting_killcam");
     }
 }
@@ -3447,16 +3439,11 @@ check_dvars(dvars)
 
 clear_prematch_look()
 {
-    // pretty sure we don't need to run all these the whole time 
-    level.matchcountdowntime = 0;
-    self.prematchlook = undefined;
-
-    self setclientomnvar("ui_match_start_countdown", 0);
-    self setclientomnvar("ui_match_in_progress", 1);
-    self freezecontrols(0);
-    
     while (isdefined(level.matchcountdowntime)) 
     {
+        level.matchcountdowntime = 0;
+        self setclientomnvar("ui_match_start_countdown", 0);
+        self setclientomnvar("ui_match_in_progress", 1);
         wait 0.05;
     }
 }
@@ -4550,7 +4537,7 @@ do_dead_silence_bind(args, slot)
 
 is_bot(ent)
 {
-    return isai(ent);
+    return isbot(ent);
 }
 
 /* 
