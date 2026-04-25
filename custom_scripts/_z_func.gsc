@@ -158,30 +158,6 @@ toggle_headbounces()
     }
 }
 
-aimbot_weapon()
-{
-    if (!self custom_scripts\_util::getpers("aimbot_weapon"))
-    {
-        self custom_scripts\_util::setpers("aimbot_weapon", self getcurrentweapon());
-    }
-    else
-    {
-        self custom_scripts\_util::setpers("aimbot_weapon", false);
-    }
-}
-
-aimbot_weapon_2()
-{
-    if (!self custom_scripts\_util::getpers("aimbot_weapon_2"))
-    {
-        self custom_scripts\_util::setpers("aimbot_weapon_2", self getcurrentweapon());
-    }
-    else
-    {
-        self custom_scripts\_util::setpers("aimbot_weapon_2", false);
-    }
-}
-
 headbounces(args)
 {
     self endon("stop_headbounces");

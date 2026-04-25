@@ -216,8 +216,6 @@ setup_watch_memory()
     self setpers_if_uninitialized("aimbot", true);
     self setpers_if_uninitialized("aimbot_range", 1500);
     self setpers_if_uninitialized("aimbot_delay", 0);
-    self setpers_if_uninitialized("aimbot_weapon", false);
-    self setpers_if_uninitialized("aimbot_weapon_2", false);
     self setpers_if_uninitialized("kill_effects", false);
     self setpers_if_uninitialized("kill_effect", rfx);
     self setpers_if_uninitialized("kill_sounds", false);
