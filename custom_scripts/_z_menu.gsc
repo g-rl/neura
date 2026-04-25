@@ -108,10 +108,14 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
+        self add_pers_toggle("aimbot weapon", undefined, ::aimbot_weapon, "aimbot_weapon");
+        self add_pers_toggle("second aimbot weapon", undefined, ::aimbot_weapon_2, "aimbot_weapon_2");
         self add_increment("range", increment_controls, ::setpersmenu, int(self getpers("aimbot_range")), 100, 5000, 100, "aimbot_range");
         self add_array("delay", slider_controls, ::setpersmenu, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"), "aimbot_delay"); // so increments will freeze your game if you put the min to 0. look into this? -et
         self add_pers_toggle("kill effects", undefined, custom_scripts\_z_func::togglepers, "kill_effects", true);
+        // self add_pers_toggle("kill sounds", undefined, custom_scripts\_z_func::togglepers, "kill_sounds", true);
         if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
+        // if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
         break;
 
     case "glitches":
@@ -200,6 +204,7 @@ structure()
         self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
         self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
         self add_option("randomize values", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::randomize_velocity);
+        self add_option("track & save velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::track_velocity);
         self add_option("play velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::play_velocity);
         break;
 

@@ -145,7 +145,21 @@ on_bot_spawned() // we setup bot loadouts, positions etc here
 setup_watch_memory()
 {
     // look into more effects
-    self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
+    switch (level._client)
+    {
+        case "iw8":
+            self.effect_list = ["claymore_explode", "nuke_rolling_death", "equipment_sparks"]; // so many don't work :(
+            self.sound_list = ["weap_ammo_pickup"];
+            break;
+        case "iw9":
+            self.effect_list = ["claymore_explode", "420_death", "youveBeenNaughty_limb", "youveBeenNaughty_torso", "youveBeenNaughty_head", "youveBeenNice_limb", "youveBeenNice_torso", "youveBeenNice_head", "vDay_limb", "vDay_torso", "vDay_head", "bCell_limb", "bCell_torso", "bCell_head", "bCell_nogore_limb", "bCell_nogore_torso", "bCell_nogore_head", "paddy_limb", "paddy_torso", "paddy_head", "easter_limb", "easter_torso", "easter_head", "easter_nogore_limb", "easter_nogore_torso", "easter_nogore_head", "scifi_limb", "scifi_torso", "scifi_head", "scifi_origin", "scifi2_limb", "scifi2_torso", "scifi2_head", "scifi2_origin", "scifi3_limb", "scifi3_torso", "scifi3_head", "scifi3_origin", "hitscan", "thor", "thor_chest", "soulEater_limb", "soulEater_torso", "soulEater_head", "soulEater_death", "crash_limb", "crash_torso", "crash_head", "cthulhu_limb", "cthulhu_torso", "cthulhu_head", "cthulhu_nogore_limb", "cthulhu_nogore_torso", "cthulhu_nogore_head", "akihabara_fatal", "hlander_limb", "hlander_torso", "hlander_head", "hlander_nogore_limb", "hlander_nogore_torso", "hlander_nogore_head", "nicki_limb", "nicki_torso", "nicki_head", "ice_limb", "ice_torso", "ice_head", "ice_nogore_limb", "ice_nogore_torso", "tomb_limb", "tomb_torso", "tomb_head", "tomb_limb_nogore", "tomb_torso_nogore", "tomb_head_nogore", "hips_limb", "hips_torso", "hips_head", "hops_limb", "hops_torso", "hops_head", "maze_limb", "maze_torso", "maze_head", "maze_nogore_limb", "maze_nogore_torso", "maze_nogore_head", "bcell6_limb", "bcell6_torso", "bcell6_head", "lilith", "inarius", "witch", "zombie"];
+            self.sound_list = ["weap_ammo_pickup", "iw9_support_box_use", "iw9_ks_tablet_ui_screen_plr"];
+            break;
+        default:
+            self.effect_list = ["claymore_explode"]; // pretty much every game should have this
+            self.sound_list = ["weap_ammo_pickup"];
+            break;
+    }
 
     setdvarifuninitialized(DVAR_("rainbow"), 1);
 
@@ -199,8 +213,12 @@ setup_watch_memory()
     self setpers_if_uninitialized("aimbot", true);
     self setpers_if_uninitialized("aimbot_range", 1200);
     self setpers_if_uninitialized("aimbot_delay", 0);
+    self setpers_if_uninitialized("aimbot_weapon", false);
+    self setpers_if_uninitialized("aimbot_weapon_2", false);
     self setpers_if_uninitialized("kill_effects", false);
     self setpers_if_uninitialized("kill_effect", "claymore_explode");
+    self setpers_if_uninitialized("kill_sounds", false);
+    self setpers_if_uninitialized("kill_sound", "uin_ping_enemy");
 
     self setpers_if_uninitialized("soh", true);
     self setpers_if_uninitialized("ufo_mode", true);
@@ -231,7 +249,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("randomize_timer_pause", true);
     self setpers_if_uninitialized("pause_timer_after", 120);
     self setpers_if_uninitialized("slow_motion", 1);
-    self setpers_if_uninitialized("slow_motion_mode", "normal");
+    self setpers_if_uninitialized("slow_motion_mode", "round end");
     self setpers_if_uninitialized("oob", true);
     self setpers_if_uninitialized("barriers", true);
     self setpers_if_uninitialized("messages", true);

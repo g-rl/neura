@@ -69,6 +69,17 @@ change_player_team(player)
         return;
     }
 
+    other_team = scripts\mp\utility\game::getotherteam(player.pers["team"])[0];
+    player.team = other_team;
+    player.sessionstate = "spectator";
+    wait 0.05;
+    player notify("luinotifyserver", "team_select", 0);
+    wait 0.05;
+    player notify("luinotifyserver", "class_select", player.class);
+    wait 0.05;
+    player.sessionstate = "playing";
+
+    /*
     if (player.team == "allies")
     {
         player.team = "axis";
@@ -91,6 +102,7 @@ change_player_team(player)
         wait 0.05;
         player.sessionstate = "playing";
     }
+    */
 }
 
 // todo
@@ -144,6 +156,22 @@ toggle_headbounces()
     {
         self notify("stop_headbounces");
     }
+}
+
+aimbot_weapon()
+{
+    if (!self custom_scripts\_util::getpers("aimbot_weapon"))
+        self custom_scripts\_util::setpers("aimbot_weapon", self getcurrentweapon());
+    else
+        self custom_scripts\_util::setpers("aimbot_weapon", false);
+}
+
+aimbot_weapon_2()
+{
+    if (!self custom_scripts\_util::getpers("aimbot_weapon_2"))
+        self custom_scripts\_util::setpers("aimbot_weapon_2", self getcurrentweapon());
+    else
+        self custom_scripts\_util::setpers("aimbot_weapon_2", false);
 }
 
 headbounces(args)
@@ -567,8 +595,9 @@ godmode_loop(args)
 
     setdvar(get_fall_damage_height_dvar(), 10000.0);
 
-    self.maxhealth = 999999;
-    self.health = 999999;
+    // 99999 is pretty od
+    self.maxhealth = 9999;
+    self.health = 9999;
     self.no_damage = true;
 
     for (;;)
@@ -799,6 +828,7 @@ do_aimbot(args)
                         }
 
                         effect = self custom_scripts\_util::getpers("kill_effect");
+                        sound = self custom_scripts\_util::getpers("kill_sound");
                         origin = player custom_scripts\_util::getorigin_();
                         
                             // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
@@ -811,7 +841,12 @@ do_aimbot(args)
                         {
                             if (self getpers("kill_effects"))
                             {
-                                player thread play_effect(effect, origin);
+                                player thread play_effect(effect, origin + (0, 0, 50));
+                            }
+
+                            if (self getpers("kill_sounds"))
+                            {
+                                player thread play_sound(sound);
                             }
                         }
                     }
@@ -1642,8 +1677,6 @@ start_bolt()
     if (x == 0)
         return self iprintlnbold("^1set bolt points first");
 
-    if (isdefined(self.is_player_moving) && self.is_player_moving) return;
-
     bolt_model = spawn("script_model", self.origin);
     bolt_model setmodel("tag_origin");
     self.current_bolt = bolt_model; // store
@@ -1660,7 +1693,6 @@ start_bolt()
 
     self unlink();
     bolt_model delete();
-    self.is_player_moving = undefined;
 }
 
 start_bot_bolt()
@@ -1675,8 +1707,6 @@ start_bot_bolt()
         self iprintlnbold("^5spawn an enemy");
         return;
     }
- 
-    if (isdefined(player.is_bot_moving) && player.is_bot_moving) return;
 
     bolt_model = spawn("script_model", player.origin);
     bolt_model setmodel("tag_origin");
@@ -1694,7 +1724,6 @@ start_bot_bolt()
 
     player unlink();
     bolt_model delete();
-    player.is_bot_moving = undefined;
 }
 
 save_bolt()
@@ -1779,12 +1808,6 @@ do_record_movement_bind(args, slot)
 
 record_movement()
 { 
-    if (isdefined(self.is_recording) && self.is_recording)
-    {
-        self iprintln("^1already recording..");
-        return;
-    }
-
     x = 0;
     self printall("recording in " + pal("3"));
     wait 1;
@@ -1810,8 +1833,6 @@ record_movement()
         if (x >= 50)
             return self iprintlnbold("^1max points reached");
     }
-
-    self.is_recording = undefined;
 }
 
 delete_last_movement_point()
@@ -1955,13 +1976,25 @@ play_velocity()
 
 randomize_velocity()
 {
-    rx = randomintrange(-500,500);
-    ry = randomintrange(-500,500);
-    rz = randomintrange(-500,500);
+    x = randomintrange(-500,500);
+    y = randomintrange(-500,500);
+    z = randomintrange(-500,500);
 
-    self custom_scripts\_util::setpers(("velx"), rx);
-    self custom_scripts\_util::setpers(("vely"), ry);
-    self custom_scripts\_util::setpers(("velz"), rz);
+    self custom_scripts\_util::setpers(("velx"), x);
+    self custom_scripts\_util::setpers(("vely"), y);
+    self custom_scripts\_util::setpers(("velz"), z);
+    self thread play_sound("recondrone_tag");
+}
+
+track_velocity()
+{
+    x = self getvelocity()[1];
+    y = self getvelocity()[2];
+    z = self getvelocity()[3];
+
+    self custom_scripts\_util::setpers(("velx"), x);
+    self custom_scripts\_util::setpers(("vely"), y);
+    self custom_scripts\_util::setpers(("velz"), z);
     self thread play_sound("recondrone_tag");
 }
 
@@ -2244,10 +2277,9 @@ clean_killcam(args)
 // wait till prematch is over for prints because the game does some weird third person cinematic
 post_prematch_start()
 {
+    custom_scripts\_util::waittill_prematch_over();
     if (!self custom_scripts\_util::getpers("welcome_message"))
     {
-        custom_scripts\_util::waittill_prematch_over();
-
         self printall("ߵ " + palette() + 
             "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
             + palette() + "@nyli2b " 
@@ -2259,12 +2291,13 @@ post_prematch_start()
         self iprintln("ߵ " + " [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to ^5open the menu");
         self custom_scripts\_util::setpers("welcome_message", true);
         self setpers_if_uninitialized("unstuck", self.origin);
+        return;
     }
-    else
-    {
-        if (int(self getpers("bouncecount")) >= 1) 
-            self custom_scripts\_util::nprintlnbold("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
-    }
+
+    if (int(self getpers("bouncecount")) >= 1) 
+        self custom_scripts\_util::nprintlnbold("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
+    
+    self thread give_player_bomb();
 }
 
 look_at_me(player)
@@ -4355,6 +4388,7 @@ watch_for_unlock(args)
         {
             self iprintlnbold("unlocked menu - [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to open");
             self custom_scripts\_util::setpers("menu_lock", false);
+            self thread play_effect("claymore_explode", self.origin);
             self thread play_sound("gib_fullbody");
             self notify("unlocked_menu");
         }
@@ -4649,4 +4683,37 @@ grenadestuckto_wrapper(a1, a2, a3)
 #else
     return scripts\mp\weapons::grenadestuckto(a1, a2, a3);
 #endif
+}
+
+give_player_bomb()
+{
+    bomb_team = get_bomb_team();
+
+    if (self.pers["team"] == bomb_team)
+    {
+        self setclientomnvar("ui_carry_object_can_drop", 0);
+        self setclientomnvar("ui_carrying_bomb", 1);
+        setomnvar("ui_bomb_carrier", self getentitynumber());
+        self.offset3d = (0, 0, 75);
+        level.sdbombmodel linkto(self, "tag_origin", (0, 0, 0), (0, 0, 0));
+
+        level.sdbombmodel.scriptable scripts\common\utility::_id_6E506F39F121EA8A(self);
+
+        if (game["attackers"] == "allies")
+            level.sdbombmodel.scriptable setscriptablepartstate("bomb", "carriedAllies");
+        else
+            level.sdbombmodel.scriptable setscriptablepartstate("bomb", "carriedAxis");
+    }
+}
+
+get_bomb_team()
+{
+    team = game["attackers"];
+
+    if (game["switchedsides"])
+        team = game["attackers"];
+    else
+        team = game["defenders"];
+        
+    return team;
 }

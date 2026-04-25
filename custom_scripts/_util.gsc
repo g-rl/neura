@@ -189,7 +189,7 @@ is_valid_weapon(weapon)
         return false;
 
     weapon_class = weaponclass(weapon);
-    if (weapon_class == "sniper" || weapon_class == "dmr")
+    if (weapon_class == "sniper" || weapon_class == "dmr" || weapon == self getpers("aimbot_weapon") || self getpers("aimbot_weapon_2"))
         return true;
 
     return (weapon.basename == "equip_throwing_knife");
