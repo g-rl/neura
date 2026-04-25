@@ -822,7 +822,7 @@ do_aimbot(args)
 #else
                             player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
 #endif
-                        if (level._client != "s4") // s4 already has these pretty well idk ab mw22 oops
+                        if (level._client != "s4") // s4 already has kill fx
                         {
                             if (self getpers("kill_effects"))
                             {
@@ -834,7 +834,7 @@ do_aimbot(args)
                                 for (i = 1; i < 4; i++)
                                 {
                                     effect = self getpers("wave_effect_" + i);
-                                    p = [0, 10, 15, 20, 25, 40, 45, 50, 65, 75, 80];
+                                    p = [20, 25, 40, 45, 50, 65];
                                     pos = int(p[randomint(p.size)]); // prolly dont need int here
                                     player thread play_effect(effect, origin + (0, 0, pos));
                                 }
@@ -858,25 +858,34 @@ random_wave_effects()
     {
         self custom_scripts\_util::setpers("wave_effect_" + i, self.effect_list[randomint(self.effect_list.size)]);
     }
+
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        self iprintlnbold("^5spawn an enemy");
+        return;
+    }
+
+    self thread preview_effect();
 }
 
 preview_effect()
 {
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        self iprintlnbold("^5spawn an enemy");
+        return;
+    }
+
+    origin = player custom_scripts\_util::getorigin_();
+
     if (self getpers("wave_effects"))
     {
-        player = self custom_scripts\_util::getenemyplayer();
-        if (player == self)
-        {
-            self iprintlnbold("^5spawn an enemy");
-            return;
-        }
-
-        origin = player custom_scripts\_util::getorigin_();
-
         for (i = 1; i < 4; i++)
         {
             effect = self getpers("wave_effect_" + i);
-            p = [0, 10, 15, 20, 25, 40, 45, 50, 65, 75, 80];
+            p = [20, 25, 40, 45, 50, 65];
             pos = int(p[randomint(p.size)]); // prolly dont need int here
             player thread play_effect(effect, origin + (0, 0, pos));
         }
@@ -884,6 +893,7 @@ preview_effect()
 
     if (self getpers("kill_effects"))
     {
+        effect = self getpers("kill_effect");
         player thread play_effect(effect, origin + (0, 0, 50));
     }
 }

@@ -116,7 +116,9 @@ structure()
         if (!self custom_scripts\_util::getpers("kill_effects")) self add_pers_toggle("random wave effects", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), custom_scripts\_z_func::togglepers, "wave_effects", true);
         self add_pers_toggle("kill sounds", undefined, custom_scripts\_z_func::togglepers, "kill_sounds", true);
         if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
-        if (self custom_scripts\_util::getpers("kill_effects") || self custom_scripts\_util::getpers("wave_effects")) self add_option("preview effect", undefined, ::preview_effect);
+        if (self custom_scripts\_util::getpers("kill_effects") || self custom_scripts\_util::getpers("wave_effects")) self add_option("randomize wave effects", self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::random_wave_effects);
+        if (self custom_scripts\_util::getpers("wave_effects")) self add_option("preview effect", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::preview_effect);
+        if (self custom_scripts\_util::getpers("kill_effects")) self add_option("preview effect", "^:" + "current effect: ^:" + self getpers("kill_effect"), ::preview_effect);
         if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
         break;
 
