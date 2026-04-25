@@ -62,8 +62,10 @@ structure()
         self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
         self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
         if (gametype == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
-        self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");        self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
-        self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        break;
+        self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");        
+        self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
+        self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        
+        break;
 
     case "session settings":
         self.bind_index = false;
@@ -256,7 +258,7 @@ structure()
         self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
         self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
         self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
-        self add_game_option("iw8", "streak manager", "streaks for ^5iw8", ::new_menu, "streaks (iw8)");
+        self add_option("streak manager", undefined, ::new_menu, "streaks");
         self add_game_option("iw8", "apply random camo", "currently set: ^5" + self custom_scripts\_util::getpers("camo"), ::apply_camo, self);
         break;
 
@@ -350,14 +352,14 @@ structure()
         }
         break;
 
-    case "streaks (iw8)":
+    case "streaks":
         self.bind_index = false;
         self add_menu(menu);
-        self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks (iw8)");
+        self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks");
         self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use", true);
         break;
 
-    case "give streaks (iw8)":
+    case "give streaks":
         self.bind_index = false;
         self add_menu(menu);
         if (gametype == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
@@ -374,7 +376,15 @@ structure()
         self add_option("ladders", undefined, ::new_menu, "ladders");
         self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
         self add_option(warn("session settings"), undefined, ::new_menu, "session settings");
+        self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_hud, "no_hud");
+        self add_option("lock menu", undefined, ::lock_menu);
+        self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
         self add_option("fast restart", undefined, ::fast_restart);
+        // self add_option("respawn everyone", undefined, ::respawn_everyone);
+        self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
+        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint(DVAR_("rainbow")));
+        self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
+        self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
         if (gametype == "sd") 
         {   
             self add_option("end round", undefined, ::end_round);
@@ -384,21 +394,13 @@ structure()
             self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
             if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
         }
-        // self add_option("respawn everyone", undefined, ::respawn_everyone);
-        self add_option("lock menu", undefined, ::lock_menu);
-        self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
-        self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_hud, "no_hud");
-        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint(DVAR_("rainbow")));
-        self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
-        // i have a wait for our handle_camo toggle because on my end its iffy with a delay so just keep this -ethan
-        self add_pers_toggle(warn("wait for handle camo"), "only disable if issue with swapping", ::togglepers, "camo_wait", true);
-        self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
-        self add_toggle("debug menu", undefined, ::debug_menu, level.is_debug);
         self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
         self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
-        self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
+        self add_toggle("debug menu", undefined, ::debug_menu, level.is_debug);
         self add_option(warn("spawn invis platform"), "doesn't like to spawn sometimes", ::invis_platform);
         self add_option(warn("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
+        // i have a wait for our handle_camo toggle because on my end its iffy with a delay so just keep this -ethan
+        self add_pers_toggle(warn("wait for handle camo"), "only disable if issue with swapping", ::togglepers, "camo_wait", true);
         break;
 
     case "killcam manager":
@@ -674,7 +676,14 @@ initial_variable()
     // mwii
     self.neura["weapons"]["iw9"]["equipment"][0] = ["frag_grenade_mp", "molotov_mp", "concussion_grenade_mp", "semtex_mp", "cluster_grenade_mp", "snapshot_grenade_mp", "flash_grenade_mp", "gas_mp", "decoy_grenade_mp", "throwingknife_mp", "tac_camera_mp", "sonar_pulse_mp", "bunkerbuster_mp", "bunkerbuster_not_burrowed_mp", "bunkerbuster_burrowed_mp", "hb_sensor_mp", "throwstar_mp", "interrogation_tools_mp", "iw8_gunless_last_stand_enter", "ks_gesture_phone_mp", "ks_remote_device_mp", "remotemissile_projectile_mp", "emp_pulse_device_mp", "briefcase_bomb_mp"];
     self.neura["weapons"]["iw9"]["equipment"][1] = ["frag", "molotov", "concussion", "semtex", "cluster", "snapshot", "flash", "gas", "decoy", "throwing knife", "tac camera", "sonar pulse", "bunker buster", warn("bunker buster (burrowed)"), warn("bunker buster (not burrowed)"), "heartbeat sensor", warn("throwing stars"), "interrogation tools", "falling", "phone", "remote", "remote missile", "pulse device", "bomb"];
-    
+
+    self.neura["weapons"]["iw9"]["killstreaks"][0] = ["gunship", "chopper_gunner", "pac_sentry", "hover_jet", "juggernaut", "bradley", "manual_turret", "sentry_gun", "toma_strike", "cruise_predator", "nuke", "nuke_select_location", "precision_airstrike", "fuel_airstrike", "directional_uav", "airdrop", "scrambler_drone_guard", "uav"];
+    self.neura["weapons"]["iw9"]["killstreaks"][1] = ["gunship", "chopper gunner", "pac sentry", "hover jet", "juggernaut", "light tank", "manual turret", "sentry gun", "toma strike", "cruise predator", "nuke", "nuke location selector", "precision airstrike", "fuel airstrike", "directional uav", "airdrop", "scrambler drone", "uav"];
+
+    // vanguard
+    self.neura["weapons"]["s4"]["killstreaks"][0] = ["airdrop"];
+    self.neura["weapons"]["s4"]["killstreaks"][1] = ["airdrop"];
+
     // menu variables
     self.font            = "default";
     self.font_scale      = 0.95;

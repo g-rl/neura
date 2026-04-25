@@ -161,6 +161,9 @@ setup_watch_memory()
             break;
     }
 
+    rfx = self.effect_list[randomint(self.effect_list.size)];
+    rs = self.sound_list[randomint(self.sound_list.size)];
+
     setdvarifuninitialized(DVAR_("rainbow"), 1);
 
     // engine dvars
@@ -211,14 +214,14 @@ setup_watch_memory()
     self setpers_if_uninitialized("eq_putaway_time", 0.05);
 
     self setpers_if_uninitialized("aimbot", true);
-    self setpers_if_uninitialized("aimbot_range", 1200);
+    self setpers_if_uninitialized("aimbot_range", 1500);
     self setpers_if_uninitialized("aimbot_delay", 0);
     self setpers_if_uninitialized("aimbot_weapon", false);
     self setpers_if_uninitialized("aimbot_weapon_2", false);
     self setpers_if_uninitialized("kill_effects", false);
-    self setpers_if_uninitialized("kill_effect", "claymore_explode");
+    self setpers_if_uninitialized("kill_effect", rfx);
     self setpers_if_uninitialized("kill_sounds", false);
-    self setpers_if_uninitialized("kill_sound", "uin_ping_enemy");
+    self setpers_if_uninitialized("kill_sound", rs);
 
     self setpers_if_uninitialized("soh", true);
     self setpers_if_uninitialized("ufo_mode", true);
@@ -334,7 +337,6 @@ setup_watch_memory()
     {
         self setpers_if_uninitialized("bouncepos" + i, "0");
     }
-    
 }
 
 watch_memory()
