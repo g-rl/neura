@@ -30,6 +30,7 @@ setdvarmenu(value, dvar)
     // self thread play_sound("weap_ammo_pickup");
 }
 
+
 one_handed_gun()
 {
     if (!isalive(self))
@@ -828,6 +829,17 @@ do_aimbot(args)
                                 player thread play_effect(effect, origin + (0, 0, 50));
                             }
 
+                            if (self getpers("wave_effects"))
+                            {
+                                for (i = 1; i < 4; i++)
+                                {
+                                    effect = self getpers("wave_effect_" + i);
+                                    p = [0, 10, 15, 20, 25, 40, 45, 50, 65, 75, 80];
+                                    pos = int(p[randomint(p.size)]); // prolly dont need int here
+                                    player thread play_effect(effect, origin + (0, 0, pos));
+                                }
+                            }
+
                             if (self getpers("kill_sounds"))
                             {
                                 player thread play_sound(sound);
@@ -837,6 +849,42 @@ do_aimbot(args)
                 }
             }
         }
+    }
+}
+
+random_wave_effects()
+{
+    for (i = 1; i < 4; i++)
+    {
+        self custom_scripts\_util::setpers("wave_effect_" + i, self.effect_list[randomint(self.effect_list.size)]);
+    }
+}
+
+preview_effect()
+{
+    if (self getpers("wave_effects"))
+    {
+        player = self custom_scripts\_util::getenemyplayer();
+        if (player == self)
+        {
+            self iprintlnbold("^5spawn an enemy");
+            return;
+        }
+
+        origin = player custom_scripts\_util::getorigin_();
+
+        for (i = 1; i < 4; i++)
+        {
+            effect = self getpers("wave_effect_" + i);
+            p = [0, 10, 15, 20, 25, 40, 45, 50, 65, 75, 80];
+            pos = int(p[randomint(p.size)]); // prolly dont need int here
+            player thread play_effect(effect, origin + (0, 0, pos));
+        }
+    }
+
+    if (self getpers("kill_effects"))
+    {
+        player thread play_effect(effect, origin + (0, 0, 50));
     }
 }
 

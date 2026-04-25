@@ -107,9 +107,14 @@ getpers(key)
 
 // setpersifuni
 setpers_if_uninitialized(key, value)
-{   
+{
+    self setpers_if_uninitialized("pers", 0);
+
     if (!isdefined(getpers(key)))
+    {
         setpers(key, value);
+        self.pers["pers"]++;
+    }
 }
 
 haspers(pers)

@@ -220,6 +220,13 @@ setup_watch_memory()
     self setpers_if_uninitialized("kill_effect", rfx);
     self setpers_if_uninitialized("kill_sounds", false);
     self setpers_if_uninitialized("kill_sound", rs);
+    self setpers_if_uninitialized("wave_effects", false);
+
+    for (i = 1; i < 4; i++)
+    {
+        iprintln("wave_effect_" + i);
+        self setpers_if_uninitialized("wave_effect_" + i, self.effect_list[randomint(self.effect_list.size)]);
+    }
 
     self setpers_if_uninitialized("soh", true);
     self setpers_if_uninitialized("ufo_mode", true);
@@ -335,6 +342,8 @@ setup_watch_memory()
     {
         self setpers_if_uninitialized("bouncepos" + i, "0");
     }
+
+    self iprintln("^:" + self.pers["pers"] + " ^7things loaded..");
 }
 
 watch_memory()

@@ -112,10 +112,12 @@ structure()
         self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
         self add_increment("range", increment_controls, ::setpersmenu, int(self getpers("aimbot_range")), 100, 5000, 100, "aimbot_range");
         self add_array("delay", slider_controls, ::setpersmenu, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"), "aimbot_delay"); // so increments will freeze your game if you put the min to 0. look into this? -et
-        self add_pers_toggle("kill effects", "current effect: ^:" + self getpers("kill_effect"), custom_scripts\_z_func::togglepers, "kill_effects", true);
-        // self add_pers_toggle("kill sounds", undefined, custom_scripts\_z_func::togglepers, "kill_sounds", true);
+        if (!self custom_scripts\_util::getpers("wave_effects")) self add_pers_toggle("kill effects", "current effect: ^:" + self getpers("kill_effect"), custom_scripts\_z_func::togglepers, "kill_effects", true);
+        if (!self custom_scripts\_util::getpers("kill_effects")) self add_pers_toggle("random wave effects", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), custom_scripts\_z_func::togglepers, "wave_effects", true);
+        self add_pers_toggle("kill sounds", undefined, custom_scripts\_z_func::togglepers, "kill_sounds", true);
         if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
-        // if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
+        if (self custom_scripts\_util::getpers("kill_effects") || self custom_scripts\_util::getpers("wave_effects")) self add_option("preview effect", undefined, ::preview_effect);
+        if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
         break;
 
     case "glitches":
