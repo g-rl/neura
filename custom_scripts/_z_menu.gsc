@@ -114,12 +114,18 @@ structure()
         self add_array("delay", slider_controls, ::setpersmenu, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"), "aimbot_delay"); // so increments will freeze your game if you put the min to 0. look into this? -et
         if (!self custom_scripts\_util::getpers("wave_effects")) self add_pers_toggle("kill effects", "current effect: ^:" + self getpers("kill_effect"), custom_scripts\_z_func::togglepers, "kill_effects", true);
         if (!self custom_scripts\_util::getpers("kill_effects")) self add_pers_toggle("random wave effects", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), custom_scripts\_z_func::togglepers, "wave_effects", true);
-        self add_pers_toggle("kill sounds", undefined, custom_scripts\_z_func::togglepers, "kill_sounds", true);
-        if (self custom_scripts\_util::getpers("kill_effects")) self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
+        // self add_pers_toggle("kill sounds", undefined, custom_scripts\_z_func::togglepers, "kill_sounds", true);
+        if (self custom_scripts\_util::getpers("kill_effects")) 
+        {
+            self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
+            self add_option("preview effect", "^:" + "current effect: ^:" + self getpers("kill_effect"), ::preview_effect);
+        }
+        
         if (self custom_scripts\_util::getpers("kill_effects") || self custom_scripts\_util::getpers("wave_effects")) self add_option("randomize wave effects", self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::random_wave_effects);
         if (self custom_scripts\_util::getpers("wave_effects")) self add_option("preview effect", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::preview_effect);
-        if (self custom_scripts\_util::getpers("kill_effects")) self add_option("preview effect", "^:" + "current effect: ^:" + self getpers("kill_effect"), ::preview_effect);
-        if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
+        // if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
+        self add_pers_toggle("crosshair tracer rounds", "current effect: ^:" + self getpers("tracer_round"), ::toggle_tracers, "tracer_rounds");
+        if (self custom_scripts\_util::getpers("tracer_rounds")) self add_array("crosshair tracer effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_round");
         break;
 
     case "glitches":

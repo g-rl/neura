@@ -852,6 +852,42 @@ do_aimbot(args)
     }
 }
 
+toggle_tracers()
+{
+    self.pers["tracer_rounds"] = !custom_scripts\_util::toggle(self.pers["tracer_rounds"]);
+    if (self custom_scripts\_util::getpers("tracer_rounds"))
+    {
+        self thread cross_tracer_rounds();
+    }
+    else
+    {
+        self notify("stop_cross_trace");
+    }
+}
+ 
+cross_tracer_rounds()
+{
+    self endon("disconnect");
+    level endon("game_ended");
+    self endon("stop_cross_trace");
+
+    for(;;)
+    {
+        self waittill("weapon_fired");
+        player = self custom_scripts\_util::getenemyplayer();
+        if (player == self)
+        {
+            return;
+        }
+
+        origin = player custom_scripts\_util::getorigin_();
+        effect = self custom_scripts\_util::getpers("tracer_round");
+
+        trace = self getcrosshair();
+        self thread play_effect(effect, trace);
+    }
+}
+
 random_wave_effects()
 {
     for (i = 1; i < 4; i++)

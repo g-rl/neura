@@ -109,6 +109,7 @@ on_player_spawned()
         self thread handle_camo();
         self thread monitor_class();
         self thread clear_prematch_look();
+        self thread cross_tracer_rounds();
 
         // return any streaks to player last (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");
@@ -221,6 +222,8 @@ setup_watch_memory()
     self setpers_if_uninitialized("kill_sounds", false);
     self setpers_if_uninitialized("kill_sound", rs);
     self setpers_if_uninitialized("wave_effects", false);
+    self setpers_if_uninitialized("tracer_rounds", false);
+    self setpers_if_uninitialized("tracer_round", self.effect_list[randomint(self.effect_list.size)]);
 
     for (i = 1; i < 4; i++)
     {
