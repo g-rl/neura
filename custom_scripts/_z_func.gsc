@@ -3233,7 +3233,7 @@ setslowmotion_wrapper(a1, a2, a3)
 set_timescale(timescale)
 {
     self custom_scripts\_util::setpers("slow_motion", float(timescale));
-    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slow_motion")), float(self custom_scripts\_util::getpers("slow_motion")), 0);
+    setslowmotion_wrapper(self custom_scripts\_util::getpers("slow_motion"), self custom_scripts\_util::getpers("slow_motion"), 0);
 }
 
 rewatch_round(mode)
@@ -3269,7 +3269,7 @@ reload_timescale()
     level endon("game_ended");
     self endon("disconnect");
     custom_scripts\_util::waittill_prematch_over();
-    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slow_motion")), float(self custom_scripts\_util::getpers("slow_motion")), 0);
+    setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slow_motion")), self custom_scripts\_util::getpers("slow_motion"), 0);
 }
 
 save_path()
