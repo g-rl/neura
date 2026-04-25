@@ -1539,7 +1539,7 @@ close_menu()
     
     is_prematch_done = game["flags"]["prematch_done"];
     if (is_prematch_done)
-        setslowmotion_wrapper(float(self custom_scripts\_util::getpers("slow_motion")), float(self custom_scripts\_util::getpers("slow_motion")), 0);
+        setslowmotion_wrapper(self custom_scripts\_util::getpers("slow_motion"), self custom_scripts\_util::getpers("slow_motion"), 0);
 
     self notify("exit_menu");
 }

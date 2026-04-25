@@ -86,7 +86,7 @@ on_player_spawned()
         self thread watch_round_end();
         self thread handle_camo();
 
-        if (float(self getpers("slow_motion")) != 1)
+        if (self getpers("slow_motion") != 1.0)
             self thread reload_timescale();
 
         if (isdefined(origin) && isvector(origin))
@@ -248,7 +248,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("auto_pause_timer", true);
     self setpers_if_uninitialized("randomize_timer_pause", true);
     self setpers_if_uninitialized("pause_timer_after", 120);
-    self setpers_if_uninitialized("slow_motion", 1);
+    self setpers_if_uninitialized("slow_motion", 1.0);
     self setpers_if_uninitialized("slow_motion_mode", "round end");
     self setpers_if_uninitialized("oob", true);
     self setpers_if_uninitialized("barriers", true);
