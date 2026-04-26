@@ -109,7 +109,7 @@ on_player_spawned()
         self thread handle_camo();
         self thread monitor_class();
         self thread clear_prematch_look();
-        self thread cross_tracer_rounds();
+        self thread tracer_rounds();
 
         // return any streaks to player last (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");
@@ -161,9 +161,6 @@ setup_watch_memory()
             self.sound_list = ["weap_ammo_pickup"];
             break;
     }
-
-    rfx = self.effect_list[randomint(self.effect_list.size)];
-    rs = self.sound_list[randomint(self.sound_list.size)];
 
     setdvarifuninitialized(DVAR_("rainbow"), 1);
 
@@ -218,9 +215,9 @@ setup_watch_memory()
     self setpers_if_uninitialized("aimbot_range", 1500);
     self setpers_if_uninitialized("aimbot_delay", 0);
     self setpers_if_uninitialized("kill_effects", false);
-    self setpers_if_uninitialized("kill_effect", rfx);
+    self setpers_if_uninitialized("kill_effect", self.effect_list[randomint(self.effect_list.size)]);
     self setpers_if_uninitialized("kill_sounds", false);
-    self setpers_if_uninitialized("kill_sound", rs);
+    self setpers_if_uninitialized("kill_sound", self.sound_list[randomint(self.sound_list.size)]);
     self setpers_if_uninitialized("wave_effects", false);
     self setpers_if_uninitialized("tracer_rounds", false);
     self setpers_if_uninitialized("tracer_round", self.effect_list[randomint(self.effect_list.size)]);

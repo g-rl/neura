@@ -834,7 +834,7 @@ do_aimbot(args)
                                 for (i = 1; i < 4; i++)
                                 {
                                     effect = self getpers("wave_effect_" + i);
-                                    p = [20, 25, 40, 45, 50, 65];
+                                    p = [20, 23, 25, 30, 32, 40, 45, 50, 58, 65, 70];
                                     pos = int(p[randomint(p.size)]); // prolly dont need int here
                                     player thread play_effect(effect, origin + (0, 0, pos));
                                 }
@@ -857,7 +857,7 @@ toggle_tracers()
     self.pers["tracer_rounds"] = !custom_scripts\_util::toggle(self.pers["tracer_rounds"]);
     if (self custom_scripts\_util::getpers("tracer_rounds"))
     {
-        self thread cross_tracer_rounds();
+        self thread tracer_rounds();
     }
     else
     {
@@ -865,27 +865,61 @@ toggle_tracers()
     }
 }
  
-cross_tracer_rounds()
+tracer_rounds()
 {
     self endon("disconnect");
-    level endon("game_ended");
+    self endon("showing_final_killcam");
     self endon("stop_cross_trace");
 
-    for(;;)
+    for (;;)
     {
         self waittill("weapon_fired");
-        player = self custom_scripts\_util::getenemyplayer();
-        if (player == self)
-        {
-            return;
-        }
 
-        origin = player custom_scripts\_util::getorigin_();
-        effect = self custom_scripts\_util::getpers("tracer_round");
-
+        // effect = self custom_scripts\_util::getpers("tracer_round");
         trace = self getcrosshair();
-        self thread play_effect(effect, trace);
+
+        // self thread play_effect(effect, trace);
+        effect = self getpers("wave_effect_1");
+        effect_2 = self getpers("wave_effect_2");
+        effect_3 = self getpers("wave_effect_2");
+
+        self thread neurabullet(self gettagorigin("tag_weapon_right"), "player32x32x8", 3, effect, effect_2);
     }
+}
+
+calc_distance(speed, origin, moveto)
+{
+    return (distance(origin, moveto) / speed);
+}
+
+// spawnLozBullet("gun",undefined,self getTagOrigin("tag_weapon_right"),"zombie_bomb",1500,loadFx("misc/fx_zombie_mini_nuke_hotness"),3,2,loadFx("misc/fx_zombie_powerup_on"),"once",undefined,"zmb_phdflop_explo",undefined,undefined,undefined,120,"kill",undefined,undefined);
+neurabullet(origin, bullet_model, bullet_speed, fx, trail_fx)
+{
+	bullet = spawnscriptmodel(origin, bullet_model);
+	tracer = scripts\engine\trace::_bullet_trace(self geteye(), self geteye() + anglestoforward(self getplayerangles()), 1000000, true, self)["position"];
+	bullet.angles = vectortoangles(tracer - bullet.origin);
+	bullet rotateto(vectortoangles(tracer - bullet.origin), .05);
+
+	duration = calc_distance(bullet_speed, bullet.origin, tracer);
+	bullet moveto(tracer, duration);
+
+    for (i = 1; i < 4; i++)
+    {
+        effect = self getpers("wave_effect_" + i);
+        self thread play_effect(effect, bullet.origin + (0,0,1));
+    }
+
+	self thread play_effect(self getpers("wave_effect_" + randomintrange(1,3)), self getcrosshair());
+	bullet delete();
+}
+
+spawnscriptmodel(origin, model, angles)
+{
+    ent = spawn("script_model", origin);
+    ent setmodel(model);
+    if (isdefined(angles))
+        ent.angles = angles;
+    return ent;
 }
 
 random_wave_effects()
@@ -898,7 +932,6 @@ random_wave_effects()
     player = self custom_scripts\_util::getenemyplayer();
     if (player == self)
     {
-        self iprintlnbold("^5spawn an enemy");
         return;
     }
 
@@ -921,7 +954,7 @@ preview_effect()
         for (i = 1; i < 4; i++)
         {
             effect = self getpers("wave_effect_" + i);
-            p = [20, 25, 40, 45, 50, 65];
+            p = [20, 23, 25, 30, 32, 40, 45, 50, 58, 65, 70];
             pos = int(p[randomint(p.size)]); // prolly dont need int here
             player thread play_effect(effect, origin + (0, 0, pos));
         }

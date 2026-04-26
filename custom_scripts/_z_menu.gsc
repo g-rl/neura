@@ -124,7 +124,7 @@ structure()
         if (self custom_scripts\_util::getpers("kill_effects") || self custom_scripts\_util::getpers("wave_effects")) self add_option("randomize wave effects", self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::random_wave_effects);
         if (self custom_scripts\_util::getpers("wave_effects")) self add_option("preview effect", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::preview_effect);
         // if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
-        self add_pers_toggle("crosshair tracer rounds", "current effect: ^:" + self getpers("tracer_round"), ::toggle_tracers, "tracer_rounds");
+        self add_pers_toggle("tracer rounds", "current effect: ^:" + self getpers("tracer_round"), ::toggle_tracers, "tracer_rounds");
         if (self custom_scripts\_util::getpers("tracer_rounds")) self add_array("crosshair tracer effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_round");
         break;
 
