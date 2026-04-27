@@ -112,20 +112,7 @@ structure()
         self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
         self add_increment("range", increment_controls, ::setpersmenu, int(self getpers("aimbot_range")), 100, 5000, 100, "aimbot_range");
         self add_array("delay", slider_controls, ::setpersmenu, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"), "aimbot_delay"); // so increments will freeze your game if you put the min to 0. look into this? -et
-        if (!self custom_scripts\_util::getpers("wave_effects")) self add_pers_toggle("kill effects", "current effect: ^:" + self getpers("kill_effect"), custom_scripts\_z_func::togglepers, "kill_effects", true);
-        if (!self custom_scripts\_util::getpers("kill_effects")) self add_pers_toggle("random wave effects", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), custom_scripts\_z_func::togglepers, "wave_effects", true);
-        // self add_pers_toggle("kill sounds", undefined, custom_scripts\_z_func::togglepers, "kill_sounds", true);
-        if (self custom_scripts\_util::getpers("kill_effects")) 
-        {
-            self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
-            self add_option("preview effect", "^:" + "current effect: ^:" + self getpers("kill_effect"), ::preview_effect);
-        }
-        
-        if (self custom_scripts\_util::getpers("kill_effects") || self custom_scripts\_util::getpers("wave_effects")) self add_option("randomize wave effects", self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::random_wave_effects);
-        if (self custom_scripts\_util::getpers("wave_effects")) self add_option("preview effect", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::preview_effect);
-        // if (self custom_scripts\_util::getpers("kill_sounds")) self add_array("kill sounds", slider_controls, custom_scripts\_z_func::setpersmenu, self.sound_list, "kill_sound");
-        self add_pers_toggle("tracer rounds", "current effect: ^:" + self getpers("tracer_round"), ::toggle_tracers, "tracer_rounds");
-        if (self custom_scripts\_util::getpers("tracer_rounds")) self add_array("crosshair tracer effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_round");
+        self add_option("effect manager", undefined, ::new_menu, "edit effects"); 
         break;
 
     case "glitches":
@@ -134,6 +121,36 @@ structure()
         self add_option("one handed gun", undefined, ::one_handed_gun); // add choose weapon menu
         self add_game_option("iw8", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw8)");
         self add_game_option("iw9", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw9)");
+        break;
+
+    case "edit effects":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_array("preview effects", slider_controls, ::preview_effect, list("wave,tracer,kill"));
+        self add_pers_toggle("kill effects", "current effect: ^:" + self getpers("kill_effect"), custom_scripts\_z_func::togglepers, "kill_effects", true);
+        self add_pers_toggle("wave kill effects", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), custom_scripts\_z_func::togglepers, "wave_effects", true);
+        self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
+        self add_option("randomize wave effects", self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::random_wave_effects);
+        self add_option("tracer effects", undefined, ::new_menu, "edit tracers");
+        break;
+
+    case "edit tracers":
+        self.bind_index = false;
+        self add_menu(menu);
+        self add_pers_toggle("tracer rounds", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::toggle_tracers, "tracer_rounds");
+        self add_pers_toggle("use multiple effects", undefined, custom_scripts\_z_func::togglepers, "use_tracer_waves", true);
+        self add_option("randomize tracer effects", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::random_tracer_effects);
+        if (self custom_scripts\_util::getpers("use_tracer_waves"))
+        {
+            for (i = 1; i < 4; i++) 
+            {
+                self add_array("effect ^:#" + i, slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_effect_" + i);
+            }
+        }
+        else
+        {
+            self add_array("tracer effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_effect");
+        }
         break;
 
     case "binds": // bro can we please rework this i mean it works but a slider would be better -et

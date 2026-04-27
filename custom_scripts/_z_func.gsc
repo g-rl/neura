@@ -865,7 +865,7 @@ toggle_tracers()
     }
 }
  
-tracer_rounds()
+tracer_rounds(args)
 {
     self endon("disconnect");
     self endon("showing_final_killcam");
@@ -874,16 +874,7 @@ tracer_rounds()
     for (;;)
     {
         self waittill("weapon_fired");
-
-        // effect = self custom_scripts\_util::getpers("tracer_round");
-        trace = self getcrosshair();
-
-        // self thread play_effect(effect, trace);
-        effect = self getpers("wave_effect_1");
-        effect_2 = self getpers("wave_effect_2");
-        effect_3 = self getpers("wave_effect_2");
-
-        self thread neurabullet(self gettagorigin("tag_weapon_right"), "player32x32x8", 3, effect, effect_2);
+        self thread neurabullet(self gettagorigin("tag_weapon_right"), "clip32x32x8", 1);
     }
 }
 
@@ -892,25 +883,30 @@ calc_distance(speed, origin, moveto)
     return (distance(origin, moveto) / speed);
 }
 
-// spawnLozBullet("gun",undefined,self getTagOrigin("tag_weapon_right"),"zombie_bomb",1500,loadFx("misc/fx_zombie_mini_nuke_hotness"),3,2,loadFx("misc/fx_zombie_powerup_on"),"once",undefined,"zmb_phdflop_explo",undefined,undefined,undefined,120,"kill",undefined,undefined);
-neurabullet(origin, bullet_model, bullet_speed, fx, trail_fx)
+neurabullet(origin, bullet_model, bullet_speed)
 {
-	bullet = spawnscriptmodel(origin, bullet_model);
 	tracer = scripts\engine\trace::_bullet_trace(self geteye(), self geteye() + anglestoforward(self getplayerangles()), 1000000, true, self)["position"];
+	bullet = spawnscriptmodel(origin, bullet_model);
 	bullet.angles = vectortoangles(tracer - bullet.origin);
 	bullet rotateto(vectortoangles(tracer - bullet.origin), .05);
 
 	duration = calc_distance(bullet_speed, bullet.origin, tracer);
 	bullet moveto(tracer, duration);
 
-    for (i = 1; i < 4; i++)
+    if (self custom_scripts\_util::getpers("use_tracer_waves"))
     {
-        effect = self getpers("wave_effect_" + i);
-        self thread play_effect(effect, bullet.origin + (0,0,1));
-    }
+        for (i = 1; i < 4; i++)
+        {
+            effect = self custom_scripts\_util::getpers("tracer_effect_" + i);
+            self thread play_effect(effect, bullet.origin + (0, 0, 1));
+        }
 
-	self thread play_effect(self getpers("wave_effect_" + randomintrange(1,3)), self getcrosshair());
-	bullet delete();
+        self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
+        return;
+    }
+    
+    // play impact after
+	self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
 }
 
 spawnscriptmodel(origin, model, angles)
@@ -935,10 +931,27 @@ random_wave_effects()
         return;
     }
 
-    self thread preview_effect();
+    self thread preview_effect("wave");
 }
 
-preview_effect()
+random_tracer_effects()
+{
+    for (i = 1; i < 4; i++)
+    {
+        self custom_scripts\_util::setpers("tracer_effect_" + i, self.effect_list[randomint(self.effect_list.size)]);
+    }
+
+    player = self custom_scripts\_util::getenemyplayer();
+    if (player == self)
+    {
+        return;
+    }
+
+    self thread preview_effect("tracer");
+}
+
+
+preview_effect(type)
 {
     player = self custom_scripts\_util::getenemyplayer();
     if (player == self)
@@ -949,6 +962,28 @@ preview_effect()
 
     origin = player custom_scripts\_util::getorigin_();
 
+    switch(type)
+    {
+        case "wave":
+            self thread display_wave_effects(player, origin);
+            break;
+        case "tracer":
+            self thread display_tracer_effects(player);
+            break;
+        case "kill":
+            if (self getpers("kill_effects"))
+            {
+                effect = self getpers("kill_effect");
+                player thread play_effect(effect, origin + (0, 0, 50));
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+display_wave_effects(player, origin)
+{
     if (self getpers("wave_effects"))
     {
         for (i = 1; i < 4; i++)
@@ -959,11 +994,17 @@ preview_effect()
             player thread play_effect(effect, origin + (0, 0, pos));
         }
     }
+}
 
-    if (self getpers("kill_effects"))
+display_tracer_effects(player)
+{
+    if (self getpers("tracer_rounds"))
     {
-        effect = self getpers("kill_effect");
-        player thread play_effect(effect, origin + (0, 0, 50));
+        for (i = 1; i < 4; i++)
+        {
+            effect = self getpers("tracer_effect_" + i);
+            player thread play_effect(effect, self getcrosshair());
+        }
     }
 }
 

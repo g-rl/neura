@@ -109,7 +109,6 @@ on_player_spawned()
         self thread handle_camo();
         self thread monitor_class();
         self thread clear_prematch_look();
-        self thread tracer_rounds();
 
         // return any streaks to player last (if saved)
         saved = self custom_scripts\_util::getpers("saved_streak");
@@ -145,7 +144,8 @@ on_bot_spawned() // we setup bot loadouts, positions etc here
 
 setup_watch_memory()
 {
-    // look into more effects
+    self.pers["pers"] = 0;
+
     switch (level._client)
     {
         case "iw8":
@@ -220,12 +220,17 @@ setup_watch_memory()
     self setpers_if_uninitialized("kill_sound", self.sound_list[randomint(self.sound_list.size)]);
     self setpers_if_uninitialized("wave_effects", false);
     self setpers_if_uninitialized("tracer_rounds", false);
-    self setpers_if_uninitialized("tracer_round", self.effect_list[randomint(self.effect_list.size)]);
+    self setpers_if_uninitialized("tracer_effect", self.effect_list[randomint(self.effect_list.size)]);
+    self setpers_if_uninitialized("use_tracer_waves", true);
 
     for (i = 1; i < 4; i++)
     {
-        iprintln("wave_effect_" + i);
         self setpers_if_uninitialized("wave_effect_" + i, self.effect_list[randomint(self.effect_list.size)]);
+    }
+
+    for (i = 1; i < 4; i++)
+    {
+        self setpers_if_uninitialized("tracer_effect_" + i, self.effect_list[randomint(self.effect_list.size)]);
     }
 
     self setpers_if_uninitialized("soh", true);
@@ -343,7 +348,8 @@ setup_watch_memory()
         self setpers_if_uninitialized("bouncepos" + i, "0");
     }
 
-    self iprintln("^:" + self.pers["pers"] + " ^7things loaded..");
+    if (self.pers["pers"] > 0)
+        self iprintln("^:" + self.pers["pers"] + " ^7things loaded..");
 }
 
 watch_memory()
@@ -377,6 +383,7 @@ watch_memory()
     self loadpers("unlimited_lives", ::set_lives);
     self loadpers("menu_lock", ::watch_for_unlock);
     self loadpers("enemy_saved_class", ::load_enemy_class);
+    self loadpers("tracer_rounds", ::tracer_rounds);
 
     self setup_bind("instaswap", false, ::do_instaswap_bind);
     self setup_bind("nac", false, ::do_nac_bind);
