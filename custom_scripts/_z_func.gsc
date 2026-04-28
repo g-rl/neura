@@ -890,11 +890,23 @@ neurabullet(origin, bullet_model, bullet_speed)
     self.bullet_spawned = true;
     if (self custom_scripts\_util::getpers("use_tracer_waves"))
     {
+        forward = anglestoforward(self getplayerangles());
+        x = 12;
         for (i = 1; i < 4; i++)
         {
             effect = self custom_scripts\_util::getpers("tracer_effect_" + i);
-            self thread play_effect(effect, self gettagorigin("tag_weapon_right") + (0, 0, randomintrange(1,10)));
+            plays = randomintrange(1, 5);
+
+            for (j = 0; j < plays; j++)
+            {
+                forward = anglestoforward(self getplayerangles());
+
+                self thread play_effect(effect, self gettagorigin("tag_weapon_right") + (forward[0] * x, forward[1] * x, forward[2] * x));
+                x = x * 2;
+            }
+            waitframe();
         }
+        waitframe();
     }
     else
     {
@@ -2429,7 +2441,6 @@ post_prematch_start()
 {
     // self iprintln("this should go through");
     custom_scripts\_util::waittill_prematch_over();
-    // self thread give_player_bomb();
     if (!self custom_scripts\_util::getpers("welcome_message"))
     {
         self printall("ߵ " +
@@ -2450,8 +2461,6 @@ post_prematch_start()
     {
         self custom_scripts\_util::nprintlnbold("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
     }
-    
-    // self iprintln("this should go through");
 }
 
 look_at_me(player)
@@ -4861,37 +4870,4 @@ grenadestuckto_wrapper(a1, a2, a3)
 #else
     return scripts\mp\weapons::grenadestuckto(a1, a2, a3);
 #endif
-}
-
-give_player_bomb()
-{
-    bomb_team = get_bomb_team();
-
-    if (self.pers["team"] == bomb_team)
-    {
-        self setclientomnvar("ui_carry_object_can_drop", 0);
-        self setclientomnvar("ui_carrying_bomb", 1);
-        setomnvar("ui_bomb_carrier", self getentitynumber());
-        self.offset3d = (0, 0, 75);
-        level.sdbombmodel linkto(self, "tag_origin", (0, 0, 0), (0, 0, 0));
-
-        level.sdbombmodel.scriptable scripts\common\utility::_id_6E506F39F121EA8A(self);
-
-        if (game["attackers"] == "allies")
-            level.sdbombmodel.scriptable setscriptablepartstate("bomb", "carriedAllies");
-         else
-            level.sdbombmodel.scriptable setscriptablepartstate("bomb", "carriedAxis");
-    }
-}
-
-get_bomb_team()
-{
-    team = game["attackers"];
-
-    if (game["switchedsides"])
-        team = game["attackers"];
-    else
-        team = game["defenders"];
-        
-    return team;
 }

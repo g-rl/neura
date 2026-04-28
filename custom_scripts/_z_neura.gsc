@@ -68,7 +68,7 @@ on_player_spawned()
     for (;;)
     {
         self waittill("spawned_player");
-        
+
         self thread reload_position();
         self thread custom_scripts\_z_menu::close_menu_on_death();
 
