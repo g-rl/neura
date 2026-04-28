@@ -900,22 +900,38 @@ neurabullet(origin, bullet_model, bullet_speed)
             for (j = 0; j < plays; j++)
             {
                 forward = anglestoforward(self getplayerangles());
-
                 self thread play_effect(effect, self gettagorigin("tag_weapon_right") + (forward[0] * x, forward[1] * x, forward[2] * x));
                 x = x * 2;
             }
             waitframe();
         }
+        // play crosshair impact after
         waitframe();
+        self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
+        self.bullet_spawned = undefined;
     }
     else
     {
+        forward = anglestoforward(self getplayerangles());
+        x = 12;
+        for (i = 1; i < 4; i++)
+        {
+            effect = self custom_scripts\_util::getpers("tracer_effect");
+            plays = randomintrange(1, 5);
+
+            for (j = 0; j < plays; j++)
+            {
+                forward = anglestoforward(self getplayerangles());
+                self thread play_effect(effect, self gettagorigin("tag_weapon_right") + (forward[0] * x, forward[1] * x, forward[2] * x));
+                x = x * 2;
+            }
+            waitframe();
+        }
+        // play crosshair impact after
+        waitframe();
         self thread play_effect(self getpers("tracer_effect"), self getcrosshair());
+        self.bullet_spawned = undefined;
     }
-    
-    // play impact after
-	self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
-    self.bullet_spawned = undefined;
 }
 
 spawnscriptmodel(origin, model, angles) // not removing rn may use later?
