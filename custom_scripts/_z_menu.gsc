@@ -407,7 +407,7 @@ structure()
         self add_option("fast restart", undefined, ::fast_restart);
         // self add_option("respawn everyone", undefined, ::respawn_everyone);
         self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
-        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, getdvarint(DVAR_("rainbow")));
+        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, self getpers("rainbow"));
         self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
         self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
         if (gametype == "sd") 
@@ -1468,9 +1468,7 @@ open_menu(menu)
     self set_menu(menu);
     self set_procedure();
     self create_option();
-
-    if (getdvarint("rainbow") == 1)
-        self thread flicker_shaders();
+    self thread flicker_shaders();
 
     is_prematch_done = game["flags"]["prematch_done"];
     if (is_prematch_done)
@@ -1485,6 +1483,12 @@ flicker_shaders() // colors from bliss - starts with original color
     self endon("end_flicker");
 
     first = true;
+
+    if (!self custom_scripts\_util::getpers("rainbow"))
+    {
+        self notify("end_flicker");
+        return;
+    }
 
     for (;;)
     {
@@ -1880,15 +1884,14 @@ update_menu(menu, cursor, force)
 // other stuff
 rainbow_menu()
 {
-    rainbow_dvar = DVAR_("rainbow");
-    if (getdvarint(rainbow_dvar) == 1)
+    self.pers["rainbow"] = !custom_scripts\_util::toggle(self.pers["rainbow"]);
+
+    if (self custom_scripts\_util::getpers("rainbow"))
     {
-        setdvar(rainbow_dvar, 0);
-        self notify("end_flicker");
+        self thread flicker_shaders();
     }
     else
     {
-        setdvar(rainbow_dvar, 1);
-        self thread flicker_shaders();
+        self notify("end_flicker");
     }
 }

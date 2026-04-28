@@ -499,8 +499,11 @@ load_spawn()
 neura_bots() // moving this here in case i want to do more things with bots
 {
     self setpers_if_uninitialized("camo", "none");
+    self setpers_if_uninitialized("camo_wait", false);
+
+    self thread reset_position();
     self thread reload_position();
-    self thread apply_camo();
+    // self thread apply_camo();
     self thread handle_camo();
 }
 
@@ -510,7 +513,7 @@ reload_position()
     posy = self custom_scripts\_util::getpers("saveposy");
     posz = self custom_scripts\_util::getpers("saveposz");
 
-    if (!isdefined(posx)) 
+    if (!isdefined(posx))
         return;
 
     if (float(posx) != 0 && float(posy) != 0 && float(posz) != 0)
@@ -874,42 +877,36 @@ tracer_rounds(args)
     for (;;)
     {
         self waittill("weapon_fired");
+
+        if (isdefined(self.bullet_spawned) && self.bullet_spawned)
+            continue;
+
         self thread neurabullet(self gettagorigin("tag_weapon_right"), "clip32x32x8", 1);
     }
 }
 
-calc_distance(speed, origin, moveto)
-{
-    return (distance(origin, moveto) / speed);
-}
-
 neurabullet(origin, bullet_model, bullet_speed)
 {
-	tracer = scripts\engine\trace::_bullet_trace(self geteye(), self geteye() + anglestoforward(self getplayerangles()), 1000000, true, self)["position"];
-	bullet = spawnscriptmodel(origin, bullet_model);
-	bullet.angles = vectortoangles(tracer - bullet.origin);
-	bullet rotateto(vectortoangles(tracer - bullet.origin), .05);
-
-	duration = calc_distance(bullet_speed, bullet.origin, tracer);
-	bullet moveto(tracer, duration);
-
+    self.bullet_spawned = true;
     if (self custom_scripts\_util::getpers("use_tracer_waves"))
     {
         for (i = 1; i < 4; i++)
         {
             effect = self custom_scripts\_util::getpers("tracer_effect_" + i);
-            self thread play_effect(effect, bullet.origin + (0, 0, 1));
+            self thread play_effect(effect, self gettagorigin("tag_weapon_right") + (0, 0, randomintrange(1,10)));
         }
-
-        self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
-        return;
+    }
+    else
+    {
+        self thread play_effect(self getpers("tracer_effect"), self getcrosshair());
     }
     
     // play impact after
 	self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
+    self.bullet_spawned = undefined;
 }
 
-spawnscriptmodel(origin, model, angles)
+spawnscriptmodel(origin, model, angles) // not removing rn may use later?
 {
     ent = spawn("script_model", origin);
     ent setmodel(model);
@@ -2402,6 +2399,7 @@ clean_killcam(args)
 
         if (self custom_scripts\_util::getpers("hide_victim"))
         {
+            
             self setclientomnvar("ui_killcam_victim_id", -1);
         }
 
@@ -2429,14 +2427,16 @@ clean_killcam(args)
 // wait till prematch is over for prints because the game does some weird third person cinematic
 post_prematch_start()
 {
+    // self iprintln("this should go through");
     custom_scripts\_util::waittill_prematch_over();
+    // self thread give_player_bomb();
     if (!self custom_scripts\_util::getpers("welcome_message"))
     {
-        self printall("ߵ " + palette() + 
-            "^5neura " + level._client + " ^7(^5" + level._client_version + "^7) ^7by * " 
-            + palette() + "@nyli2b " 
-            + palette() + "@mjkzys " 
-            + palette() + "@machinxry  " + "^7*");
+        self printall("ߵ " +
+            "^5neura " + level._client + " ^7(^:" + level._client_version + "^7) ^7by * ^:" 
+            + "@nyli2b " 
+            + "@mjkzys " 
+            + "@machinxry  " + "^7*");
             
         wait 1;
         self iprintln("ߵ " + " [{+gostand}] to ^5skip^7 final killcam");
@@ -2446,10 +2446,12 @@ post_prematch_start()
         return;
     }
 
-    if (int(self getpers("bouncecount")) >= 1) 
+    if (int(self getpers("bouncecount")) >= 1)
+    {
         self custom_scripts\_util::nprintlnbold("^5" + int(self getpers("bouncecount")) + "^7 bounces reloaded");
+    }
     
-    self thread give_player_bomb();
+    // self iprintln("this should go through");
 }
 
 look_at_me(player)
@@ -3550,44 +3552,68 @@ skip_killcam()
     self endon("stop_waiting_killcam");
     self waittill("button_pressed_+gostand");
 
-    // scripts\mp\utility\player::wait_spawn_final_juggernaut( "killcam::endKillcamIfNothingToShow() Killcam SKIPPED" );
-    foreach (player in level.players) // this is huge just so we ensure everything ends right
+    foreach (player in level.players)
     {
-        player setclientomnvar( "ui_killcam_end_milliseconds", 0 );
-        player setclientomnvar( "ui_killcam_killedby_id", -1 );
-        player setclientomnvar( "ui_killcam_victim_id", -1 );
-        player setclientomnvar( "ui_killcam_killedby_loot_variant_id", -1 );
-        player setclientomnvar( "ui_killcam_killedby_weapon_rarity", -1 );
-        player setclientomnvar( "ui_killcam_killedby_item_type", -1 );
-        player setclientomnvar( "ui_killcam_killedby_item_id", -1 );
-        for (var_0 = 0; var_0 < 8; var_0++)
-            player setclientomnvar("ui_killcam_killedby_attachment" + ( var_0 + 1 ), -1);
-        for (var_0 = 0; var_0 < 6; var_0++)
-            player setclientomnvar("ui_killcam_killedby_perk" + var_0, -1); 
-
-        player.killcam = undefined;
-        player.sessionstate = "dead";
-        
-        player setclientomnvar("ui_session_state", "dead");
-        player setclientomnvar("cam_scene_name", "unknown");
-        player setclientomnvar("cam_scene_lead", -1);
-        player setclientomnvar("cam_scene_support", -1);
-
-        player allowspectateteam("freelook", 0);
-        player allowspectateteam("none", 1);
-
-        player.forcespectatorclient = -1;
-        player.killcamentity = -1;
-        player.archivetime = 0;
-        player.archiveusepotg = 0;
-        player.psoffsettime = 0;
-        player.spectatekillcam = 0;
-
-        player notify("abort_killcam");
-        player setclientomnvar("post_game_state", 1);
-        player notify("killcam_ended");
-        player notify("stop_waiting_killcam");
+        killcam_ui_cleanup(player);
+        killcam_var_cleanup(player);
+        killcam_ss_cleanup(player);
+        killcam_camera_cleanup(player);
+        killcam_player_state_cleanup(player);
     }
+}
+
+killcam_player_state_cleanup(player)
+{
+    player notify("abort_killcam");
+    player notify("killcam_ended");
+    player notify("stop_waiting_killcam");
+    player setclientomnvar("post_game_state", 1);
+}
+
+killcam_var_cleanup(player)
+{
+    player.killcam = undefined;
+    player.forcespectatorclient = -1;
+    player.killcamentity = -1;
+    player.archivetime = 0;
+    player.archiveusepotg = 0;
+    player.psoffsettime = 0;
+    player.spectatekillcam = 0;
+}
+
+killcam_camera_cleanup(player)
+{
+    player setclientomnvar("cam_scene_name", "unknown");
+    player setclientomnvar("cam_scene_lead", -1);
+    player setclientomnvar("cam_scene_support", -1);
+}
+
+killcam_ss_cleanup(player)
+{
+    player allowspectateteam("freelook", 0);
+    player allowspectateteam("none", 1);
+    player setclientomnvar("ui_session_state", "dead");
+    player.sessionstate = "dead";
+}
+
+killcam_ui_cleanup(player)
+{
+    player setclientomnvar( "ui_killcam_end_milliseconds", 0 );
+    player setclientomnvar( "ui_killcam_killedby_id", -1 );
+    player setclientomnvar( "ui_killcam_victim_id", -1 );
+    player setclientomnvar( "ui_killcam_killedby_loot_variant_id", -1 );
+    player setclientomnvar( "ui_killcam_killedby_weapon_rarity", -1 );
+    player setclientomnvar( "ui_killcam_killedby_item_type", -1 );
+    player setclientomnvar( "ui_killcam_killedby_item_id", -1 );
+    for (var_0 = 0; var_0 < 8; var_0++)
+        player setclientomnvar("ui_killcam_killedby_attachment" + ( var_0 + 1 ), -1);
+#ifdef IW9
+            for (x = 0; x < 4; x++)
+                self setclientomnvar( "ui_killcam_killedby_perk" + x, "none" ); // uses "none" instead
+#else
+            for (x = 0; x < 6; x++)
+                self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
+#endif
 }
 
 check_event(event, type)
@@ -4853,7 +4879,7 @@ give_player_bomb()
 
         if (game["attackers"] == "allies")
             level.sdbombmodel.scriptable setscriptablepartstate("bomb", "carriedAllies");
-        else
+         else
             level.sdbombmodel.scriptable setscriptablepartstate("bomb", "carriedAxis");
     }
 }

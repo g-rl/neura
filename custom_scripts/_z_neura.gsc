@@ -45,7 +45,7 @@ on_player_connect()
     for (;;)
     {
         level waittill("connected", player);
-
+        
         if (isai(player) || isbot(player))
             player thread on_bot_spawned();
         else
@@ -162,8 +162,6 @@ setup_watch_memory()
             break;
     }
 
-    setdvarifuninitialized(DVAR_("rainbow"), 1);
-
     // engine dvars
     setdvarifuninitialized(DVAR_("pan_instashoots"), 1);
     setdvarifuninitialized(DVAR_("pan_alwayscanswap"), 0);
@@ -187,6 +185,8 @@ setup_watch_memory()
     setdvar(DVAR_("lfx_showDebugOverlay"), 1);
     setdvar(DVAR_("lfx_showDebugOverlay"), 0);
     
+    self setpers_if_uninitialized("rainbow", true);
+
     // add change save & load binds
     self setpers_if_uninitialized("snl", true);
     self setpers_if_uninitialized("saveposx", 0);
@@ -348,8 +348,10 @@ setup_watch_memory()
         self setpers_if_uninitialized("bouncepos" + i, "0");
     }
 
+    /* 
     if (self.pers["pers"] > 0)
         self iprintln("^:" + self.pers["pers"] + " ^7things loaded..");
+        */
 }
 
 watch_memory()
