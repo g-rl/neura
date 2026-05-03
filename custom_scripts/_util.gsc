@@ -7,7 +7,10 @@
 #define DVAR_(name) name
 #endif
 
-void() {}
+void() 
+{
+    // empty function
+}
 
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
@@ -410,3 +413,13 @@ allow_jump(1)
         allow_weapon_switch(1);
         allow_sprint(1);
 */
+
+// TODO: add these to gsc-tool prob lol
+getclassindex_wrapper(index)
+{
+#ifdef S4
+    return scripts\mp\class::_id_6962(index);
+#else
+    return scripts\mp\class::getclassindex(index);
+#endif
+}
