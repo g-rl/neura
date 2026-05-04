@@ -30,7 +30,6 @@ setdvarmenu(value, dvar)
     // self thread play_sound("weap_ammo_pickup");
 }
 
-
 one_handed_gun()
 {
     if (!isalive(self))
@@ -47,7 +46,7 @@ one_handed_gun()
 
     wait 2;
     self notify("luinotifyserver", "class_select", self.class);
-    index = int(scripts\mp\class::getclassindex(self.class) + 1);
+    index = int(custom_scripts\_util::getclassindex_wrapper(self.class) + 1);
     self.class = "custom" + index;
     scripts\mp\class::setclass(self.class);
     self.tag_stowed_back = undefined;
@@ -70,7 +69,12 @@ change_player_team(player)
         return;
     }
 
+#ifdef S4
+    other_team = scripts\mp\utility\game::_id_6BE2(player.pers["team"])[0];
+#else
     other_team = scripts\mp\utility\game::getotherteam(player.pers["team"])[0];
+#endif
+
     player.team = other_team;
     player.sessionstate = "spectator";
     wait 0.05;
@@ -2239,7 +2243,7 @@ do_class_bind(args, slot)
 
         if (!self custom_scripts\_util::in_menu())
         {
-            index = int(scripts\mp\class::getclassindex(self.class) + 1);
+            index = int(custom_scripts\_util::getclassindex_wrapper(self.class) + 1);
             index++;
 
             if (index > int(self custom_scripts\_util::getpers("class_wrap"))) 
@@ -2763,7 +2767,12 @@ disable_oob(args)
 
     if (isdefined(self.vehicle) && isdefined(self.vehicle.health) && self.vehicle.health > 0)
     {
+#ifdef S4
+        scripts\mp\outofbounds::_id_3964(self.vehicle, 0);
+#else
         scripts\mp\outofbounds::clearoob(self.vehicle, 0);
+#endif
+
         self setclientomnvar("ui_out_of_bounds_type", 0 );
         self setclientomnvar("ui_out_of_bounds_countdown", 0);
     }
