@@ -505,7 +505,10 @@ neura_bots() // moving this here in case i want to do more things with bots
     self setpers_if_uninitialized("camo", "none");
     self setpers_if_uninitialized("camo_wait", false);
 
-    self thread reset_position();
+    // self thread reset_position();
+    self setpers_if_uninitialized("saveposx", 0);
+    self setpers_if_uninitialized("saveposy", 0);
+    self setpers_if_uninitialized("saveposz", 0);
     self thread reload_position();
     // self thread apply_camo();
     self thread handle_camo();
