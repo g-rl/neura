@@ -881,16 +881,18 @@ tracer_rounds(args)
         if (isdefined(self.bullet_spawned) && self.bullet_spawned)
             continue;
 
-        self thread neurabullet(self gettagorigin("tag_weapon_right"), "clip32x32x8", 1);
+        self thread neurabullet(self gettagorigin("tag_weapon_right"));
     }
 }
 
-neurabullet(origin, bullet_model, bullet_speed)
+neurabullet(origin) 
 {
     self.bullet_spawned = true;
-    if (self custom_scripts\_util::getpers("use_tracer_waves"))
+    wave_effects = self custom_scripts\_util::getpers("use_tracer_waves");
+
+    if (wave_effects)
     {
-        forward = anglestoforward(self getplayerangles());
+        // wave effect trails - todo: player can manage effect count
         x = 12;
         for (i = 1; i < 4; i++)
         {
@@ -900,19 +902,19 @@ neurabullet(origin, bullet_model, bullet_speed)
             for (j = 0; j < plays; j++)
             {
                 forward = anglestoforward(self getplayerangles());
-                self thread play_effect(effect, self gettagorigin("tag_weapon_right") + (forward[0] * x, forward[1] * x, forward[2] * x));
+                self thread play_effect(effect, origin + (forward[0] * x, forward[1] * x, forward[2] * x));
                 x = x * 2;
             }
-            waitframe();
+            wait 0.05;
         }
-        // play crosshair impact after
-        waitframe();
+        // play impact on cross after
+        wait 0.05;
         self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
         self.bullet_spawned = undefined;
     }
     else
     {
-        forward = anglestoforward(self getplayerangles());
+        // singular effect trails
         x = 12;
         for (i = 1; i < 4; i++)
         {
@@ -922,13 +924,13 @@ neurabullet(origin, bullet_model, bullet_speed)
             for (j = 0; j < plays; j++)
             {
                 forward = anglestoforward(self getplayerangles());
-                self thread play_effect(effect, self gettagorigin("tag_weapon_right") + (forward[0] * x, forward[1] * x, forward[2] * x));
+                self thread play_effect(effect, origin + (forward[0] * x, forward[1] * x, forward[2] * x));
                 x = x * 2;
             }
-            waitframe();
+            wait 0.05;
         }
         // play crosshair impact after
-        waitframe();
+        wait 0.05;
         self thread play_effect(self getpers("tracer_effect"), self getcrosshair());
         self.bullet_spawned = undefined;
     }
