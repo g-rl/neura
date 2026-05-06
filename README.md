@@ -1,8 +1,10 @@
 # neura
 
-a multi-game GSC menu for **IW8** (MW:2019), **S4** (Vanguard), and **IW9** (MW:2022), created by [nyli2b](https://x.com/nyli2b) & [mjkzy](https://x.com/mjkzys)
+a multi-game GSC menu for **IW8**, **S4**, and **IW9**, created by [nyli2b](https://x.com/nyli2b) & [mjkzy](https://x.com/mjkzys)
 
-neura will **ALWAYS** be free and open source.
+- **you must own the game yourself in order to use neura**
+- neura's GSC *always be free and Open Source*
+- neura is only usable offline and is not cheats
 
 <div align="center">
   <table>
@@ -18,13 +20,15 @@ neura will **ALWAYS** be free and open source.
 
 *TODO*
 
-## Want something?
-
-open up a issue, or join [the Discord server here](https://discord.gg/eGy76FAVgz) and ask us about it!
-
 ## Credits
 
 - [nyli](https://github.com/g-rl) - primarily the one writing GSC
 - [mjkzy](https://github.com/mjkzy) - maintaining GSC and engine mods for errors and multi-game support
 - [blue](https://github.com/SadesperRecord) - IW8 player mechanics research
 - [hinatyu](https://x.com/hinatyu) - provided GSC dumps & extremely useful resources for S4 & IW9 (thank you!)
+
+## License
+
+neura's GSC is available under **GNU General Public License v3.0 (GPLv3)**. To learn more about it, read the [LICENSE](./LICENSE) file.
+
+You can do anything with this GSC **as long as it is Open Source and includes the license.** 
