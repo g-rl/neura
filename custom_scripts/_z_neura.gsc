@@ -7,11 +7,11 @@
 #include custom_scripts\_util;
 
 // TODO: temporary, to handle dvars, regardless of hash or not
-#ifdef IW9
-#define DVAR_(name) @ name
-#else
+//#ifdef IW9
+//#define DVAR_(name) @ name
+//#else
 #define DVAR_(name) name
-#endif
+//#endif
 
 init()
 {

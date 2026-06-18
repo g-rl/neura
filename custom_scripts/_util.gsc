@@ -1,11 +1,11 @@
 // this is a utility file and never has includes
 
 // TODO: temporary, to handle dvars, regardless of hash or not
-#ifdef IW9
-#define DVAR_(name) @ name
-#else
+//#ifdef IW9
+//#define DVAR_(name) @ name
+//#else
 #define DVAR_(name) name
-#endif
+//#endif
 
 void() 
 {

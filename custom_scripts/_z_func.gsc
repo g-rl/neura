@@ -1,11 +1,11 @@
 #include custom_scripts\_util; // this is okay to do as _util doesnt include anything
 
 // TODO: temporary, to handle dvars, regardless of hash or not
-#ifdef IW9
-#define DVAR_(name) @ name
-#else
+//#ifdef IW9
+//#define DVAR_(name) @ name
+//#else
 #define DVAR_(name) name
-#endif
+//#endif
 
 debug_menu()
 {
