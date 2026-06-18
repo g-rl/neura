@@ -22,6 +22,7 @@ init()
 #else
     level._client = "iw8";
 #endif
+
     level._client_version = getdvar(DVAR_("build_version"), "1.0.0"); // build_version_full can be used for more in depth checks
 
     level.is_debug = false;

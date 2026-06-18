@@ -2,8 +2,8 @@
 
 a multi-game GSC menu for **IW8**, **S4**, and **IW9**, created by [nyli2b](https://x.com/nyli2b) & [mjkzy](https://x.com/mjkzys)
 
-- **you must own the game yourself in order to use neura**
-- neura's GSC *always be free and Open Source*
+- **you must own a license to the game in order to use neura.**
+- neura's GSC will *always* be **free** and **Open Source** for anyone
 - neura is only usable offline and is not cheats
 
 <div align="center">
@@ -26,6 +26,7 @@ a multi-game GSC menu for **IW8**, **S4**, and **IW9**, created by [nyli2b](http
 - [mjkzy](https://github.com/mjkzy) - maintaining GSC and engine mods for errors and multi-game support
 - [blue](https://github.com/SadesperRecord) - IW8 player mechanics research
 - [hinatyu](https://x.com/hinatyu) - provided GSC dumps & extremely useful resources for S4 & IW9 (thank you!)
+- [sortileges (Sass)](https://x.com/sasseries) - [iw8cine](https://github.com/sortileges/iw8cine) open source cinematic mod which was ported to S4 & IW9
 
 ## License
 
