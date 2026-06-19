@@ -2,9 +2,9 @@
 
 a multi-game GSC menu for **IW8**, **S4**, and **IW9**, created by [nyli2b](https://x.com/nyli2b) & [mjkzy](https://x.com/mjkzys)
 
-- **you must own a license to the game in order to use neura.**
+- **you must own a license to the game(s) in order to use neura.**
 - neura's GSC will *always* be **free** and **Open Source** for anyone
-- neura is only usable offline and is not cheats
+- neura is only usable offline and is not to be used as "cheats" or "hacks"
 
 <div align="center">
   <table>
@@ -16,9 +16,9 @@ a multi-game GSC menu for **IW8**, **S4**, and **IW9**, created by [nyli2b](http
   </table>
 </div>
 
-## Features
+## Download
 
-*TODO*
+to download and use neura, check out the [Discord Server](https://discord.gg/5U7dChVgBe) and navigate to the #install channel. this will have everything to install neura for MW2019!
 
 ## Credits
 
