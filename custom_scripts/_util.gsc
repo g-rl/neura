@@ -7,7 +7,7 @@
 #define DVAR_(name) name
 //#endif
 
-void() 
+void()
 {
     // empty function
 }

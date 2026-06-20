@@ -4615,9 +4615,14 @@ watch_for_unlock(args)
 end_round() // issue on other games?
 {
 #ifdef S4
-    level thread scripts\mp\gametypes\sd::_id_CF9E(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
+    //setomnvarforallclients( "ui_objective_state", 0 );
+    //setomnvar( "ui_bomb_interacting", 0 );
+    //thread scripts\mp\gamelogic::endgame( game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"] );
+    iprintln("needs confirming!"); // TODO
 #else
-    level thread scripts\mp\gametypes\sd::sd_endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
+    setomnvarforallclients( "ui_objective_state", 0 );
+    setomnvar( "ui_bomb_interacting", 0 );
+    thread scripts\mp\gamelogic::endgame( game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"] );
 #endif
 }
 
