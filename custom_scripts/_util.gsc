@@ -1,12 +1,5 @@
 // this is a utility file and never has includes
 
-// TODO: temporary, to handle dvars, regardless of hash or not
-//#ifdef IW9
-//#define DVAR_(name) @ name
-//#else
-#define DVAR_(name) name
-//#endif
-
 void()
 {
     // empty function
@@ -280,6 +273,7 @@ randomize(key)
 }
 
 // session
+/*
 load_session()
 {
     self endon("disconnect");
@@ -382,6 +376,7 @@ waittill_nengine_has_read()
         wait 0.05;
     }
 }
+*/
 
 palette() // ^: has been readded so rewrite everything using palette to just that eventually
 {

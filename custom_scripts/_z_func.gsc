@@ -1,12 +1,5 @@
 #include custom_scripts\_util; // this is okay to do as _util doesnt include anything
 
-// TODO: temporary, to handle dvars, regardless of hash or not
-//#ifdef IW9
-//#define DVAR_(name) @ name
-//#else
-#define DVAR_(name) name
-//#endif
-
 debug_menu()
 {
     level.is_debug = !custom_scripts\_util::toggle(level.is_debug);
@@ -199,7 +192,7 @@ set_lives(args)
 show_hud(should_show)
 {
 #ifdef IW9
-    setdvar(DVAR_("cg_drawCrosshair"), should_show);
+    setdvar("cg_drawCrosshair", should_show);
 #else
     setdvar("LOPKSRNTTS", should_show);
 #endif
@@ -263,8 +256,7 @@ do_freeze_anim_bind(args, slot)
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            freezeanim_dvar = DVAR_("pan_freezeanim");
-            setdvar(freezeanim_dvar, !custom_scripts\_util::toggle( getdvarint(freezeanim_dvar) ));
+            setdvar("pan_freezeanim", !custom_scripts\_util::toggle( getdvarint("pan_freezeanim") ));
             wait 0.05;
         }
     }
@@ -569,7 +561,7 @@ toggle_invincibility()
 get_fall_damage_height_dvar()
 {
 #ifdef IW9
-    return DVAR_("bg_fallDamageMinHeight");
+    return "bg_fallDamageMinHeight";
 #else
     return "NKTQRKRMTS";
 #endif
@@ -3403,7 +3395,7 @@ flashrumbleloop(num)
 watch_freeze_anim()
 {
     self waittill("showing_final_killcam");
-    setdvar(DVAR_("pan_freezeanim"), 0);
+    setdvar("pan_freezeanim", 0);
 }
 
 setslowmotion_wrapper(a1, a2, a3)
@@ -4107,8 +4099,8 @@ setup_player_state()
 {
     self freezecontrols(1);
     hide_camera_preview();
-    setdvar(DVAR_("cg_drawGun"), 0);
-    setdvar(DVAR_("cg_drawCrosshair"), 0);
+    setdvar("cg_drawGun", 0);
+    setdvar("cg_drawCrosshair", 0);
     self playerhide();
     self setclientomnvar("ui_hide_full_hud", 1);
 }
@@ -4117,8 +4109,8 @@ reset_player_state(camera)
 {
     show_camera_preview();
     self setclientomnvar("ui_hide_full_hud", 0);
-    setdvar(DVAR_("cg_drawGun"), 1);
-    setdvar(DVAR_("cg_drawCrosshair"), 1);
+    setdvar("cg_drawGun", 1);
+    setdvar("cg_drawCrosshair", 1);
     self unlink();
     self playershow();
     camera delete();

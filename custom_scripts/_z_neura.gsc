@@ -6,24 +6,18 @@
 #include custom_scripts\_z_func;
 #include custom_scripts\_util;
 
-// TODO: temporary, to handle dvars, regardless of hash or not
-//#ifdef IW9
-//#define DVAR_(name) @ name
-//#else
-#define DVAR_(name) name
-//#endif
-
 init()
 {
 #ifdef S4
     level._client = "s4";
+    level._client_version = getdvar("#x32567ef8d20de67e3", "1.0.0");
 #elifdef IW9
     level._client = "iw9";
+    level._client_version = getdvar("build_version", "1.0.0");
 #else
     level._client = "iw8";
+    level._client_version = getdvar("build_version", "1.0.0"); // build_version_full can be used for more in depth checks
 #endif
-
-    level._client_version = getdvar(DVAR_("build_version"), "1.0.0"); // build_version_full can be used for more in depth checks
 
     level.is_debug = false;
     level.session_data = [];
@@ -120,7 +114,7 @@ on_player_spawned()
 
 setup_dvars()
 {
-    setdvarifuninitialized(DVAR_("scr_killcam_time"), 5);
+    setdvarifuninitialized("scr_killcam_time", 5);
 
     // these still don't stop bots from being auto kicked due to team balance
     // edit: please look at this do we need a bot patch or something?? -ethan
@@ -163,19 +157,27 @@ setup_watch_memory()
             break;
     }
 
-    // engine dvars
-    setdvarifuninitialized(DVAR_("pan_instashoots"), 1);
-    setdvarifuninitialized(DVAR_("pan_alwayscanswap"), 0);
-    setdvarifuninitialized(DVAR_("pan_sprintswaps"), 0);
-    setdvarifuninitialized(DVAR_("pan_freezeanim"), 0);
-    setdvarifuninitialized(DVAR_("pan_alwaysaltswap"), 0);
-    setdvarifuninitialized(DVAR_("pan_canzooms"), 0);
+#ifdef S4
+    setdvarifuninitialized("#x3b13d1ca6cc94aadb", 1);
+    setdvarifuninitialized("#x39643587c396c30e2", 0);
+    setdvarifuninitialized("#x38d6540b423a9e0d8", 0);
+    setdvarifuninitialized("#x37c95f8797d5904c6", 0);
+    setdvarifuninitialized("#x3e9d8c32a93a40713", 0);
+    setdvarifuninitialized("#x327c785ae3b1ef9c2", 0);
+#else
+    setdvarifuninitialized("pan_instashoots", 1);
+    setdvarifuninitialized("pan_alwayscanswap", 0);
+    setdvarifuninitialized("pan_sprintswaps", 0);
+    setdvarifuninitialized("pan_freezeanim", 0);
+    setdvarifuninitialized("pan_alwaysaltswap", 0);
+    setdvarifuninitialized("pan_canzooms", 0);
+#endif
 
     // only tested these on iw8 so not too sure if they're the same on others -et
 #ifdef IW9
-    setdvar(DVAR_("r_mbEnable"), 0); // remove all motion blur
-    setdvar(DVAR_("camera_thirdPerson"), 0); // disable third person just in case
-    setdvar(DVAR_("jump_slowdownEnable"), 0); // jump slowdown
+    setdvar("r_mbEnable", 0); // remove all motion blur
+    setdvar("camera_thirdPerson", 0); // disable third person just in case
+    setdvar("jump_slowdownEnable", 0); // jump slowdown
 #else
     setdvar("LPSPNKLRPO", 0); // remove all motion blur
     setdvar("NOSLRNTRKL", 0); // disable third person just in case
@@ -183,8 +185,8 @@ setup_watch_memory()
     setdvar("LNOKTQPLKO", 0); // jump slowdown
 #endif
 
-    setdvar(DVAR_("lfx_showDebugOverlay"), 1);
-    setdvar(DVAR_("lfx_showDebugOverlay"), 0);
+    setdvar("lfx_showDebugOverlay", 1);
+    setdvar("lfx_showDebugOverlay", 0);
     
     self setpers_if_uninitialized("rainbow", true);
 

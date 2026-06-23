@@ -1,13 +1,6 @@
 #include custom_scripts\_z_func;
 #include custom_scripts\_util;
 
-// TODO: temporary, to handle dvars, regardless of hash or not
-//#ifdef IW9
-//#define DVAR_(name) @ name
-//#else
-#define DVAR_(name) name
-//#endif
-
 structure()
 {
     menu = self get_menu();
@@ -49,12 +42,21 @@ structure()
         self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
 
         // engine toggles
-        self add_dvar_toggle("instashoots", undefined, DVAR_("pan_instashoots"));
-        self add_dvar_toggle("always canswap", undefined, DVAR_("pan_alwayscanswap"));
-        self add_dvar_toggle("sprint swaps", undefined, DVAR_("pan_sprintswaps"));
-        self add_dvar_toggle("freeze anim", undefined, DVAR_("pan_freezeanim"));
-        self add_dvar_toggle("canzooms", undefined, DVAR_("pan_canzooms"));
-        self add_dvar_toggle("always altswap", undefined, DVAR_("pan_alwaysaltswap"));
+#ifdef S4
+        self add_dvar_toggle("instashoots", undefined, "#x3b13d1ca6cc94aadb");
+        self add_dvar_toggle("always canswap", undefined, "#x39643587c396c30e2");
+        self add_dvar_toggle("sprint swaps", undefined, "#x38d6540b423a9e0d8");
+        self add_dvar_toggle("freeze anim", undefined, "#x37c95f8797d5904c6");
+        self add_dvar_toggle("canzooms", undefined, "#x327c785ae3b1ef9c2");
+        self add_dvar_toggle("always altswap", undefined, "#x3e9d8c32a93a40713");
+#else
+        self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
+        self add_dvar_toggle("always canswap", undefined, "pan_alwayscanswap");
+        self add_dvar_toggle("sprint swaps", undefined, "pan_sprintswaps");
+        self add_dvar_toggle("freeze anim", undefined, "pan_freezeanim");
+        self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
+        self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");
+#endif
 
         self add_pers_toggle("always nac", "[{+weapnext}] to easily swap", custom_scripts\_z_func::always_nac, "always_nac");
         self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
@@ -67,12 +69,14 @@ structure()
         self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        
         break;
 
+    /*
     case "session settings":
         self.bind_index = false;
         self add_menu(menu);
         self add_option("^1load ^7session", "load previous map session if exists", ::load_session);
         self add_option("^2save ^7session", "save current map session", ::save_session);
         break;
+    */
 
     case "cinematics": // add scenes later ?
         self.bind_index = false;
@@ -432,7 +436,7 @@ structure()
         self.bind_index = false;
         self add_menu(menu);
         self add_pers_toggle("allow hud edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
-        self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat(DVAR_("scr_killcam_time")), 5, 10, 1, DVAR_("scr_killcam_time"));
+        self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
         self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "hide_itemtype", true);
         self add_pers_toggle("hide victim", undefined, ::togglepers, "hide_victim", true);
         self add_pers_toggle("hide perks", undefined, ::togglepers, "hide_perks", true);
