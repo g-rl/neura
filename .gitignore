@@ -3,4 +3,4 @@ gsc-tool.exe
 compile.bat
 move.bat
 .vscode
-gsclsp.*
+.gsclsp

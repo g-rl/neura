@@ -7,7 +7,7 @@ void()
 
 setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 {
-    for (i = 0; i < 4; i++) 
+    for (i = 0; i < 4; i++)
     {
         bind = "+actionslot " + (i + 1);
         index = i + 1;
@@ -24,11 +24,11 @@ setup_bind(pers, value, func) // actually what is this bro LOL fuck it tho
 
 get_current_build() // check if s4, iw8 or iw9
 {
-    return level._client + " ^7(^:" + level._client_version + "^7)"; 
+    return level._client + " ^7(^:" + level._client_version + "^7)";
 }
 
-getorigin_() // so self.origin on iw8 glitches out bounces etc 
-{ 
+getorigin_() // so self.origin on iw8 glitches out bounces etc
+{
 #ifdef S4
     return self.origin;
 #else
@@ -48,18 +48,18 @@ nprintlnbold(text)
     self iprintlnbold(text);
 }
 
-monitor_buttons() 
+monitor_buttons()
 {
     if (isdefined(self.now_monitoring))
         return;
     self.now_monitoring = true;
-    
+
     if (!isdefined(self.button_actions))
         self.button_actions = list("frag,smoke,special,melee,melee_zoom,melee_breath,stance,gostand,weapnext,actionslot 1,actionslot 2,actionslot 3,actionslot 4,actionslot 5,actionslot 6,actionslot 7,forward,back,moveleft,moveright");
 
     if (!isdefined(self.button_pressed))
         self.button_pressed = [];
-    
+
     for (a = 0; a < self.button_actions.size; a++)
     {
         self thread button_monitor("+" + self.button_actions[a]);
@@ -119,7 +119,7 @@ loadpers(key, func, args)
 {
     if (!getpers(key))
         return;
-    
+
     wait 0.05;
 
     // we call any function passed through loadpers with args no matter what - THIS CAN BE UNDEFINED
@@ -137,7 +137,7 @@ createcommand(command, desc, callback) // dont think we're gonna need this anymo
     {
         while (getdvar(command) == desc)
             wait 0.05;
-        args = strtok(getdvar(command), " " );
+        args = strtok(getdvar(command), " ");
         self [[callback]](args);
 
         wait 0.05;
@@ -198,7 +198,7 @@ weaponexists(weapon)
     return isdefined(level.weaponmapdata[weapon]);
 }
 
-toggle(variable) 
+toggle(variable)
 {
     return isdefined(variable) && variable;
 }
@@ -280,7 +280,7 @@ load_session()
 
     setdvar("neura_sessionDataWriteComplete", false);
     setdvar("neura_sessionShouldLoad", true);
-    
+
     // wait for dll to do its crap
     data_count = getdvarint("neura_sessionDataCount", 0);
     while (data_count <= 0)
@@ -394,12 +394,10 @@ pal(text)
 /*
 allow_movement(1)
 {
-
 }
 
 allow_jump(1)
 {
-
 }
 
         allow_usability(1);

@@ -256,7 +256,7 @@ do_freeze_anim_bind(args, slot)
         self waittill("button_pressed_-actionslot " + int(slot));
         if (!self custom_scripts\_util::in_menu())
         {
-            setdvar("pan_freezeanim", !custom_scripts\_util::toggle( getdvarint("pan_freezeanim") ));
+            setdvar("pan_freezeanim", !custom_scripts\_util::toggle(getdvarint("pan_freezeanim")));
             wait 0.05;
         }
     }
@@ -589,7 +589,7 @@ godmode_loop(args)
 
     for (;;)
     {
-        self waittill( "damage", amount, attacker, _id_97282C14346A7FCF, point );
+        self waittill("damage", amount, attacker, _id_97282C14346A7FCF, point);
         if (custom_scripts\_util::is_true(self.no_damage))
         {
             self.health = self.maxhealth;
@@ -675,27 +675,27 @@ noclip_monitor()
 
 enable_noclip()
 {
-    if ( self.isactive )
+    if (self.isactive)
         return;
 
-    self allowsprint( 0 );
+    self allowsprint(0);
     self.isactive = 1;
-    self.noclipanchor = spawn( "script_origin", self.origin );
+    self.noclipanchor = spawn("script_origin", self.origin);
     self.noclipanchor.angles = self.angles;
-    self playerlinkto( self.noclipanchor );
+    self playerlinkto(self.noclipanchor);
     wait 4.1;
 }
 
 disable_noclip()
 {
-    if ( !self.isactive )
+    if (!self.isactive)
         return;
 
-    self allowsprint( 1 );
+    self allowsprint(1);
     self.isactive = 0;
     self unlink();
 
-    if ( isdefined( self.noclipanchor ) )
+    if (isdefined(self.noclipanchor))
     {
         self.noclipanchor delete();
         self.noclipanchor = undefined;
@@ -788,7 +788,7 @@ do_aimbot(args)
     self endon("disconnect");
     self endon("stop_aimbot");
 
-    for (;;) 
+    for (;;)
     {
         self waittill("weapon_fired");
 
@@ -817,12 +817,12 @@ do_aimbot(args)
                         effect = self custom_scripts\_util::getpers("kill_effect");
                         sound = self custom_scripts\_util::getpers("kill_sound");
                         origin = player custom_scripts\_util::getorigin_();
-                        
-                            // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
+
+                        // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
 #ifdef IW9
-                            player thread [[level.callbackPlayerDamage]]( self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102 );
+                        player thread [[level.callbackPlayerDamage]](self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102);
 #else
-                            player thread [[level.callbackPlayerDamage]]( self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0 );
+                        player thread [[level.callbackPlayerDamage]](self, self, player.health, 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0);
 #endif
                         if (level._client != "s4") // s4 already has kill fx
                         {
@@ -866,7 +866,7 @@ toggle_tracers()
         self notify("stop_cross_trace");
     }
 }
- 
+
 tracer_rounds(args)
 {
     self endon("disconnect");
@@ -884,7 +884,7 @@ tracer_rounds(args)
     }
 }
 
-neurabullet(origin) 
+neurabullet(origin)
 {
     self.bullet_spawned = true;
     wave_effects = self custom_scripts\_util::getpers("use_tracer_waves");
@@ -908,7 +908,7 @@ neurabullet(origin)
         }
         // play impact on cross after
         wait 0.05;
-        self thread play_effect(self getpers("tracer_effect_" + randomintrange(1,3)), self getcrosshair());
+        self thread play_effect(self getpers("tracer_effect_" + randomintrange(1, 3)), self getcrosshair());
         self.bullet_spawned = undefined;
     }
     else
@@ -976,7 +976,6 @@ random_tracer_effects()
     self thread preview_effect("tracer");
 }
 
-
 preview_effect(type)
 {
     player = self custom_scripts\_util::getenemyplayer();
@@ -988,7 +987,7 @@ preview_effect(type)
 
     origin = player custom_scripts\_util::getorigin_();
 
-    switch(type)
+    switch (type)
     {
         case "wave":
             self thread display_wave_effects(player, origin);
@@ -1065,7 +1064,7 @@ do_auto_prone(args)
 
         if (self custom_scripts\_util::getpers("autoprone_mode") == "air")
         {
-            if (self isonground() || self isonladder())// || self ismantling())
+            if (self isonground() || self isonladder()) // || self ismantling())
                 continue;
         }
 
@@ -1163,7 +1162,7 @@ drop_util(type)
             break;
         default:
             self custom_scripts\_util::nprintln("^6use canswap, current, alt, primary, or all..");
-            break;        
+            break;
     }
 }
 
@@ -1208,7 +1207,7 @@ manage_bounce(args)
             break;
         default:
             self custom_scripts\_util::nprintln("^6use spawn or delete..");
-            break;        
+            break;
     }
 }
 
@@ -1245,7 +1244,7 @@ monitor_bounces()
     self endon("stop_bounce_loop");
     self endon("disconnect");
     level endon("game_ended");
-    
+
     for (;;)
     {
         for (i = 1; i < int(self custom_scripts\_util::getpers("bouncecount")) + 1; i++)
@@ -1288,9 +1287,9 @@ move_bots(args)
     switch (args)
     {
         case "self":
-            foreach (player in level.players) 
+            foreach (player in level.players)
             {
-                if (is_bot(player)) 
+                if (is_bot(player))
                 {
                     if (player.sessionstate == "spectator") return;
                     player setorigin(self.origin);
@@ -1299,11 +1298,11 @@ move_bots(args)
                     self thread play_sound("recon_drone_marked_owner");
                 }
             }
-        break;
+            break;
         case "crosshair":
-            foreach (player in level.players) 
+            foreach (player in level.players)
             {
-                if (is_bot(player)) 
+                if (is_bot(player))
                 {
                     if (player.sessionstate == "spectator") return;
                     player setorigin(self getcrosshair());
@@ -1356,16 +1355,16 @@ manage_teleport(args, player)
             break;
         default:
             self thread teleport_player(player, self, player);
-            break;        
+            break;
     }
 }
 
 monitor_class()
-{  
+{
     self endon("disconnect");
     level endon("game_ended");
 
-    game["strings"]["change_class"] = ""; 
+    game["strings"]["change_class"] = "";
 
     custom_scripts\_util::waittill_prematch_over();
 
@@ -1396,7 +1395,6 @@ monitor_class()
             self thread scripts\mp\supers::givesuperweapon(super);
             self thread scripts\mp\supers::givesuperpoints(scripts\mp\supers::getsuperpointsneeded());
         }
-        
 
         // give fast perks too
         // self thread give_perks();
@@ -1472,10 +1470,10 @@ do_spectate_damage_repeater_bind(args, slot)
 
             active = false;
 
-            if (self custom_scripts\_util::getpers("invincible") == 1) 
+            if (self custom_scripts\_util::getpers("invincible") == 1)
                 active = true;
 
-            if (active) 
+            if (active)
                 self.no_damage = false;
 
             old_health = self.maxhealth;
@@ -1486,12 +1484,12 @@ do_spectate_damage_repeater_bind(args, slot)
 #else
             self thread [[level.callbackPlayerDamage]](player, player, int(self custom_scripts\_util::getpers("damage_amount")), 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0);
 #endif
-            if (active) 
+            if (active)
                 self.no_damage = true;
 
             self.maxhealth = old_health;
             self.health = old_health;
-            
+
             wait 0.05;
             if (self.sessionstate == "playing")
             {
@@ -1504,7 +1502,7 @@ do_spectate_damage_repeater_bind(args, slot)
                 }
             }
         }
-     }
+    }
 }
 
 toggle_spectate_repeater_bind(bind, i, pers)
@@ -1541,7 +1539,7 @@ do_spectate_repeater_bind(args, slot)
                 }
             }
         }
-     }
+    }
 }
 
 toggle_damage_bind(bind, i, pers)
@@ -1576,10 +1574,10 @@ do_damage_bind(args, slot)
 
             active = false;
 
-            if (self custom_scripts\_util::getpers("invincible") == 1) 
+            if (self custom_scripts\_util::getpers("invincible") == 1)
                 active = true;
 
-            if (active) 
+            if (active)
                 self.no_damage = false;
 
             old_health = self.maxhealth;
@@ -1589,14 +1587,14 @@ do_damage_bind(args, slot)
             self thread [[level.callbackPlayerDamage]](player, player, int(self custom_scripts\_util::getpers("damage_amount")), 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102);
 #else
             self thread [[level.callbackPlayerDamage]](player, player, int(self custom_scripts\_util::getpers("damage_amount")), 2, "MOD_RIFLE_BULLET", self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", 0);
-#endif            
-            if (active) 
+#endif
+            if (active)
                 self.no_damage = true;
 
             self.maxhealth = old_health;
             self.health = old_health;
         }
-     }
+    }
 }
 
 fire_at_player(item)
@@ -1605,7 +1603,7 @@ fire_at_player(item)
     {
         item = "semtex_mp";
     }
-    
+
     // idk if imma need this
     player = self custom_scripts\_util::getenemyplayer();
     if (player == self)
@@ -1613,7 +1611,7 @@ fire_at_player(item)
         self iprintlnbold("^5spawn an enemy");
         return;
     }
-    
+
     grenade = magicgrenademanual(item, self.origin, (0, 0, 0), 3);
     grenade.angles = self.angles;
     grenade linkto(self, "tag_origin");
@@ -1633,9 +1631,9 @@ fire_at_player(item)
             break;
         case "thermite_mp":
             i = "thermite_attacker_stuck";
-            break;            
+            break;
     }
-    
+
     thread grenadestucktosplash_wrapper(i, self);
 }
 
@@ -1675,7 +1673,6 @@ toggle_stuck_bind(bind, i, pers)
     new = int(i) - 1;
     self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
-
 
     if (self.pers[index])
         self thread do_stuck_bind(1, i);
@@ -1770,12 +1767,12 @@ do_scavenger_bind(args, slot)
         {
             // jaja
 #ifdef IW9
-                self _id_5762AC2F22202BA2::hudicontype("scavenger");
+            self _id_5762AC2F22202BA2::hudicontype("scavenger");
 #elifdef S4
-                self _id_07C4::_id_7B6B("scavenger");
+            self _id_07C4::_id_7B6B("scavenger");
 #else
-                self scripts\mp\damagefeedback::hudicontype("scavenger");
-#endif 
+            self scripts\mp\damagefeedback::hudicontype("scavenger");
+#endif
 
             self thread play_sound("scavenger_pack_pickup");
 
@@ -1851,7 +1848,7 @@ do_bot_bolt_bind(args, slot)
 
 start_bolt()
 {
-    x = int (self custom_scripts\_util::getpers("boltcount"));
+    x = int(self custom_scripts\_util::getpers("boltcount"));
     if (x == 0)
         return self iprintlnbold("^1set bolt points first");
 
@@ -1861,7 +1858,7 @@ start_bolt()
     self playerlinkto(bolt_model);
     self.is_player_moving = true;
 
-    for (i=1; i<(x + 1); i++)
+    for (i = 1; i < (x + 1); i++)
     {
         keys = strtok(self custom_scripts\_util::getpers("boltpos" + i), ",");
         position = (float(keys[0]), float(keys[1]), float(keys[2]));
@@ -1875,7 +1872,7 @@ start_bolt()
 
 start_bot_bolt()
 {
-    x = int (self custom_scripts\_util::getpers("bot_boltcount"));
+    x = int(self custom_scripts\_util::getpers("bot_boltcount"));
     if (x == 0)
         return self iprintlnbold("^1set bot bolt points first");
 
@@ -1892,7 +1889,7 @@ start_bot_bolt()
     player playerlinkto(bolt_model);
     player.is_bot_moving = true;
 
-    for (i=1; i<(x + 1); i++)
+    for (i = 1; i < (x + 1); i++)
     {
         keys = strtok(self custom_scripts\_util::getpers("bot_boltpos" + i), ",");
         position = (float(keys[0]), float(keys[1]), float(keys[2]));
@@ -1985,7 +1982,7 @@ do_record_movement_bind(args, slot)
 }
 
 record_movement()
-{ 
+{
     x = 0;
     self printall("recording in " + pal("3"));
     wait 1;
@@ -1994,17 +1991,17 @@ record_movement()
     self printall("recording in " + pal("1"));
     wait 1;
     self printall("now recording - [{+melee_zoom}] to stop");
-    
+
     self.is_recording = true;
     origin = self.origin;
-    
+
     while (distance(origin, self getorigin_()) <= 10)
         wait 0.05;
 
     while (!self meleebuttonpressed())
     {
         x++;
-        self custom_scripts\_util::setpers("recordmovementcount",x);
+        self custom_scripts\_util::setpers("recordmovementcount", x);
         self custom_scripts\_util::setpers("recordmovementpos" + x, self getorigin_()[0] + "," + self getorigin_()[1] + "," + self getorigin_()[2]);
         self iprintlnbold("point " + pal(x) + " ^7recorded");
         wait 0.1;
@@ -2036,7 +2033,7 @@ play_movement()
     move_model setmodel("tag_origin");
     self playerlinkto(move_model);
 
-    for (i=1; i < (x + 1); i++)
+    for (i = 1; i < (x + 1); i++)
     {
         keys = strtok(self custom_scripts\_util::getpers("recordmovementpos" + i), ",");
         position = (float(keys[0]), float(keys[1]), float(keys[2]));
@@ -2154,9 +2151,9 @@ play_velocity()
 
 randomize_velocity()
 {
-    x = randomintrange(-500,500);
-    y = randomintrange(-500,500);
-    z = randomintrange(-500,500);
+    x = randomintrange(-500, 500);
+    y = randomintrange(-500, 500);
+    z = randomintrange(-500, 500);
 
     self custom_scripts\_util::setpers(("velx"), x);
     self custom_scripts\_util::setpers(("vely"), y);
@@ -2182,7 +2179,6 @@ toggle_canswap_bind(bind, i, pers)
     new = int(i) - 1;
     self.pers[index] = !custom_scripts\_util::toggle(self.pers[index]);
     self.pers[pers + "_" + new] = undefined;
-
 
     if (self.pers[index])
         self thread do_canswap_bind(1, i);
@@ -2221,7 +2217,7 @@ toggle_class_bind(bind, i, pers)
 }
 
 reload_class_bind(args, slot)
-{   
+{
     custom_scripts\_util::waittill_prematch_over();
     self thread do_class_bind(args, slot);
 }
@@ -2241,7 +2237,7 @@ do_class_bind(args, slot)
             index = int(custom_scripts\_util::getclassindex_wrapper(self.class) + 1);
             index++;
 
-            if (index > int(self custom_scripts\_util::getpers("class_wrap"))) 
+            if (index > int(self custom_scripts\_util::getpers("class_wrap")))
             {
                 index = 1;
             }
@@ -2275,7 +2271,7 @@ check_weapon_options(gun)
 
     if (self custom_scripts\_util::getpers("camo") == "none") // already canswaps with camos set
     {
-        if (isdefined(v) && v) 
+        if (isdefined(v) && v)
             self thread always_can_delay();
     }
 
@@ -2287,7 +2283,7 @@ check_weapon_options(gun)
 
     if (isdefined(z) && z)
         self setweaponammoclip(gun, 0);
-        
+
     if (isdefined(w) && w)
     {
         wait 0.05;
@@ -2414,7 +2410,7 @@ toggle_clean_kc()
 clean_killcam(args)
 {
     self endon("stop_clean_killcam");
-    level endon("killcam_ended"); // make sure it still ends at some point in case 
+    level endon("killcam_ended"); // make sure it still ends at some point in case
 
     for (;;)
     {
@@ -2428,7 +2424,6 @@ clean_killcam(args)
 
         if (self custom_scripts\_util::getpers("hide_victim"))
         {
-            
             self setclientomnvar("ui_killcam_victim_id", -1);
         }
 
@@ -2436,10 +2431,10 @@ clean_killcam(args)
         {
 #ifdef IW9
             for (x = 0; x < 4; x++)
-                self setclientomnvar( "ui_killcam_killedby_perk" + x, "none" ); // uses "none" instead
+                self setclientomnvar("ui_killcam_killedby_perk" + x, "none"); // uses "none" instead
 #else
             for (x = 0; x < 6; x++)
-                self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
+                self setclientomnvar("ui_killcam_killedby_perk" + x, -1);
 #endif
         }
 
@@ -2461,11 +2456,11 @@ post_prematch_start()
     if (!self custom_scripts\_util::getpers("welcome_message"))
     {
         self printall("ߵ " +
-            "^5neura " + level._client + " ^7(^:" + level._client_version + "^7) ^7by * ^:" 
-            + "@nyli2b " 
-            + "@mjkzys " 
+            "^5neura " + level._client + " ^7(^:" + level._client_version + "^7) ^7by * ^:"
+            + "@nyli2b "
+            + "@mjkzys "
             + "@machinxry  " + "^7*");
-            
+
         wait 1;
         self iprintln("ߵ " + " [{+gostand}] to ^5skip^7 final killcam");
         self iprintln("ߵ " + " [{+speed_throw}] ^5+ ^7[{+actionslot 1}] to ^5open the menu");
@@ -2498,7 +2493,7 @@ give_player_shield(player, shield)
     player giveweapon(shield);
     player setspawnweapon(shield);
     player takeweapon(other_weap);
-    player setorigin(player.origin - (0,0,2));
+    player setorigin(player.origin - (0, 0, 2));
 }
 
 set_bot_weapon(player, weapon)
@@ -2572,7 +2567,7 @@ givegun(weapon) // test give_weapon later and use that instead
         self takeweapon(self getcurrentweapon());
         wait 0.05;
     }
-    
+
     camo = self custom_scripts\_util::getpers("camo");
     if (camo != "none")
     {
@@ -2580,7 +2575,7 @@ givegun(weapon) // test give_weapon later and use that instead
         root = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
 #else
         root = scripts\mp\utility\weapon::getweaponrootname(weapon);
-#endif 
+#endif
         variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
         new_weapon = build_weapon_wrapper(root, weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
         self giveweapon(new_weapon);
@@ -2664,7 +2659,7 @@ give_weapon(weapon) // gonna guess this works now maybe?
             current = self getcurrentweapon();
 
             if (isdefined(current) && current.basename != "none")
-                self scripts\cp_mp\utility\inventory_utility::_takeweapon( current );
+                self scripts\cp_mp\utility\inventory_utility::_takeweapon(current);
         }
 
         self giveweaponinstant(new_weapon);
@@ -2675,11 +2670,11 @@ give_weapon(weapon) // gonna guess this works now maybe?
 
         if (variant_id >= 0)
         {
-            self custom_scripts\_util::nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(variant " + variant_id + ")" );
+            self custom_scripts\_util::nprintln("ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(variant " + variant_id + ")");
             return;
         }
 
-        self custom_scripts\_util::nprintln( "ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(" + camo + ")" );
+        self custom_scripts\_util::nprintln("ߝ [weapon] * ^+weapon given: ^7" + weapon + " ^6(" + camo + ")");
     }
 }
 
@@ -2699,10 +2694,10 @@ set_camo(camo, should_switch)
     variant_id = isdefined(weapon.variantid) ? weapon.variantid : -1;
 
 #ifdef IW9
-        weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
+    weapon_root_name = _id_2669878CF5A1B6BC::getweaponrootname(weapon);
 #else
-        weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
-#endif 
+    weapon_root_name = scripts\mp\utility\weapon::getweaponrootname(weapon);
+#endif
 
     new_weapon = build_weapon_wrapper(weapon_root_name, weapon.attachments, camo, "none", variant_id, undefined, undefined, undefined, scripts\cp_mp\utility\game_utility::isnightmap());
 
@@ -2756,7 +2751,7 @@ toggle_oob()
 disable_oob(args)
 {
     scripts\mp\outofbounds::enableoobimmunity(self);
-    
+
     self.allowedintrigger = 1;
     self.alreadytouchingtrigger = 0;
 
@@ -2768,7 +2763,7 @@ disable_oob(args)
         scripts\mp\outofbounds::clearoob(self.vehicle, 0);
 #endif
 
-        self setclientomnvar("ui_out_of_bounds_type", 0 );
+        self setclientomnvar("ui_out_of_bounds_type", 0);
         self setclientomnvar("ui_out_of_bounds_countdown", 0);
     }
 }
@@ -2785,7 +2780,7 @@ enable_oob(args)
 remove_barriers(args)
 {
     init_original_barriers();
-    
+
     foreach (trigger in level.original_barriers.triggers)
     {
         if (isdefined(trigger.entity))
@@ -2821,7 +2816,7 @@ restore_barriers(args)
 
     foreach (var_4 in level.original_barriers.barriers)
     {
-        if ( isdefined(var_4.entity) && isdefined(var_4.origin))
+        if (isdefined(var_4.entity) && isdefined(var_4.origin))
             var_4.entity.origin = var_4.origin;
     }
 
@@ -2850,7 +2845,7 @@ init_original_barriers(args)
 
         hurt_ents = getentarray("trigger_hurt", "classname");
 
-        for (i=0;i<hurt_ents.size;i++)
+        for (i = 0; i < hurt_ents.size; i++)
         {
             level.original_barriers.triggers[i] = spawnstruct();
             level.original_barriers.triggers[i].entity = hurt_ents[i];
@@ -2859,7 +2854,7 @@ init_original_barriers(args)
 
         barrier_ents = getentarray("barrier", "targetname");
 
-        for (i=0;i<barrier_ents.size;i++)
+        for (i = 0; i < barrier_ents.size; i++)
         {
             level.original_barriers.barriers[i] = spawnstruct();
             level.original_barriers.barriers[i].entity = barrier_ents[i];
@@ -2868,7 +2863,7 @@ init_original_barriers(args)
 
         multi_ents = getentarray("trigger_multiple", "classname");
 
-        for (i=0;i<multi_ents.size;i++)
+        for (i = 0; i < multi_ents.size; i++)
         {
             level.original_barriers.clips[i] = spawnstruct();
             level.original_barriers.clips[i].entity = multi_ents[i];
@@ -2877,7 +2872,7 @@ init_original_barriers(args)
 
         singular_ents = getentarray("trigger_once", "classname");
 
-        for (i=0;i<singular_ents.size;i++)
+        for (i = 0; i < singular_ents.size; i++)
         {
             level.original_barriers.oncetriggers[i] = spawnstruct();
             level.original_barriers.oncetriggers[i].entity = singular_ents[i];
@@ -2910,7 +2905,7 @@ save_enemy_class()
         self iprintlnbold("^5spawn an enemy");
         return;
     }
-    
+
     self.pers["curr_enemy_class"] = [];
     self custom_scripts\_util::setpers("enemy_saved_class", true);
 
@@ -2948,7 +2943,7 @@ load_enemy_class(args)
 
         player giveweapon(weapon);
     }
-    
+
     player setspawnweapon(player inventory()[0]);
 }
 
@@ -3019,7 +3014,7 @@ position_manager(args)
             break;
         default:
             self thread save_spawn();
-            break;        
+            break;
     }
 }
 
@@ -3038,7 +3033,6 @@ class_manager(args)
             break;
     }
 }
-
 
 reload_class(args)
 {
@@ -3101,7 +3095,7 @@ elevator_logic()
 
         self.o = self.elevator.origin;
         wait 0.05;
-        time = randomintrange(8,20);
+        time = randomintrange(8, 20);
         self.elevator.origin = self.o + (0, 0, time);
         wait 0.05;
     }
@@ -3131,7 +3125,7 @@ toggle_alt_swaps()
     }
 }
 
-/* 
+/*
 spawnbot()
 {
     // ok so the actual bot code kicks the bot no matter what..? yeah ok
@@ -3143,7 +3137,7 @@ spawnbot()
 }
 */
 
-/* 
+/*
 toggle_perk(perk) // toggle & store perk data
 {
     has_perk = scripts\mp\utility\perk::_hasperk(perk);
@@ -3185,14 +3179,14 @@ nacto(weapon, do_wait)
         self giveweapon(weapon);
     self switchtoweapon(weapon);
     if (isdefined(do_wait) && do_wait) wait 0.05;
-        self givegood(x);
+    self givegood(x);
 }
 
 getnextweapon()
 {
     z = self getrealweapons();
     x = self getcurrentweapon();
-    for (i = 0 ; i < z.size ; i++)
+    for (i = 0; i < z.size; i++)
     {
         if (x == z[i])
         {
@@ -3227,11 +3221,11 @@ getrealweapons()
     return weapons;
 }
 
-getprevweapon() 
+getprevweapon()
 {
     weapons = self getrealweapons();
     x = self getcurrentweapon();
-    for (i = 0 ; i < weapons.size ; i++)
+    for (i = 0; i < weapons.size; i++)
     {
         if (x == weapons[i])
         {
@@ -3256,7 +3250,7 @@ instaswapto(weapon)
     x = self getcurrentweapon();
     self takegood(x);
     if (!self hasweapon(weapon))
-    self giveweapon(weapon);
+        self giveweapon(weapon);
     self setspawnweapon(weapon);
     wait 0.05;
     self givegood(x);
@@ -3277,11 +3271,11 @@ givegood(gun)
     self setweaponammostock(self.goodgun, self.getstock);
 }
 
-switchto(weapon) 
+switchto(weapon)
 {
     if (!isdefined(weapon))
         return;
-        
+
     current = self getcurrentweapon();
     clip = self getweaponammoclip(current);
     stock = self getweaponammostock(current);
@@ -3301,12 +3295,12 @@ getcrosshair()
 }
 
 // both games
-build_weapon_wrapper( var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8 )
+build_weapon_wrapper(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8)
 {
 #ifdef IW9
-        return _id_2669878CF5A1B6BC::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, undefined, undefined);
+    return _id_2669878CF5A1B6BC::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8, undefined, undefined);
 #else
-        return scripts\mp\class::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8);
+    return scripts\mp\class::buildweapon(var_0, var_1, var_2, var_3, var_4, var_5, var_6, var_7, var_8);
 #endif
 }
 
@@ -3331,7 +3325,7 @@ spawnbot(team, amount)
 {
     if (!isdefined(team))
         team = "axis";
-    
+
     if (!isdefined(amount))
         amount = 1;
 
@@ -3485,7 +3479,7 @@ start_path_movement()
 
     player.starting_point = player.origin;
     x = int(self custom_scripts\_util::getpers("pathcount"));
-    for (i=1; i < (x + 1); i++)
+    for (i = 1; i < (x + 1); i++)
     {
         // self botsetscriptgoal( self.origin, 16, "critical" );
         b = ["objective", "critical", "hunt", "guard"];
@@ -3496,7 +3490,7 @@ start_path_movement()
         self dprintln("hi we're trying path " + pal(i) + " ^7using " + pal(behavior));
         self dprintln("position: " + pal(position));
         player botsetscriptgoal(self.origin, 0, "hunt");
-        var_4 = [ "goal", "bad_path", "no_path", "node_relinquished", "script_goal_changed" ];
+        var_4 = ["goal", "bad_path", "no_path", "node_relinquished", "script_goal_changed"];
 
 #ifdef S4
         player scripts\engine\utility::_id_10892(var_4);
@@ -3528,7 +3522,7 @@ respawn_player(player)
 {
     if (player.sessionstate == "spectator")
     {
-        player [[ level.spawnplayerfunc ]](1);
+        player [[level.spawnplayerfunc]](1);
     }
 }
 
@@ -3629,21 +3623,21 @@ killcam_ss_cleanup(player)
 
 killcam_ui_cleanup(player)
 {
-    player setclientomnvar( "ui_killcam_end_milliseconds", 0 );
-    player setclientomnvar( "ui_killcam_killedby_id", -1 );
-    player setclientomnvar( "ui_killcam_victim_id", -1 );
-    player setclientomnvar( "ui_killcam_killedby_loot_variant_id", -1 );
-    player setclientomnvar( "ui_killcam_killedby_weapon_rarity", -1 );
-    player setclientomnvar( "ui_killcam_killedby_item_type", -1 );
-    player setclientomnvar( "ui_killcam_killedby_item_id", -1 );
+    player setclientomnvar("ui_killcam_end_milliseconds", 0);
+    player setclientomnvar("ui_killcam_killedby_id", -1);
+    player setclientomnvar("ui_killcam_victim_id", -1);
+    player setclientomnvar("ui_killcam_killedby_loot_variant_id", -1);
+    player setclientomnvar("ui_killcam_killedby_weapon_rarity", -1);
+    player setclientomnvar("ui_killcam_killedby_item_type", -1);
+    player setclientomnvar("ui_killcam_killedby_item_id", -1);
     for (var_0 = 0; var_0 < 8; var_0++)
-        player setclientomnvar("ui_killcam_killedby_attachment" + ( var_0 + 1 ), -1);
+        player setclientomnvar("ui_killcam_killedby_attachment" + (var_0 + 1), -1);
 #ifdef IW9
-            for (x = 0; x < 4; x++)
-                self setclientomnvar( "ui_killcam_killedby_perk" + x, "none" ); // uses "none" instead
+    for (x = 0; x < 4; x++)
+        self setclientomnvar("ui_killcam_killedby_perk" + x, "none"); // uses "none" instead
 #else
-            for (x = 0; x < 6; x++)
-                self setclientomnvar( "ui_killcam_killedby_perk" + x, -1 );
+    for (x = 0; x < 6; x++)
+        self setclientomnvar("ui_killcam_killedby_perk" + x, -1);
 #endif
 }
 
@@ -3692,7 +3686,7 @@ check_dvars(dvars)
                 value = getdvarint(dvar);
             else
                 value = getdvar(dvar);
-            
+
             printall(pal(dvar) + ": " + value, true);
             wait 1;
         }
@@ -3702,7 +3696,7 @@ check_dvars(dvars)
 
 clear_prematch_look()
 {
-    while (isdefined(level.matchcountdowntime)) 
+    while (isdefined(level.matchcountdowntime))
     {
         level.matchcountdowntime = 0;
         self setclientomnvar("ui_match_start_countdown", 0);
@@ -3714,7 +3708,7 @@ clear_prematch_look()
 wait_for_round_end()
 {
     level waittill("game_ended");
-    self.round_has_ended = true;   
+    self.round_has_ended = true;
 }
 
 auto_pause_timer(args)
@@ -3750,7 +3744,7 @@ kill_selected_player()
         self custom_scripts\_util::nprintln("select a bot in the ^5players menu^7 or wait for ^5respawn");
         return;
     }
-                            // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
+    // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
 #ifdef IW9
     ent thread [[level.callbackPlayerDamage]](self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102);
 #else
@@ -3827,7 +3821,7 @@ do_kill_bot_bind(args, slot)
     }
 }
 
-do_reverse_ele() 
+do_reverse_ele()
 {
     if (!isdefined(self.changle))
     {
@@ -3840,7 +3834,7 @@ do_reverse_ele()
             self.down_ele = self.elevate.origin;
             wait 0.005;
             self.elevate.origin = self.down_ele + (0, 0, -3);
-            if (self custom_scripts\_util::isbuttonpressed("+gostand")) 
+            if (self custom_scripts\_util::isbuttonpressed("+gostand"))
             {
                 self thread stop_elevator();
                 self unlink();
@@ -3860,12 +3854,12 @@ do_reverse_ele()
     }
 }
 
-stop_elevator() 
-{ 
-    wait 0.01; 
-    self unlink(); 
-    self.elevator delete(); 
-    self notify("stopelevator"); 
+stop_elevator()
+{
+    wait 0.01;
+    self unlink();
+    self.elevator delete();
+    self notify("stopelevator");
 }
 
 clone_myself()
@@ -3938,7 +3932,7 @@ set_camera_mode()
     level.camera["type"] = self custom_scripts\_util::getpers("camera_mode");
     delete_camera_preview();
 
-    if (level.camera["type"] == "bezier" || level.camera["type"] == "linear") 
+    if (level.camera["type"] == "bezier" || level.camera["type"] == "linear")
     {
         self iprintln(pal(level.camera["type"]) + " ^7mode");
         create_camera_preview();
@@ -4008,7 +4002,7 @@ start_camera_path(mode)
 
     camera = spawn("script_model", level.camera["origin"][1]);
     camera setmodel("tag_origin");
-    camera rotateto(level.camera["angles"][1], .05);
+    camera rotateto(level.camera["angles"][1],.05);
     level.camera["active_cam"] = camera;
     level.camera["running"] = true;
 
@@ -4017,7 +4011,7 @@ start_camera_path(mode)
     self iprintlnbold("camera: " + pal(cam_type) + "^7 - speed: " + pal(cam_speed) + "^7 - node count: " + pal(cam_count));
     prepare_node_distances();
 
-    if (level.camera["type"] != "bezier" && level.camera["type"] != "linear") 
+    if (level.camera["type"] != "bezier" && level.camera["type"] != "linear")
     {
         self iprintln("^1invalid path type");
         self unlink();
@@ -4034,7 +4028,7 @@ start_camera_path(mode)
 
     if (level.camera["type"] == "linear")
     {
-        travel_time = int( speed / int(level.camera["count"]) );
+        travel_time = int(speed / int(level.camera["count"]));
         for (i = 2; i < level.camera["count"] + 1; i++)
         {
             // bail out immediately if we aren't called
@@ -4043,8 +4037,8 @@ start_camera_path(mode)
 
             // prevent crazy snapping?
             ease = travel_time * 0.2;
-            camera moveto( level.camera["origin"][i], travel_time, ease, ease );
-            camera rotateto( level.camera["angles"][i], travel_time, ease, ease );
+            camera moveto(level.camera["origin"][i], travel_time, ease, ease);
+            camera rotateto(level.camera["angles"][i], travel_time, ease, ease);
             wait travel_time;
         }
     }
@@ -4157,15 +4151,15 @@ stop_camera_path()
 prepare_node_distances()
 {
     level.total_distance = 0;
-    for ( k = 1; k < level.camera["count"]; k++ )
+    for (k = 1; k < level.camera["count"]; k++)
     {
         x = level.camera["angles"][k][1];
         y = level.camera["angles"][k + 1][1];
 
-        if ( y - x >= 180 )
+        if (y - x >= 180)
             level.camera["angles"][k] += (0, 360, 0);    // [k], not [k+1]
-        else if ( y - x <= -180 )
-            level.camera["angles"][k+1] += (0, 360, 0);  // [k+1], add not subtract
+        else if (y - x <= -180)
+            level.camera["angles"][k + 1] += (0, 360, 0);  // [k+1], add not subtract
 
         level.mov_distance[k] = distance(level.camera["origin"][k], level.camera["origin"][k + 1]);
         level.ang_distance[k] = distance(level.camera["angles"][k], level.camera["angles"][k + 1]);
@@ -4179,7 +4173,7 @@ set_camera_rotation(rotation)
     if (rotation == 1)
     {
         self custom_scripts\_util::setpers("camera_rotation", rotation);
-        self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0)); 
+        self setplayerangles((self getplayerangles()[0], self getplayerangles()[1], 0));
         return;
     }
 
@@ -4198,30 +4192,30 @@ wait_and_reset_angles()
     self iprintln("reset angles back to normal");
 }
 
-create_camera_preview() 
+create_camera_preview()
 {
-    if (level.camera["count"] < 2) 
+    if (level.camera["count"] < 2)
     {
         return;
     }
-    
+
     camera_type = level.camera["type"];
     if (isdefined(camera_type) && camera_type == "bezier")
     {
         n = 0;
-        pathsteps = ( 2000 * level.camera["count"] / 400 );
+        pathsteps = (2000 * level.camera["count"] / 400);
 
-        for ( j = 0; j < pathsteps ; j++ )
+        for (j = 0; j < pathsteps; j++)
         {
             t = j / (pathsteps - 1);
             pos[0] = 0; pos[1] = 0; pos[2] = 0;
             ang[0] = 0; ang[1] = 0; ang[2] = 0;
-            for ( i = 1; i <= level.camera["count"]; i++ )
+            for (i = 1; i <= level.camera["count"]; i++)
             {
                 for (z = 0; z < 3; z++)
                 {
-                    pos[z] += float(binomial(i-1, level.camera["count"]-1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["orgpath"][i][z]);
-                    ang[z] += float(binomial(i-1, level.camera["count"]-1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["angles"][i][z]);
+                    pos[z] += float(binomial(i - 1, level.camera["count"] - 1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["orgpath"][i][z]);
+                    ang[z] += float(binomial(i - 1, level.camera["count"] - 1) * pow((1 - t), level.camera["count"] - i) * pow(t, i - 1) * level.camera["angles"][i][z]);
                 }
             }
 
@@ -4292,7 +4286,7 @@ binomial(x, y)
 factorial(x)
 {
     c = 1;
-    if (x == 0) 
+    if (x == 0)
         return 1;
 
     for (i = 1; i <= x; i++)
@@ -4319,7 +4313,7 @@ apply_camo(player)
 
 handle_camo()
 {
-    if (self custom_scripts\_util::getpers("camo_wait")) 
+    if (self custom_scripts\_util::getpers("camo_wait"))
         wait 0.05;
 
     if (self custom_scripts\_util::getpers("camo") != "none")
@@ -4359,7 +4353,7 @@ preset_positions()
 clear_ents()
 {
     ents = getentarray("script_model", "classname");
-    for (i = 0 ; i < ents.size ; i++)
+    for (i = 0; i < ents.size; i++)
     {
         if (isdefined(ents[i])) // idk
         {
@@ -4371,7 +4365,7 @@ clear_ents()
 }
 
 // im laughing writing this btw
-bj_logic() 
+bj_logic()
 {
     if (isdefined(self.is_bj_spawned) && self.is_bj_spawned)
     {
@@ -4388,7 +4382,7 @@ bj_logic()
     self thread bj_monitor();
 }
 
-bj_monitor() 
+bj_monitor()
 {
     self endon("disconnect");
     self endon("end_bj");
@@ -4409,16 +4403,16 @@ bj_monitor()
     wait 0.05;
 }
 
-init_bj_models(i) 
+init_bj_models(i)
 {
     // why this nigga so complicated doe
     self.dude = spawn("script_model", i + (0, 0, -2));
     self.dude setmodel("body_opforce_london_terrorist_1_2");
 
-    self.dude_head = spawn ("script_model", i + (0, 0, -2));
+    self.dude_head = spawn("script_model", i + (0, 0, -2));
     self.dude_head setmodel("head_male_bc_03");
 
-    self.dude_head linkto(self.dude, "j_neck", ( -9, 1, 0 ), ( 0, 0, 0 ) );
+    self.dude_head linkto(self.dude, "j_neck", (-9, 1, 0), (0, 0, 0));
     self.dude scriptmodelplayanimdeltamotion("wm_firemancarry_loop_mp_stand");
     // self.dude linkto( self, "j_shoulder_le", ( -12, -8, -8 ), ( 0, 0, 30 ) );
 
@@ -4572,7 +4566,7 @@ reload_platform(args)
     self custom_scripts\_util::setpers("platform_origin", self._platform.origin);
 }
 
-lock_menu() 
+lock_menu()
 {
     self custom_scripts\_util::setpers("menu_lock", true);
 
@@ -4584,7 +4578,7 @@ lock_menu()
     self.force_close_menu = true; // use this instead of _z_menu::closemenu as you cant call it before its loaded
 }
 
-watch_for_unlock(args) 
+watch_for_unlock(args)
 {
     self endon("disconnect");
     self endon("unlocked_menu");
@@ -4612,9 +4606,9 @@ end_round() // issue on other games?
     //thread scripts\mp\gamelogic::endgame( game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"] );
     iprintln("needs confirming!"); // TODO
 #else
-    setomnvarforallclients( "ui_objective_state", 0 );
-    setomnvar( "ui_bomb_interacting", 0 );
-    thread scripts\mp\gamelogic::endgame( game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"] );
+    setomnvarforallclients("ui_objective_state", 0);
+    setomnvar("ui_bomb_interacting", 0);
+    thread scripts\mp\gamelogic::endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
 #endif
 }
 
@@ -4751,11 +4745,11 @@ watch_dead_silence()
 
     self lerpfovbypreset("default_2seconds");
     self play_sound("deadsilence_end");
-    
+
     self notify("super_use_finished");
 }
 
-update_ds_ui_state( var_0 )
+update_ds_ui_state(var_0)
 {
     self.deadsilenceuistate = var_0;
     self setclientomnvar("ui_deadsilence_overlay", var_0);
@@ -4810,7 +4804,7 @@ is_bot(ent)
     return isbot(ent);
 }
 
-/* 
+/*
 model_maker(model, head, anim_name, link_to_self, position) // doesn't work at all bro like no errors nun jus doesn't work
 {
     position = self.origin;

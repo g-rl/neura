@@ -6,7 +6,7 @@ structure()
     menu = self get_menu();
     if (!isdefined(menu))
         menu = "unassigned";
-    
+
     increment_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5no jump^7 needed";
     slider_controls = "^5[{+actionslot 3}] ^7/ ^5[{+actionslot 4}] ^7to use slider, ^5[{+gostand}]^7 to select";
     credits = "made with ^5<3^7 by ^5nyli^7, ^5mikey ^7& ^5blue";
@@ -16,60 +16,60 @@ structure()
     bind_list = list("nac,change class,pullout equipment,freeze anim,illusion,velocity,bounce,record movement,bolt movement,bot bolt movement,canswap,dead silence,care package stall,hitmarker,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,instaswap,damage,stuck,spectator,scavenger,empty clip,one bullet,start camera");
     gametype = scripts\mp\utility\game::getgametype();
     // do we need to call like custom_scripts\_z_func::function?
-    switch(menu)
+    switch (menu)
     {
-    case "neura":
-        self.bind_index = false;
-        self add_menu(title);
-        self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
-        self add_option("binds", credits, ::new_menu, "bind settings");
-        self add_option("position", credits, ::new_menu, "position");
-        self add_option("cinematics", credits, ::new_menu, "cinematics");
-        self add_option("aimbot", credits, ::new_menu, "aimbot settings");
-        self add_option("class", credits, ::new_menu, "class manager");
-        self add_option("game", credits, ::new_menu, "game settings");
-        self add_option("clients", credits, ::new_menu, "manage clients");
-        if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
-        break;
+        case "neura":
+            self.bind_index = false;
+            self add_menu(title);
+            self add_option("mods & toggles", credits, ::new_menu, "mods & toggles");
+            self add_option("binds", credits, ::new_menu, "bind settings");
+            self add_option("position", credits, ::new_menu, "position");
+            self add_option("cinematics", credits, ::new_menu, "cinematics");
+            self add_option("aimbot", credits, ::new_menu, "aimbot settings");
+            self add_option("class", credits, ::new_menu, "class manager");
+            self add_option("game", credits, ::new_menu, "game settings");
+            self add_option("clients", credits, ::new_menu, "manage clients");
+            if (is_true(level.is_debug)) self add_option("debug settings", credits, ::new_menu, "debug settings");
+            break;
 
-    case "mods & toggles": // eh clean this up later -et
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("glitches", undefined, ::new_menu, "glitches");
-        if (gametype == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
-        self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
-        self add_pers_toggle("unlimited lives", undefined, custom_scripts\_z_func::unlimited_lives, "unlimited_lives");
-        self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
+        case "mods & toggles": // eh clean this up later -et
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("glitches", undefined, ::new_menu, "glitches");
+            if (gametype == "dm") self add_option("fast last", undefined, custom_scripts\_z_func::fast_last);
+            self add_pers_toggle("invincibility", undefined, custom_scripts\_z_func::toggle_invincibility, "invincible");
+            self add_pers_toggle("unlimited lives", undefined, custom_scripts\_z_func::unlimited_lives, "unlimited_lives");
+            self add_pers_toggle("ufo", "toggle noclip - [{+gostand}] + [{+melee}]", custom_scripts\_z_func::ufo_mode, "ufo_mode");
 
-        // engine toggles
+            // engine toggles
 #ifdef S4
-        self add_dvar_toggle("instashoots", undefined, "#x3b13d1ca6cc94aadb");
-        self add_dvar_toggle("always canswap", undefined, "#x39643587c396c30e2");
-        self add_dvar_toggle("sprint swaps", undefined, "#x38d6540b423a9e0d8");
-        self add_dvar_toggle("freeze anim", undefined, "#x37c95f8797d5904c6");
-        self add_dvar_toggle("canzooms", undefined, "#x327c785ae3b1ef9c2");
-        self add_dvar_toggle("always altswap", undefined, "#x3e9d8c32a93a40713");
+            self add_dvar_toggle("instashoots", undefined, "#x3b13d1ca6cc94aadb");
+            self add_dvar_toggle("always canswap", undefined, "#x39643587c396c30e2");
+            self add_dvar_toggle("sprint swaps", undefined, "#x38d6540b423a9e0d8");
+            self add_dvar_toggle("freeze anim", undefined, "#x37c95f8797d5904c6");
+            self add_dvar_toggle("canzooms", undefined, "#x327c785ae3b1ef9c2");
+            self add_dvar_toggle("always altswap", undefined, "#x3e9d8c32a93a40713");
 #else
-        self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
-        self add_dvar_toggle("always canswap", undefined, "pan_alwayscanswap");
-        self add_dvar_toggle("sprint swaps", undefined, "pan_sprintswaps");
-        self add_dvar_toggle("freeze anim", undefined, "pan_freezeanim");
-        self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
-        self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");
+            self add_dvar_toggle("instashoots", undefined, "pan_instashoots");
+            self add_dvar_toggle("always canswap", undefined, "pan_alwayscanswap");
+            self add_dvar_toggle("sprint swaps", undefined, "pan_sprintswaps");
+            self add_dvar_toggle("freeze anim", undefined, "pan_freezeanim");
+            self add_dvar_toggle("canzooms", undefined, "pan_canzooms");
+            self add_dvar_toggle("always altswap", undefined, "pan_alwaysaltswap");
 #endif
 
-        self add_pers_toggle("always nac", "[{+weapnext}] to easily swap", custom_scripts\_z_func::always_nac, "always_nac");
-        self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
-        self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
-        self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
-        self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
-        if (gametype == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
-        self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");        
-        self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
-        self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");        
-        break;
+            self add_pers_toggle("always nac", "[{+weapnext}] to easily swap", custom_scripts\_z_func::always_nac, "always_nac");
+            self add_pers_toggle("elevators", undefined, custom_scripts\_z_func::toggle_elevators, "elevators");
+            self add_pers_toggle("alt swaps", undefined, custom_scripts\_z_func::toggle_alt_swaps, "alt_swap");
+            self add_pers_toggle("instaswaps", undefined, custom_scripts\_z_func::instaswaps, "instaswaps");
+            self add_pers_toggle("auto prone", undefined, custom_scripts\_z_func::autoprone, "autoprone");
+            if (gametype == "sd") self add_pers_toggle("round end prone", undefined, custom_scripts\_z_func::togglepers, "autoprone_endgame", true);
+            self add_pers_toggle("auto reload", undefined, custom_scripts\_z_func::autoreload, "autoreload");
+            self add_increment("instaswaps time", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("instaswaps_time")), 0.1, 1, 0.01, "instaswaps_time");
+            self add_array("auto prone mode", slider_controls, custom_scripts\_z_func::setpersmenu, list("air,always"), "autoprone_mode");
+            break;
 
-    /*
+            /*
     case "session settings":
         self.bind_index = false;
         self add_menu(menu);
@@ -78,441 +78,441 @@ structure()
         break;
     */
 
-    case "cinematics": // add scenes later ?
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("start camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::start_camera_path, self getpers("camera_get_start_type"));
-        self add_option("stop camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::stop_camera_path);
-        self add_increment("set camera rotation", increment_controls, custom_scripts\_z_func::set_camera_rotation, int(self getpers("camera_rotation")), 1, 360, 1);        
-        if (self custom_scripts\_util::getpers("camera_get_start_type") == "speed") self add_increment("set bezier speed", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_bezier_speed")), 1, 20, 1, "camera_bezier_speed");
-        if (self custom_scripts\_util::getpers("camera_get_start_type") == "time") self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
-        self add_array("set camera mode", slider_controls, ::set_the_mode, list("bezier,linear"));
-        self add_option("save node", "camera nodes: ^5" + int(self getpers("nodecount")), ::save_camera_node);
-        self add_option("delete last node", "camera nodes: ^5" + int(self getpers("nodecount")), ::delete_last_node);
-        self add_option("clone self", undefined, ::clone_myself);
-        self add_option(warn("clear all ents"), "i don't recommend doing this", ::clear_ents);
-        break;
+        case "cinematics": // add scenes later ?
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("start camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::start_camera_path, self getpers("camera_get_start_type"));
+            self add_option("stop camera path", "camera nodes: ^5" + int(self getpers("nodecount")), ::stop_camera_path);
+            self add_increment("set camera rotation", increment_controls, custom_scripts\_z_func::set_camera_rotation, int(self getpers("camera_rotation")), 1, 360, 1);
+            if (self custom_scripts\_util::getpers("camera_get_start_type") == "speed") self add_increment("set bezier speed", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_bezier_speed")), 1, 20, 1, "camera_bezier_speed");
+            if (self custom_scripts\_util::getpers("camera_get_start_type") == "time") self add_increment("set linear time", increment_controls, custom_scripts\_z_func::setpersmenu, int(self getpers("camera_linear_time")), 1, 20, 1, "camera_linear_time");
+            self add_array("set camera mode", slider_controls, ::set_the_mode, list("bezier,linear"));
+            self add_option("save node", "camera nodes: ^5" + int(self getpers("nodecount")), ::save_camera_node);
+            self add_option("delete last node", "camera nodes: ^5" + int(self getpers("nodecount")), ::delete_last_node);
+            self add_option("clone self", undefined, ::clone_myself);
+            self add_option(warn("clear all ents"), "i don't recommend doing this", ::clear_ents);
+            break;
 
-    case "position":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_array("teleport bots", slider_controls, ::move_bots, list("crosshair,self"));
-        self add_pers_toggle("freeze bots", undefined, ::togglepers, "frozen_bots", true);
-        self add_option("unstuck", undefined, ::unstuck);
-        self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
-        self add_array("manage position", slider_controls, ::position_manager, list("save,load,reset"));
-        if (float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
-        {
-            self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("saveposx")), -500000, 5000000, float(self getpers("poschangeby")), "saveposx");
-            self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("saveposy")), -500000, 5000000, float(self getpers("poschangeby")), "saveposy");
-            self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("saveposz")), -500000, 5000000, float(self getpers("poschangeby")), "saveposz");
-            self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("poschangeby")), 5, 10000, 5, "poschangeby");
-        }
-        break;
-
-    case "aimbot settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
-        self add_increment("range", increment_controls, ::setpersmenu, int(self getpers("aimbot_range")), 100, 5000, 100, "aimbot_range");
-        self add_array("delay", slider_controls, ::setpersmenu, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"), "aimbot_delay"); // so increments will freeze your game if you put the min to 0. look into this? -et
-        self add_option("effect manager", undefined, ::new_menu, "edit effects"); 
-        break;
-
-    case "glitches":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("one handed gun", undefined, ::one_handed_gun); // add choose weapon menu
-        self add_game_option("iw8", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw8)");
-        self add_game_option("iw9", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw9)");
-        break;
-
-    case "edit effects":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_array("preview effects", slider_controls, ::preview_effect, list("wave,tracer,kill"));
-        self add_pers_toggle("kill effects", "current effect: ^:" + self getpers("kill_effect"), custom_scripts\_z_func::togglepers, "kill_effects", true);
-        self add_pers_toggle("wave kill effects", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), custom_scripts\_z_func::togglepers, "wave_effects", true);
-        self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
-        self add_option("randomize wave effects", self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::random_wave_effects);
-        self add_option("tracer effects", undefined, ::new_menu, "edit tracers");
-        break;
-
-    case "edit tracers":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_pers_toggle("tracer rounds", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::toggle_tracers, "tracer_rounds");
-        self add_pers_toggle("use multiple effects", undefined, custom_scripts\_z_func::togglepers, "use_tracer_waves", true);
-        self add_option("randomize tracer effects", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::random_tracer_effects);
-        if (self custom_scripts\_util::getpers("use_tracer_waves"))
-        {
-            for (i = 1; i < 4; i++) 
+        case "position":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_array("teleport bots", slider_controls, ::move_bots, list("crosshair,self"));
+            self add_pers_toggle("freeze bots", undefined, ::togglepers, "frozen_bots", true);
+            self add_option("unstuck", undefined, ::unstuck);
+            self add_pers_toggle("save and load binds", undefined, ::toggle_snl, "snl");
+            self add_array("manage position", slider_controls, ::position_manager, list("save,load,reset"));
+            if (float(self getpers("saveposx")) != 0 && float(self getpers("saveposy")) != 0 && float(self getpers("saveposz")) != 0)
             {
-                self add_array("effect ^:#" + i, slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_effect_" + i);
+                self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("saveposx")), -500000, 5000000, float(self getpers("poschangeby")), "saveposx");
+                self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("saveposy")), -500000, 5000000, float(self getpers("poschangeby")), "saveposy");
+                self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("saveposz")), -500000, 5000000, float(self getpers("poschangeby")), "saveposz");
+                self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("poschangeby")), 5, 10000, 5, "poschangeby");
             }
-        }
-        else
-        {
-            self add_array("tracer effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_effect");
-        }
-        break;
+            break;
 
-    case "binds": // bro can we please rework this i mean it works but a slider would be better -et
-        self.bind_index = true;
-        self add_menu(menu);
-        foreach (bind in bind_list)
-            self add_option(bind, undefined, ::new_menu, bind);
-        break;
+        case "aimbot settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_pers_toggle("aimbot", undefined, ::aimbot, "aimbot");
+            self add_increment("range", increment_controls, ::setpersmenu, int(self getpers("aimbot_range")), 100, 5000, 100, "aimbot_range");
+            self add_array("delay", slider_controls, ::setpersmenu, list("0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1"), "aimbot_delay"); // so increments will freeze your game if you put the min to 0. look into this? -et
+            self add_option("effect manager", undefined, ::new_menu, "edit effects");
+            break;
 
-    case "bind settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("choose bind", undefined, ::new_menu, "binds");   
-        self add_option("edit record movement", undefined, ::new_menu, "record movement settings");
-        self add_option("edit bolt movement", undefined, ::new_menu, "bolt movement settings");
-        self add_option("edit class change", undefined, ::new_menu, "class change settings");
-        self add_option("edit velocity", undefined, ::new_menu, "edit velocity");
-        self add_game_option("iw8", "choose equipment", undefined, ::new_menu, "equipment bind (iw8)");
-        self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
-        self add_game_array("iw8", "stuck weapon", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
-        self add_pers_toggle("put away equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
-        if (self custom_scripts\_util::getpers("eq_putaway")) self add_increment("put away time", increment_controls, ::setpersmenu, float(self getpers("eq_putaway_time")), 0.05, 30, 0.05, "eq_putaway_time");  
-        self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
-        self add_pers_toggle("repeater illusions", undefined, custom_scripts\_z_func::togglepers, "repeater_illusion", true);
-        self add_pers_toggle("unlink after bar", "for care package & hack stalls", custom_scripts\_z_func::togglepers, "unlink_after_bar", true);
-        self add_increment("spectator repeater time", increment_controls, ::setpersmenu, float(self getpers("spectate_time")), 0.1, 2, 0.1, "spectate_time");   
-        self add_pers_toggle("real dead silence", "auto fades out dead silence", custom_scripts\_z_func::togglepers, "dead_silence_auto", true);
-        if (self custom_scripts\_util::getpers("dead_silence_auto")) self add_increment("dead silence time", increment_controls, ::setpersmenu, int(self getpers("dead_silence_time")), 1, 30, 1, "dead_silence_time");  
-        self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");     
-        self add_increment("flash amount", increment_controls, ::setpersmenu, float(self getpers("flash_amount")), 1, 5, 0.25, "flash_amount");
-        self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");  
-        self add_game_array("iw8", "shellshock type", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
-        break;
+        case "glitches":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("one handed gun", undefined, ::one_handed_gun); // add choose weapon menu
+            self add_game_option("iw8", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw8)");
+            self add_game_option("iw9", "switch to equipment", "^5" + self.neura["weapons"][client]["equipment"][0].size + " ^7equipment available", ::new_menu, "switch to equipment (iw9)");
+            break;
 
-    case "bolt movement settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("bot bolt movement", undefined, ::new_menu, "bot bolt movement settings");
-        self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 0.1, 10, 0.1, "boltspeed");
-        self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
-        self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
-        self add_option("play bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::start_bolt);
-        break;
+        case "edit effects":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_array("preview effects", slider_controls, ::preview_effect, list("wave,tracer,kill"));
+            self add_pers_toggle("kill effects", "current effect: ^:" + self getpers("kill_effect"), custom_scripts\_z_func::togglepers, "kill_effects", true);
+            self add_pers_toggle("wave kill effects", "^:" + self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), custom_scripts\_z_func::togglepers, "wave_effects", true);
+            self add_array("kill effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "kill_effect");
+            self add_option("randomize wave effects", self getpers("wave_effect_1") + " | " + self getpers("wave_effect_2") + " | " + self getpers("wave_effect_3"), ::random_wave_effects);
+            self add_option("tracer effects", undefined, ::new_menu, "edit tracers");
+            break;
 
-    case "record movement settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("record movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::record_movement);
-        self add_option("delete last point", "movement points: ^5" + int(self getpers("recordmovementcount")), ::delete_last_movement_point);
-        self add_option("play movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::play_movement);
-        break;
-
-    case "class change settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap");
-        self add_pers_toggle("one bullet out", undefined, ::togglepers, "ccb_one_bullet_out", true);
-        self add_pers_toggle("one bullet left", undefined, ::togglepers, "ccb_one_bullet_left", true);
-        self add_pers_toggle("empty clip", undefined, ::togglepers, "ccb_empty_clip", true);
-        self add_pers_toggle("illusion", undefined, ::togglepers, "ccb_illusion", true);
-        self add_pers_toggle("canswap", undefined, ::togglepers, "ccb_always_can", true);
-        break;
-
-    case "bot bolt movement settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_increment("bot bolt speed", increment_controls, ::setpersmenu, float(self getpers("bot_boltspeed")), 0.1, 10, 0.1, "bot_boltspeed");
-        self add_option("save bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::save_bot_bolt);
-        self add_option("delete last bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::delete_last_bot_bolt);
-        self add_option("play bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::start_bot_bolt);
-        break;
-
-    case "edit velocity":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("velx")), -2000, 2000, float(self getpers("velocitychangeby")), "velx");
-        self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
-        self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
-        self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
-        self add_option("randomize values", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::randomize_velocity);
-        self add_option("track & save velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::track_velocity);
-        self add_option("play velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::play_velocity);
-        break;
-
-    case "switch to equipment (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
-        }
-        break;
-
-    case "switch to equipment (iw9)":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
-        }
-        break;
-
-    case "equipment bind (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
-        }
-        break;
-
-    case "equipment bind (iw9)":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
-        }
-        break;
-
-    case "class manager":
-        self.bind_index = false;
-        self add_menu(menu);
-        // self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]); // broken broken broken
-        self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
-        self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
-        self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
-        self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
-        self add_option("take weapon", undefined, ::take_current);
-        self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
-        self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
-        self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
-        self add_option("streak manager", undefined, ::new_menu, "streaks");
-        self add_game_option("iw8", "apply random camo", "currently set: ^5" + self custom_scripts\_util::getpers("camo"), ::apply_camo, self);
-        break;
-
-    case "primaries (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("snipers", "^5" + self.neura["weapons"][client]["primary"]["snipers"][0].size + " ^7weapons available", ::new_menu, "snipers");
-        self add_option("shotguns", "^5" + self.neura["weapons"][client]["primary"]["shotguns"][0].size + " ^7weapons available", ::new_menu, "shotguns");
-        self add_option("assault rifles", "^5" + self.neura["weapons"][client]["primary"]["assault rifles"][0].size + " ^7weapons available", ::new_menu, "assault rifles");
-        self add_option("sub machine guns", "^5" + self.neura["weapons"][client]["primary"]["sub machine guns"][0].size + " ^7weapons available", ::new_menu, "sub machine guns");
-        self add_option("light machine guns", "^5" + self.neura["weapons"][client]["primary"]["light machine guns"][0].size + " ^7weapons available", ::new_menu, "light machine guns");
-        break;
-
-    case "secondaries (iw8)":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("launchers", "^5" + self.neura["weapons"][client]["secondary"]["launchers"][0].size + " ^7weapons available", ::new_menu, "launchers");
-        self add_option("pistols", "^5" + self.neura["weapons"][client]["secondary"]["pistols"][0].size + " ^7weapons available", ::new_menu, "pistols");
-        self add_option("misc", "^5" + self.neura["weapons"][client]["secondary"]["misc"][0].size + " ^7weapons available", ::new_menu, "misc");
-        break;
-
-    case "launchers":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], "id: ^5" + self.neura["weapons"][client]["secondary"][menu][0][i], ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
-        }
-        break;
-
-    case "pistols":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
-        }
-        break;
-
-    case "misc":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
-        }
-        break;
-
-    case "snipers":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
-        }
-        break;
-
-    case "shotguns":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
-        }
-        break;
-
-    case "assault rifles":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
-        }
-        break;
-
-    case "light machine guns":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
-        }
-        break;
-
-    case "sub machine guns":
-        self.bind_index = false;
-        self add_menu(menu);
-        for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
-        }
-        break;
-
-    case "streaks":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks");
-        self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use", true);
-        break;
-
-    case "give streaks":
-        self.bind_index = false;
-        self add_menu(menu);
-        if (gametype == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
-        for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++) 
-        {
-            self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
-        }
-        break;
-
-    case "game settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("dvars", undefined, ::new_menu, "dvars");
-        self add_option("ladders", undefined, ::new_menu, "ladders");
-        self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
-        self add_option(warn("session settings"), undefined, ::new_menu, "session settings");
-        self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_hud, "no_hud");
-        self add_option("lock menu", undefined, ::lock_menu);
-        self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
-        self add_option("fast restart", undefined, ::fast_restart);
-        // self add_option("respawn everyone", undefined, ::respawn_everyone);
-        self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
-        self add_toggle("toggle rainbow", undefined, ::rainbow_menu, self getpers("rainbow"));
-        self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
-        self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
-        if (gametype == "sd") 
-        {   
-            self add_option("end round", undefined, ::end_round);
-            self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
-            self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
-            self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
-            self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
-            if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
-        }
-        self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
-        self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
-        self add_toggle("debug menu", undefined, ::debug_menu, level.is_debug);
-        self add_option(warn("spawn invis platform"), "doesn't like to spawn sometimes", ::invis_platform);
-        self add_option(warn("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
-        // i have a wait for our handle_camo toggle because on my end its iffy with a delay so just keep this -ethan
-        self add_pers_toggle(warn("wait for handle camo"), "only disable if issue with swapping", ::togglepers, "camo_wait", true);
-        break;
-
-    case "killcam manager":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_pers_toggle("allow hud edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
-        self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
-        self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "hide_itemtype", true);
-        self add_pers_toggle("hide victim", undefined, ::togglepers, "hide_victim", true);
-        self add_pers_toggle("hide perks", undefined, ::togglepers, "hide_perks", true);
-        self add_pers_toggle("hide attachments", undefined, ::togglepers, "hide_attachments", true);
-        break;
-
-    case "dvars":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
-        self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
-        self add_increment("timescale", increment_controls, ::set_timescale, float(self getpers("slow_motion")), 0.25, 10, 0.25); 
-        self add_array("timescale mode", slider_controls, ::rewatch_round, list("round end,start of killcam,normal"));
-        self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
-        // self add_increment("knockback", increment_controls, ::set_knockback, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
-        break;
-
-    case "ladders":
-        self.bind_index = false;
-        // LMOLRRPPMP
-        self add_menu(menu);
-        self add_dvar_toggle("ladder strafing", undefined, "LLNQPTKKQP");
-        self add_dvar_toggle("enhanced ladders", undefined, "OMSLTKKKMK");
-        self add_dvar_toggle("enable weapon", undefined, "MMTQQLRRRM");
-        self add_increment("pushback velocity", increment_controls, ::setdvarmenu, getdvarint("LMQTTNORKP"), 50, 3000, 25, "LMQTTNORKP");
-        self add_increment("ladder cresting", increment_controls, ::setdvarmenu, getdvarint("NMNLNOKQTQ"), 1, 2, 1, "NMNLNOKQTQ");
-        self add_increment("jump right scale", increment_controls, ::setdvarmenu, getdvarint("LMOLRRPPMP"), 1, 50, 1, "LMOLRRPPMP");
-        self add_increment("vault offset", increment_controls, ::setdvarmenu, getdvarfloat("PSSNPRQSO"), 0.1, 1, 0.1, "PSSNPRQSO");
-        self add_increment("jump up desire", increment_controls, ::setdvarmenu, getdvarfloat("LQQMPMNLP"), 0.1, 2, 0.1, "LQQMPMNLP");
-        self add_increment("pull in bounds scale", increment_controls, ::setdvarmenu, getdvarfloat("MSRROOLQMS"), 1, 6, 0.2, "MSRROOLQMS");
-        break;
-
-    case "debug settings":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option(warn("bot paths"), "trying to get this to work", ::new_menu, "bot paths");
-        self add_option("origin", self getorigin(), ::void);
-        self add_option("kill selected player", undefined, ::kill_selected_player);
-        self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
-        self add_option("try to flash", undefined, ::try_to_flash);
-        // model_maker(model, head, anim, link_to_self, position) 
-        // self add_option("model maker", undefined, ::model_maker, "body_opforce_london_terrorist_1_2", "head_male_bc_03", "hm_grnd_civ_react02_idle04", false);
-        self add_game_option("iw8", "hostage to cross", undefined, ::hostage_to_cross, self getcrosshair()); 
-        self add_game_option("iw8", "bj", undefined, ::bj_logic);
-        self add_game_increment("iw8", "bj speed", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("bj_speed")), 1, 5, 0.1, "bj_speed");
-        self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
-        break;
-
-    case "bot paths":
-        self.bind_index = false;
-        self add_menu(menu);
-        self add_option("start path movement", "path count: ^5" + int(self getpers("pathcount")), ::start_path_movement);
-        self add_option("save point", "path count: ^5" + int(self getpers("pathcount")), ::save_path);
-        self add_option("delete last point", "path count: ^5" + int(self getpers("pathcount")), ::delete_last_path);
-        break;
-
-    case "manage clients":
-        self.bind_index = false;
-        self add_menu(menu);
-        players = level.players;
-        foreach (player in players)
-        {
-            if (player ishost())
-                player_text = "ߵ " + player get_name(); // party icon for self :3
+        case "edit tracers":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_pers_toggle("tracer rounds", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::toggle_tracers, "tracer_rounds");
+            self add_pers_toggle("use multiple effects", undefined, custom_scripts\_z_func::togglepers, "use_tracer_waves", true);
+            self add_option("randomize tracer effects", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::random_tracer_effects);
+            if (self custom_scripts\_util::getpers("use_tracer_waves"))
+            {
+                for (i = 1; i < 4; i++)
+                {
+                    self add_array("effect ^:#" + i, slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_effect_" + i);
+                }
+            }
             else
-                player_text = player get_name();
+            {
+                self add_array("tracer effect", slider_controls, custom_scripts\_z_func::setpersmenu, self.effect_list, "tracer_effect");
+            }
+            break;
 
-            self add_option(player_text, undefined, ::new_menu, "player option");
-        }
-        break;
-    default: // shitty bind menu solution (but works :3) edit: we really need a slider solution -et
-        if (is_true(self.bind_index))
-            self bind_index(menu, increment_controls);
-        else 
-            self player_index(menu, self.select_player);
-        break;
+        case "binds": // bro can we please rework this i mean it works but a slider would be better -et
+            self.bind_index = true;
+            self add_menu(menu);
+            foreach (bind in bind_list)
+                self add_option(bind, undefined, ::new_menu, bind);
+            break;
+
+        case "bind settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("choose bind", undefined, ::new_menu, "binds");
+            self add_option("edit record movement", undefined, ::new_menu, "record movement settings");
+            self add_option("edit bolt movement", undefined, ::new_menu, "bolt movement settings");
+            self add_option("edit class change", undefined, ::new_menu, "class change settings");
+            self add_option("edit velocity", undefined, ::new_menu, "edit velocity");
+            self add_game_option("iw8", "choose equipment", undefined, ::new_menu, "equipment bind (iw8)");
+            self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
+            self add_game_array("iw8", "stuck weapon", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
+            self add_pers_toggle("put away equipment", undefined, custom_scripts\_z_func::togglepers, "eq_putaway", true);
+            if (self custom_scripts\_util::getpers("eq_putaway")) self add_increment("put away time", increment_controls, ::setpersmenu, float(self getpers("eq_putaway_time")), 0.05, 30, 0.05, "eq_putaway_time");
+            self add_pers_toggle("real scavenger", undefined, custom_scripts\_z_func::togglepers, "real_scavenger", true);
+            self add_pers_toggle("repeater illusions", undefined, custom_scripts\_z_func::togglepers, "repeater_illusion", true);
+            self add_pers_toggle("unlink after bar", "for care package & hack stalls", custom_scripts\_z_func::togglepers, "unlink_after_bar", true);
+            self add_increment("spectator repeater time", increment_controls, ::setpersmenu, float(self getpers("spectate_time")), 0.1, 2, 0.1, "spectate_time");
+            self add_pers_toggle("real dead silence", "auto fades out dead silence", custom_scripts\_z_func::togglepers, "dead_silence_auto", true);
+            if (self custom_scripts\_util::getpers("dead_silence_auto")) self add_increment("dead silence time", increment_controls, ::setpersmenu, int(self getpers("dead_silence_time")), 1, 30, 1, "dead_silence_time");
+            self add_increment("damage amount", increment_controls, ::setpersmenu, int(self getpers("damage_amount")), 10, 100, 10, "damage_amount");
+            self add_increment("flash amount", increment_controls, ::setpersmenu, float(self getpers("flash_amount")), 1, 5, 0.25, "flash_amount");
+            self add_increment("shellshock amount", increment_controls, ::setpersmenu, float(self getpers("shellshock_amount")), 0.01, 1, 0.01, "shellshock_amount");
+            self add_game_array("iw8", "shellshock type", slider_controls, ::setpersmenu, list("frag_grenade_mp,flash_grenade_mp,concussion_grenade_mp,semtex_mp"), "shellshock_type");
+            break;
+
+        case "bolt movement settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("bot bolt movement", undefined, ::new_menu, "bot bolt movement settings");
+            self add_increment("bolt speed", increment_controls, ::setpersmenu, float(self getpers("boltspeed")), 0.1, 10, 0.1, "boltspeed");
+            self add_option("save bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::save_bolt);
+            self add_option("delete last bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::delete_last_bolt);
+            self add_option("play bolt", "bolt count: ^5" + int(self getpers("boltcount")), ::start_bolt);
+            break;
+
+        case "record movement settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("record movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::record_movement);
+            self add_option("delete last point", "movement points: ^5" + int(self getpers("recordmovementcount")), ::delete_last_movement_point);
+            self add_option("play movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::play_movement);
+            break;
+
+        case "class change settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_increment("class wrap", increment_controls, ::setpersmenu, int(self getpers("class_wrap")), 1, 10, 1, "class_wrap");
+            self add_pers_toggle("one bullet out", undefined, ::togglepers, "ccb_one_bullet_out", true);
+            self add_pers_toggle("one bullet left", undefined, ::togglepers, "ccb_one_bullet_left", true);
+            self add_pers_toggle("empty clip", undefined, ::togglepers, "ccb_empty_clip", true);
+            self add_pers_toggle("illusion", undefined, ::togglepers, "ccb_illusion", true);
+            self add_pers_toggle("canswap", undefined, ::togglepers, "ccb_always_can", true);
+            break;
+
+        case "bot bolt movement settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_increment("bot bolt speed", increment_controls, ::setpersmenu, float(self getpers("bot_boltspeed")), 0.1, 10, 0.1, "bot_boltspeed");
+            self add_option("save bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::save_bot_bolt);
+            self add_option("delete last bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::delete_last_bot_bolt);
+            self add_option("play bot bolt", "bolt count: ^5" + int(self getpers("bot_boltcount")), ::start_bot_bolt);
+            break;
+
+        case "edit velocity":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("velx")), -2000, 2000, float(self getpers("velocitychangeby")), "velx");
+            self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("vely")), -2000, 2000, float(self getpers("velocitychangeby")), "vely");
+            self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("velz")), -2000, 2000, float(self getpers("velocitychangeby")), "velz");
+            self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("velocitychangeby")), 5, 1000, 5, "velocitychangeby");
+            self add_option("randomize values", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::randomize_velocity);
+            self add_option("track & save velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::track_velocity);
+            self add_option("play velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::play_velocity);
+            break;
+
+        case "switch to equipment (iw8)":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
+            }
+            break;
+
+        case "switch to equipment (iw9)":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::nacto, self.neura["weapons"][client]["equipment"][0][i]);
+            }
+            break;
+
+        case "equipment bind (iw8)":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
+            }
+            break;
+
+        case "equipment bind (iw9)":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["equipment"][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["equipment"][1][i], undefined, ::setpersmenu, self.neura["weapons"][client]["equipment"][0][i], "eq_weapon");
+            }
+            break;
+
+        case "class manager":
+            self.bind_index = false;
+            self add_menu(menu);
+            // self add_game_array("iw8", "perks", "running ^5" + self.pers["my_perks"].size + " ^7custom perks", ::toggle_perk, self.neura["perks"]); // broken broken broken
+            self add_pers_toggle("infinite equipment", undefined, custom_scripts\_z_func::toggle_inf_eq, "inf_eq");
+            self add_array("drop weapon", slider_controls, ::drop_util, list("current,secondary,all"));
+            self add_array("save & load class", slider_controls, ::class_manager, list("save,load"));
+            self add_array("refill ammo", slider_controls, ::refill_my_ammo, list("all weapons,current"));
+            self add_option("take weapon", undefined, ::take_current);
+            self add_pers_toggle("replace weapon", "replace current when giving weapon", ::togglepers, "replace_weapon", true);
+            self add_game_option("iw8", "primaries", "primaries for ^5iw8", ::new_menu, "primaries (iw8)");
+            self add_game_option("iw8", "secondaries", "secondaries for ^5iw8", ::new_menu, "secondaries (iw8)");
+            self add_option("streak manager", undefined, ::new_menu, "streaks");
+            self add_game_option("iw8", "apply random camo", "currently set: ^5" + self custom_scripts\_util::getpers("camo"), ::apply_camo, self);
+            break;
+
+        case "primaries (iw8)":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("snipers", "^5" + self.neura["weapons"][client]["primary"]["snipers"][0].size + " ^7weapons available", ::new_menu, "snipers");
+            self add_option("shotguns", "^5" + self.neura["weapons"][client]["primary"]["shotguns"][0].size + " ^7weapons available", ::new_menu, "shotguns");
+            self add_option("assault rifles", "^5" + self.neura["weapons"][client]["primary"]["assault rifles"][0].size + " ^7weapons available", ::new_menu, "assault rifles");
+            self add_option("sub machine guns", "^5" + self.neura["weapons"][client]["primary"]["sub machine guns"][0].size + " ^7weapons available", ::new_menu, "sub machine guns");
+            self add_option("light machine guns", "^5" + self.neura["weapons"][client]["primary"]["light machine guns"][0].size + " ^7weapons available", ::new_menu, "light machine guns");
+            break;
+
+        case "secondaries (iw8)":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("launchers", "^5" + self.neura["weapons"][client]["secondary"]["launchers"][0].size + " ^7weapons available", ::new_menu, "launchers");
+            self add_option("pistols", "^5" + self.neura["weapons"][client]["secondary"]["pistols"][0].size + " ^7weapons available", ::new_menu, "pistols");
+            self add_option("misc", "^5" + self.neura["weapons"][client]["secondary"]["misc"][0].size + " ^7weapons available", ::new_menu, "misc");
+            break;
+
+        case "launchers":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], "id: ^5" + self.neura["weapons"][client]["secondary"][menu][0][i], ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
+            }
+            break;
+
+        case "pistols":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
+            }
+            break;
+
+        case "misc":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["secondary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["secondary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["secondary"][menu][0][i]);
+            }
+            break;
+
+        case "snipers":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+            }
+            break;
+
+        case "shotguns":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+            }
+            break;
+
+        case "assault rifles":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+            }
+            break;
+
+        case "light machine guns":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+            }
+            break;
+
+        case "sub machine guns":
+            self.bind_index = false;
+            self add_menu(menu);
+            for (i = 0; i < self.neura["weapons"][client]["primary"][menu][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["primary"][menu][1][i], undefined, ::givegun, self.neura["weapons"][client]["primary"][menu][0][i]);
+            }
+            break;
+
+        case "streaks":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("give streak", "^5" + self.neura["weapons"][client]["killstreaks"][0].size + " ^7streaks available", ::new_menu, "give streaks");
+            self add_pers_toggle("auto pullout streak", undefined, ::togglepers, "ks_auto_use", true);
+            break;
+
+        case "give streaks":
+            self.bind_index = false;
+            self add_menu(menu);
+            if (gametype == "sd") self add_pers_toggle("reload next round", "give back last streak next round", ::togglepers, "reload_streaks", true);
+            for (i = 0; i < self.neura["weapons"][client]["killstreaks"][0].size; i++)
+            {
+                self add_option(self.neura["weapons"][client]["killstreaks"][1][i], undefined, ::give_streak, self.neura["weapons"][client]["killstreaks"][0][i]);
+            }
+            break;
+
+        case "game settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("dvars", undefined, ::new_menu, "dvars");
+            self add_option("ladders", undefined, ::new_menu, "ladders");
+            self add_option("killcam manager", undefined, ::new_menu, "killcam manager");
+            self add_option(warn("session settings"), undefined, ::new_menu, "session settings");
+            self add_pers_toggle("no hud", undefined, custom_scripts\_z_func::toggle_hud, "no_hud");
+            self add_option("lock menu", undefined, ::lock_menu);
+            self add_array("fake bounces", slider_controls, ::manage_bounce, list("spawn,delete"));
+            self add_option("fast restart", undefined, ::fast_restart);
+            // self add_option("respawn everyone", undefined, ::respawn_everyone);
+            self add_pers_toggle("headbounces", undefined, custom_scripts\_z_func::toggle_headbounces, "headbounces");
+            self add_toggle("toggle rainbow", undefined, ::rainbow_menu, self getpers("rainbow"));
+            self add_pers_toggle("messages", undefined, ::togglepers, "messages", true);
+            self add_pers_toggle("sounds", "menu sounds etc", ::togglepers, "sounds", true);
+            if (gametype == "sd")
+            {
+                self add_option("end round", undefined, ::end_round);
+                self add_array("manage rounds", slider_controls, ::round_manager, list("reset,random"));
+                self add_pers_toggle("always randomize rounds", undefined, ::togglepers, "random_rounds", true);
+                self add_pers_toggle("auto pause timer", undefined, ::togglepers, "auto_pause_timer", true);
+                self add_pers_toggle("randomize timer pause", "will update next round", ::togglepers, "randomize_timer_pause", true);
+                if (!self custom_scripts\_util::getpers("randomize_timer_pause")) self add_increment("pause timer after", increment_controls, ::setpersmenu, int(self getpers("pause_timer_after")), 2, 120, 2, "pause_timer_after");
+            }
+            self add_toggle("out of bounds", undefined, ::toggle_oob, self getpers("oob"));
+            self add_toggle("remove barriers", undefined, ::toggle_barriers, self getpers("barriers"));
+            self add_toggle("debug menu", undefined, ::debug_menu, level.is_debug);
+            self add_option(warn("spawn invis platform"), "doesn't like to spawn sometimes", ::invis_platform);
+            self add_option(warn("spawn enemy"), undefined, ::spawnbot, "axis", 1); // look at this pls someoneeee
+            // i have a wait for our handle_camo toggle because on my end its iffy with a delay so just keep this -ethan
+            self add_pers_toggle(warn("wait for handle camo"), "only disable if issue with swapping", ::togglepers, "camo_wait", true);
+            break;
+
+        case "killcam manager":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_pers_toggle("allow hud edits", "allow editing killcam elems", ::toggle_clean_kc, "clean_kc");
+            self add_increment("killcam time", increment_controls, ::setdvarmenu, getdvarfloat("scr_killcam_time"), 5, 10, 1, "scr_killcam_time");
+            self add_pers_toggle("hide weapon & items", undefined, ::togglepers, "hide_itemtype", true);
+            self add_pers_toggle("hide victim", undefined, ::togglepers, "hide_victim", true);
+            self add_pers_toggle("hide perks", undefined, ::togglepers, "hide_perks", true);
+            self add_pers_toggle("hide attachments", undefined, ::togglepers, "hide_attachments", true);
+            break;
+
+        case "dvars":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_dvar_toggle("jump slowdown", undefined, "LNOKTQPLKO");
+            self add_dvar_toggle("unlimited sprint", undefined, "MSOOMPMPQS");
+            self add_increment("timescale", increment_controls, ::set_timescale, float(self getpers("slow_motion")), 0.25, 10, 0.25);
+            self add_array("timescale mode", slider_controls, ::rewatch_round, list("round end,start of killcam,normal"));
+            self add_increment("pickup radius", increment_controls, ::setdvarmenu, getdvarfloat("MTOQQKKRPS"), 50, 20000, 50, "MTOQQKKRPS"); // don't think this works
+            // self add_increment("knockback", increment_controls, ::set_knockback, getdvarfloat("NSMSTQROLM"), 50, 20000, 50, "NSMSTQROLM"); // haven't tested
+            break;
+
+        case "ladders":
+            self.bind_index = false;
+            // LMOLRRPPMP
+            self add_menu(menu);
+            self add_dvar_toggle("ladder strafing", undefined, "LLNQPTKKQP");
+            self add_dvar_toggle("enhanced ladders", undefined, "OMSLTKKKMK");
+            self add_dvar_toggle("enable weapon", undefined, "MMTQQLRRRM");
+            self add_increment("pushback velocity", increment_controls, ::setdvarmenu, getdvarint("LMQTTNORKP"), 50, 3000, 25, "LMQTTNORKP");
+            self add_increment("ladder cresting", increment_controls, ::setdvarmenu, getdvarint("NMNLNOKQTQ"), 1, 2, 1, "NMNLNOKQTQ");
+            self add_increment("jump right scale", increment_controls, ::setdvarmenu, getdvarint("LMOLRRPPMP"), 1, 50, 1, "LMOLRRPPMP");
+            self add_increment("vault offset", increment_controls, ::setdvarmenu, getdvarfloat("PSSNPRQSO"), 0.1, 1, 0.1, "PSSNPRQSO");
+            self add_increment("jump up desire", increment_controls, ::setdvarmenu, getdvarfloat("LQQMPMNLP"), 0.1, 2, 0.1, "LQQMPMNLP");
+            self add_increment("pull in bounds scale", increment_controls, ::setdvarmenu, getdvarfloat("MSRROOLQMS"), 1, 6, 0.2, "MSRROOLQMS");
+            break;
+
+        case "debug settings":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option(warn("bot paths"), "trying to get this to work", ::new_menu, "bot paths");
+            self add_option("origin", self getorigin(), ::void);
+            self add_option("kill selected player", undefined, ::kill_selected_player);
+            self add_option("current weapon", self getcurrentweapon().basename, ::print_weapon);
+            self add_option("try to flash", undefined, ::try_to_flash);
+            // model_maker(model, head, anim, link_to_self, position)
+            // self add_option("model maker", undefined, ::model_maker, "body_opforce_london_terrorist_1_2", "head_male_bc_03", "hm_grnd_civ_react02_idle04", false);
+            self add_game_option("iw8", "hostage to cross", undefined, ::hostage_to_cross, self getcrosshair());
+            self add_game_option("iw8", "bj", undefined, ::bj_logic);
+            self add_game_increment("iw8", "bj speed", increment_controls, custom_scripts\_z_func::setpersmenu, float(self getpers("bj_speed")), 1, 5, 0.1, "bj_speed");
+            self add_array("enemy shooting at you", slider_controls, ::fire_at_player, list("semtex_mp,semtex_bolt_mp,molotov_mp,thermite_mp,pop_rocket_proj_mp"));
+            break;
+
+        case "bot paths":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_option("start path movement", "path count: ^5" + int(self getpers("pathcount")), ::start_path_movement);
+            self add_option("save point", "path count: ^5" + int(self getpers("pathcount")), ::save_path);
+            self add_option("delete last point", "path count: ^5" + int(self getpers("pathcount")), ::delete_last_path);
+            break;
+
+        case "manage clients":
+            self.bind_index = false;
+            self add_menu(menu);
+            players = level.players;
+            foreach (player in players)
+            {
+                if (player ishost())
+                    player_text = "ߵ " + player get_name(); // party icon for self :3
+                else
+                    player_text = player get_name();
+
+                self add_option(player_text, undefined, ::new_menu, "player option");
+            }
+            break;
+        default: // shitty bind menu solution (but works :3) edit: we really need a slider solution -et
+            if (is_true(self.bind_index))
+                self bind_index(menu, increment_controls);
+            else
+                self player_index(menu, self.select_player);
+            break;
     }
 }
 
@@ -521,33 +521,33 @@ player_index(menu, player, slider_controls)
     if (!isdefined(player) || !isplayer(player))
         menu = "unassigned";
 
-    switch(menu)
+    switch (menu)
     {
-    case "player option":
-        self add_menu(player.name);
-        self add_option("kill player", undefined, ::kill_player, player);
-        self add_option("respawn player", undefined, ::respawn_player, player);
-        self add_option("change team", undefined, ::change_player_team, player);
-        self add_array("teleport to", slider_controls, ::manage_teleport, list("crosshair,me,them"), player);
-        if (is_bot(player))
-        {
-            self add_option("set kill bind target", undefined, ::set_selected_player, player);
-            self add_game_option("iw8", "give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
-            self add_game_option("iw8", "save class", undefined, ::save_enemy_class);
-            self add_game_option("iw8", "apply random camo", "currently set: ^5" + player custom_scripts\_util::getpers("camo"), ::apply_camo, player);
-            self add_game_option("iw9", "give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
-            self add_option("look at me", undefined, ::look_at_me, player);
-            self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, player, self getcurrentweapon());
-        }
-        break;
-    case "unassigned":
-        self add_menu(menu);
-        self add_option("this menu is unassigned");
-        break;
-    default:
-        self add_menu("error");
-        self add_option("unable to load " + menu);
-        break;
+        case "player option":
+            self add_menu(player.name);
+            self add_option("kill player", undefined, ::kill_player, player);
+            self add_option("respawn player", undefined, ::respawn_player, player);
+            self add_option("change team", undefined, ::change_player_team, player);
+            self add_array("teleport to", slider_controls, ::manage_teleport, list("crosshair,me,them"), player);
+            if (is_bot(player))
+            {
+                self add_option("set kill bind target", undefined, ::set_selected_player, player);
+                self add_game_option("iw8", "give shield", undefined, ::give_player_shield, player, "iw8_me_riotshield_mp");
+                self add_game_option("iw8", "save class", undefined, ::save_enemy_class);
+                self add_game_option("iw8", "apply random camo", "currently set: ^5" + player custom_scripts\_util::getpers("camo"), ::apply_camo, player);
+                self add_game_option("iw9", "give shield", undefined, ::give_player_shield, player, "iw9_me_riotshield_mp");
+                self add_option("look at me", undefined, ::look_at_me, player);
+                self add_option("set current weapon", "will set to: ^5" + self getcurrentweapon().basename, ::set_bot_weapon, player, self getcurrentweapon());
+            }
+            break;
+        case "unassigned":
+            self add_menu(menu);
+            self add_option("this menu is unassigned");
+            break;
+        default:
+            self add_menu("error");
+            self add_option("unable to load " + menu);
+            break;
     }
 }
 
@@ -556,7 +556,7 @@ bind_index(menu, increment_controls) // ew
     if (!isdefined(menu))
         menu = "unassigned";
 
-    switch(menu) 
+    switch (menu)
     {
         case "dead silence":
             self add_bind(menu, ::toggle_dead_silence_bind, "dead_silence");
@@ -665,7 +665,7 @@ initial_variable()
     // [1]: Display Name
     self.neura["soh_perk_list"] = list("specialty_fastreload,specialty_quickdraw");
     self.neura["perk_list"] = list("specialty_marathon,specialty_holdbreath,specialty_lightweight,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster,specialty_fastoffhand,specialty_quickswap");
-    
+
     self.neura["perks"] = list("specialty_fastreload,specialty_lightweight,specialty_marathon,specialty_holdbreath,specialty_fastoffhand,specialty_quickswap,specialty_quickdraw,specialty_sprintmelee,specialty_sprintfire,specialty_stalker,specialty_regenfaster");
 
     // mw19
@@ -725,7 +725,7 @@ initial_variable()
     self.element_list    = list("text,submenu,toggle,category,slider");
 
     // we should do flickershaders rainbow color yes ouu so awesome -et
-    self.color[0] = (1,1,1); // when cursor is over a option, this is the color. this is white for now
+    self.color[0] = (1, 1, 1); // when cursor is over a option, this is the color. this is white for now
     self.color[1] = (0.109803, 0.129411, 0.156862);
     self.color[2] = (0.133333, 0.152941, 0.180392);
     self.color[3] = (0.443, 0.455, 0.467);
@@ -744,7 +744,7 @@ monitor_menu_close()
 
     self.force_close_menu = false;
 
-    for(;;)
+    for (;;)
     {
         if (self.force_close_menu)
         {
@@ -764,7 +764,7 @@ initial_monitor()
 
     self thread monitor_menu_close();
 
-    for(;;)
+    for (;;)
     {
         if (isalive(self))
         {
@@ -793,7 +793,7 @@ initial_monitor()
                 }
                 else if (self usebuttonpressed()) // back
                 {
-                   // self sfx("zmb_powerup_activate");
+                    // self sfx("zmb_powerup_activate");
 
                     if (isdefined(self.previous[(self.previous.size - 1)]))
                     {
@@ -814,7 +814,7 @@ initial_monitor()
                         // self thread play_sound("attachment_pickup");
                         scrolling = self isbuttonpressed("-actionslot 2") ? 1 : -1;
                         self set_cursor((cursor + scrolling));
-                        
+
                         res = self update_scrolling(scrolling);
                         while (!res)
                         {
@@ -860,9 +860,9 @@ initial_monitor()
                         else
                             self thread execute_function(self.structure[cursor]["function"], self.structure[cursor]["argument_1"], self.structure[cursor]["argument_2"], self.structure[cursor]["argument_3"], self.structure[cursor]["argument_4"], self.structure[cursor]["argument_5"]);
 
-                        // self update_menu(menu, cursor); 
+                        // self update_menu(menu, cursor);
                         // only update the menu visually if not a array (?)
-                        
+
                         cursor_struct = self.structure[cursor];
                         if (isdefined(cursor_struct))
                         {
@@ -871,7 +871,6 @@ initial_monitor()
                                 self update_menu(menu, cursor);
                             }
                         }
-                        
                     }
                     wait 0.18;
                 }
@@ -973,7 +972,7 @@ set_slider(scrolling, index)
 {
     menu    = self get_menu();
     index   = isdefined(index) ? index : self get_cursor();
-    storage = ( menu + "_" + index );
+    storage = (menu + "_" + index);
 
     if (isdefined(self.structure[index]["array"]))
     {
@@ -1057,13 +1056,13 @@ destroy_element()
         self.player.element_count--;
 }
 
-set_text( text ) 
+set_text(text)
 {
-    if ( !isdefined( self ) || !isdefined( text ) )
+    if (!isdefined(self) || !isdefined(text))
         return;
 
     self.text = text;
-    self settext( text );
+    self settext(text);
 }
 
 create_text(text, override, font, font_scale, alignment, relative, x_offset, y_offset, color, alpha, sort)
@@ -1107,7 +1106,7 @@ create_shader(shader, alignment, relative, x_offset, y_offset, width, height, co
     element scripts\mp\hud_util::setparent(level.uiparent);
     element scripts\mp\hud_util::setpoint(alignment, relative, x_offset, y_offset);
     element set_shader(shader, width, height);
-    
+
     self.element_count++;
 
     return element;
@@ -1282,7 +1281,7 @@ add_bind(name, func, pers, end_on) // lol im so lazy bro idc
 {
     self add_menu(name);
 
-    for (i = 0; i < 4; i++) 
+    for (i = 0; i < 4; i++)
     {
         option = name + " -> " + "[{+actionslot " + (i + 1) + "}]";
         bind = "+actionslot " + (i + 1);
@@ -1395,18 +1394,18 @@ add_category(text)
 
 actionslot_notify_map(slot)
 {
-    switch(slot)
+    switch (slot)
     {
-    case "[{+actionslot 1}]":
-        return "+actionslot 1";
-    case "[{+actionslot 2}]":
-        return "+actionslot 2";
-    case "[{+actionslot 3}]":
-        return "+actionslot 3";
-    case "[{+actionslot 4}]":
-        return "+actionslot 4";
-    default:
-        break;
+        case "[{+actionslot 1}]":
+            return "+actionslot 1";
+        case "[{+actionslot 2}]":
+            return "+actionslot 2";
+        case "[{+actionslot 3}]":
+            return "+actionslot 3";
+        case "[{+actionslot 4}]":
+            return "+actionslot 4";
+        default:
+            break;
     }
 }
 
@@ -1498,7 +1497,7 @@ flicker_shaders() // colors from bliss - starts with original color
     {
         color = self.current_menu_color;
 
-        waittime = randomintrange(1,5);
+        waittime = randomintrange(1, 5);
 
         if (!first)
         {
@@ -1578,7 +1577,7 @@ close_menu()
     self set_procedure();
     self clear_option();
     self clear_all(self.menu["hud"]);
-    
+
     is_prematch_done = game["flags"]["prematch_done"];
     if (is_prematch_done)
         setslowmotion_wrapper(self custom_scripts\_util::getpers("slow_motion"), self custom_scripts\_util::getpers("slow_motion"), 0);
@@ -1637,7 +1636,7 @@ sym()
 
 override_string_for_index(index)
 {
-    switch(index)
+    switch (index)
     {
         case 1:
             return "MP_INGAME_ONLY/HOLD_TO_START_GAME";
@@ -1702,14 +1701,14 @@ create_option()
             index      = (i + start);
             cursor     = (self get_cursor() == index);
             color[0] = cursor ? self.color[0] : self.color[4];
-            color[1] = is_true(self.structure[index]["toggle"]) ? cursor ? self.color[0] : (1,1,1) : cursor ? self.color[2] : self.color[1];
+            color[1] = is_true(self.structure[index]["toggle"]) ? cursor ? self.color[0] : (1, 1, 1) : cursor ? self.color[2] : self.color[1];
 
             // new menu text
             if (isdefined(self.structure[index]["function"]) && self.structure[index]["function"] == ::new_menu)
                 self.menu["hud"]["submenu"][index] = self create_text("MP/NEURA_STR14_>", "MP_INGAME_ONLY/OBJ_HVT_CAPS_17", self.font, 0.65, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 212), (self.y_offset + ((i * self.option_spacing) + 20)), color[0], 1, 10);
             if (isdefined(self.structure[index]["toggle"]))
             {
-                self.menu["hud"]["toggle"][index] = self create_shader("white", "TOP_LEFT", "TOPCENTER", (self.x_offset + 204), (self.y_offset + ((i * self.option_spacing) + 20)), 8, 8, color[1], .65, 10);
+                self.menu["hud"]["toggle"][index] = self create_shader("white", "TOP_LEFT", "TOPCENTER", (self.x_offset + 204), (self.y_offset + ((i * self.option_spacing) + 20)), 8, 8, color[1],.65, 10);
                 // self.menu["hud"]["current_toggle_index"] = self.menu["hud"]["toggle"][index];
             }
 
@@ -1723,7 +1722,7 @@ create_option()
                     if (cursor)
                     {
                         self.menu["hud"]["slider"][0] = [];
-                        self.menu["hud"]["slider"][0][index] = self create_text("MP/NEURA_STR13_" + self.structure[index]["array"][ self.slider[storage] ], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, self.font_scale, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 210), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
+                        self.menu["hud"]["slider"][0][index] = self create_text("MP/NEURA_STR13_" + self.structure[index]["array"][self.slider[storage]], "MP_INGAME_ONLY/OBJ_HVT_CAPS_16", self.font, self.font_scale, "TOP_RIGHT", "TOPCENTER", (self.x_offset + 210), (self.y_offset + ((i * self.option_spacing) + 19)), color[0], 1, 10);
                     }
                 }
                 else

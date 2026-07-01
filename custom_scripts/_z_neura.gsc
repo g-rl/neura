@@ -1,5 +1,5 @@
 /*
-        neura menu for IW8 (MW2019), S4 (Vanguard), and IW9 (MW2022) 
+        neura menu for IW8 (MW2019), S4 (Vanguard), and IW9 (MW2022)
         by ethan (@nyli2b) & mikey (@mjkzys)
 */
 
@@ -40,7 +40,7 @@ on_player_connect()
     for (;;)
     {
         level waittill("connected", player);
-        
+
         if (isai(player) || isbot(player))
             player thread on_bot_spawned();
         else
@@ -67,7 +67,7 @@ on_player_spawned()
         self thread reload_position();
         self thread custom_scripts\_z_menu::close_menu_on_death();
 
-        if (self.has_spawned) 
+        if (self.has_spawned)
             continue;
 
         self.neura = [];
@@ -187,7 +187,7 @@ setup_watch_memory()
 
     setdvar("lfx_showDebugOverlay", 1);
     setdvar("lfx_showDebugOverlay", 0);
-    
+
     self setpers_if_uninitialized("rainbow", true);
 
     // add change save & load binds
@@ -331,7 +331,7 @@ setup_watch_memory()
 
     // record movement
     self setpers_if_uninitialized("recordmovementcount", "0");
-    for (i=1; i < 20; i++)
+    for (i = 1; i < 20; i++)
     {
         self setpers_if_uninitialized("recordmovementpos" + i, "0");
     }
@@ -351,7 +351,7 @@ setup_watch_memory()
         self setpers_if_uninitialized("bouncepos" + i, "0");
     }
 
-    /* 
+    /*
     if (self.pers["pers"] > 0)
         self iprintln("^:" + self.pers["pers"] + " ^7things loaded..");
         */
@@ -359,7 +359,7 @@ setup_watch_memory()
 
 watch_memory()
 {
-    if (int(self getpers("bouncecount")) >= 1) 
+    if (int(self getpers("bouncecount")) >= 1)
     {
         self notify("stop_bounce_loop");
         self thread monitor_bounces();
@@ -380,8 +380,8 @@ watch_memory()
     self loadpers("alt_swap", ::reload_alt_swap);
     self loadpers("headbounces", ::headbounces);
     self loadpers("oob", ::disable_oob);
-    self loadpers("barriers", ::remove_barriers); 
-    self loadpers("always_nac", ::do_always_nac); 
+    self loadpers("barriers", ::remove_barriers);
+    self loadpers("always_nac", ::do_always_nac);
     self loadpers("random_rounds", ::always_random_rounds);
     self loadpers("auto_pause_timer", ::auto_pause_timer);
     self loadpers("no_hud", ::watch_hud);
@@ -406,20 +406,20 @@ watch_memory()
     self setup_bind("empty_clip", false, ::do_emptyclip_bind);
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
     self setup_bind("freeze_anim", false, ::do_freeze_anim_bind);
-    self setup_bind("shellshock", false, ::do_shellshock_bind); 
-    self setup_bind("load_class", false, ::do_load_class_bind); 
-    self setup_bind("flash", false, ::do_flash_bind); 
-    self setup_bind("third_person", false, ::do_third_person_bind); 
-    self setup_bind("record_movement", false, ::do_record_movement_bind); 
-    self setup_bind("reverse_ele", false, ::do_reverse_ele_bind); 
-    self setup_bind("kill_bot", false, ::do_kill_bot_bind); 
-    self setup_bind("spectate_repeater", false, ::do_spectate_repeater_bind); 
-    self setup_bind("spectate_damage_repeater", false, ::do_spectate_damage_repeater_bind); 
-    self setup_bind("bounce", false, ::do_bounce_bind); 
-    self setup_bind("hitmarker", false, ::do_hitmarker_bind); 
-    self setup_bind("start_camera", false, ::do_cinematic_bind); 
-    self setup_bind("stall", false, ::do_stall_bind); 
-    self setup_bind("dead_silence", false, ::do_dead_silence_bind); 
+    self setup_bind("shellshock", false, ::do_shellshock_bind);
+    self setup_bind("load_class", false, ::do_load_class_bind);
+    self setup_bind("flash", false, ::do_flash_bind);
+    self setup_bind("third_person", false, ::do_third_person_bind);
+    self setup_bind("record_movement", false, ::do_record_movement_bind);
+    self setup_bind("reverse_ele", false, ::do_reverse_ele_bind);
+    self setup_bind("kill_bot", false, ::do_kill_bot_bind);
+    self setup_bind("spectate_repeater", false, ::do_spectate_repeater_bind);
+    self setup_bind("spectate_damage_repeater", false, ::do_spectate_damage_repeater_bind);
+    self setup_bind("bounce", false, ::do_bounce_bind);
+    self setup_bind("hitmarker", false, ::do_hitmarker_bind);
+    self setup_bind("start_camera", false, ::do_cinematic_bind);
+    self setup_bind("stall", false, ::do_stall_bind);
+    self setup_bind("dead_silence", false, ::do_dead_silence_bind);
 }
 
 // this was used to debug IW9, and can be used for S4 too
