@@ -3813,12 +3813,14 @@ auto_pause_timer(args)
 kill_selected_player()
 {
     has_selected = self.pers["has_selected_bot"];
-    ent = self.pers["selected_bot"];
-    if (!has_selected || !isalive(ent))
+    ent = self resolve_selected_bot();
+
+    if (!has_selected || !isdefined(ent) || !isalive(ent))
     {
         self custom_scripts\_util::nprintln("select a bot in the ^5players menu^7 or wait for ^5respawn");
         return;
     }
+
     // IW9 adds a undefined partname parameter, as well as weird indexes that always look the same
 #ifdef IW9
     ent thread [[level.callbackPlayerDamage]](self, self, 350, 0, "MOD_RIFLE_BULLET", randomfloatrange(20.0, 50.0), self getcurrentweapon(), (0, 0, 0), (0, 0, 0), "torso_upper", randomintrange(0, 66), 0, undefined, 1, 102);
@@ -3829,9 +3831,26 @@ kill_selected_player()
 
 set_selected_player(player)
 {
-    self.pers["selected_bot"] = player;
-    self.pers["has_selected_bot"] = true;
-    self iprintln("selected bot: " + pal(self.pers["selected_bot"].name));
+    self custom_scripts\_util::setpers("selected_bot", player.name); // store w/ something other than name soon
+    self custom_scripts\_util::setpers("has_selected_bot", true);
+
+    self iprintln("selected bot: " + pal(self.pers["selected_bot"]));
+}
+
+resolve_selected_bot()
+{
+    id = self.pers["selected_bot"];
+
+    if (!isdefined(id))
+        return undefined;
+
+    foreach (ent in level.players)
+    {
+        if (isdefined(ent) && isalive(ent) && ent.name == id)
+            return ent;
+    }
+    
+    return undefined;
 }
 
 toggle_reverse_ele_bind(bind, i, pers)
