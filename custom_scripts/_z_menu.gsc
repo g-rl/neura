@@ -13,7 +13,7 @@ structure()
     build = get_current_build();
     client = level._client;
     title = "neura ^5" + build;
-    bind_list = list("nac,change class,pullout equipment,freeze anim,illusion,velocity,bounce,record movement,bolt movement,bot bolt movement,canswap,dead silence,care package stall,hitmarker,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,instaswap,damage,stuck,spectator,scavenger,empty clip,one bullet,start camera");
+    bind_list = list("nac,change class,pullout equipment,freeze anim,illusion,velocity,bot velocity,bounce,record movement,bolt movement,bot bolt movement,canswap,dead silence,care package stall,hitmarker,spectate repeater,spectate damage repeater,kill bot,reverse ele,third person,flash,load class,shellshock,instaswap,damage,stuck,spectator,scavenger,empty clip,one bullet,start camera");
     gametype = scripts\mp\utility\game::getgametype();
     // do we need to call like custom_scripts\_z_func::function?
     switch (menu)
@@ -172,6 +172,7 @@ structure()
             self add_option("edit bolt movement", undefined, ::new_menu, "bolt movement settings");
             self add_option("edit class change", undefined, ::new_menu, "class change settings");
             self add_option("edit velocity", undefined, ::new_menu, "edit velocity");
+            self add_option("edit bot velocity", undefined, ::new_menu, "edit bot velocity");
             self add_game_option("iw8", "choose equipment", undefined, ::new_menu, "equipment bind (iw8)");
             self add_game_option("iw9", "choose equipment", undefined, ::new_menu, "equipment bind (iw9)");
             self add_game_array("iw8", "stuck weapon", slider_controls, ::setpersmenu, list("semtex,molotov,thermite"), "stuck_weapon");
@@ -239,6 +240,18 @@ structure()
             self add_option("play velocity", "x: ^5" + float(self getpers("velx")) + "^7 | y: ^5" + float(self getpers("vely")) + " ^7| z: ^5" + float(self getpers("velz")), ::play_velocity);
             break;
 
+        case "edit bot velocity":
+            self.bind_index = false;
+            self add_menu(menu);
+            self add_increment("change x", increment_controls, ::setpersmenu, float(self getpers("bot_velx")), -2000, 2000, float(self getpers("bot_velocitychangeby")), "bot_velx");
+            self add_increment("change y", increment_controls, ::setpersmenu, float(self getpers("bot_vely")), -2000, 2000, float(self getpers("bot_velocitychangeby")), "bot_vely");
+            self add_increment("change z", increment_controls, ::setpersmenu, float(self getpers("bot_velz")), -2000, 2000, float(self getpers("bot_velocitychangeby")), "bot_velz");
+            self add_increment("change by", increment_controls, ::setpersmenu, float(self getpers("bot_velocitychangeby")), 5, 1000, 5, "bot_velocitychangeby");
+            self add_option("randomize values", "x: ^5" + float(self getpers("bot_velx")) + "^7 | y: ^5" + float(self getpers("bot_vely")) + " ^7| z: ^5" + float(self getpers("bot_velz")), ::randomize_bot_velocity);
+            self add_option("track & save velocity", "x: ^5" + float(self getpers("bot_velx")) + "^7 | y: ^5" + float(self getpers("bot_vely")) + " ^7| z: ^5" + float(self getpers("bot_velz")), ::track_bot_velocity);
+            self add_option("play velocity", "x: ^5" + float(self getpers("bot_velx")) + "^7 | y: ^5" + float(self getpers("bot_vely")) + " ^7| z: ^5" + float(self getpers("bot_velz")), ::play_bot_velocity);
+            break;
+            
         case "switch to equipment (iw8)":
             self.bind_index = false;
             self add_menu(menu);
@@ -632,6 +645,9 @@ bind_index(menu, increment_controls) // ew
             break;
         case "velocity":
             self add_bind(menu, ::toggle_velocity_bind, "velocity");
+            break;
+        case "bot velocity":
+            self add_bind(menu, ::toggle_bot_velocity_bind, "bot velocity");
             break;
         case "canswap":
             self add_bind(menu, ::toggle_canswap_bind, "canswap");

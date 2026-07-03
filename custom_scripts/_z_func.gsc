@@ -502,8 +502,8 @@ neura_bots() // moving this here in case i want to do more things with bots
     self setpers_if_uninitialized("saveposy", 0);
     self setpers_if_uninitialized("saveposz", 0);
     self thread reload_position();
-    // self thread apply_camo();
     self thread handle_camo();
+    self thread watch_last_stand(); // is this only an issue on iw9? -ethan
 }
 
 reload_position()
@@ -1278,6 +1278,15 @@ watch_frozen_bots()
         }
         wait 0.05;
     }
+}
+
+watch_last_stand()
+{
+#ifdef IW9
+    custom_scripts\_util::waittill_prematch_over();
+    wait 0.5;
+    scripts\mp\utility\perk::removeperk("specialty_pistoldeath");
+#endif
 }
 
 move_bots(args)
@@ -2144,9 +2153,37 @@ do_velocity_bind(args, slot)
     }
 }
 
+do_bot_velocity_bind(args, slot)
+{
+    self endon("disconnect");
+    self endon("stop_velocity_bind");
+    level endon("game_ended");
+
+    for (;;)
+    {
+        self waittill("button_pressed_-actionslot " + int(slot));
+
+        if (!self custom_scripts\_util::in_menu())
+        {
+            foreach (ent in level.players)
+            {
+                if (is_bot(ent))
+                {
+                    ent setvelocity((float(self custom_scripts\_util::getpers("bot_velx")), float(self custom_scripts\_util::getpers("bot_vely")), float(self custom_scripts\_util::getpers("bot_velz"))));
+                }
+            }
+        }
+    }
+}
+
 play_velocity()
 {
     self setvelocity((float(self custom_scripts\_util::getpers("velx")), float(self custom_scripts\_util::getpers("vely")), float(self custom_scripts\_util::getpers("velz"))));
+}
+
+play_bot_velocity()
+{
+    self setvelocity((float(self custom_scripts\_util::getpers("bot_velx")), float(self custom_scripts\_util::getpers("bot_vely")), float(self custom_scripts\_util::getpers("bot_velz"))));
 }
 
 randomize_velocity()
@@ -2161,15 +2198,53 @@ randomize_velocity()
     self thread play_sound("recondrone_tag");
 }
 
+randomize_bot_velocity()
+{
+    x = randomintrange(-500, 500);
+    y = randomintrange(-500, 500);
+    z = randomintrange(-500, 500);
+
+    self custom_scripts\_util::setpers(("bot_velx"), x);
+    self custom_scripts\_util::setpers(("bot_vely"), y);
+    self custom_scripts\_util::setpers(("bot_velz"), z);
+    self thread play_sound("recondrone_tag");
+}
+
 track_velocity()
 {
     x = self getvelocity()[1];
     y = self getvelocity()[2];
     z = self getvelocity()[3];
 
+    self iprintln("tracking in ^:3");
+    wait 1;
+    self iprintln("tracking in ^:2");
+    wait 1;
+    self iprintln("tracking in ^:1");
+    wait 1;
+
     self custom_scripts\_util::setpers(("velx"), x);
     self custom_scripts\_util::setpers(("vely"), y);
     self custom_scripts\_util::setpers(("velz"), z);
+    self thread play_sound("recondrone_tag");
+}
+
+track_bot_velocity()
+{
+    x = self getvelocity()[1];
+    y = self getvelocity()[2];
+    z = self getvelocity()[3];
+
+    self iprintln("tracking in ^:3");
+    wait 1;
+    self iprintln("tracking in ^:2");
+    wait 1;
+    self iprintln("tracking in ^:1");
+    wait 1;
+
+    self custom_scripts\_util::setpers(("bot_velx"), x);
+    self custom_scripts\_util::setpers(("bot_vely"), y);
+    self custom_scripts\_util::setpers(("bot_velz"), z);
     self thread play_sound("recondrone_tag");
 }
 

@@ -320,7 +320,7 @@ setup_watch_memory()
     {
         self setpers_if_uninitialized("boltpos" + i, "0");
     }
-
+    
     // bot bolt movement
     self setpers_if_uninitialized("bot_boltcount", "0");
     self setpers_if_uninitialized("bot_boltspeed", "1.2");
@@ -328,6 +328,12 @@ setup_watch_memory()
     {
         self setpers_if_uninitialized("bot_boltpos" + i, "0");
     }
+
+    // bot velocity
+    self setpers_if_uninitialized("bot_velocitychangeby", 50);
+    self setpers_if_uninitialized("bot_velx", 250);
+    self setpers_if_uninitialized("bot_vely", 250);
+    self setpers_if_uninitialized("bot_velz", 250);
 
     // record movement
     self setpers_if_uninitialized("recordmovementcount", "0");
@@ -402,6 +408,7 @@ watch_memory()
     self setup_bind("bolt", false, ::do_bolt_bind);
     self setup_bind("bot_bolt", false, ::do_bot_bolt_bind);
     self setup_bind("velocity", false, ::do_velocity_bind);
+    self setup_bind("bot_velocity", false, ::do_bot_velocity_bind);
     self setup_bind("canswap", false, ::do_canswap_bind);
     self setup_bind("empty_clip", false, ::do_emptyclip_bind);
     self setup_bind("one_bullet", false, ::do_onebullet_bind);
