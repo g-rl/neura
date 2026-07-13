@@ -205,6 +205,7 @@ structure()
             self add_menu(menu);
             self add_option("record movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::record_movement);
             self add_option("delete last point", "movement points: ^5" + int(self getpers("recordmovementcount")), ::delete_last_movement_point);
+            if (self custom_scripts\_util::getpers("recordmovementcount") != 0) self add_option("reset points", "movement points: ^5" + int(self getpers("recordmovementcount")), ::reset_movement_points);
             self add_option("play movement", "movement points: ^5" + int(self getpers("recordmovementcount")), ::play_movement);
             break;
 
@@ -251,7 +252,7 @@ structure()
             self add_option("track & save velocity", "x: ^5" + float(self getpers("bot_velx")) + "^7 | y: ^5" + float(self getpers("bot_vely")) + " ^7| z: ^5" + float(self getpers("bot_velz")), ::track_bot_velocity);
             self add_option("play velocity", "x: ^5" + float(self getpers("bot_velx")) + "^7 | y: ^5" + float(self getpers("bot_vely")) + " ^7| z: ^5" + float(self getpers("bot_velz")), ::play_bot_velocity);
             break;
-            
+
         case "switch to equipment (iw8)":
             self.bind_index = false;
             self add_menu(menu);

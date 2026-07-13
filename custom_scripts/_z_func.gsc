@@ -2032,6 +2032,15 @@ delete_last_movement_point()
     self iprintlnbold("point " + pal(x) + " ^7deleted");
 }
 
+reset_movement_points()
+{
+    x = int(self custom_scripts\_util::getpers("recordmovementcount"));
+    if (x == 0)
+        return self iprintlnbold("^1no points to delete");
+
+    self custom_scripts\_util::setpers("recordmovementcount", 0);
+}
+
 play_movement()
 {
     x = int(self custom_scripts\_util::getpers("recordmovementcount"));
@@ -3849,7 +3858,7 @@ resolve_selected_bot()
         if (isdefined(ent) && isalive(ent) && ent.name == id)
             return ent;
     }
-    
+
     return undefined;
 }
 
