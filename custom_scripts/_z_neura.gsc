@@ -251,8 +251,8 @@ setup_watch_memory()
     self setpers_if_uninitialized("headbounces", false);
     self setpers_if_uninitialized("always_nac", false);
 
-    // todo: hide field upgrades
     self setpers_if_uninitialized("clean_kc", true);
+    self setpers_if_uninitialized("hide_field_upgrade", true);
     self setpers_if_uninitialized("hide_itemtype", true);
     self setpers_if_uninitialized("hide_victim", false);
     self setpers_if_uninitialized("hide_perks", true);

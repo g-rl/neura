@@ -455,6 +455,7 @@ structure()
             self add_pers_toggle("hide victim", undefined, ::togglepers, "hide_victim", true);
             self add_pers_toggle("hide perks", undefined, ::togglepers, "hide_perks", true);
             self add_pers_toggle("hide attachments", undefined, ::togglepers, "hide_attachments", true);
+            self add_pers_toggle("hide field upgrade", undefined, ::togglepers, "hide_field_upgrade", true);
             break;
 
         case "dvars":

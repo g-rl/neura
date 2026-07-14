@@ -2528,6 +2528,12 @@ clean_killcam(args)
                 self setclientomnvar("ui_killcam_killedby_attachment" + (x + 1), -1);
         }
 
+        if (self custom_scripts\_util::getpers("hide_field_upgrade") && !isalive(self))
+        {
+            self setclientomnvar("ui_super_ref", "none");
+            self setclientomnvar("ui_super_progress", 0);
+        }
+
         wait 0.05;
     }
 }
