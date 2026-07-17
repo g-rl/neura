@@ -3,7 +3,7 @@
 a multi-game GSC menu for **IW8**, **S4**, and **IW9**, created by [nyli2b](https://x.com/nyli2b) & [mjkzy](https://x.com/mjkzys)
 
 - **you must own a license to the game(s) in order to use neura.**
-- neura's GSC will *always* be **free** and **Open Source** for anyone
+- neura's engine and GSC will *always* be **free** and **Open Source** for anyone
 - neura is only usable offline and is not to be used as "cheats" or "hacks"
 
 <div align="center">
@@ -16,11 +16,15 @@ a multi-game GSC menu for **IW8**, **S4**, and **IW9**, created by [nyli2b](http
   </table>
 </div>
 
-## Download
+## download
 
 to download and use neura, check out the [Discord Server](https://discord.gg/5U7dChVgBe) and navigate to the #install channel. this will have everything to install neura for MW2019!
 
-## Credits
+## nengine
+
+to see the source code behind the neura engine that adds additional features to the GSC mod, you can view the [nengine](https://github.com/g-rl/nengine) source code here!
+
+## credits
 
 - [nyli](https://github.com/g-rl) - primarily the one writing GSC
 - [mjkzy](https://github.com/mjkzy) - maintaining GSC and engine mods for errors and multi-game support
@@ -28,8 +32,8 @@ to download and use neura, check out the [Discord Server](https://discord.gg/5U7
 - [hinatyu](https://x.com/hinatyu) - provided GSC dumps & extremely useful resources for S4 & IW9 (thank you!)
 - [sortileges (Sass)](https://x.com/sasseries) - [iw8cine](https://github.com/sortileges/iw8cine) open source cinematic mod which was ported to S4 & IW9
 
-## License
+## license
 
-neura's GSC is available under **GNU General Public License v3.0 (GPLv3)**. To learn more about it, read the [LICENSE](./LICENSE) file.
+neura's GSC is available under the **MIT License**. to learn more about it, read the [LICENSE](./LICENSE) file.
 
 You can do anything with this GSC **as long as it is Open Source and includes the license.** 
