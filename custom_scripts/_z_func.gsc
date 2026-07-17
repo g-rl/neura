@@ -4707,16 +4707,13 @@ watch_for_unlock(args)
     }
 }
 
-end_round() // issue on other games?
+end_round()
 {
-#ifdef S4
-    //setomnvarforallclients( "ui_objective_state", 0 );
-    //setomnvar( "ui_bomb_interacting", 0 );
-    //thread scripts\mp\gamelogic::endgame( game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"] );
-    iprintln("needs confirming!"); // TODO
-#else
     setomnvarforallclients("ui_objective_state", 0);
     setomnvar("ui_bomb_interacting", 0);
+#ifdef S4
+    thread scripts\mp\gamelogic::_id_52F7(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
+#else
     thread scripts\mp\gamelogic::endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
 #endif
 }
