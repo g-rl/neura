@@ -1711,9 +1711,9 @@ do_stuck_bind(args, slot)
                 continue;
             }
 
-            // TODO: not sure if IW9 works for this yet..
-            // thread grenadestuckto_wrapper(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
-            self thread fire_at_player("semtex_mp");
+            weapon = self custom_scripts\_util::getpers("stuck_weapon") + "_mp";
+            grenade = magicgrenademanual(weapon, self.origin, (0, 0, 0), 3);
+            thread grenadestuckto_wrapper(grenade, player, false);
         }
     }
 }
