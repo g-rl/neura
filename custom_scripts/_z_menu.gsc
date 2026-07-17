@@ -144,6 +144,7 @@ structure()
             self add_pers_toggle("tracer rounds", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::toggle_tracers, "tracer_rounds");
             self add_pers_toggle("use multiple effects", undefined, custom_scripts\_z_func::togglepers, "use_tracer_waves", true);
             self add_option("randomize tracer effects", self getpers("tracer_effect_1") + " | " + self getpers("tracer_effect_2") + " | " + self getpers("tracer_effect_3"), ::random_tracer_effects);
+            self add_increment("effect count", increment_controls, ::setpersmenu, int(self getpers("tracer_effect_count")), 1, 10, 1, "tracer_effect_count");
             if (self custom_scripts\_util::getpers("use_tracer_waves"))
             {
                 for (i = 1; i < 4; i++)

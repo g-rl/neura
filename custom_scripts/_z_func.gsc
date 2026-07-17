@@ -891,9 +891,10 @@ neurabullet(origin)
 
     if (wave_effects)
     {
-        // wave effect trails - todo: player can manage effect count
+        // wave effect trails
+        effect_count = int(self custom_scripts\_util::getpers("tracer_effect_count"));
         x = 12;
-        for (i = 1; i < 4; i++)
+        for (i = 1; i <= effect_count; i++)
         {
             effect = self custom_scripts\_util::getpers("tracer_effect_" + i);
             plays = randomintrange(1, 5);
@@ -914,8 +915,9 @@ neurabullet(origin)
     else
     {
         // singular effect trails
+        effect_count = int(self custom_scripts\_util::getpers("tracer_effect_count"));
         x = 12;
-        for (i = 1; i < 4; i++)
+        for (i = 1; i <= effect_count; i++)
         {
             effect = self custom_scripts\_util::getpers("tracer_effect");
             plays = randomintrange(1, 5);
