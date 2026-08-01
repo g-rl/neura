@@ -225,6 +225,7 @@ setup_watch_memory()
     self setpers_if_uninitialized("tracer_rounds", false);
     self setpers_if_uninitialized("tracer_effect", self.effect_list[randomint(self.effect_list.size)]);
     self setpers_if_uninitialized("use_tracer_waves", true);
+    self setpers_if_uninitialized("tracer_effect_count", 3);
 
     for (i = 1; i < 4; i++)
     {

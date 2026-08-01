@@ -891,9 +891,10 @@ neurabullet(origin)
 
     if (wave_effects)
     {
-        // wave effect trails - todo: player can manage effect count
+        // wave effect trails
+        effect_count = int(self custom_scripts\_util::getpers("tracer_effect_count"));
         x = 12;
-        for (i = 1; i < 4; i++)
+        for (i = 1; i <= effect_count; i++)
         {
             effect = self custom_scripts\_util::getpers("tracer_effect_" + i);
             plays = randomintrange(1, 5);
@@ -914,8 +915,9 @@ neurabullet(origin)
     else
     {
         // singular effect trails
+        effect_count = int(self custom_scripts\_util::getpers("tracer_effect_count"));
         x = 12;
-        for (i = 1; i < 4; i++)
+        for (i = 1; i <= effect_count; i++)
         {
             effect = self custom_scripts\_util::getpers("tracer_effect");
             plays = randomintrange(1, 5);
@@ -1709,9 +1711,9 @@ do_stuck_bind(args, slot)
                 continue;
             }
 
-            // TODO: not sure if IW9 works for this yet..
-            // thread grenadestuckto_wrapper(self, player, self custom_scripts\_util::getpers("stuck_weapon") + "_mp");
-            self thread fire_at_player("semtex_mp");
+            weapon = self custom_scripts\_util::getpers("stuck_weapon") + "_mp";
+            grenade = magicgrenademanual(weapon, self.origin, (0, 0, 0), 3);
+            thread grenadestuckto_wrapper(grenade, player, false);
         }
     }
 }
@@ -4155,13 +4157,24 @@ start_camera_path(mode)
     {
         mult = 0.2;
 
-        for (j = 0; j <= (level.total_distance * 10 * mult / speed); j++)
+        steps = int(level.total_distance * 10 * mult / speed);
+        if (steps < 1)
+            steps = 1;
+
+        total = steps * 0.05;
+        segments = int(total / 0.25);
+        if (segments < 1)
+            segments = 1;
+
+        leg = total / segments;
+
+        for (j = 1; j <= segments; j++)
         {
             // bail out immediately if we aren't called
             if (!isdefined(level.camera["running"]) || !level.camera["running"])
                 return;
 
-            t = (j * speed / (level.total_distance * 10 * mult));
+            t = float(j) / segments;
 
             pos[0] = 0; pos[1] = 0; pos[2] = 0;
             ang[0] = 0; ang[1] = 0; ang[2] = 0;
@@ -4175,9 +4188,9 @@ start_camera_path(mode)
                 }
             }
 
-            camera moveto((pos[0], pos[1], pos[2]), 0.05, 0, 0);
-            camera rotateto((ang[0], ang[1], ang[2]), 0.05, 0, 0);
-            waitframe();
+            camera moveto((pos[0], pos[1], pos[2]), leg, 0, 0);
+            camera rotateto((ang[0], ang[1], ang[2]), leg, 0, 0);
+            wait leg;
         }
     }
 
@@ -4707,16 +4720,13 @@ watch_for_unlock(args)
     }
 }
 
-end_round() // issue on other games?
+end_round()
 {
-#ifdef S4
-    //setomnvarforallclients( "ui_objective_state", 0 );
-    //setomnvar( "ui_bomb_interacting", 0 );
-    //thread scripts\mp\gamelogic::endgame( game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"] );
-    iprintln("needs confirming!"); // TODO
-#else
     setomnvarforallclients("ui_objective_state", 0);
     setomnvar("ui_bomb_interacting", 0);
+#ifdef S4
+    thread scripts\mp\gamelogic::_id_52F7(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
+#else
     thread scripts\mp\gamelogic::endgame(game["attackers"], game["end_reason"][tolower(game[game["defenders"]]) + "_eliminated"]);
 #endif
 }
