@@ -4157,13 +4157,24 @@ start_camera_path(mode)
     {
         mult = 0.2;
 
-        for (j = 0; j <= (level.total_distance * 10 * mult / speed); j++)
+        steps = int(level.total_distance * 10 * mult / speed);
+        if (steps < 1)
+            steps = 1;
+
+        total = steps * 0.05;
+        segments = int(total / 0.25);
+        if (segments < 1)
+            segments = 1;
+
+        leg = total / segments;
+
+        for (j = 1; j <= segments; j++)
         {
             // bail out immediately if we aren't called
             if (!isdefined(level.camera["running"]) || !level.camera["running"])
                 return;
 
-            t = (j * speed / (level.total_distance * 10 * mult));
+            t = float(j) / segments;
 
             pos[0] = 0; pos[1] = 0; pos[2] = 0;
             ang[0] = 0; ang[1] = 0; ang[2] = 0;
@@ -4177,9 +4188,9 @@ start_camera_path(mode)
                 }
             }
 
-            camera moveto((pos[0], pos[1], pos[2]), 0.05, 0, 0);
-            camera rotateto((ang[0], ang[1], ang[2]), 0.05, 0, 0);
-            waitframe();
+            camera moveto((pos[0], pos[1], pos[2]), leg, 0, 0);
+            camera rotateto((ang[0], ang[1], ang[2]), leg, 0, 0);
+            wait leg;
         }
     }
 
